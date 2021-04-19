@@ -1,0 +1,31 @@
+{
+    "general": {
+        "Home": "Beranda",
+
+        "Product": "Produk",
+        "Product.Cs": "Simulasi Kredit",
+        "Product.Pr": "Promo",
+        "Product.Vh": "Kendaraan Bermotor",
+
+        "Product.Ln": "Pinjaman Dana",
+        "Product.Um": "Umrah",
+
+        "Contact":"Kontak Kami",
+
+        "Profile": "Profil",
+        "News": "Berita",
+        "test_param": "Ini coba param, :param wae",
+        "test_plural": "Ini test plural 1 |ini test plural plural 2",
+
+        "ModalLogout.Title": "Siap untuk Keluar?",
+        "ModalLogout.Body": "Pilih \"Keluar\" jika anda ingin keluar dari sesi ini.",
+        "ModalLogout.Button.Close": "Tutup",
+        "ModalLogout.Button.Logout": "Keluar",
+
+        "Login.Header": "Halaman Login"
+    },
+    "home": {
+        "test": "okee"
+    }
+
+}

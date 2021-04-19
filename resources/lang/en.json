@@ -1,0 +1,31 @@
+{
+    "general": {
+
+        "Home": "Home",
+
+        "Product": "Product",
+        "Product.Cs": "Credit Simulation",
+        "Product.Pr": "Promo",
+        "Product.Vh": "Vehicle",
+
+        "Product.Ln": "Loan Funds",
+        "Product.Um": "Umrah",
+
+        "Contact":"Contact Us",
+
+        "Profile": "Profile",
+        "News": "News",
+        "test_param": "This is the test param, :param",
+        "test_plural": "There is one apple|There are many apples",
+
+        "ModalLogout.Title": "Ready to Leave?",
+        "ModalLogout.Body": "Select \"Logout\" below if you are ready to end your current session.",
+        "ModalLogout.Button.Close": "Close",
+        "ModalLogout.Button.Logout": "Logout",
+
+        "Login.Header": "Login Page"
+    },
+    "home": {
+        "test": "okee"
+    }
+}
