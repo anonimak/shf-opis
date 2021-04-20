@@ -47,12 +47,15 @@ export default {
           child: [
             {
               title: "Branch",
+              link: "admin.branch.index",
             },
             {
               title: "Departement",
+              link: "admin.branch.index",
             },
             {
               title: "Employee",
+              link: "admin.branch.index",
             },
           ],
         },

@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 // Auth::routes();
 // authentication routes
 Auth::routes();
@@ -29,10 +25,14 @@ Auth::routes();
 |
 |
 */
-Route::get('/dashboard', 'Admin\DashboardController@index')
-    ->name('admin.dashboard')
-    ->middleware('auth', 'is_admin');
+Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', 'Admin\DashboardController@index')
+        ->name('dashboard');
 
+    Route::resource('/branch', '\App\Http\Controllers\Admin\BranchController');
+});
+
+Route::get('/', 'HomeController@index');
 
 // Logout
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');

@@ -4,25 +4,25 @@
       v-for="item in items"
       :key="item.id"
       class="nav-item"
-      :class="checkStatusRoutes(item) == true? 'active':''"
+      :class="checkStatusRoutes(item) == true ? 'active' : ''"
     >
       <div v-if="isArrayRoutes(item) == true">
         <a
-          :class="checkStatusRoutes(item) == true? '':'collapsed'"
+          :class="checkStatusRoutes(item) == true ? '' : 'collapsed'"
           class="nav-link"
           href="#"
           data-toggle="collapse"
-          :data-target="'#'+item.title+'Page'"
+          :data-target="'#' + item.title + 'Page'"
           aria-expanded="false"
-          :aria-controls="item.title+'Page'"
+          :aria-controls="item.title + 'Page'"
         >
           <i :class="item.icon"></i>
-          <span>{{item.title}}</span>
+          <span>{{ item.title }}</span>
         </a>
         <div
           v-if="isArrayRoutes(item) == true"
-          :id="item.title+'Page'"
-          :class="checkStatusRoutes(item) == true? 'show':''"
+          :id="item.title + 'Page'"
+          :class="checkStatusRoutes(item) == true ? 'show' : ''"
           class="collapse"
           aria-labelledby="headingPage"
           data-parent="#accordionSidebar"
@@ -32,15 +32,20 @@
             <inertia-link
               v-for="itemChild in item.child"
               :key="itemChild.link"
-              :class="isRoute(itemChild.link)? 'collapse-item active': 'collapse-item'"
+              :class="
+                isRoute(itemChild.link)
+                  ? 'collapse-item active'
+                  : 'collapse-item'
+              "
               :href="route(itemChild.link)"
-            >{{ itemChild.title }}</inertia-link>
+              >{{ itemChild.title }}</inertia-link
+            >
           </div>
         </div>
       </div>
       <inertia-link v-else class="nav-link" :href="route(item.link)">
         <i :class="item.icon"></i>
-        <span>{{item.title}}</span>
+        <span>{{ item.title }}</span>
       </inertia-link>
     </li>
   </div>

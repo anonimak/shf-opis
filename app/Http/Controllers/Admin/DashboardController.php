@@ -28,7 +28,7 @@ class DashboardController extends Controller
     public function index()
     {
         // Synchronously
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Admin/Dashboard', [
             'meta' => [
                 'title' => 'tests',
                 'foo' => 'bar'
