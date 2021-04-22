@@ -46,44 +46,16 @@ export default {
           icon: "fas fa-fw fa-folder",
           child: [
             {
-              title: "Branch",
+              title: "Branch Office",
               link: "admin.branch.index",
             },
             {
-              title: "Departement",
-              link: "admin.branch.index",
+              title: "Department",
+              link: "admin.department.index",
             },
             {
               title: "Employee",
               link: "admin.branch.index",
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "Post",
-          link: "#",
-          icon: "fas fa-fw fa-newspaper",
-          child: [
-            {
-              title: "News",
-            },
-            {
-              title: "CSR News",
-            },
-          ],
-        },
-        {
-          id: 3,
-          title: "Settings",
-          link: "#",
-          icon: "fas fa-fw fa-cog",
-          child: [
-            {
-              title: "Meta Data",
-            },
-            {
-              title: "System",
             },
           ],
         },

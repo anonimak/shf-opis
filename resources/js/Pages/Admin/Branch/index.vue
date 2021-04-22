@@ -2,7 +2,7 @@
   <Layout :userinfo="userinfo">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Branch</h1>
+      <h1 class="h3 mb-0 text-gray-800">Branch Office</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -49,14 +49,14 @@
                         </td>
                         <td>
                           <b-button-group size="sm">
-                            <inertia-link
+                            <!-- <inertia-link
                               :href="route(__show, item.id)"
                               class="btn btn-primary"
                               ><i
                                 class="fa fa-search-plus"
                                 aria-hidden="true"
                               ></i
-                            ></inertia-link>
+                            ></inertia-link> -->
                             <inertia-link
                               :href="route(__edit, item.id)"
                               class="btn btn-secondary"

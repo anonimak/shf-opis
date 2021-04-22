@@ -14,16 +14,18 @@ class Branch extends Model
      */
     protected $table = 'm_branches';
 
+    protected $fillable = ['branch_name', 'is_head'];
+
     use SoftDeletes;
 
     public static function getBranches($search = null)
     {
         $news = Self::select('*')
-            ->orderBy('created_at', 'asc');
+            ->orderBy('created_at', 'desc');
 
         if ($search) {
             $news->where('branch_name', 'LIKE', '%' . $search . '%');
         }
-        return $news->paginate(18);
+        return $news->paginate(10);
     }
 }

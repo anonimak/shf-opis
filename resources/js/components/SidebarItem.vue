@@ -30,8 +30,8 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <!-- <h6 class="collapse-header">Custom Utilities:</h6> -->
             <inertia-link
-              v-for="itemChild in item.child"
-              :key="itemChild.link"
+              v-for="(itemChild, index) in item.child"
+              :key="index"
               :class="
                 isRoute(itemChild.link)
                   ? 'collapse-item active'
@@ -65,10 +65,10 @@ export default {
     checkStatusRoutes(data) {
       if (typeof data.child !== "undefined" && Array.isArray(data.child)) {
         for (let index = 0; index < data.child.length; index++) {
-          if (this.isRoute(data.child[index].link)) {
+          if (this.route().current(data.child[index].link)) {
             return true;
           }
-          // console.log("ada");
+          // console.log(data.child);
         }
 
         return false;

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Branch;
+use Illuminate\Support\Facades\Redirect;
 
 class BranchController extends Controller
 {
@@ -27,7 +28,7 @@ class BranchController extends Controller
                     'href'    => "admin.dashboard"
                 ],
                 [
-                    'title'   => "Branch",
+                    'title'   => "Branch Office",
                     'active'  => true
                 ]
             ),
@@ -55,19 +56,16 @@ class BranchController extends Controller
                     'href'    => "admin.dashboard"
                 ],
                 [
-                    'title'   => "Branch",
-                    'href'  => "admin.branch"
+                    'title'   => "Branch Office",
+                    'href'  => "admin.branch.index"
                 ],
                 [
                     'title'   => "Create",
                     'active'  => true
                 ]
             ),
-            '__create'  => 'admin.branch.create',
-            '__edit'    => 'admin.branch.edit',
-            '__show'    => 'admin.branch.show',
-            '__destroy' => 'admin.branch.destroy',
-            '__index'   => 'admin.branch.index'
+            '_token' => csrf_token(),
+            '__store'  => 'admin.branch.store',
         ]);
     }
 
@@ -79,7 +77,15 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'branch'   => 'required|max:50',
+            'isHead'    => 'required',
+        ]);
+        $branch = Branch::create([
+            'branch_name'   => $request->input('branch'),
+            'is_head'       => $request->input('isHead')
+        ]);
+        return Redirect::route('admin.branch.index')->with('success', "Successfull Create new Branch $branch->branch_name");
     }
 
     /**
@@ -99,9 +105,33 @@ class BranchController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Branch $branch)
     {
-        //
+        return Inertia::render('Admin/Branch/edit', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "admin.dashboard"
+                ],
+                [
+                    'title'   => "Branch Office",
+                    'href'  => "admin.branch.index"
+                ],
+                [
+                    'title'   => $branch->branch_name,
+                    'active'  => true
+                ]
+            ),
+            'dataBranch'      => [
+                'branch'        => $branch->branch_name,
+                'isHead'        => $branch->is_head,
+                'id'            => $branch->id
+            ],
+            '_token'    => csrf_token(),
+            '__create'  => 'admin.branch.create',
+            '__update'    => 'admin.branch.update',
+        ]);
     }
 
     /**
@@ -113,7 +143,16 @@ class BranchController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'branch'   => 'required|max:50',
+            'isHead'    => 'required',
+        ]);
+
+        Branch::where('id', $id)->update([
+            'branch_name'   => $request->input('branch'),
+            'is_head'       => $request->input('isHead')
+        ]);
+        return Redirect::route('admin.branch.index')->with('success', "Successfull updated.");
     }
 
     /**
@@ -124,6 +163,8 @@ class BranchController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $branch = Branch::where('id', $id)->first();
+        $branch->delete();
+        return Redirect::route('admin.branch.index')->with('success', "Branch Office $branch->branch_name deleted.");
     }
 }

@@ -30,6 +30,7 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
         ->name('dashboard');
 
     Route::resource('/branch', '\App\Http\Controllers\Admin\BranchController');
+    Route::resource('/department', '\App\Http\Controllers\Admin\DepartmentController');
 });
 
 Route::get('/', 'HomeController@index');
