@@ -18,6 +18,11 @@ class Branch extends Model
 
     use SoftDeletes;
 
+    public function employee()
+    {
+        return $this->hasMany(Employee::class);
+    }
+
     public static function getBranches($search = null)
     {
         $news = Self::select('*')

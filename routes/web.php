@@ -31,6 +31,10 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
 
     Route::resource('/branch', '\App\Http\Controllers\Admin\BranchController');
     Route::resource('/department', '\App\Http\Controllers\Admin\DepartmentController');
+    Route::resource('/employee', '\App\Http\Controllers\Admin\EmployeeController');
+
+    // Route importexcel
+    Route::post('/employee/importexcel', '\App\Http\Controllers\Admin\EmployeeController@importexcel')->name('employee.importexcel');
 });
 
 Route::get('/', 'HomeController@index');

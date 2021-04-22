@@ -806,7 +806,7 @@ __webpack_require__.r(__webpack_exports__);
           link: "admin.department.index"
         }, {
           title: "Employee",
-          link: "admin.branch.index"
+          link: "admin.employee.index"
         }]
       }]
     };

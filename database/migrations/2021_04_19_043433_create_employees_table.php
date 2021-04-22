@@ -21,12 +21,12 @@ class CreateEmployeesTable extends Migration
             $table->string('lastname', 30);
             $table->enum('gender', ['L', 'P']);
             $table->string('nik', 10);
-            $table->string('address', 180);
-            $table->string('address_two', 180);
+            $table->string('address', 180)->nullable();
+            $table->string('address_two', 180)->nullable();
             $table->string('email', 50);
-            $table->string('mobile', 25);
-            $table->string('phone', 25);
-            $table->string('phone_two', 25);
+            $table->string('mobile', 25)->nullable();
+            $table->string('phone', 25)->nullable();
+            $table->string('phone_two', 25)->nullable();
             $table->date('hired_at')->nullable();
             $table->date('terminated_at')->nullable();
             $table->softDeletes();

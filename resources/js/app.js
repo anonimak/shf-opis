@@ -41,7 +41,7 @@ Vue.mixin(require("./base"));
 
 const app = document.getElementById("app");
 
-new Vue({
+const VueApp = new Vue({
     metaInfo: {
         titleTemplate: title =>
             title ? `${title} - Sinarmas Hana Finance` : "Sinarmas Hana Finance"

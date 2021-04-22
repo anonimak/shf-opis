@@ -17,7 +17,7 @@ class BranchController extends Controller
      */
     public function index(Request $request)
     {
-        //
+
         return Inertia::render('Admin/Branch', [
             'dataBranches' => Branch::getBranches($request->input('search')),
             'filters' => $request->all(),
@@ -47,7 +47,7 @@ class BranchController extends Controller
      */
     public function create(Request $request)
     {
-        //
+
         return Inertia::render('Admin/Branch/create', [
             'breadcrumbItems' => array(
                 [

@@ -15,4 +15,10 @@ class Ref_Title extends Model
     protected $table = 'ref_titles';
 
     use SoftDeletes;
+
+
+    public function employee()
+    {
+        return $this->hasMany(Employee::class);
+    }
 }

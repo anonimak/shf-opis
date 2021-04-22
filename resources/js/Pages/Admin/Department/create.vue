@@ -68,7 +68,9 @@ export default {
     submit() {
       if (!this.submitState) {
         this.submitState = true;
-        this.$inertia.post(this.route(this.__store), this.form);
+        this.$inertia
+          .post(this.route(this.__store), this.form)
+          .then(() => (this.submitState = false));
       }
     },
   },
