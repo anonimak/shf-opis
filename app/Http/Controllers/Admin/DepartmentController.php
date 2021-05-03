@@ -19,7 +19,8 @@ class DepartmentController extends Controller
     {
         //
         return Inertia::render('Admin/Department', [
-            'dataDepartments' => Department::getDepartments($request->input('search')),
+            'dataDepartments' => Department::getDepartments($request->input('search'))->paginate(10),
+            'perPage' => 10,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [

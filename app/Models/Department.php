@@ -19,12 +19,12 @@ class Department extends Model
 
     public static function getDepartments($search = null)
     {
-        $news = Self::select('*')
+        $department = Self::select('*')
             ->orderBy('created_at', 'desc');
 
         if ($search) {
-            $news->where('department_name', 'LIKE', '%' . $search . '%');
+            $department->where('department_name', 'LIKE', '%' . $search . '%');
         }
-        return $news->paginate(10);
+        return $department;
     }
 }

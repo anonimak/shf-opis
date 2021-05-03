@@ -40,7 +40,16 @@
                         v-for="(item, index) in dataBranches.data"
                         :key="item.id"
                       >
-                        <th scope="row">{{ index + 1 }}</th>
+                        <th scope="row">
+                          {{
+                            (filters.page !== undefined
+                              ? filters.page - 1
+                              : 1 - 1) *
+                              perPage +
+                            index +
+                            1
+                          }}
+                        </th>
                         <td>
                           {{ item.branch_name }}
                           <b-badge v-if="item.is_head" class="bg-primary"
@@ -101,6 +110,7 @@ export default {
     "breadcrumbItems",
     "userinfo",
     "filters",
+    "perPage",
     "__create",
     "__edit",
     "__show",

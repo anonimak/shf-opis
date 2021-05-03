@@ -12,7 +12,10 @@ import Vue from "vue";
 import VueMeta from "vue-meta";
 
 import BootstrapVue from "bootstrap-vue";
+
 import FlashMessage from "@smartweb/vue-flash-message";
+
+import vSelect from 'vue-select';
 
 // untuk local storage
 import Storage from "vue-ls";
@@ -27,15 +30,22 @@ Vue.use(require("vue-moment"), {
     moment
 });
 
+
 // bootstrap framework
 Vue.use(BootstrapVue);
 
 // untuk flash message
 Vue.use(FlashMessage);
+
+// inertia app
 Vue.use(InertiaApp);
 
 // untuk localstorage
 Vue.use(Storage);
+
+// component v-select
+Vue.component('v-select', vSelect)
+import 'vue-select/dist/vue-select.css';
 
 Vue.mixin(require("./base"));
 

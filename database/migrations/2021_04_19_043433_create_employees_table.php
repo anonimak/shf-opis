@@ -44,8 +44,7 @@ class CreateEmployeesTable extends Migration
             $table->unsignedBigInteger('id_branch');
             $table->boolean('is_manager')->default(false);
             $table->date('year_started');
-            $table->date('year_finished');
-            $table->softDeletes();
+            $table->date('year_finished')->nullable();
             $table->timestamps();
 
             // foreign key

@@ -19,7 +19,8 @@ class BranchController extends Controller
     {
 
         return Inertia::render('Admin/Branch', [
-            'dataBranches' => Branch::getBranches($request->input('search')),
+            'dataBranches' => Branch::getBranches($request->input('search'))->paginate(10),
+            'perPage' => 10,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [

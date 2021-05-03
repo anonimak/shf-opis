@@ -7,92 +7,99 @@
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
       <div class="col-12">
-        <div>
-          <b-card>
-            <keep-alive>
-              <div class="row">
-                <div class="col-12">
-                  <div class="row">
-                    <div class="col-12">
-                      <inertia-link
-                        :href="route(__create)"
-                        class="btn btn-primary my-2 float-right"
-                      >
-                        <i class="fas fa-plus"></i>
-                        Add</inertia-link
-                      >
-                      <b-button
-                        variant="outline-primary float-right"
-                        class="my-2 mr-2 btn-file"
-                        ><i class="fas fa-file-import"></i> Import Excel<input
-                          type="file"
-                          ref="employeeFile"
-                          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                          @change="onFileChange"
-                      /></b-button>
-                    </div>
+        <b-card>
+          <keep-alive>
+            <div class="row">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-12">
+                    <inertia-link
+                      :href="route(__create)"
+                      class="btn btn-primary my-2 float-right"
+                    >
+                      <i class="fas fa-plus"></i>
+                      Add</inertia-link
+                    >
+                    <b-button
+                      variant="outline-primary float-right"
+                      class="my-2 mr-2 btn-file"
+                      ><i class="fas fa-file-import"></i> Import Excel<input
+                        type="file"
+                        ref="employeeFile"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        @change="onFileChange"
+                    /></b-button>
                   </div>
-                  <div class="col-lg-3 col-xs-12 mt-3">
-                    <search v-model="form.search" @reset="reset" />
-                  </div>
-                  <!-- table news -->
-                  <table class="table mt-4">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Employee Name</th>
-                        <th scope="col">Branch Office</th>
-                        <th scope="col">NIK</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in dataEmployees.data"
-                        :key="item.id"
-                      >
-                        <th scope="row">{{ index + 1 }}</th>
-                        <td>
-                          {{ item.firstname + " " + item.lastname }}
-                        </td>
-                        <td>
-                          {{ item.branch.branch_name }}
-                        </td>
-                        <td>
-                          {{ item.nik }}
-                        </td>
-                        <td>
-                          <b-button-group size="sm">
-                            <inertia-link
-                              :href="route(__show, item.id)"
-                              class="btn btn-primary"
-                              ><i
-                                class="fa fa-search-plus"
-                                aria-hidden="true"
-                              ></i
-                            ></inertia-link>
-                            <inertia-link
-                              :href="route(__edit, item.id)"
-                              class="btn btn-secondary"
-                              ><i class="fa fa-edit" aria-hidden="true"></i
-                            ></inertia-link>
-                            <b-button
-                              href="#"
-                              variant="danger"
-                              @click="showMsgBoxDelete(item.id)"
-                              ><i class="fa fa-trash-alt" aria-hidden="true"></i
-                            ></b-button>
-                          </b-button-group>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <Pagination :links="dataEmployees.links" />
                 </div>
+                <div class="col-lg-3 col-xs-12 mt-3">
+                  <search v-model="form.search" @reset="reset" />
+                </div>
+                <!-- table news -->
+                <table class="table mt-4">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Employee Name</th>
+                      <th scope="col">Branch Office</th>
+                      <th scope="col">NIK</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(item, index) in dataEmployees.data"
+                      :key="item.id"
+                    >
+                      <th scope="row">
+                        {{
+                          (filters.page !== undefined
+                            ? filters.page - 1
+                            : 1 - 1) *
+                            perPage +
+                          index +
+                          1
+                        }}
+                      </th>
+                      <td>
+                        {{ item.firstname + " " + item.lastname }}
+                        <b-badge v-if="item.terminated_at" variant="danger"
+                          >Terminated</b-badge
+                        >
+                      </td>
+                      <td>
+                        {{ item.branch.branch_name }}
+                      </td>
+                      <td>
+                        {{ item.nik }}
+                      </td>
+                      <td>
+                        <b-button-group size="sm">
+                          <inertia-link
+                            :href="route(__show, item.id)"
+                            class="btn btn-primary"
+                            ><i class="fa fa-search-plus" aria-hidden="true"></i
+                          ></inertia-link>
+                          <inertia-link
+                            :href="route(__edit, item.id)"
+                            class="btn btn-secondary"
+                            ><i class="fa fa-edit" aria-hidden="true"></i
+                          ></inertia-link>
+                          <b-button
+                            href="#"
+                            variant="danger"
+                            @click="showMsgBoxDelete(item.id)"
+                            ><i class="fa fa-trash-alt" aria-hidden="true"></i
+                          ></b-button>
+                        </b-button-group>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <Pagination :links="dataEmployees.links" />
               </div>
-            </keep-alive>
-          </b-card>
-        </div>
+            </div>
+          </keep-alive>
+        </b-card>
       </div>
     </div>
   </Layout>
@@ -114,6 +121,8 @@ export default {
     "breadcrumbItems",
     "userinfo",
     "filters",
+    "perPage",
+    "test",
     "__create",
     "__edit",
     "__show",
