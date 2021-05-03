@@ -102,6 +102,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
  //import layouts
 
 
@@ -112,7 +121,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["dataDepartments", "flash", "breadcrumbItems", "userinfo", "filters", "__create", "__edit", "__show", "__destroy", "__index"],
+  props: ["dataDepartments", "flash", "breadcrumbItems", "userinfo", "filters", "perPage", "__create", "__edit", "__show", "__destroy", "__index"],
   metaInfo: {
     title: "Admin Department Page"
   },
@@ -337,6 +346,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -803,7 +813,7 @@ __webpack_require__.r(__webpack_exports__);
           link: "admin.department.index"
         }, {
           title: "Employee",
-          link: "admin.branch.index"
+          link: "admin.employee.index"
         }]
       }]
     };
@@ -6306,7 +6316,18 @@ var render = function() {
                               ) {
                                 return _c("tr", { key: item.id }, [
                                   _c("th", { attrs: { scope: "row" } }, [
-                                    _vm._v(_vm._s(index + 1))
+                                    _vm._v(
+                                      "\n                        " +
+                                        _vm._s(
+                                          (_vm.filters.page !== undefined
+                                            ? _vm.filters.page - 1
+                                            : 1 - 1) *
+                                            _vm.perPage +
+                                            index +
+                                            1
+                                        ) +
+                                        "\n                      "
+                                    )
                                   ]),
                                   _vm._v(" "),
                                   _c("td", [
@@ -6529,12 +6550,22 @@ var render = function() {
         },
         [
           !item.active
-            ? _c("inertia-link", { attrs: { href: _vm.route(item.href) } }, [
-                item.icon
-                  ? _c("i", { staticClass: "fas", class: item.icon })
-                  : _vm._e(),
-                _vm._v("\n      " + _vm._s(item.title) + "\n    ")
-              ])
+            ? _c(
+                "inertia-link",
+                {
+                  attrs: {
+                    href: item.param
+                      ? _vm.route(item.href, item.param)
+                      : _vm.route(item.href)
+                  }
+                },
+                [
+                  item.icon
+                    ? _c("i", { staticClass: "fas", class: item.icon })
+                    : _vm._e(),
+                  _vm._v("\n      " + _vm._s(item.title) + "\n    ")
+                ]
+              )
             : _c("span", [
                 item.icon
                   ? _c("i", { staticClass: "fas", class: item.icon })
@@ -7260,7 +7291,7 @@ var render = function() {
         staticClass: "form-control input-round",
         attrs: {
           autocomplete: "off",
-          type: "text",
+          type: "search",
           name: "search",
           placeholder: "Search.."
         },

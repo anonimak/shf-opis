@@ -6,11 +6,12 @@
       :key="item.title"
       :class="{ active: item.active }"
     >
-      <inertia-link v-if="!item.active" :href="route(item.href)">
+      <inertia-link
+        v-if="!item.active"
+        :href="item.param ? route(item.href, item.param) : route(item.href)"
+      >
         <i v-if="item.icon" class="fas" :class="item.icon"></i>
-        {{
-        item.title
-        }}
+        {{ item.title }}
       </inertia-link>
       <span v-else>
         <i v-if="item.icon" class="fas" :class="item.icon"></i>

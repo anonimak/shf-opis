@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             BranchesSeeder::class,
             DepartmentsSeeder::class,
             RefTitleSeeder::class,
+            RefPositionSeeder::class,
             EmployeeSeeder::class
         ]);
     }

@@ -4,7 +4,7 @@
       <input
         class="form-control input-round"
         autocomplete="off"
-        type="text"
+        type="search"
         name="search"
         placeholder="Search.."
         :value="value"

@@ -55,7 +55,7 @@ export default {
             },
             {
               title: "Employee",
-              link: "admin.branch.index",
+              link: "admin.employee.index",
             },
           ],
         },

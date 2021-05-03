@@ -31,6 +31,13 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
 
     Route::resource('/branch', '\App\Http\Controllers\Admin\BranchController');
     Route::resource('/department', '\App\Http\Controllers\Admin\DepartmentController');
+    Route::resource('/employee', '\App\Http\Controllers\Admin\EmployeeController');
+    // Employee History
+    Route::post('/employee/{id}/history', '\App\Http\Controllers\Admin\EmployeeController@empStore')->name('employee.history.store');
+    Route::put('/employee/{id}/history/{idhistory}/update', '\App\Http\Controllers\Admin\EmployeeController@empUpdate')->name('employee.history.update');
+    Route::delete('/employee/{id}/history/{idhistory}', '\App\Http\Controllers\Admin\EmployeeController@empDestroy')->name('employee.history.destroy');
+    // Route importexcel
+    Route::post('/employee/importexcel', '\App\Http\Controllers\Admin\EmployeeController@importexcel')->name('employee.importexcel');
 });
 
 Route::get('/', 'HomeController@index');

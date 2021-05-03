@@ -32,12 +32,12 @@
                   id="checkbox-group-head"
                   label=""
                   label-for="checkbox-head"
-                  :invalid-feedback="errors.isHead ? errors.isHead[0] : ''"
-                  :state="errors.isHead ? false : null"
+                  :invalid-feedback="errors.is_head ? errors.is_head[0] : ''"
+                  :state="errors.is_head ? false : null"
                 >
                   <b-form-checkbox
                     id="checkbox-head"
-                    v-model="form.isHead"
+                    v-model="form.is_head"
                     name="checkboxhead"
                     :value="1"
                     :unchecked-value="0"
@@ -94,7 +94,9 @@ export default {
     submit() {
       if (!this.submitState) {
         this.submitState = true;
-        this.$inertia.put(this.route(this.__update, this.form.id), this.form);
+        this.$inertia
+          .put(this.route(this.__update, this.form.id), this.form)
+          .then(() => (this.submitState = false));
       }
     },
   },

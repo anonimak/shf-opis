@@ -18,14 +18,19 @@ class Branch extends Model
 
     use SoftDeletes;
 
+    public function employee()
+    {
+        return $this->hasMany(Employee::class);
+    }
+
     public static function getBranches($search = null)
     {
-        $news = Self::select('*')
+        $branch = Self::select('*')
             ->orderBy('created_at', 'desc');
 
         if ($search) {
-            $news->where('branch_name', 'LIKE', '%' . $search . '%');
+            $branch->where('branch_name', 'LIKE', '%' . $search . '%');
         }
-        return $news->paginate(10);
+        return $branch;
     }
 }

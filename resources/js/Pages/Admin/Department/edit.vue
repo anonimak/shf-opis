@@ -79,14 +79,9 @@ export default {
     submit() {
       if (!this.submitState) {
         this.submitState = true;
-        this.$inertia.put(this.route(this.__update, this.form.id), this.form, {
-          onSuccess: (page) => {
-            console.log(page);
-          },
-          onError: (errors) => {
-            console.log("ada error");
-          },
-        });
+        this.$inertia
+          .put(this.route(this.__update, this.form.id), this.form)
+          .then(() => (this.submitState = false));
       }
     },
   },
