@@ -9,7 +9,7 @@
       class="sidebar-brand d-flex align-items-center"
       :href="route('admin.dashboard')"
     >
-      <div class="sidebar-brand-text mx-3">WebSHF</div>
+      <div class="sidebar-brand-text mx-3">SuperMenu WebSHF</div>
     </inertia-link>
     <!-- Divider -->
     <hr class="sidebar-divider my-0" />
@@ -41,6 +41,12 @@ export default {
         },
         {
           id: 1,
+          title: "User Management",
+          active: true,
+          icon: "fas fa-fw fa-user",
+        },
+        {
+          id: 2,
           title: "Reference",
           link: "#",
           icon: "fas fa-fw fa-folder",
