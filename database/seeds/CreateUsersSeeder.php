@@ -16,19 +16,30 @@ class CreateUsersSeeder extends Seeder
     {
         $user = [
             [
-                'name'=>'Admin',
-                'email'=>'admin@admin.com',
+                'name' => 'Super',
+                'email' => 'super@admin.com',
+                'id_employee' => 1,
                 'email_verified_at' => now(),
-                'is_admin'=>'1',
-                'password'=> Hash::make('kosong'),
+                'role' => 2,
+                'password' => Hash::make('kosong'),
                 'remember_token' => Str::random(10),
             ],
             [
-                'name'=>'User',
-                'email'=>'user@user.com',
+                'name' => 'Admin',
+                'email' => 'admin@admin.com',
+                'id_employee' => 2,
                 'email_verified_at' => now(),
-                'is_admin'=>'0',
-                'password'=> Hash::make('kosong'),
+                'role' => 1,
+                'password' => Hash::make('kosong'),
+                'remember_token' => Str::random(10),
+            ],
+            [
+                'name' => 'User',
+                'email' => 'user@user.com',
+                'id_employee' => 3,
+                'email_verified_at' => now(),
+                'role' => 0,
+                'password' => Hash::make('kosong'),
                 'remember_token' => Str::random(10),
             ],
         ];

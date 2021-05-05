@@ -17,9 +17,9 @@
   </div>
 </template>
 <script>
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Sidebar from "@/components/admin/Sidebar";
+import Navbar from "@/components/admin/Navbar";
+import Footer from "@/components/admin/Footer";
 
 export default {
   components: {

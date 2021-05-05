@@ -40,6 +40,19 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
     Route::post('/employee/importexcel', '\App\Http\Controllers\Admin\EmployeeController@importexcel')->name('employee.importexcel');
 });
 
+/*
+|
+| super routes
+|
+|
+*/
+Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->group(function () {
+    Route::get('/dashboard', 'Super\DashboardController@index')
+        ->name('dashboard');
+});
+
+
+
 Route::get('/', 'HomeController@index');
 
 // Logout
