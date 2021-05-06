@@ -42,7 +42,7 @@ export default {
         {
           id: 1,
           title: "User Management",
-          active: true,
+          link: "super.user.index",
           icon: "fas fa-fw fa-user",
         },
         {

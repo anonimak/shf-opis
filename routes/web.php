@@ -49,6 +49,7 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
 Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->group(function () {
     Route::get('/dashboard', 'Super\DashboardController@index')
         ->name('dashboard');
+    Route::resource('/user', 'Super\UserManagement');
 });
 
 
