@@ -50,6 +50,8 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::get('/dashboard', 'Super\DashboardController@index')
         ->name('dashboard');
     Route::resource('/user', 'Super\UserManagement');
+    Route::resource('/ref_position', 'Super\RefPosition');
+    Route::resource('/ref_title', 'Super\RefTitle');
 });
 
 

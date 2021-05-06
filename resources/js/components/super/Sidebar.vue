@@ -58,13 +58,11 @@ export default {
             },
             {
               title: "Position",
-              // link: "super.ref.position.index",
-              active: true,
+              link: "super.ref_position.index",
             },
             {
               title: "Title",
-              // link: "super.ref.title.index",
-              active: true,
+              link: "super.ref_title.index",
             },
           ],
         },

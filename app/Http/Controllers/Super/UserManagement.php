@@ -190,7 +190,6 @@ class UserManagement extends Controller
         ]);
 
         if ($request->input('newpassword')) {
-            // dd("new password");
             User::where('id', $id)->update([
                 'password' => Hash::make($request->input('newpassword'))
             ]);
