@@ -52,6 +52,24 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/user', 'Super\UserManagement');
     Route::resource('/ref_position', 'Super\RefPosition');
     Route::resource('/ref_title', 'Super\RefTitle');
+
+    Route::prefix('/ref_approver')->name('ref_approver.')->group(function () {
+        // superadmin
+        // superadmin -> ref_approver
+
+        Route::get('/index', 'Super\RefModuleApprover@index')
+            ->name('index');
+        Route::get('/create', 'Super\RefModuleApprover@create')
+            ->name('create');
+        Route::post('/store', 'Super\RefModuleApprover@store')
+            ->name('store');
+        Route::get('/{user}/edit', 'Super\RefModuleApprover@edit')
+            ->name('edit');
+        Route::put('/{user}', 'Super\RefModuleApprover@update')
+            ->name('update');
+        Route::delete('/{user}', 'Super\RefModuleApprover@destroy')
+            ->name('destroy');
+    });
 });
 
 

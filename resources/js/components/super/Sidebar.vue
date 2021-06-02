@@ -53,7 +53,7 @@ export default {
           child: [
             {
               title: "Approver",
-              // link: "super.ref.approver.index",
+              link: "super.ref_approver.index",
               active: true,
             },
             {
