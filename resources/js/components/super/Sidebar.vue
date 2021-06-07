@@ -37,12 +37,14 @@ export default {
           id: 0,
           title: "Dashboard",
           link: "super.dashboard",
+          index: "super.dashboard",
           icon: "fas fa-fw fa-tachometer-alt",
         },
         {
           id: 1,
           title: "User Management",
-          link: "super.user.index",
+          link: "super.user.*",
+          index: "super.user.index",
           icon: "fas fa-fw fa-user",
         },
         {
@@ -52,17 +54,24 @@ export default {
           icon: "fas fa-fw fa-folder",
           child: [
             {
-              title: "Approver",
-              link: "super.ref_approver.index",
-              active: true,
-            },
-            {
               title: "Position",
-              link: "super.ref_position.index",
+              link: "super.ref_position.*",
+              index: "super.ref_position.index",
             },
             {
               title: "Title",
-              link: "super.ref_title.index",
+              link: "super.ref_title.*",
+              index: "super.ref_title.index",
+            },
+            {
+              title: "Approver",
+              link: "super.ref_approver.*",
+              index: "super.ref_approver.index",
+            },
+            {
+              title: "Type Memo",
+              link: "super.ref_type_memo.*",
+              index: "super.ref_type_memo.index",
             },
           ],
         },
