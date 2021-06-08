@@ -37,6 +37,7 @@ export default {
           id: 0,
           title: "Dashboard",
           link: "admin.dashboard",
+          index: "admin.dashboard",
           icon: "fas fa-fw fa-tachometer-alt",
         },
         {
@@ -47,15 +48,18 @@ export default {
           child: [
             {
               title: "Branch Office",
-              link: "admin.branch.index",
+              link: "admin.branch.*",
+              index: "admin.branch.index",
             },
             {
               title: "Department",
-              link: "admin.department.index",
+              link: "admin.department.*",
+              index: "admin.department.index",
             },
             {
               title: "Employee",
-              link: "admin.employee.index",
+              link: "admin.employee.*",
+              index: "admin.employee.index",
             },
           ],
         },
