@@ -539,8 +539,7 @@ __webpack_require__.r(__webpack_exports__);
         for (var index = 0; index < data.child.length; index++) {
           if (this.route().current(data.child[index].link)) {
             return true;
-          } // console.log(data.child);
-
+          }
         }
 
         return false;
@@ -6779,7 +6778,7 @@ var render = function() {
                                 class: _vm.isRoute(itemChild.link)
                                   ? "collapse-item active"
                                   : "collapse-item",
-                                attrs: { href: _vm.route(itemChild.link) }
+                                attrs: { href: _vm.route(itemChild.index) }
                               },
                               [_vm._v(_vm._s(itemChild.title))]
                             )
@@ -6794,7 +6793,7 @@ var render = function() {
                 "inertia-link",
                 {
                   staticClass: "nav-link",
-                  attrs: { href: _vm.route(item.link) }
+                  attrs: { href: _vm.route(item.index) }
                 },
                 [
                   _c("i", { class: item.icon }),

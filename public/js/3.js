@@ -542,8 +542,7 @@ __webpack_require__.r(__webpack_exports__);
         for (var index = 0; index < data.child.length; index++) {
           if (this.route().current(data.child[index].link)) {
             return true;
-          } // console.log(data.child);
-
+          }
         }
 
         return false;
@@ -732,11 +731,13 @@ __webpack_require__.r(__webpack_exports__);
         id: 0,
         title: "Dashboard",
         link: "super.dashboard",
+        index: "super.dashboard",
         icon: "fas fa-fw fa-tachometer-alt"
       }, {
         id: 1,
         title: "User Management",
-        link: "super.user.index",
+        link: "super.user.*",
+        index: "super.user.index",
         icon: "fas fa-fw fa-user"
       }, {
         id: 2,
@@ -744,15 +745,21 @@ __webpack_require__.r(__webpack_exports__);
         link: "#",
         icon: "fas fa-fw fa-folder",
         child: [{
-          title: "Approver",
-          link: "super.ref_approver.index",
-          active: true
-        }, {
           title: "Position",
-          link: "super.ref_position.index"
+          link: "super.ref_position.*",
+          index: "super.ref_position.index"
         }, {
           title: "Title",
-          link: "super.ref_title.index"
+          link: "super.ref_title.*",
+          index: "super.ref_title.index"
+        }, {
+          title: "Approver",
+          link: "super.ref_approver.*",
+          index: "super.ref_approver.index"
+        }, {
+          title: "Type Memo",
+          link: "super.ref_type_memo.*",
+          index: "super.ref_type_memo.index"
         }]
       }]
     };
@@ -6640,7 +6647,7 @@ var render = function() {
                                 class: _vm.isRoute(itemChild.link)
                                   ? "collapse-item active"
                                   : "collapse-item",
-                                attrs: { href: _vm.route(itemChild.link) }
+                                attrs: { href: _vm.route(itemChild.index) }
                               },
                               [_vm._v(_vm._s(itemChild.title))]
                             )
@@ -6655,7 +6662,7 @@ var render = function() {
                 "inertia-link",
                 {
                   staticClass: "nav-link",
-                  attrs: { href: _vm.route(item.link) }
+                  attrs: { href: _vm.route(item.index) }
                 },
                 [
                   _c("i", { class: item.icon }),
