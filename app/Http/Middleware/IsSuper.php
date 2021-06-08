@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Providers\RouteServiceProvider;
 use Closure;
 use Inertia\Inertia;
 
@@ -20,6 +21,8 @@ class IsSuper
 
         if (auth()->user()->role == 2) {
             return $next($request);
+        } else if (auth()->user()->role == 1) {
+            return Redirect()->route(RouteServiceProvider::HOMEADMIN)->with('error', "You don't have access.");
         }
 
         return redirect('dashboard')->with('error', "You don't have admin access.");
