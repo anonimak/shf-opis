@@ -38,6 +38,7 @@
         "vue-ls": "^3.2.2",
         "vue-meta": "^2.4.0",
         "vue-moment": "^4.1.0",
-        "vue-select": "^3.11.2"
+        "vue-select": "^3.11.2",
+        "vuedraggable": "^2.24.3"
     }
 }

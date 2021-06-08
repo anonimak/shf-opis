@@ -64,7 +64,14 @@ class LoginController extends Controller
 
         if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
             // return redirectWithoutInertia('admin.dashboard');
-            return Redirect()->route('admin.dashboard');
+            $role = auth()->user()->role;
+            if ($role == 2) {
+                return Redirect()->route(RouteServiceProvider::HOMESUPER);
+            } elseif ($role == 1) {
+                return Redirect()->route(RouteServiceProvider::HOMEADMIN);
+            } else {
+                return Redirect()->route(RouteServiceProvider::HOME);
+            }
         } else {
             return Redirect()->route('login')
                 ->with('error', 'Email-Address And Password Are Wrong.');

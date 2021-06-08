@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'is_admin'
+        'name', 'email', 'password', 'id_employee', 'role'
     ];
 
     /**
@@ -36,4 +36,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function getUsers($id = null, $search = null)
+    {
+        $user = Self::select('*')
+            ->orderBy('created_at', 'desc');
+
+        if ($id) {
+            $user->where('email', '!=', $id);
+        }
+
+        if ($search) {
+            $user->where('name', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%');
+        }
+        return $user;
+    }
 }

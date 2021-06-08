@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'remember' => \Reinink\RememberQueryStrings::class,
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        'is_super' => \App\Http\Middleware\IsSuper::class,
     ];
 }

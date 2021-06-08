@@ -37,13 +37,13 @@
                   ? 'collapse-item active'
                   : 'collapse-item'
               "
-              :href="route(itemChild.link)"
+              :href="route(itemChild.index)"
               >{{ itemChild.title }}</inertia-link
             >
           </div>
         </div>
       </div>
-      <inertia-link v-else class="nav-link" :href="route(item.link)">
+      <inertia-link v-else class="nav-link" :href="route(item.index)">
         <i :class="item.icon"></i>
         <span>{{ item.title }}</span>
       </inertia-link>
@@ -68,7 +68,6 @@ export default {
           if (this.route().current(data.child[index].link)) {
             return true;
           }
-          // console.log(data.child);
         }
 
         return false;

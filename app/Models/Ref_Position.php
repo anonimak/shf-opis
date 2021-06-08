@@ -14,5 +14,24 @@ class Ref_Position extends Model
      */
     protected $table = 'ref_positions';
 
+    protected $fillable = [
+        "position_name", "id_departement"
+    ];
     use SoftDeletes;
+
+    public function departement()
+    {
+        return $this->belongsTo(Department::class, 'id_departement', 'id');
+    }
+
+    public static function getRef_Positions($search = null)
+    {
+        $position = Self::select('*')
+            ->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $position->where('position_name', 'LIKE', '%' . $search . '%');
+        }
+        return $position;
+    }
 }

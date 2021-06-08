@@ -14,11 +14,26 @@ class Ref_Title extends Model
      */
     protected $table = 'ref_titles';
 
+    protected $fillable = [
+        "title_name"
+    ];
+
     use SoftDeletes;
 
 
     public function employee()
     {
         return $this->hasMany(Employee::class);
+    }
+
+    public static function getRef_Titles($search = null)
+    {
+        $title = Self::select('*')
+            ->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $title->where('title_name', 'LIKE', '%' . $search . '%');
+        }
+        return $title;
     }
 }

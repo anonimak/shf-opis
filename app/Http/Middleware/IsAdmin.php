@@ -17,8 +17,7 @@ class IsAdmin
     public function handle($request, Closure $next)
     {
         Inertia::share('userinfo', auth()->user());
-
-        if (auth()->user()->is_admin == 1) {
+        if (auth()->user()->role == 1) {
             return $next($request);
         }
 

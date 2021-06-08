@@ -11,7 +11,7 @@ import Vue from "vue";
 // meta tools
 import VueMeta from "vue-meta";
 
-import BootstrapVue from "bootstrap-vue";
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 
 import FlashMessage from "@smartweb/vue-flash-message";
 
@@ -33,6 +33,7 @@ Vue.use(require("vue-moment"), {
 
 // bootstrap framework
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 
 // untuk flash message
 Vue.use(FlashMessage);

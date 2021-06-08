@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Ref_Module_Approver_Detail extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'd_module_approvers';
+
+    protected $guarded = [];
+
+    public function approver()
+    {
+        return $this->belongsTo(Ref_Module_Approver::class, 'id_ref_module_approver', 'id');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Ref_Position::class, 'id_ref_position', 'id');
+    }
+}
