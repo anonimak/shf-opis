@@ -101,11 +101,12 @@ class UserManagement extends Controller
             'employee'     => 'required',
         ]);
         $user = User::create([
-            'name'         => $request->input('name'),
-            'email'        => $request->input('email'),
-            'password'     => $request->input('password'),
-            'role'         => $request->input('role'),
-            'id_employee'  => $request->input('employee'),
+            'name'              => $request->input('name'),
+            'email'             => $request->input('email'),
+            'password'          => Hash::make($request->input('password')),
+            'email_verified_at' => now(),
+            'role'              => $request->input('role'),
+            'id_employee'       => $request->input('employee'),
         ]);
         return Redirect::route('super.user.index')->with('success', "Successfull Create new User $user->email");
     }

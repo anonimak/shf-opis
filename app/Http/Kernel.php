@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'remember' => \Reinink\RememberQueryStrings::class,
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
         'is_super' => \App\Http\Middleware\IsSuper::class,
+        'is_user' => \App\Http\Middleware\IsUser::class,
     ];
 }
