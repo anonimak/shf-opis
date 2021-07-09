@@ -15,13 +15,13 @@ class CreateRefPositionsTable extends Migration
     {
         Schema::create('ref_positions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_departement');
+            $table->unsignedBigInteger('id_department');
             $table->string('position_name', 50);
             $table->softDeletes();
             $table->timestamps();
 
             // foreign key
-            $table->foreign('id_departement')->references('id')->on('m_departements');
+            $table->foreign('id_department')->references('id')->on('m_departments');
         });
     }
 

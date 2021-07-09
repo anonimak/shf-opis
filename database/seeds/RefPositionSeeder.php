@@ -15,63 +15,63 @@ class RefPositionSeeder extends Seeder
         $positions = [
             [
                 'position_name' => 'Staff IT',
-                'id_departement' => 1,
+                'id_department' => 1,
             ],
             [
                 'position_name' => 'Head IT',
-                'id_departement' => 1,
+                'id_department' => 1,
             ],
             [
                 'position_name' => 'Staff Risk Management',
-                'id_departement' => 2,
+                'id_department' => 2,
             ],
             [
                 'position_name' => 'Head Risk Management',
-                'id_departement' => 2,
+                'id_department' => 2,
             ],
             [
                 'position_name' => 'Staff General Affairs',
-                'id_departement' => 3,
+                'id_department' => 3,
             ],
             [
                 'position_name' => 'Staff Tax',
-                'id_departement' => 4,
+                'id_department' => 4,
             ],
             [
                 'position_name' => 'Head Tax',
-                'id_departement' => 4,
+                'id_department' => 4,
             ],
             [
                 'position_name' => 'Staff Litigation',
-                'id_departement' => 5,
+                'id_department' => 5,
             ],
             [
                 'position_name' => 'Head Litigation',
-                'id_departement' => 5,
+                'id_department' => 5,
             ],
             [
                 'position_name' => 'Staff Legan and Compliance',
-                'id_departement' => 6,
+                'id_department' => 6,
             ],
             [
                 'position_name' => 'Head Legan and Compliance',
-                'id_departement' => 6,
+                'id_department' => 6,
             ],
             [
                 'position_name' => 'Head HRD',
-                'id_departement' => 7,
+                'id_department' => 7,
             ],
             [
                 'position_name' => 'Staff HRD',
-                'id_departement' => 7,
+                'id_department' => 7,
             ],
             [
                 'position_name' => 'Head Finance and Accounting',
-                'id_departement' => 8,
+                'id_department' => 8,
             ],
             [
                 'position_name' => 'Staff Finance and Accounting',
-                'id_departement' => 8,
+                'id_department' => 8,
             ],
         ];
 

@@ -12,8 +12,11 @@ class Ref_Module_Approver_Detail extends Model
      * @var string
      */
     protected $table = 'd_module_approvers';
-
+    public $timestamps = true;
     protected $guarded = [];
+    protected $hidden = [
+        'laravel_through_key'
+    ];
 
     public function approver()
     {

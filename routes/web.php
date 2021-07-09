@@ -58,7 +58,27 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/ref_type_memo', 'Super\RefTypeMemo');
 });
 
+/*
+|
+| user routes
+|
+|
+*/
+Route::middleware('auth', 'is_user')->name('user.')->group(function () {
+    Route::get('/dashboard', 'User\DashboardController@index')->name('dashboard');
+    Route::prefix('/memo')->name('memo.')->group(function () {
+        Route::get('/index', 'User\MemoController@index')->name('index');
+        Route::get('/create', 'User\MemoController@create')->name('create');
+        Route::post('/store', 'User\MemoController@store')->name('store');
 
+        Route::prefix('/draft')->name('draft.')->group(function () {
+            Route::get('/', 'User\MemoController@draft')->name('index');
+            Route::get('/{memo}', 'User\MemoController@draftEdit')->name('edit');
+        });
+    });
+
+    Route::get('/test', 'User\MemoController@test')->name('test');
+});
 
 Route::get('/', 'HomeController@index');
 

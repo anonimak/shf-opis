@@ -16,6 +16,9 @@ class Ref_Module_Approver extends Model
 
     use SoftDeletes;
     protected $guarded = [];
+    protected $hidden = [
+        'laravel_through_key'
+    ];
 
     public function detailApprover()
     {
@@ -27,7 +30,7 @@ class Ref_Module_Approver extends Model
         $position = Self::select('*')->with(['detailApprover' => function ($query) {
             return $query->select('id', 'id_ref_module_approver', 'id_ref_position')->with(['position' => function ($q) {
                 return $q->select('id', 'position_name');
-            }])->orderBy('index', 'ASC');
+            }])->orderBy('idx', 'ASC');
         }])
             ->orderBy('created_at', 'desc');
 
@@ -36,17 +39,6 @@ class Ref_Module_Approver extends Model
         }
         return $position;
     }
-
-    // public static function getApproverById($id)
-    // {
-    //     return Self::where('id', $id)
-    //         ->with(['detailApprover' => function ($query) {
-    //             return $query->select('id', 'username')
-    //                 ->with(['position' => function ($q) {
-    //                     return $q->select();
-    //                 }])->orderBy('index', 'ASC');
-    //         }])->first();
-    // }
 
     public static function boot()
     {

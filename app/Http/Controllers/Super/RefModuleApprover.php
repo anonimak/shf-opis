@@ -90,7 +90,7 @@ class RefModuleApprover extends Controller
                 Ref_DetailApprover::create([
                     'id_ref_module_approver' => $refapprover->id,
                     'id_ref_position'   =>  $value['id'],
-                    'index' => $key + 1
+                    'idx' => $key + 1
                 ]);
             }
         }
@@ -191,7 +191,7 @@ class RefModuleApprover extends Controller
                 $item = [
                     'id_ref_module_approver' => $value['id_ref_module_approver'],
                     'id_ref_position'   =>  $value['id_ref_position'],
-                    'index' => $key + 1
+                    'idx' => $key + 1
                 ];
                 if ($itemapprover) {
                     $itemapprover->update($item);

@@ -24,7 +24,7 @@ class CreateRefModuleApproversTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_ref_module_approver');
             $table->unsignedBigInteger('id_ref_position');
-            $table->integer('index');
+            $table->integer('idx');
             $table->timestamps();
 
             // foreign key

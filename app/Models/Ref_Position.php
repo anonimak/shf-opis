@@ -15,13 +15,13 @@ class Ref_Position extends Model
     protected $table = 'ref_positions';
 
     protected $fillable = [
-        "position_name", "id_departement"
+        "position_name", "id_department"
     ];
     use SoftDeletes;
 
-    public function departement()
+    public function department()
     {
-        return $this->belongsTo(Department::class, 'id_departement', 'id');
+        return $this->belongsTo(Department::class, 'id_department', 'id')->select('id', 'department_name');
     }
 
     public static function getRef_Positions($search = null)

@@ -19,7 +19,7 @@ class RefPosition extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Super/Ref_Position', [
-            'dataRefPositions' => Ref_Position::getRef_Positions($request->input('search'))->with('departement')->paginate(10),
+            'dataRefPositions' => Ref_Position::getRef_Positions($request->input('search'))->with('department')->paginate(10),
             'perPage' => 10,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -81,11 +81,11 @@ class RefPosition extends Controller
     {
         $request->validate([
             'position'   => 'required|max:50',
-            'departement'    => 'required',
+            'idepartment'    => 'required',
         ]);
         $position = Ref_Position::create([
             'position_name'         => $request->input('position'),
-            'id_departement'        => $request->input('departement')
+            'id_department'        => $request->input('idepartment')
         ]);
         return Redirect::route('super.ref_position.index')->with('success', "Successfull Create new Ref_Position $position->position_name");
     }
@@ -128,7 +128,7 @@ class RefPosition extends Controller
             ),
             'dataRef_Position'      => [
                 'position'      => $position->position_name,
-                'departement'   => $position->id_departement,
+                'department'    => $position->id_department,
                 'id'            => $position->id
             ],
             'dataDepartments'   => Department::get(),
@@ -150,12 +150,12 @@ class RefPosition extends Controller
 
         $request->validate([
             'position'     => 'required|max:50',
-            'departement'    => 'required',
+            'idepartment'    => 'required',
         ]);
 
         Ref_Position::where('id', $id)->update([
             'position_name'   => $request->input('position'),
-            'id_departement'       => $request->input('departement')
+            'id_department'       => $request->input('idepartment')
         ]);
         return Redirect::route('super.ref_position.index')->with('success', "Successfull updated.");
     }

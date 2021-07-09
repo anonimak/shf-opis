@@ -33,17 +33,17 @@
                   label="Department:"
                   label-for="input-title"
                   :invalid-feedback="
-                    errors.departement ? errors.departement[0] : ''
+                    errors.department ? errors.department[0] : ''
                   "
-                  :state="errors.departement ? false : null"
+                  :state="errors.department ? false : null"
                 >
                   <v-select
                     placeholder="-- Select Department --"
                     label="department_name"
                     :options="dataDepartments"
-                    v-model="form.departement"
-                    :reduce="(departement) => departement.id"
-                    :required="!form.departement"
+                    v-model="form.department"
+                    :reduce="(department) => department.id"
+                    :required="!form.department"
                   >
                   </v-select>
                 </b-form-group>

@@ -43,6 +43,17 @@ class User extends Authenticatable
         return $this->belongsTo(Employee::class, 'id_employee', 'id');
     }
 
+    public static function getUsersEmployeeInfo()
+    {
+        return Self::with(['employee' => function ($query) {
+            return $query->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department')->first();
+                }])->with('branch')->first();
+            }])->first();
+        }])->where('id', auth()->id())->first();
+    }
+
     public static function getUsers($id = null, $search = null)
     {
         $user = Self::select('*')

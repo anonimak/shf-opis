@@ -55,7 +55,7 @@
                           {{ item.position_name }}
                         </td>
                         <td>
-                          {{ item.departement.department_name }}
+                          {{ item.department.department_name }}
                         </td>
                         <td>
                           <b-button-group size="sm">

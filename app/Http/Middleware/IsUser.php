@@ -20,7 +20,7 @@ class IsUser
     {
 
         if (auth()->user()->role == 0) {
-            Inertia::share('userinfo', User::with('employee')->where('id', auth()->id())->first());
+            Inertia::share('userinfo', User::getUsersEmployeeInfo());
             return $next($request);
         } else if (auth()->user()->role == 1) {
             return Redirect()->route(RouteServiceProvider::HOMEADMIN)->with('error', "You don't have access.");
