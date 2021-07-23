@@ -119,7 +119,7 @@ class RefModuleApprover extends Controller
         $refapprover = Ref_Approver::where('id', $id)->with(['detailApprover' => function ($query) {
             return $query->select('id_ref_module_approver', 'id_ref_position')->with(['position' => function ($q) {
                 return $q->select('id', 'position_name');
-            }])->orderBy('index', 'ASC');
+            }])->orderBy('idx', 'ASC');
         }])->first();
         return Inertia::render('Super/Ref_Approver/edit', [
             'breadcrumbItems' => array(
