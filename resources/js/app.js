@@ -1,5 +1,7 @@
 require("./bootstrap");
 import "bootstrap-vue/dist/bootstrap-vue.css";
+// remixicon
+import 'remixicon/fonts/remixicon.css'
 
 // hover css
 import "hover.css/css/hover-min.css";
