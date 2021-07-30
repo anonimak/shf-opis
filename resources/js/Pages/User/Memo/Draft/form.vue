@@ -1,18 +1,18 @@
 <template>
-  <layout :userinfo="userinfo">
-    <flash-msg />
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Memo {{ form.doc_no }}</h1>
-    </div>
-    <breadcrumb :items="breadcrumbItems" />
-    <div class="row">
-      <div class="col-12">
-        <b-card no-body>
-          <b-form id="form" @submit.prevent="submit">
-            <b-card-body>
-              <b-row class="mb-2">
-                <b-col col lg="6" md="auto">
-                  <b-form-group
+    <layout :userinfo="userinfo">
+        <flash-msg />
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Memo {{ form.doc_no }}</h1>
+        </div>
+        <breadcrumb :items="breadcrumbItems" />
+        <div class="row">
+            <div class="col-12">
+                <b-card no-body>
+                    <b-form id="form" @submit.prevent="submit">
+                        <b-card-body>
+                            <b-row class="mb-2">
+                                <b-col col lg="6" md="auto">
+                                    <!-- <b-form-group
                     id="input-group-title"
                     label="Title Memo:"
                     label-for="input-title"
@@ -47,78 +47,138 @@
                       disabled
                     >
                     </v-select>
-                  </b-form-group>
-                </b-col>
-                <b-col col lg="6">
-                  <table class="table table-bordered">
-                    <thead class="thead-dark">
-                      <tr>
-                        <th>#</th>
-                        <th>Approver</th>
-                        <th>Position</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="approver in dataApprovers" :key="approver.idx">
-                        <td>{{ approver.idx }}</td>
-                        <td>
-                          {{
-                            approver.employee.firstname +
-                            " " +
-                            approver.employee.lastname
-                          }}
-                        </td>
-                        <td>
-                          <strong>
-                            {{
-                              approver.employee.position_now.position
-                                .position_name +
-                              " in " +
-                              approver.employee.position_now.position.department
-                                .department_name
-                            }}
-                          </strong>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </b-col>
-              </b-row>
-              <b-row>
-                <div class="col-12">
-                  <b-form-group
-                    id="input-group-text"
-                    label="Background:"
-                    label-for="input-text"
-                  >
-                    <editor v-model="form.background" />
-                  </b-form-group>
-                </div>
-              </b-row>
-              <b-row>
-                <div class="col-12">
-                  <b-form-group
-                    id="input-group-text"
-                    label="Information:"
-                    label-for="input-text"
-                  >
-                    <Editor2 v-model="form.information" />
-                  </b-form-group>
-                </div>
-              </b-row>
-              <b-row align-h="center">
-                <b-button-group>
-                  <b-button type="submit" variant="primary" class="btn-lg"
-                    >Create Memo</b-button
-                  >
-                </b-button-group>
-              </b-row>
-            </b-card-body>
-          </b-form>
-        </b-card>
-      </div>
-    </div>
-  </layout>
+                  </b-form-group> -->
+
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>Department</td>
+                                                <td>
+                                                    {{
+                                                        userinfo.employee
+                                                            .position_now
+                                                            .position.department
+                                                            .department_name
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Title</td>
+                                                <td>{{ form.title }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Doc. No</td>
+                                                <td>{{ form.doc_no }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </b-col>
+                                <b-col col lg="6">
+                                    <table class="table table-bordered">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Approver</th>
+                                                <th>Position</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                v-for="approver in dataApprovers"
+                                                :key="approver.idx"
+                                            >
+                                                <td>{{ approver.idx }}</td>
+                                                <td>
+                                                    {{
+                                                        approver.employee
+                                                            .firstname +
+                                                            " " +
+                                                            approver.employee
+                                                                .lastname
+                                                    }}
+                                                </td>
+                                                <td>
+                                                    <strong>
+                                                        {{
+                                                            approver.employee
+                                                                .position_now
+                                                                .position
+                                                                .position_name +
+                                                                " in " +
+                                                                approver
+                                                                    .employee
+                                                                    .position_now
+                                                                    .position
+                                                                    .department
+                                                                    .department_name
+                                                        }}
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <div class="col-12">
+                                    <b-form-group
+                                        id="input-group-text"
+                                        label="Background:"
+                                        label-for="input-text"
+                                    >
+                                        <Editor2 v-model="form.background" />
+                                    </b-form-group>
+                                </div>
+                            </b-row>
+                            <b-row>
+                                <div class="col-12">
+                                    <b-form-group
+                                        id="input-group-text"
+                                        label="Information:"
+                                        label-for="input-text"
+                                    >
+                                        <Editor2 v-model="form.information" />
+                                    </b-form-group>
+                                </div>
+                            </b-row>
+                            <b-row>
+                                <div class="col-12">
+                                    <b-form-group
+                                        id="input-group-text"
+                                        label="Conclusion:"
+                                        label-for="input-text"
+                                    >
+                                        <Editor2 v-model="form.conclusion" />
+                                    </b-form-group>
+                                </div>
+                            </b-row>
+                            <b-row>
+                                <div class="col-12">
+                                    <b-form-group
+                                        id="input-group-text"
+                                        label="Conclusion:"
+                                        label-for="input-text"
+                                    >
+                                        <Editor2 v-model="form.payment" />
+                                    </b-form-group>
+                                </div>
+                            </b-row>
+                            <b-row align-h="center">
+                                <b-button-group>
+                                    <b-button
+                                        type="submit"
+                                        variant="primary"
+                                        class="btn-lg"
+                                        >Create Memo</b-button
+                                    >
+                                </b-button-group>
+                            </b-row>
+                        </b-card-body>
+                    </b-form>
+                </b-card>
+            </div>
+        </div>
+    </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
@@ -128,45 +188,45 @@ import Breadcrumb from "@/components/Breadcrumb";
 import Editor from "@/components/Editor";
 import Editor2 from "@/components/Editor2";
 export default {
-  props: [
-    "_token",
-    "userinfo",
-    "breadcrumbItems",
-    "dataMemo",
-    "dataTypeMemo",
-    "errors",
-    "__store",
-  ],
-  components: {
-    Layout,
-    FlashMsg,
-    Breadcrumb,
-    Editor,
-    Editor2,
-  },
-  data: () => {
-    return {
-      submitState: false,
-      form: {},
-      dataApprovers: [],
-    };
-  },
-  mounted() {
-    this.fillForm();
-  },
-  methods: {
-    fillForm() {
-      this.form = { ...this.dataMemo };
-      this.dataApprovers = [...this.form.approvers];
+    props: [
+        "_token",
+        "userinfo",
+        "breadcrumbItems",
+        "dataMemo",
+        "dataTypeMemo",
+        "errors",
+        "__store"
+    ],
+    components: {
+        Layout,
+        FlashMsg,
+        Breadcrumb,
+        Editor,
+        Editor2
     },
-    submit() {
-      if (!this.submitState) {
-        this.submitState = true;
-        this.$inertia
-          .post(route(this.__store), this.form)
-          .then(() => (this.submitState = false));
-      }
+    data: () => {
+        return {
+            submitState: false,
+            form: {},
+            dataApprovers: []
+        };
     },
-  },
+    mounted() {
+        this.fillForm();
+    },
+    methods: {
+        fillForm() {
+            this.form = { ...this.dataMemo };
+            this.dataApprovers = [...this.form.approvers];
+        },
+        submit() {
+            if (!this.submitState) {
+                this.submitState = true;
+                this.$inertia
+                    .post(route(this.__store), this.form)
+                    .then(() => (this.submitState = false));
+            }
+        }
+    }
 };
 </script>
