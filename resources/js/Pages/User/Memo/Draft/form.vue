@@ -1,18 +1,18 @@
 <template>
-    <layout :userinfo="userinfo">
-        <flash-msg />
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Memo {{ form.doc_no }}</h1>
-        </div>
-        <breadcrumb :items="breadcrumbItems" />
-        <div class="row">
-            <div class="col-12">
-                <b-card no-body>
-                    <b-form id="form" @submit.prevent="submit">
-                        <b-card-body>
-                            <b-row class="mb-2">
-                                <b-col col lg="6" md="auto">
-                                    <!-- <b-form-group
+  <layout :userinfo="userinfo">
+    <flash-msg />
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Memo {{ form.doc_no }}</h1>
+    </div>
+    <breadcrumb :items="breadcrumbItems" />
+    <div class="row">
+      <div class="col-12">
+        <b-card no-body>
+          <b-form id="form" @submit.prevent="submit">
+            <b-card-body>
+              <b-row class="mb-2">
+                <b-col col lg="6" md="auto">
+                  <!-- <b-form-group
                     id="input-group-title"
                     label="Title Memo:"
                     label-for="input-title"
@@ -49,184 +49,264 @@
                     </v-select>
                   </b-form-group> -->
 
-                                    <table class="table table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <td>Department</td>
-                                                <td>
-                                                    {{
-                                                        userinfo.employee
-                                                            .position_now
-                                                            .position.department
-                                                            .department_name
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Title</td>
-                                                <td>{{ form.title }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Doc. No</td>
-                                                <td>{{ form.doc_no }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </b-col>
-                                <b-col col lg="6">
-                                    <table class="table table-bordered">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Approver</th>
-                                                <th>Position</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr
-                                                v-for="approver in dataApprovers"
-                                                :key="approver.idx"
-                                            >
-                                                <td>{{ approver.idx }}</td>
-                                                <td>
-                                                    {{
-                                                        approver.employee
-                                                            .firstname +
-                                                            " " +
-                                                            approver.employee
-                                                                .lastname
-                                                    }}
-                                                </td>
-                                                <td>
-                                                    <strong>
-                                                        {{
-                                                            approver.employee
-                                                                .position_now
-                                                                .position
-                                                                .position_name +
-                                                                " in " +
-                                                                approver
-                                                                    .employee
-                                                                    .position_now
-                                                                    .position
-                                                                    .department
-                                                                    .department_name
-                                                        }}
-                                                    </strong>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </b-col>
-                            </b-row>
-                            <b-row>
-                                <div class="col-12">
-                                    <b-form-group
-                                        id="input-group-text"
-                                        label="Background:"
-                                        label-for="input-text"
-                                    >
-                                        <Editor2 v-model="form.background" />
-                                    </b-form-group>
-                                </div>
-                            </b-row>
-                            <b-row>
-                                <div class="col-12">
-                                    <b-form-group
-                                        id="input-group-text"
-                                        label="Information:"
-                                        label-for="input-text"
-                                    >
-                                        <Editor2 v-model="form.information" />
-                                    </b-form-group>
-                                </div>
-                            </b-row>
-                            <b-row>
-                                <div class="col-12">
-                                    <b-form-group
-                                        id="input-group-text"
-                                        label="Conclusion:"
-                                        label-for="input-text"
-                                    >
-                                        <Editor2 v-model="form.conclusion" />
-                                    </b-form-group>
-                                </div>
-                            </b-row>
-                            <b-row>
-                                <div class="col-12">
-                                    <b-form-group
-                                        id="input-group-text"
-                                        label="Conclusion:"
-                                        label-for="input-text"
-                                    >
-                                        <Editor2 v-model="form.payment" />
-                                    </b-form-group>
-                                </div>
-                            </b-row>
-                            <b-row align-h="center">
-                                <b-button-group>
-                                    <b-button
-                                        type="submit"
-                                        variant="primary"
-                                        class="btn-lg"
-                                        >Create Memo</b-button
-                                    >
-                                </b-button-group>
-                            </b-row>
-                        </b-card-body>
-                    </b-form>
-                </b-card>
-            </div>
-        </div>
-    </layout>
+                  <table class="table table-bordered">
+                    <tbody>
+                      <tr>
+                        <td>Department</td>
+                        <td>
+                          {{
+                            userinfo.employee.position_now.position.department
+                              .department_name
+                          }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Title</td>
+                        <td>{{ form.title }}</td>
+                      </tr>
+                      <tr>
+                        <td>Doc. No</td>
+                        <td>{{ form.doc_no }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </b-col>
+                <b-col col lg="6">
+                  <table class="table table-bordered">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>#</th>
+                        <th>Approver</th>
+                        <th>Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="approver in dataApprovers" :key="approver.idx">
+                        <td>{{ approver.idx }}</td>
+                        <td>
+                          {{
+                            approver.employee.firstname +
+                            " " +
+                            approver.employee.lastname
+                          }}
+                        </td>
+                        <td>
+                          <strong>
+                            {{
+                              approver.employee.position_now.position
+                                .position_name +
+                              " in " +
+                              approver.employee.position_now.position.department
+                                .department_name
+                            }}
+                          </strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </b-col>
+              </b-row>
+              <b-row>
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-text"
+                    label="Background:"
+                    label-for="input-text"
+                  >
+                    <Editor2 v-model="form.background" />
+                  </b-form-group>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-text"
+                    label="Information:"
+                    label-for="input-text"
+                  >
+                    <Editor2 v-model="form.information" />
+                  </b-form-group>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-text"
+                    label="Conclusion:"
+                    label-for="input-text"
+                  >
+                    <Editor2 v-model="form.conclusion" />
+                  </b-form-group>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-text"
+                    label="Payment:"
+                    label-for="input-text"
+                  >
+                    <hot-table :settings="hotSettings"></hot-table>
+                  </b-form-group>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-12">
+                  <b-form-group
+                    id="input-group-text"
+                    label="Attachment:"
+                    label-for="input-text"
+                  >
+                    <ul>
+                      <li v-for="(file, index) in files" :key="index">
+                        {{ file.name }} - Error: {{ file.error }}, Success:
+                        {{ file.success }}
+                      </li>
+                    </ul>
+                    <file-upload
+                      ref="upload"
+                      v-model="files"
+                      :multiple="true"
+                      post-action="/post.method"
+                      put-action="/put.method"
+                      @input-file="inputFile"
+                      @input-filter="inputFilter"
+                    >
+                      Upload file
+                    </file-upload>
+                    <span v-show="$refs.upload && $refs.upload.features.drop"
+                      >Support drag and drop upload</span
+                    >
+                    <button
+                      v-show="!$refs.upload || !$refs.upload.active"
+                      @click.prevent="$refs.upload.active = true"
+                      type="button"
+                    >
+                      Start upload
+                    </button>
+                    <button
+                      v-show="$refs.upload && $refs.upload.active"
+                      @click.prevent="$refs.upload.active = false"
+                      type="button"
+                    >
+                      Stop upload
+                    </button>
+                  </b-form-group>
+                </div>
+              </b-row>
+              <b-row align-h="center">
+                <b-button-group>
+                  <b-button type="submit" variant="primary" class="btn-lg"
+                    >Create Memo</b-button
+                  >
+                </b-button-group>
+              </b-row>
+            </b-card-body>
+          </b-form>
+        </b-card>
+      </div>
+    </div>
+  </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import Handsontable from "handsontable";
 // Import the editor
-import Editor from "@/components/Editor";
+
 import Editor2 from "@/components/Editor2";
 export default {
-    props: [
-        "_token",
-        "userinfo",
-        "breadcrumbItems",
-        "dataMemo",
-        "dataTypeMemo",
-        "errors",
-        "__store"
-    ],
-    components: {
-        Layout,
-        FlashMsg,
-        Breadcrumb,
-        Editor,
-        Editor2
+  props: [
+    "_token",
+    "userinfo",
+    "breadcrumbItems",
+    "dataMemo",
+    "dataTypeMemo",
+    "errors",
+    "__store",
+  ],
+  components: {
+    Layout,
+    FlashMsg,
+    Breadcrumb,
+    Editor2,
+  },
+  data: () => {
+    return {
+      submitState: false,
+      form: {},
+      dataApprovers: [],
+      files: [],
+      hotSettings: {
+        data: Handsontable.helper.createSpreadsheetData(6, 10),
+        colHeaders: true,
+        height: "auto",
+        width: "100%",
+        colHeaders: true,
+        rowHeaders: true,
+        colWidths: 100,
+        manualColumnResize: true,
+        licenseKey: "non-commercial-and-evaluation",
+        columnSummary: [
+          {
+            destinationRow: 0,
+            destinationColumn: 0,
+            reversedRowCoords: true,
+            type: "sum",
+          },
+          {
+            destinationRow: 0,
+            destinationColumn: 1,
+            reversedRowCoords: true,
+            type: "average",
+            roundFloat: 2,
+          },
+        ],
+      },
+    };
+  },
+  mounted() {
+    this.fillForm();
+  },
+  methods: {
+    fillForm() {
+      this.form = { ...this.dataMemo };
+      this.dataApprovers = [...this.form.approvers];
     },
-    data: () => {
-        return {
-            submitState: false,
-            form: {},
-            dataApprovers: []
-        };
+    submit() {
+      if (!this.submitState) {
+        this.submitState = true;
+        this.$inertia
+          .post(route(this.__store), this.form)
+          .then(() => (this.submitState = false));
+      }
     },
-    mounted() {
-        this.fillForm();
-    },
-    methods: {
-        fillForm() {
-            this.form = { ...this.dataMemo };
-            this.dataApprovers = [...this.form.approvers];
-        },
-        submit() {
-            if (!this.submitState) {
-                this.submitState = true;
-                this.$inertia
-                    .post(route(this.__store), this.form)
-                    .then(() => (this.submitState = false));
-            }
+    inputFile: function (newFile, oldFile) {
+      if (newFile && oldFile && !newFile.active && oldFile.active) {
+        // Get response data
+        console.log("response", newFile.response);
+        if (newFile.xhr) {
+          //  Get the response status code
+          console.log("status", newFile.xhr.status);
         }
-    }
+      }
+    },
+    inputFilter: function (newFile, oldFile, prevent) {
+      if (newFile && !oldFile) {
+        // Filter non-image file
+        if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
+          return prevent();
+        }
+      }
+
+      // Create a blob field
+      newFile.blob = "";
+      let URL = window.URL || window.webkitURL;
+      if (URL && URL.createObjectURL) {
+        newFile.blob = URL.createObjectURL(newFile.file);
+      }
+    },
+  },
 };
 </script>

@@ -46,6 +46,16 @@ Vue.use(InertiaApp);
 // untuk localstorage
 Vue.use(Storage);
 
+// file-upload
+import VueUploadComponent from 'vue-upload-component'
+Vue.component('file-upload', VueUploadComponent);
+
+// spreadsheet hotdata
+import { HotTable } from "@handsontable/vue";
+Vue.component('hot-table', HotTable);
+import 'handsontable/dist/handsontable.full.css'
+
+
 // component v-select
 Vue.component('v-select', vSelect)
 import 'vue-select/dist/vue-select.css';
