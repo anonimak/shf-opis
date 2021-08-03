@@ -27,6 +27,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@handsontable/vue": "^9.0.2",
         "@inertiajs/inertia": "^0.1.9",
         "@inertiajs/inertia-vue": "^0.1.4",
         "@smartweb/vue-flash-message": "^0.6.4",
@@ -39,6 +40,7 @@
         "@tiptap/vue-2": "*",
         "bootstrap-vue": "^2.16.0",
         "google-maps-api-loader": "^1.1.1",
+        "handsontable": "^9.0.2",
         "hover.css": "^2.3.2",
         "remixicon": "^2.5.0",
         "tiptap": "^1.32.2",
@@ -50,6 +52,7 @@
         "vue-meta": "^2.4.0",
         "vue-moment": "^4.1.0",
         "vue-select": "^3.11.2",
+        "vue-upload-component": "^2.8.22",
         "vuedraggable": "^2.24.3"
     }
 }
