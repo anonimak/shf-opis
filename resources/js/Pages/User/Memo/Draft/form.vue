@@ -157,40 +157,64 @@
                     label="Attachment:"
                     label-for="input-text"
                   >
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>File</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>jhkjhkj.jpg</td>
+                          <td>
+                            <b-button size="sm" variant="danger"
+                              >remove</b-button
+                            >
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                     <ul>
                       <li v-for="(file, index) in files" :key="index">
-                        {{ file.name }} - Error: {{ file.error }}, Success:
-                        {{ file.success }}
+                        <span>{{ file.name }}</span>
+                        <b-badge variant="danger"
+                          ><a href="#" @click.prevent="remove(file)"
+                            >-</a
+                          ></b-badge
+                        >
                       </li>
                     </ul>
                     <file-upload
+                      class="btn btn-primary"
                       ref="upload"
                       v-model="files"
                       :multiple="true"
                       post-action="/post.method"
-                      put-action="/put.method"
                       @input-file="inputFile"
                       @input-filter="inputFilter"
                     >
                       Upload file
                     </file-upload>
-                    <span v-show="$refs.upload && $refs.upload.features.drop"
-                      >Support drag and drop upload</span
-                    >
-                    <button
-                      v-show="!$refs.upload || !$refs.upload.active"
+                    <b-button
+                      v-show="
+                        (!$refs.upload || !$refs.upload.active) &&
+                        files.length > 0
+                      "
                       @click.prevent="$refs.upload.active = true"
                       type="button"
+                      variant="primary"
                     >
                       Start upload
-                    </button>
-                    <button
+                    </b-button>
+                    <b-button
                       v-show="$refs.upload && $refs.upload.active"
                       @click.prevent="$refs.upload.active = false"
                       type="button"
+                      variant="secondary"
                     >
                       Stop upload
-                    </button>
+                    </b-button>
                   </b-form-group>
                 </div>
               </b-row>
@@ -306,6 +330,9 @@ export default {
       if (URL && URL.createObjectURL) {
         newFile.blob = URL.createObjectURL(newFile.file);
       }
+    },
+    remove(file) {
+      this.$refs.upload.remove(file);
     },
   },
 };
