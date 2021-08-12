@@ -35,7 +35,8 @@ class CreateMemosTable extends Migration
         Schema::create('d_memo_attachments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_memo');
-            $table->char('file', 255);
+            $table->text('real_name');
+            $table->text('name');
             $table->timestamps();
 
             // foreign key

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\D_Memo_Approver;
+use App\Models\D_Memo_Attachment;
 use App\Models\Memo;
 use App\Models\Ref_Type_Memo;
 use App\User;
@@ -139,6 +140,27 @@ class MemoController extends Controller
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
         D_Memo_Approver::insert($dataDetailInsert);
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
+    }
+
+    public function fileUploadPost(Request $request, $id)
+    {
+        $memo = Memo::getMemoDetail($id);
+
+        foreach ($request->file('files') as $uploadedFile) {
+
+            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
+
+            $path = $uploadedFile->store($filename, 'uploads');
+
+            D_Memo_Attachment::create([
+                'id_memo' => $id,
+                'name' => $filename,
+                'real_name' => $uploadedFile->getClientOriginalName()
+            ]);
+        }
+
+        return back()
+            ->with('success', 'You have successfully upload file.');
     }
 
     public function test()
