@@ -118,6 +118,7 @@ class MemoController extends Controller
             ),
             '_token' => csrf_token(),
             '__store'  => 'user.memo.store',
+            '__attachment'  => 'user.memo.attachment',
             'dataMemo' => $memo,
             'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);
@@ -142,9 +143,9 @@ class MemoController extends Controller
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
     }
 
-    public function fileUploadPost(Request $request, $id)
+    public function fileUploadAttach(Request $request, $id)
     {
-        $memo = Memo::getMemoDetail($id);
+        // $memo = Memo::getMemoDetail($id);
 
         foreach ($request->file('files') as $uploadedFile) {
 

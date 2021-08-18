@@ -74,6 +74,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/draft')->name('draft.')->group(function () {
             Route::get('/', 'User\MemoController@draft')->name('index');
             Route::get('/{memo}', 'User\MemoController@draftEdit')->name('edit');
+            Route::post('/attachment/{memo}', 'User\MemoController@fileUploadAttach')->name('attachment');
         });
     });
 
