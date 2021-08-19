@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
 use App\Models\Memo;
+use App\Models\Ref_Position;
 use App\Models\Ref_Type_Memo;
 use App\User;
 use Carbon\Carbon;
@@ -119,6 +120,7 @@ class MemoController extends Controller
             '_token' => csrf_token(),
             '__store'  => 'user.memo.store',
             '__attachment'  => 'user.memo.attachment',
+            'dataPosition' => Ref_Position::select('id', 'position_name')->get(),
             'dataMemo' => $memo,
             'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);

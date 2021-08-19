@@ -48,7 +48,7 @@ class CreateMemosTable extends Migration
             $table->unsignedBigInteger('id_memo');
             $table->unsignedBigInteger('id_employee');
             $table->integer('idx');
-            $table->enum('status', ['submit', 'edit', 'reject', 'approve'])->default('edit');
+            $table->enum('status', ['submit', 'edit', 'reject', 'approve', 'revisi'])->default('edit');
             $table->timestamps();
 
             // foreign key
