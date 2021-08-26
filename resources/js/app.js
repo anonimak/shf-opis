@@ -62,6 +62,9 @@ import 'vue-select/dist/vue-select.css';
 
 Vue.mixin(require("./base"));
 
+import _ from 'lodash';    
+Object.defineProperty(Vue.prototype, '$_', { value: _ });
+
 const app = document.getElementById("app");
 
 const VueApp = new Vue({

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
+use App\Models\Employee_History;
 use App\Models\Memo;
 use App\Models\Ref_Position;
 use App\Models\Ref_Type_Memo;
@@ -97,6 +99,11 @@ class MemoController extends Controller
     {
         $memo = Memo::getMemoDetail($id);
         $employeeInfo = User::getUsersEmployeeInfo();
+
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
                 [
@@ -120,7 +127,9 @@ class MemoController extends Controller
             '_token' => csrf_token(),
             '__store'  => 'user.memo.store',
             '__attachment'  => 'user.memo.attachment',
-            'dataPosition' => Ref_Position::select('id', 'position_name')->get(),
+            '__updateApprover' => 'user.memo.draft.updateapprover',
+            '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            'dataPosition' => $positions,
             'dataMemo' => $memo,
             'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);
@@ -164,6 +173,91 @@ class MemoController extends Controller
 
         return back()
             ->with('success', 'You have successfully upload file.');
+    }
+
+    public function updateAcknowledge(Request $request, $id)
+    {
+        $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
+        $updatedacknowledges = $request->input('acknowledge');
+        // filter yang tidak ada pada updatedacknowledges
+        $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
+            if (count($updatedacknowledges)) {
+                $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
+                $key = in_array($item->id_employee, $itemacknowledge);
+                if (!$key) {
+                    return $item;
+                }
+            }
+            return $item;
+        });
+
+        // delete filter yang tidak ada pada D_Memo_Acknowledge
+        if (count($filteredacknowledges) > 0) {
+            foreach ($filteredacknowledges as $itemfiltered) {
+                $itemfiltered->delete();
+            }
+        }
+
+        // update/insert pda D_Memo_Acknowledge
+        if (count($updatedacknowledges) > 0) {
+            foreach ($updatedacknowledges as $key => $value) {
+                $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
+                $item = [
+                    'id_memo' => $id,
+                    'id_employee'   =>  $value['id_employee']
+                ];
+                if ($itemacknowledge) {
+                    $itemacknowledge->update($item);
+                } else {
+                    D_Memo_Acknowledge::create($item);
+                }
+            }
+        }
+
+        return Redirect::back()->with('success', "Successfull updated acknowledge.");
+    }
+
+    public function updateApprover(Request $request, $id)
+    {
+        $memoapprover = D_Memo_Approver::where('id_memo', $id)->get();
+        $updatedapprover = $request->input('approver');
+        // filter yang tidak ada pada updatedapprover
+        $filteredapprove = $memoapprover->filter(function ($item, $key) use ($updatedapprover) {
+            if (count($updatedapprover)) {
+                $itemapprover = array_column($updatedapprover, 'id_employee');
+                $key = in_array($item->id_employee, $itemapprover);
+                if (!$key) {
+                    return $item;
+                }
+            }
+            return $item;
+        });
+
+        // delete filter yang tidak ada pada updaterefapprover
+        if (count($filteredapprove) > 0) {
+            foreach ($filteredapprove as $itemfiltered) {
+                $itemfiltered->delete();
+            }
+        }
+
+        // update/insert pda updaterefapprover
+        if (count($updatedapprover) > 0) {
+            foreach ($updatedapprover as $key => $value) {
+                $itemapprover = D_Memo_Approver::where('id_employee', $value['id_employee'])->first();
+                $item = [
+                    'id_memo' => $value['id_memo'],
+                    'id_employee'   =>  $value['id_employee'],
+                    'idx' => $key + 1
+                ];
+                if ($itemapprover) {
+                    $itemapprover->update($item);
+                } else {
+                    D_Memo_Approver::create($item);
+                }
+            }
+        }
+
+        return Redirect::back()->with('success', "Successfull updated approver.");
     }
 
     public function test()

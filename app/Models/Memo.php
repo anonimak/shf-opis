@@ -14,6 +14,11 @@ class Memo extends Model
         return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id');
     }
 
+    public function acknowledges()
+    {
+        return $this->hasMany(D_Memo_Acknowledge::class, 'id_memo', 'id');
+    }
+
     public static function getMemoDetail($id)
     {
         return Self::with(['approvers' => function ($approver) {
@@ -24,6 +29,14 @@ class Memo extends Model
                     }])->with('branch');
                 }]);
             }])->orderBy('idx', 'asc');
+        }])->with(['acknowledges' => function ($approver) {
+            return $approver->with(['employee' => function ($employee) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch');
+                }]);
+            }])->orderBy('id', 'asc');
         }])->where('id', $id)->first();
     }
 
