@@ -23,6 +23,7 @@ class CreateMemosTable extends Migration
             $table->text('background')->nullable();
             $table->text('information')->nullable();
             $table->text('conclusion')->nullable();
+            $table->text('cost')->nullable();
             $table->text('payment')->nullable();
             $table->date('propose_at')->nullable();
             $table->timestamps();

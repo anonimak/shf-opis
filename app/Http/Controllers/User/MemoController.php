@@ -11,19 +11,25 @@ use App\Models\Memo;
 use App\Models\Ref_Position;
 use App\Models\Ref_Type_Memo;
 use App\User;
+use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MemoController extends Controller
 {
     public function index(Request $request)
     {
-
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
         return Inertia::render('User/Memo', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $request->input('tab'), $request->input('search'))->paginate(10),
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -37,6 +43,11 @@ class MemoController extends Controller
                 ]
             ),
             'tab' => ['submit', 'approve', 'reject'],
+            'counttab' => [
+                'submit' => Memo::getMemo(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemo(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemo(auth()->user()->id_employee, 'reject')->count(),
+            ],
             '__create'  => 'user.memo.create',
             '__edit'    => 'user.memo.edit',
             '__show'    => 'user.memo.show',
@@ -66,7 +77,8 @@ class MemoController extends Controller
             '__create'  => 'user.memo.create',
             '__edit'    => 'user.memo.draft.edit',
             '__show'    => 'user.memo.show',
-            '__destroy' => 'user.memo.destroy'
+            '__destroy' => 'user.memo.draft.destroy',
+            '__propose' => 'user.memo.draft.propose'
         ]);
     }
 
@@ -125,14 +137,29 @@ class MemoController extends Controller
                 ]
             ),
             '_token' => csrf_token(),
-            '__store'  => 'user.memo.store',
-            '__attachment'  => 'user.memo.attachment',
+            '__attachment'  => 'user.memo.draft.attachment',
+            '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
             'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);
+    }
+
+    public function draftUpdate(Request $request, $id)
+    {
+
+        Memo::where('id', $id)->update([
+            'doc_no'   => $request->input('doc_no'),
+            'background'        => $request->input('background'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+            'payment'           => $request->input('payment'),
+        ]);
+        $memo = Memo::where('id', $id)->first();
+        return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Successfull updated.");
     }
 
     public function store(Request $request)
@@ -154,20 +181,52 @@ class MemoController extends Controller
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
     }
 
+    public function destroy($id)
+    {
+        $memo = Memo::where('id', $id)->first();
+        $memo->delete();
+        return Redirect::route('user.memo.draft.index')->with('success', "Memo with $memo->doc_no deleted.");
+    }
+
+    public function propose($id)
+    {
+        // update status menjadi submit
+        $memo = Memo::where('id', $id)->update([
+            'status'   => 'submit'
+        ]);
+        D_Memo_Approver::where('id_memo', $id)->update([
+            'status'   => 'submit'
+        ]);
+
+
+
+        // kirim email ke approver pertama
+        $details = [
+            'title' => 'Mail from ItSolutionStuff.com',
+            'body' => 'This is for testing email using smtp'
+        ];
+
+        Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
+        // kirim email ke tiap acknowlegde
+        return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
+    }
+
     public function fileUploadAttach(Request $request, $id)
     {
         // $memo = Memo::getMemoDetail($id);
+        // dd($request->all());
+        foreach ($request->post('attach') as $uploadedFile) {
+            $uploadedFile = json_decode($uploadedFile);
+            var_dump($uploadedFile);
+            die();
+            $filename = time() . '_' . $uploadedFile->name;
 
-        foreach ($request->file('files') as $uploadedFile) {
-
-            $filename = time() . '_' . $uploadedFile->getClientOriginalName();
-
-            $path = $uploadedFile->store($filename, 'uploads');
-
+            // $path = $uploadedFile->store($filename, 'uploads');
+            Storage::put('uploads/memo/attach/' . $filename, $uploadedFile);
             D_Memo_Attachment::create([
                 'id_memo' => $id,
                 'name' => $filename,
-                'real_name' => $uploadedFile->getClientOriginalName()
+                'real_name' => $uploadedFile->name
             ]);
         }
 
@@ -260,9 +319,37 @@ class MemoController extends Controller
         return Redirect::back()->with('success', "Successfull updated approver.");
     }
 
+    public function previewMemo(Request $request, $id)
+    {
+        $memo = Memo::getMemoDetail($id);
+        $employeeInfo = User::getUsersEmployeeInfo();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+
+        $data = [
+            'memo' => $memo,
+            'employeeInfo' => $employeeInfo,
+            'positions' => $positions,
+            'dataTypeMemo' => $dataTypeMemo
+        ];
+        $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf->setPaper('A4', 'portrait');
+        // download PDF file with download method
+        // return $pdf->download('pdf_file.pdf');
+        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
+
     public function test()
     {
-        dd(Ref_Type_Memo::with('ref_module_approver_detail')->get());
+        $details = [
+            'title' => 'Mail from ItSolutionStuff.com',
+            'body' => 'This is for testing email using smtp'
+        ];
+
+        Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
     }
 
     private function generateDocNo()

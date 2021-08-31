@@ -56,4 +56,17 @@ class Memo extends Model
         }
         return $memo;
     }
+
+    public static function boot()
+    {
+        parent::boot();
+        self::deleting(function ($memo) { // before delete() method call this
+            $memo->approvers()->each(function ($approver) {
+                $approver->delete(); // <-- direct deletion
+            });
+            $memo->acknowledges()->each(function ($acknowledge) {
+                $acknowledge->delete(); // <-- direct deletion
+            });
+        });
+    }
 }

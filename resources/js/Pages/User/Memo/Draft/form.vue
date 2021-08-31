@@ -8,48 +8,21 @@
         <div class="row">
             <div class="col-12">
                 <b-card no-body>
+                    <a
+                        role="button"
+                        class="btn btn-secondary"
+                        v-b-tooltip.hover
+                        title="Preview Memo"
+                        :href="route(__preview, dataMemo.id)"
+                        target="_blank"
+                    >
+                        preview
+                    </a>
                     <b-form id="form" @submit.prevent="submit">
                         <b-card-body>
                             <b-row class="mb-2">
                                 <b-col col lg="6" md="auto">
                                     <h5>Memo Information</h5>
-                                    <!-- <b-form-group
-                    id="input-group-title"
-                    label="Title Memo:"
-                    label-for="input-title"
-                    :invalid-feedback="errors.title ? errors.title[0] : ''"
-                    :state="errors.title ? false : null"
-                  >
-                    <b-form-input
-                      id="input-title"
-                      type="text"
-                      name="title"
-                      v-model="form.title"
-                      placeholder="Title Memo"
-                      :state="errors.title ? false : null"
-                      trim
-                      readonly
-                    ></b-form-input>
-                  </b-form-group>
-                  <b-form-group
-                    id="input-group-type-memo"
-                    label="Type Memo:"
-                    label-for="input-title"
-                    :invalid-feedback="errors.id_type ? errors.id_type[0] : ''"
-                    :state="errors.id_type ? false : null"
-                  >
-                    <v-select
-                      placeholder="-- Select Type Memo --"
-                      label="name"
-                      :options="dataTypeMemo"
-                      v-model="form.id_type"
-                      :reduce="(id_type) => id_type.id"
-                      :required="!form.id_type"
-                      disabled
-                    >
-                    </v-select>
-                  </b-form-group> -->
-
                                     <table class="table table-bordered">
                                         <tbody>
                                             <tr>
@@ -311,7 +284,7 @@
                                 <div class="col-12">
                                     <b-form-group
                                         id="input-group-text"
-                                        label="Payment:"
+                                        label="Cost /Expense:"
                                         label-for="input-text"
                                     >
                                         <hot-table
@@ -365,15 +338,41 @@
                                             </li>
                                         </ul>
                                         <file-upload
+                                            :extensions="[
+                                                'jpg',
+                                                'png',
+                                                'xls',
+                                                'xlsx',
+                                                'pdf'
+                                            ]"
+                                            :maximum="3"
                                             class="btn btn-primary"
                                             ref="upload"
                                             v-model="files"
                                             :multiple="true"
+                                            :headers="{
+                                                'X-Token-CSRF': 'tdsr'
+                                            }"
+                                            :post-action="
+                                                route(__attachment, dataMemo.id)
+                                            "
                                             @input-file="inputFile"
                                             @input-filter="inputFilter"
                                         >
                                             Add Attachment file
                                         </file-upload>
+                                        <!-- <button
+                                            v-show="
+                                                !$refs.upload ||
+                                                    !$refs.upload.active
+                                            "
+                                            @click.prevent="
+                                                $refs.upload.active = true
+                                            "
+                                            type="button"
+                                        >
+                                            Start upload
+                                        </button> -->
                                         <b-button
                                             v-show="
                                                 (!$refs.upload ||
@@ -400,7 +399,8 @@
                                         type="submit"
                                         variant="primary"
                                         class="btn-lg"
-                                        >Create Memo</b-button
+                                        @click="updateMemo"
+                                        >Save Memo</b-button
                                     >
                                 </b-button-group>
                             </b-row>
@@ -431,7 +431,9 @@ export default {
         "dataPosition",
         "__store",
         "__updateApprover",
-        "__updateAcknowledge"
+        "__updateAcknowledge",
+        "__preview",
+        "__attachment"
     ],
     components: {
         Layout,
@@ -502,11 +504,20 @@ export default {
                     .then(() => (this.submitState = false));
             }
         },
-
+        updateMemo: function() {
+            this.$inertia.post(route(this.__update, this.dataMemo.id), form);
+        },
         uploadFile: function() {
-            this.$inertia.post(route(this.__attachment, this.dataMemo.id), {
-                files: this.files
-            });
+            var formData = new FormData();
+            console.log(this.$refs.upload.get(0));
+            // _.forEach(this.files, function(file) {
+            //     formData.append("attach[]", JSON.stringify(file));
+            // });
+
+            // this.$inertia.post(
+            //     route(this.__attachment, this.dataMemo.id),
+            //     formData
+            // );
         },
         inputFile: function(newFile, oldFile) {
             if (newFile && oldFile && !newFile.active && oldFile.active) {
@@ -580,6 +591,7 @@ export default {
                     this.isApproverEdited = false;
                 });
         },
+
         actionApproverCanceled() {
             this.isApproverEdited = false;
             this.dataApprovers = [...this.form.approvers];
