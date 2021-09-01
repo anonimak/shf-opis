@@ -181,6 +181,7 @@ export default {
             this.$inertia.delete(route(this.__destroy, id));
         },
         submitPropose(id) {
+            console.log("submit");
             this.$inertia.put(route(this.__propose, id));
         },
         submitDeleteAll(idx) {
@@ -210,7 +211,7 @@ export default {
                     // An error occurred
                 });
         },
-        showMsgBoxPropose: function() {
+        showMsgBoxPropose: function(id) {
             this.$bvModal
                 .msgBoxConfirm(
                     "Please confirm that you want to submit this Memo.",
@@ -229,6 +230,7 @@ export default {
                     value && this.submitPropose(id);
                 })
                 .catch(err => {
+                    console.log(err);
                     // An error occurred
                 });
         },

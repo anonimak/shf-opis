@@ -110,7 +110,7 @@
                     <td>Silvia Usman</td>
                     <td>Propose Date</td>
                     <td></td>
-                    <td>Tri Gunadi</td>
+                    <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
@@ -126,7 +126,7 @@
                 </tr>
                 <tr>
                     <td>Branch</td>
-                    <td colspan="2">ROXY</td>
+                    <td colspan="2">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
                     <td colspan="1"><div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval</td>
                 </tr>
                 @if ( count($memo->acknowledges) > 0)
@@ -160,7 +160,8 @@
                 </tr>
                 <tr>
                     @foreach ($memo->approvers as $approver)
-                        <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
+                        {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
+                        <td>-</td>
                     @endforeach
                 </tr>
             </tbody>
@@ -193,6 +194,65 @@
         <p>{!!$memo->payment!!}</p>
         <br>
         <br>
+        @endif
+        @if ( count($memocost) > 0)
+        <h4>Cost/Expenses</h4>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>QTY</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($memocost as $cost)
+                <tr>
+                    <td>{{ $cost->{'Product Name'} }}</td>
+                    <td>{{ $cost->QTY }}</td>
+                    <td>{{ $cost->Price }}</td>
+                    <td>{{ $cost->Total }}</td>
+                </tr>
+                @endforeach
+                <tr>
+                    <td colspan="4" style="height: 20px"> </td>
+                </tr>
+                <tr>
+                    <th colspan="3">Amount</th>
+                    <th>{{$sumtotal}}</th>
+                </tr>
+                <tr>
+                    <th colspan="3">PPN</th>
+                    <th>{{$ppn}}</th>
+
+                </tr>
+                <tr>
+                    <th colspan="3">GRAND TOTAL</th>
+                    <th>{{$grandtotal}}</th>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        @endif
+        @if ( count($dataAttachments) > 0)
+        <h4>Attachment</h4>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <td>file</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($dataAttachments as $attachment)
+                <tr>
+                    <td>{{ $attachment->name }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
         @endif
     </div>
 </body>

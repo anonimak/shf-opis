@@ -15,4 +15,9 @@ class D_Memo_Approver extends Model
     {
         return $this->belongsTo(Employee::class, 'id_employee', 'id');
     }
+
+    public function memo()
+    {
+        return $this->belongsTo(Memo::class, 'id_memo', 'id');
+    }
 }

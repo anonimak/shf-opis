@@ -288,6 +288,7 @@
                                         label-for="input-text"
                                     >
                                         <hot-table
+                                            ref="formCost"
                                             :settings="hotSettings"
                                         ></hot-table>
                                     </b-form-group>
@@ -308,12 +309,23 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>jhkjhkj.jpg</td>
+                                                <tr
+                                                    v-for="(attachment,
+                                                    index) in dataAttachments"
+                                                    :key="index"
+                                                >
+                                                    <td>
+                                                        {{ attachment.name }}
+                                                    </td>
                                                     <td>
                                                         <b-button
                                                             size="sm"
                                                             variant="danger"
+                                                            @click="
+                                                                removeAttachment(
+                                                                    attachment.id
+                                                                )
+                                                            "
                                                             >remove</b-button
                                                         >
                                                     </td>
@@ -399,7 +411,6 @@
                                         type="submit"
                                         variant="primary"
                                         class="btn-lg"
-                                        @click="updateMemo"
                                         >Save Memo</b-button
                                     >
                                 </b-button-group>
@@ -416,6 +427,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Handsontable from "handsontable";
+import { HyperFormula } from "hyperformula";
 import draggable from "vuedraggable";
 // Import the editor
 
@@ -429,11 +441,13 @@ export default {
         "dataTypeMemo",
         "errors",
         "dataPosition",
+        "dataAttachments",
         "__store",
         "__updateApprover",
         "__updateAcknowledge",
         "__preview",
-        "__attachment"
+        "__attachment",
+        "__removeAttachment"
     ],
     components: {
         Layout,
@@ -442,7 +456,7 @@ export default {
         Editor2,
         draggable
     },
-    data: () => {
+    data() {
         return {
             submitState: false,
             isApproverEdited: false,
@@ -453,37 +467,74 @@ export default {
             form: {},
             dataApprovers: [],
             files: [],
+            dataCost: null,
+            colHeaders: ["Product Name", "QTY", "Price", "Total"],
             hotSettings: {
-                data: Handsontable.helper.createSpreadsheetData(6, 10),
-                colHeaders: true,
+                data: [],
+                colHeaders: index => {
+                    return this.colHeaders[index];
+                },
                 height: "auto",
                 width: "100%",
-                colHeaders: true,
+                startCols: 4,
+                startRows: 10,
+                minSpareRows: 1,
                 rowHeaders: true,
-                colWidths: 100,
-                manualColumnResize: true,
-                licenseKey: "non-commercial-and-evaluation",
-                columnSummary: [
+                columns: [
                     {
-                        destinationRow: 0,
-                        destinationColumn: 0,
-                        reversedRowCoords: true,
-                        forceNumeric: true,
-                        type: "sum"
+                        data: "Product Name",
+                        type: "text",
+                        width: 800
                     },
                     {
-                        destinationRow: 0,
-                        destinationColumn: 1,
-                        reversedRowCoords: true,
-                        type: "average",
-                        roundFloat: 2
+                        data: "QTY",
+                        // type: "numeric",
+                        width: 100
+                    },
+                    {
+                        data: "Price",
+                        // type: "numeric",
+                        // pattern: "IDR 0.0,00",
+                        culture: "en-ID",
+                        width: 300
+                    },
+                    {
+                        data: "Total",
+                        // type: "numeric",
+                        // pattern: "IDR 0.0,00",
+                        culture: "en-ID",
+                        width: 350
                     }
-                ]
+                ],
+                manualColumnResize: true,
+                contextMenu: true,
+                formulas: {
+                    engine: HyperFormula.buildEmpty({ maxColumns: 1000 })
+                },
+                licenseKey: "non-commercial-and-evaluation",
+                // columnSummary: [
+                //     {
+                //         destinationRow: 0,
+                //         destinationColumn: 3,
+                //         reversedRowCoords: true,
+                //         forceNumeric: true,
+                //         type: "sum"
+                //     }
+                // ],
+                afterChange: () => {
+                    this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
+                }
             }
         };
     },
     mounted() {
         this.fillForm();
+
+        if (!_.isNull(this.dataMemo.cost)) {
+            let cost = this.dataMemo.cost;
+            cost = _.toArray(JSON.parse(cost));
+            this.$refs.formCost.hotInstance.loadData(cost);
+        }
     },
     watch: {
         dataMemo: function(val) {
@@ -498,26 +549,39 @@ export default {
         },
         submit() {
             if (!this.submitState) {
+                let arrayCost = _.map(this.dataCost, valueCost => {
+                    let objCost = {};
+                    _.map(this.colHeaders, v => {
+                        objCost[v] = valueCost[v];
+                    });
+                    objCost = _.pickBy(objCost, _.identity);
+                    if (!_.isEmpty(objCost)) {
+                        return objCost;
+                    }
+                });
+                arrayCost = _.pickBy(arrayCost, _.identity);
+                if (!_.isEmpty(arrayCost))
+                    this.form.cost = JSON.stringify(arrayCost);
                 this.submitState = true;
                 this.$inertia
-                    .post(route(this.__store), this.form)
-                    .then(() => (this.submitState = false));
+                    .post(route(this.__update, this.dataMemo.id), this.form)
+                    .then(() => {
+                        this.submitState = false;
+                        this.$refs.upload.remove();
+                    });
             }
-        },
-        updateMemo: function() {
-            this.$inertia.post(route(this.__update, this.dataMemo.id), form);
         },
         uploadFile: function() {
             var formData = new FormData();
-            console.log(this.$refs.upload.get(0));
-            // _.forEach(this.files, function(file) {
-            //     formData.append("attach[]", JSON.stringify(file));
-            // });
+            // console.log(this.$refs.upload.get(0));
+            _.forEach(this.files, function(file) {
+                formData.append("attach[]", JSON.stringify(file));
+            });
 
-            // this.$inertia.post(
-            //     route(this.__attachment, this.dataMemo.id),
-            //     formData
-            // );
+            this.$inertia.post(
+                route(this.__attachment, this.dataMemo.id),
+                formData
+            );
         },
         inputFile: function(newFile, oldFile) {
             if (newFile && oldFile && !newFile.active && oldFile.active) {
@@ -546,6 +610,11 @@ export default {
         },
         remove(file) {
             this.$refs.upload.remove(file);
+        },
+        removeAttachment(id) {
+            this.$inertia
+                .delete(route(this.__removeAttachment, id))
+                .then(() => {});
         },
         onHidden() {
             // Return focus to the button once hidden

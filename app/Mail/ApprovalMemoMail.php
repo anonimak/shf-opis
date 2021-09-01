@@ -31,7 +31,7 @@ class ApprovalMemoMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from system')
+        return $this->subject($this->details['subject'])
             ->view('emails.approvalMemoMail');
     }
 }

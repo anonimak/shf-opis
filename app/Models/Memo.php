@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Memo extends Model
 {
@@ -14,9 +16,24 @@ class Memo extends Model
         return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id');
     }
 
+    public function approver()
+    {
+        return $this->hasOne(D_Memo_Approver::class, 'id_memo', 'id');
+    }
+
+    public function proposeemployee()
+    {
+        return $this->belongsTo(Employee::class, 'id_employee', 'id');
+    }
+
     public function acknowledges()
     {
         return $this->hasMany(D_Memo_Acknowledge::class, 'id_memo', 'id');
+    }
+
+    public function attachment()
+    {
+        return $this->hasMany(D_Memo_Attachment::class, 'id_memo', 'id');
     }
 
     public static function getMemoDetail($id)
@@ -57,6 +74,61 @@ class Memo extends Model
         return $memo;
     }
 
+    public static function getMemoWithLastApprover($id_employee, $status, $search = null)
+    {
+        $memo = Self::select('*')
+            ->orderBy('created_at', 'desc')
+            ->where('status', '=', $status)
+            ->with(['approver' => function ($approver) {
+                return $approver->orderBy('idx', "ASC")->first();
+            }])
+            ->whereHas(
+                'approvers',
+                function (Builder $query) use ($id_employee, $status) {
+                    $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                }
+            );
+        // ->with(['approvers' => function ($approver) {
+        //     return $approver->where('id_employee', "ASC");
+        // }]);
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
+    public static function getMemoWithLastApproverRawQuery($id_employee)
+    {
+        // $memo = DB::table('m_memos')
+        //     ->join('d_memo_approvers', 'm_memos.id', '=', 'd_memo_approvers.id_memo')
+        //     ->join(
+        //         DB::raw("(select min(idx) as min_idx, id_memo from d_memo_approvers where status = 'submit' group by id_memo) lower_approver"),
+        //         function ($join) {
+        //             $join->on('m_memos.id', '=', 'lower_approver.id_memo');
+        //         }
+        //     )
+        //     ->where('lower_approver.min_idx', '=', 'd_memo_approvers.idx')
+        //     ->where('d_memo_approvers.id_employee', '=', 3)
+        //     ->select('*')
+        //     ->get();
+
+        $memo = DB::select(
+            DB::raw("select a.*,c.id id_approver from m_memos a join
+            (
+            select min(idx) as min_idx, id_memo from d_memo_approvers where status = 'submit' group by id_memo
+            ) b on a.id = b.id_memo
+            join d_memo_approvers c on a.id = c.id_memo
+            where b.min_idx = c.idx
+            and c.id_employee = $id_employee")
+        );
+        return $memo;
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -66,6 +138,9 @@ class Memo extends Model
             });
             $memo->acknowledges()->each(function ($acknowledge) {
                 $acknowledge->delete(); // <-- direct deletion
+            });
+            $memo->attachment()->each(function ($attachment) {
+                $attachment->delete(); // <-- direct deletion
             });
         });
     }

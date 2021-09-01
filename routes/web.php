@@ -78,9 +78,16 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/propose/{memo}', 'User\MemoController@propose')->name('propose');
             Route::delete('/{memo}', 'User\MemoController@destroy')->name('destroy');
             Route::post('/attachment/{memo}', 'User\MemoController@fileUploadAttach')->name('attachment');
+            Route::delete('/attachment/{memo}', 'User\MemoController@destroyAttach')->name('attachmentremove');
             Route::post('/approver/{memo}', 'User\MemoController@updateApprover')->name('updateapprover');
             Route::post('/acknowledge/{memo}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
+        });
+
+        Route::prefix('/approval')->name('approval.')->group(function () {
+            Route::get('/', 'User\ApprovalController@index')->name('index');
+            Route::get('/{memo}', 'User\ApprovalController@detail')->name('detail');
+            Route::put('/{memo}', 'User\ApprovalController@approving')->name('approving');
         });
     });
 

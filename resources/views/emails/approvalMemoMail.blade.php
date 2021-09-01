@@ -178,7 +178,7 @@
                   </tr>
                   <tr>
                     <td style="font-size:24px; text-align:center; padding: 0 75px; color: #6f6f6f;" class="w320 mobile-spacing">
-                     Details below.
+                     {{ $details['subject'] }}
                     </td>
                   </tr>
                 </table>
@@ -200,7 +200,7 @@
               <td style="background-color:#ffffff; padding-top: 15px;">
 
               <center>
-                <table style="margin:0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
+                {{-- <table style="margin:0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
                   <tr>
                     <td style="text-align:left;">
                     <br>
@@ -237,15 +237,14 @@
                       </table>
                     </td>
                   </tr>
-                </table>
+                </table> --}}
 
 
                 <table style="margin: 0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
                   <tr>
                     <td style="text-align: left;">
                     <br>
-                      To track or view your order please click the button below. Thank you for your business.<br><br>
-                      Awesome Inc
+                      Silahkan melakukan persetujuan memo {{ $details['doc_no'] }}
                     </td>
                   </tr>
                 </table>
@@ -256,10 +255,8 @@
                   <td style="text-align:center; margin:0 auto;">
                   <br>
                     <div>
-                        <a href="http://"
+                        <a href="{{ $details['url'] }}"
                         style="background-color:#27aa90;color:#ffffff;display:inline-block;font-family:'Source Sans Pro', Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:45px;text-align:center;text-decoration:none;width:180px;-webkit-text-size-adjust:none;">Approve</a>
-                        <a href="http://"
-                        style="background-color:#f5774e;color:#ffffff;display:inline-block;font-family:'Source Sans Pro', Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:45px;text-align:center;text-decoration:none;width:180px;-webkit-text-size-adjust:none;">Reject</a>
                     </div>
                     <br>
                   </td>

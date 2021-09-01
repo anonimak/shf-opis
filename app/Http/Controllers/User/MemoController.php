@@ -116,6 +116,8 @@ class MemoController extends Controller
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
 
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
                 [
@@ -138,12 +140,14 @@ class MemoController extends Controller
             ),
             '_token' => csrf_token(),
             '__attachment'  => 'user.memo.draft.attachment',
+            '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
+            'dataAttachments' => $attachments,
             'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);
     }
@@ -157,6 +161,7 @@ class MemoController extends Controller
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
             'payment'           => $request->input('payment'),
+            'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
         $memo = Memo::where('id', $id)->first();
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Successfull updated.");
@@ -190,23 +195,29 @@ class MemoController extends Controller
 
     public function propose($id)
     {
+        $memo = Memo::where('id', $id)->first();
+        // cek apakah ada approver
+        if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
+            return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
+        }
         // update status menjadi submit
-        $memo = Memo::where('id', $id)->update([
+        Memo::where('id', $id)->update([
             'status'   => 'submit'
         ]);
         D_Memo_Approver::where('id_memo', $id)->update([
             'status'   => 'submit'
         ]);
 
-
-
+        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
         $details = [
-            'title' => 'Mail from ItSolutionStuff.com',
-            'body' => 'This is for testing email using smtp'
+            'subject' => $memo->title,
+            'doc_no'  => $memo->doc_no,
+            'url'     => url('')
         ];
 
-        Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
+        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
         // kirim email ke tiap acknowlegde
         return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
     }
@@ -217,12 +228,12 @@ class MemoController extends Controller
         // dd($request->all());
         foreach ($request->post('attach') as $uploadedFile) {
             $uploadedFile = json_decode($uploadedFile);
-            var_dump($uploadedFile);
-            die();
+            // var_dump($uploadedFile);
+            // die();
             $filename = time() . '_' . $uploadedFile->name;
 
             // $path = $uploadedFile->store($filename, 'uploads');
-            Storage::put('uploads/memo/attach/' . $filename, $uploadedFile);
+            Storage::put('public/uploads/memo/attach/' . $filename, $uploadedFile);
             D_Memo_Attachment::create([
                 'id_memo' => $id,
                 'name' => $filename,
@@ -232,6 +243,14 @@ class MemoController extends Controller
 
         return back()
             ->with('success', 'You have successfully upload file.');
+    }
+
+    public function destroyAttach($id)
+    {
+        $attach = D_Memo_Attachment::where('id', $id)->first();
+        $attach->delete();
+        return
+            Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->name deleted.");
     }
 
     public function updateAcknowledge(Request $request, $id)
@@ -302,7 +321,7 @@ class MemoController extends Controller
         // update/insert pda updaterefapprover
         if (count($updatedapprover) > 0) {
             foreach ($updatedapprover as $key => $value) {
-                $itemapprover = D_Memo_Approver::where('id_employee', $value['id_employee'])->first();
+                $itemapprover = D_Memo_Approver::where('id_memo', $id)->where('id_employee', $value['id_employee'])->first();
                 $item = [
                     'id_memo' => $value['id_memo'],
                     'id_employee'   =>  $value['id_employee'],
@@ -327,12 +346,31 @@ class MemoController extends Controller
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        $sumtotal = 0;
+        $memocost = (array) json_decode($memo->cost);
+        $memocost = array_map(function ($itemcost) use ($sumtotal) {
+            $itemcost->Total = $itemcost->QTY * $itemcost->Price;
+            $sumtotal += $itemcost->Total;
+            return $itemcost;
+        }, $memocost);
+        foreach ($memocost as $itemcost) {
+            $sumtotal += $itemcost->Total;
+        }
+        $ppn = $sumtotal * 10 / 100;
+        $grandtotal = $sumtotal - $ppn;
 
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
             'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo
+            'dataTypeMemo' => $dataTypeMemo,
+            'dataAttachments' => $attachments,
+            'memocost' => $memocost,
+            'sumtotal' => $sumtotal,
+            'ppn' => $ppn,
+            'grandtotal' => $grandtotal,
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');

@@ -42,6 +42,7 @@
         "google-maps-api-loader": "^1.1.1",
         "handsontable": "^9.0.2",
         "hover.css": "^2.3.2",
+        "hyperformula": "^0.6.0",
         "remixicon": "^2.5.0",
         "tiptap": "^1.32.2",
         "tiptap-extensions": "^1.35.2",
