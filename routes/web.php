@@ -75,14 +75,20 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/', 'User\MemoController@draft')->name('index');
             Route::get('/{memo}', 'User\MemoController@draftEdit')->name('edit');
             Route::post('/{memo}', 'User\MemoController@draftUpdate')->name('update');
-            Route::put('/propose/{memo}', 'User\MemoController@propose')->name('propose');
             Route::delete('/{memo}', 'User\MemoController@destroy')->name('destroy');
-            Route::post('/attachment/{memo}', 'User\MemoController@fileUploadAttach')->name('attachment');
-            Route::delete('/attachment/{memo}', 'User\MemoController@destroyAttach')->name('attachmentremove');
-            Route::post('/approver/{memo}', 'User\MemoController@updateApprover')->name('updateapprover');
-            Route::post('/acknowledge/{memo}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
+            Route::put('/{memo}/propose', 'User\MemoController@propose')->name('propose');
+            Route::post('/{memo}/attachment', 'User\MemoController@fileUploadAttach')->name('attachment');
+            Route::delete('/{memo}/attachment', 'User\MemoController@destroyAttach')->name('attachmentremove');
+            Route::post('/{memo}/approver', 'User\MemoController@updateApprover')->name('updateapprover');
+            Route::post('/{memo}/acknowledge', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
         });
+
+        Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
+            Route::get('/', 'User\MemoController@index')->name('index');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
+        });
+
 
         Route::prefix('/approval')->name('approval.')->group(function () {
             Route::get('/', 'User\ApprovalController@index')->name('index');

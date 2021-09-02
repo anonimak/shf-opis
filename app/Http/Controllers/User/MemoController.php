@@ -42,17 +42,15 @@ class MemoController extends Controller
                     'active'  => true
                 ]
             ),
-            'tab' => ['submit', 'approve', 'reject'],
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
                 'submit' => Memo::getMemo(auth()->user()->id_employee, 'submit')->count(),
                 'approve' => Memo::getMemo(auth()->user()->id_employee, 'approve')->count(),
                 'reject' => Memo::getMemo(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemo(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            '__create'  => 'user.memo.create',
-            '__edit'    => 'user.memo.edit',
-            '__show'    => 'user.memo.show',
-            '__destroy' => 'user.memo.destroy',
-            '__index'   => 'user.memo.index'
+            '__index'   => 'user.memo.statusmemo.index',
+            '__webpreview'   => 'user.memo.statusmemo.webpreview'
         ]);
     }
 
@@ -377,6 +375,32 @@ class MemoController extends Controller
         // download PDF file with download method
         // return $pdf->download('pdf_file.pdf');
         return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
+    public function webpreviewMemo(Request $request, $id)
+    {
+        $memo = Memo::getMemoDetail($id);
+        $memocost = (array) json_decode($memo->cost);
+
+        return Inertia::render('User/Memo/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'memocost' => $memocost,
+        ]);
     }
 
 
