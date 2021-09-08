@@ -208,7 +208,7 @@ export default {
     TimelineItem,
     TimelineTitle,
   },
-  created() {
+  beforeMount() {
     this.setLsTabMemo();
   },
   methods: {
@@ -275,13 +275,13 @@ export default {
       this.memo = { data: [], link: [] };
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
-        this.$inertia
-          .replace(route(this.__index, { tab: this.tab[this.tabIndex] }))
-          .then(() => {
-            this.memo = { ...this.dataMemo };
-            this.isLoadMemo = false;
-          });
       }
+      this.$inertia
+        .replace(route(this.__index, { tab: this.tab[this.tabIndex] }))
+        .then(() => {
+          this.memo = { ...this.dataMemo };
+          this.isLoadMemo = false;
+        });
     },
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;

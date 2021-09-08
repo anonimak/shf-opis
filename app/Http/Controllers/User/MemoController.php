@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
+use App\Models\D_Memo_History;
+use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Memo;
 use App\Models\Ref_Position;
@@ -40,6 +42,10 @@ class MemoController extends Controller
                 [
                     'title'   => "Memo",
                     'active'  => true
+                ],
+                [
+                    'title'   => "Status Memo",
+                    'active'  => true
                 ]
             ),
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
@@ -69,6 +75,10 @@ class MemoController extends Controller
                 ],
                 [
                     'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Draft",
                     'active'  => true
                 ]
             ),
@@ -132,7 +142,7 @@ class MemoController extends Controller
                     'href'    => "user.memo.draft.index"
                 ],
                 [
-                    'title'   => $memo->doc_no,
+                    'title'   => $memo->title,
                     'active'  => true
                 ]
             ),
@@ -175,7 +185,6 @@ class MemoController extends Controller
         $memo = Memo::create([
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
-            'doc_no'                => $this->generateDocNo(),
             'id_type'               => $request->input('typememo'),
         ]);
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo);
@@ -198,15 +207,34 @@ class MemoController extends Controller
         if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
         }
+        $doc_no = $this->generateDocNo();
         // update status menjadi submit
         Memo::where('id', $id)->update([
-            'status'   => 'submit'
+            'status'   => 'submit',
+            'doc_no'   => $doc_no,
+            'propose_at' => Carbon::now()
         ]);
+
         D_Memo_Approver::where('id_memo', $id)->update([
             'status'   => 'submit'
         ]);
 
+        // insert to history where first time submit
+        D_Memo_History::create([
+            'title' => 'Memo Proposed',
+            'id_memo'   => $id,
+            'type'  => 'info',
+            'content' => "Memo successful submitted with document no $doc_no"
+        ]);
+
         $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        // insert to history frist approval
+        D_Memo_History::create([
+            'title'     => "Process Approving {$firstApprover->idx}",
+            'id_memo'   => $id,
+            'type'      => 'info',
+            'content'   => "On process approving by approver {$firstApprover->idx}"
+        ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
         $details = [
@@ -380,7 +408,9 @@ class MemoController extends Controller
     public function webpreviewMemo(Request $request, $id)
     {
         $memo = Memo::getMemoDetail($id);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
@@ -394,29 +424,35 @@ class MemoController extends Controller
                     'active'  => true
                 ],
                 [
+                    'title'   => "Status Memo",
+                    'href'    => "user.memo.statusmemo.index"
+                ],
+                [
                     'title'   => $memo->doc_no,
                     'active'  => true
                 ]
             ),
             'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
+            'attachments' => $attachments
         ]);
     }
 
 
     public function test()
     {
-        $details = [
-            'title' => 'Mail from ItSolutionStuff.com',
-            'body' => 'This is for testing email using smtp'
-        ];
+        // $details = [
+        //     'title' => 'Mail from ItSolutionStuff.com',
+        //     'body' => 'This is for testing email using smtp'
+        // ];
 
-        Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
+        // Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
     }
 
     private function generateDocNo()
     {
-        $lastrow = Memo::orderBy('id', 'desc')->first();
+        $lastrow = Memo::whereNotNull('doc_no')->orderBy('id', 'desc')->first();
         if ($lastrow) {
             $lastdocno = $lastrow->doc_no;
             $arraylastdocno = explode('/', $lastdocno);

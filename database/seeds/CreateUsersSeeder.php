@@ -42,6 +42,15 @@ class CreateUsersSeeder extends Seeder
                 'password' => Hash::make('kosong'),
                 'remember_token' => Str::random(10),
             ],
+            [
+                'name' => 'User 2',
+                'email' => 'user2@user.com',
+                'id_employee' => 4,
+                'email_verified_at' => now(),
+                'role' => 0,
+                'password' => Hash::make('kosong'),
+                'remember_token' => Str::random(10),
+            ],
         ];
 
         foreach ($user as $key => $value) {

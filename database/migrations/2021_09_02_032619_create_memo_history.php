@@ -17,6 +17,7 @@ class CreateMemoHistory extends Migration
             $table->id();
             $table->unsignedBigInteger('id_memo');
             $table->text('title');
+            $table->enum('type', ['info', 'success', 'danger', 'warning']);
             $table->text('content')->nullable();
             $table->timestamps();
 

@@ -29,7 +29,7 @@ class Employee extends Model
 
     public function emp_history()
     {
-        return $this->hasMany(Employee_History::class, 'id_employee', 'id');
+        return $this->hasOne(Employee_History::class, 'id_employee', 'id');
     }
 
     public function position()
@@ -42,6 +42,15 @@ class Employee extends Model
             'id', // Local key on the projects table...
             'id' // Local key on the environments table...
         );
+    }
+
+    public static function getWithPositionNowById($memo)
+    {
+        return Self::where('id', $memo->id_employee)->with(['emp_history' => function ($emp_history) use ($memo) {
+            return $emp_history->where('year_started', '<', $memo->created_at)->where('year_finished', '>', $memo->created_at)->orWhere('year_finished', null)->with(['position' => function ($position) {
+                return $position->with('department');
+            }])->with('branch');
+        }])->first();
     }
 
     public static function getEmployees($search = null)

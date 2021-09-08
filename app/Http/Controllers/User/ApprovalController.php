@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Memo;
 use Illuminate\Http\Request;
 use App\Models\D_Memo_Approver;
+use App\Models\D_Memo_History;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -56,9 +57,23 @@ class ApprovalController extends Controller
         ]);
 
         if ($status_approver == 'approve') {
-            $nextApprover = D_Memo_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+            // insert to history when approved
+            D_Memo_History::create([
+                'title'     => "Approved lvl {$approver->idx}",
+                'id_memo'   => $memo->id,
+                'type'      => 'success',
+                'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname})"
+            ]);
+            $nextApprover = D_Memo_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
 
             if ($nextApprover) {
+                // insert to history next approval
+                D_Memo_History::create([
+                    'title' => "Process Approving {$nextApprover->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'  => 'info',
+                    'content' => "On process approving by approver {$nextApprover->idx}"
+                ]);
                 // send email to next approver
                 $mailApprover = $nextApprover->employee->email;
                 // kirim email ke approver pertama
@@ -77,6 +92,13 @@ class ApprovalController extends Controller
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             } else {
                 Memo::where('id', $approver->id_memo)->update(['status' => 'approve']);
+                // insert to history when all approved by approver
+                D_Memo_History::create([
+                    'title'     => "Memo Approved",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Memo {$memo->doc_no} has approved."
+                ]);
 
                 $detailspropose = [
                     'subject' => "Memo $memo->doc_no approved",
@@ -90,6 +112,13 @@ class ApprovalController extends Controller
         if ($status_approver == 'revisi') {
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
+            // insert to history when revisi by approver
+            D_Memo_History::create([
+                'title'     => "Memo Revisi",
+                'id_memo'   => $memo->id,
+                'type'      => 'warning',
+                'content'   => "Memo {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). message ()"
+            ]);
 
             $detailspropose = [
                 'subject' => "Memo $memo->doc_no revisi",
@@ -102,6 +131,13 @@ class ApprovalController extends Controller
         if ($status_approver == 'reject') {
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
+            // insert to history when revisi by approver
+            D_Memo_History::create([
+                'title'     => "Memo Rejected",
+                'id_memo'   => $memo->id,
+                'type'      => 'danger',
+                'content'   => "Memo {$memo->doc_no} has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). message ()"
+            ]);
 
             $detailspropose = [
                 'subject' => "Memo $memo->doc_no reject",

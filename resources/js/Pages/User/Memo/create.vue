@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Create New Reference Title</h1>
+      <h1 class="h3 mb-0 text-gray-800">Create New Memo</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">

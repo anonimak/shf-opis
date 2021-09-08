@@ -54,7 +54,8 @@ class Memo extends Model
                     }])->with('branch');
                 }]);
             }])->orderBy('id', 'asc');
-        }])->where('id', $id)->first();
+        }])
+            ->where('id', $id)->first();
     }
 
     public static function getMemo($id_employee, $status, $search = null)
@@ -104,18 +105,6 @@ class Memo extends Model
 
     public static function getMemoWithLastApproverRawQuery($id_employee)
     {
-        // $memo = DB::table('m_memos')
-        //     ->join('d_memo_approvers', 'm_memos.id', '=', 'd_memo_approvers.id_memo')
-        //     ->join(
-        //         DB::raw("(select min(idx) as min_idx, id_memo from d_memo_approvers where status = 'submit' group by id_memo) lower_approver"),
-        //         function ($join) {
-        //             $join->on('m_memos.id', '=', 'lower_approver.id_memo');
-        //         }
-        //     )
-        //     ->where('lower_approver.min_idx', '=', 'd_memo_approvers.idx')
-        //     ->where('d_memo_approvers.id_employee', '=', 3)
-        //     ->select('*')
-        //     ->get();
 
         $memo = DB::select(
             DB::raw("select a.*,c.id id_approver from m_memos a join

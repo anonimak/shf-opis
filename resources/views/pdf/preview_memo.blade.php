@@ -188,13 +188,6 @@
         <br>
         <br>
         @endif
-        @if ( $memo->payment != "<p></p>" && $memo->payment != '')
-        <h4>Payment</h4>
-        <hr>
-        <p>{!!$memo->payment!!}</p>
-        <br>
-        <br>
-        @endif
         @if ( count($memocost) > 0)
         <h4>Cost/Expenses</h4>
         <hr>
@@ -234,6 +227,13 @@
                 </tr>
             </tbody>
         </table>
+        <br>
+        @endif
+        @if ( $memo->payment != "<p></p>" && $memo->payment != '')
+        <h4>Payment</h4>
+        <hr>
+        <p>{!!$memo->payment!!}</p>
+        <br>
         <br>
         @endif
         @if ( count($dataAttachments) > 0)

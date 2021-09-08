@@ -19,7 +19,7 @@ class CreateMemosTable extends Migration
             $table->unsignedBigInteger('id_employee');
             $table->string('title', 255);
             $table->enum('status', ['submit', 'edit', 'reject', 'approve'])->default('edit');
-            $table->char('doc_no', 18);
+            $table->char('doc_no', 18)->nullable();
             $table->text('background')->nullable();
             $table->text('information')->nullable();
             $table->text('conclusion')->nullable();
@@ -49,6 +49,7 @@ class CreateMemosTable extends Migration
             $table->unsignedBigInteger('id_memo');
             $table->unsignedBigInteger('id_employee');
             $table->integer('idx');
+            $table->text('msg')->nullable();
             $table->enum('status', ['submit', 'edit', 'reject', 'approve', 'revisi'])->default('edit');
             $table->timestamps();
 
