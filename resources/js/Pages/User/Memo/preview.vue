@@ -39,7 +39,7 @@
                         >
                         <b-badge
                           v-if="dataMemo.status == 'reject'"
-                          variant="warning"
+                          variant="danger"
                           >Memo Rejected</b-badge
                         >
                         <b-badge
@@ -93,7 +93,7 @@
               </b-col>
               <b-col col lg="6" md="auto">
                 <h5>Approver</h5>
-                <table class="table table-bordered">
+                <table class="table table-bordered mb-2">
                   <thead class="thead-dark">
                     <tr>
                       <th>Level</th>
@@ -135,7 +135,7 @@
                         >
                         <b-badge
                           v-if="approver.status == 'reject'"
-                          variant="warning"
+                          variant="danger"
                           >Rejected</b-badge
                         >
                         <b-badge
@@ -147,6 +147,54 @@
                     </tr>
                   </tbody>
                 </table>
+                <div
+                  class="card mb-4"
+                  v-if="dataMemo && dataMemo.histories.length > 0"
+                >
+                  <div
+                    class="
+                      card-header
+                      py-3
+                      d-flex
+                      flex-row
+                      align-items-center
+                      justify-content-between
+                    "
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">History</h6>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="overflow-auto" style="height: 218px">
+                      <timeline>
+                        <timeline-item
+                          v-for="(itemHistory, index) in dataMemo.histories"
+                          :key="index"
+                          :bg-color="timelinecolor[itemHistory.type]"
+                        >
+                          <strong>
+                            {{ itemHistory.title }}
+                            <span class="float-right">
+                              <small class="text-muted">
+                                <em>
+                                  {{
+                                    itemHistory.created_at
+                                      | moment("D/M/YY,h:mm a")
+                                  }}
+                                </em>
+                              </small>
+                            </span>
+                          </strong>
+                          <p>
+                            <small class="text-muted">{{
+                              itemHistory.content
+                            }}</small>
+                          </p>
+                        </timeline-item>
+                      </timeline>
+                    </div>
+                  </div>
+                </div>
               </b-col>
             </b-row>
             <b-row
@@ -215,6 +263,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
   props: [
@@ -229,9 +278,19 @@ export default {
     Layout,
     FlashMsg,
     Breadcrumb,
+    Timeline,
+    TimelineItem,
+    TimelineTitle,
   },
   data() {
-    return {};
+    return {
+      timelinecolor: {
+        success: "#1cc88a",
+        info: "#36b9cc",
+        danger: "#e74a3b",
+        warning: "#f6c23e",
+      },
+    };
   },
 };
 </script>

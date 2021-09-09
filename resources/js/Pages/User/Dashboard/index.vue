@@ -13,7 +13,7 @@
         > -->
       </div>
       <b-jumbotron bg-variant="primary" text-variant="white">
-        <template #header>Hello, {{ userinfo.name }}</template>
+        <template #header>Hello {{ userinfo.name }}</template>
 
         <template #lead>
           Welcome to Sinarmas Hana Finance Memo Apps. Click button below to
@@ -82,7 +82,7 @@
                       >
                       <b-badge
                         v-if="dataMemo.status == 'reject'"
-                        variant="warning"
+                        variant="danger"
                         >Memo Rejected</b-badge
                       >
                       <b-badge
@@ -90,6 +90,13 @@
                         variant="secondary"
                         >Memo Revisi</b-badge
                       >
+                      <p v-if="dataMemo.history" class="text-muted">
+                        <small>
+                          <em>
+                            {{ dataMemo.history.title }}
+                          </em>
+                        </small>
+                      </p>
                     </td>
                   </tr>
                 </tbody>
@@ -102,10 +109,11 @@
           </div>
         </div>
 
-        <!-- Pie Chart -->
         <div class="col-xl-4 col-lg-5">
-          <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
+          <div
+            class="card shadow mb-4"
+            v-if="dataMemo && dataMemo.histories.length > 0"
+          >
             <div
               class="
                 card-header
@@ -116,26 +124,38 @@
                 justify-content-between
               "
             >
-              <h6 class="m-0 font-weight-bold text-primary">History Memo</h6>
+              <h6 class="m-0 font-weight-bold text-primary">
+                History Last Memo
+              </h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
-              <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChart"></canvas>
-              </div>
-              <div class="mt-4 text-center small">
-                <span class="mr-2">
-                  <i class="fas fa-circle text-primary"></i>
-                  Direct
-                </span>
-                <span class="mr-2">
-                  <i class="fas fa-circle text-success"></i>
-                  Social
-                </span>
-                <span class="mr-2">
-                  <i class="fas fa-circle text-info"></i>
-                  Referral
-                </span>
+              <div class="overflow-auto" style="height: 218px">
+                <timeline>
+                  <timeline-item
+                    v-for="(itemHistory, index) in dataMemo.histories"
+                    :key="index"
+                    :bg-color="timelinecolor[itemHistory.type]"
+                  >
+                    <strong>
+                      {{ itemHistory.title }}
+                      <span class="float-right">
+                        <small class="text-muted">
+                          <em>
+                            {{
+                              itemHistory.created_at | moment("D/M/YY,h:mm a")
+                            }}
+                          </em>
+                        </small>
+                      </span>
+                    </strong>
+                    <p>
+                      <small class="text-muted">{{
+                        itemHistory.content
+                      }}</small>
+                    </p>
+                  </timeline-item>
+                </timeline>
               </div>
             </div>
           </div>
@@ -148,14 +168,25 @@
 
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
+import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
   metaInfo: { title: "Beranda" },
   data() {
-    return {};
+    return {
+      timelinecolor: {
+        success: "#1cc88a",
+        info: "#36b9cc",
+        danger: "#e74a3b",
+        warning: "#f6c23e",
+      },
+    };
   },
   components: {
     Layout,
+    Timeline,
+    TimelineItem,
+    TimelineTitle,
   },
   props: ["meta", "dataMemo", "userinfo", "__create", "__allmemo"],
   methods: {

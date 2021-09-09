@@ -54,6 +54,7 @@
         "vue-meta": "^2.4.0",
         "vue-moment": "^4.1.0",
         "vue-select": "^3.11.2",
+        "vue-undraw": "^2.0.13",
         "vue-upload-component": "^2.8.22",
         "vuedraggable": "^2.24.3"
     }

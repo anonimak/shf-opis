@@ -174,9 +174,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
  //import layouts
 
 
@@ -6584,6 +6581,10 @@ var render = function() {
                                           _vm._v("Document No")
                                         ]),
                                         _vm._v(" "),
+                                        _c("th", { attrs: { scope: "col" } }, [
+                                          _vm._v("Status")
+                                        ]),
+                                        _vm._v(" "),
                                         _c("th", [_vm._v("Action")])
                                       ])
                                     ]),
@@ -6632,26 +6633,19 @@ var render = function() {
                                                 )
                                               ]),
                                               _vm._v(" "),
+                                              _c("td", [
+                                                _vm._v(
+                                                  "\n                            " +
+                                                    _vm._s(
+                                                      item.history.content
+                                                    ) +
+                                                    "\n                          "
+                                                )
+                                              ]),
+                                              _vm._v(" "),
                                               _c(
                                                 "td",
                                                 [
-                                                  _vm.tabIndex == 0
-                                                    ? _c(
-                                                        "b-button",
-                                                        {
-                                                          attrs: {
-                                                            variant: "info",
-                                                            size: "sm"
-                                                          }
-                                                        },
-                                                        [
-                                                          _vm._v(
-                                                            "\n                              check status\n                            "
-                                                          )
-                                                        ]
-                                                      )
-                                                    : _vm._e(),
-                                                  _vm._v(" "),
                                                   _c(
                                                     "inertia-link",
                                                     {

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Memo;
 use Illuminate\Http\Request;
 use App\Models\D_Memo_Approver;
+use App\Models\D_Memo_Attachment;
 use App\Models\D_Memo_History;
+use App\Models\Employee;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -26,12 +28,7 @@ class ApprovalController extends Controller
                     'href'    => "user.dashboard"
                 ],
                 [
-                    'title'   => "Approval",
-                    'active'  => true
-                ],
-
-                [
-                    'title'   => "Memo",
+                    'title'   => "Approval Memo",
                     'active'  => true
                 ]
             ),
@@ -41,8 +38,35 @@ class ApprovalController extends Controller
         ]);
     }
 
-    public function detail($id)
+
+    public function detail(Request $request, $id)
     {
+        $memo = Memo::getMemoDetail($id);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        return Inertia::render('User/Approval/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Approval Memo",
+                    'href'  => "user.memo.approval.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments
+        ]);
     }
 
     public function approving(Request $request, $id)
@@ -130,7 +154,7 @@ class ApprovalController extends Controller
 
         if ($status_approver == 'reject') {
             // notif ke user propose
-            Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
+            Memo::where('id', $approver->id_memo)->update(['status' => 'reject']);
             // insert to history when revisi by approver
             D_Memo_History::create([
                 'title'     => "Memo Rejected",

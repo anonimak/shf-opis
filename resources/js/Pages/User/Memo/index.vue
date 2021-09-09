@@ -81,6 +81,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
                             <th scope="col">Document No</th>
+                            <th scope="col">Status</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -103,13 +104,9 @@
                               {{ item.doc_no }}
                             </td>
                             <td>
-                              <b-button
-                                v-if="tabIndex == 0"
-                                variant="info"
-                                size="sm"
-                              >
-                                check status
-                              </b-button>
+                              {{ item.history.content }}
+                            </td>
+                            <td>
                               <inertia-link
                                 :href="route(__webpreview, item.id)"
                                 class="btn btn-secondary btn-sm"

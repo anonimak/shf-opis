@@ -10,7 +10,6 @@ use App\Models\D_Memo_History;
 use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Memo;
-use App\Models\Ref_Position;
 use App\Models\Ref_Type_Memo;
 use App\User;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -31,7 +30,9 @@ class MemoController extends Controller
         }
         return Inertia::render('User/Memo', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->paginate(10),
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with(['history' => function ($history) {
+                return $history->orderBy('id', 'DESC')->first();
+            }])->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [

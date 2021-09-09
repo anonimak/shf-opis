@@ -36,6 +36,16 @@ class Memo extends Model
         return $this->hasMany(D_Memo_Attachment::class, 'id_memo', 'id');
     }
 
+    public function histories()
+    {
+        return $this->hasMany(D_Memo_History::class, 'id_memo', 'id');
+    }
+
+    public function history()
+    {
+        return $this->hasOne(D_Memo_History::class, 'id_memo', 'id');
+    }
+
     public static function getMemoDetail($id)
     {
         return Self::with(['approvers' => function ($approver) {
@@ -54,6 +64,8 @@ class Memo extends Model
                     }])->with('branch');
                 }]);
             }])->orderBy('id', 'asc');
+        }])->with(['histories' => function ($history) {
+            return $history->orderBy('id', 'DESC');
         }])
             ->where('id', $id)->first();
     }
@@ -113,6 +125,7 @@ class Memo extends Model
             ) b on a.id = b.id_memo
             join d_memo_approvers c on a.id = c.id_memo
             where b.min_idx = c.idx
+            and a.status = 'submit'
             and c.id_employee = $id_employee")
         );
         return $memo;
