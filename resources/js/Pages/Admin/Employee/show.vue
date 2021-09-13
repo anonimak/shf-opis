@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <b-button type="button" variant="dark" class="float-right">Delete</b-button>
     <b-button
@@ -208,7 +208,7 @@
       :errors="errors"
       :indexEmpHistory="itemClicked"
     />
-  </Layout>
+  </layout>
 </template>
 <script>
 import Layout from "@/Shared/AdminLayout"; //import layouts
@@ -226,6 +226,7 @@ export default {
     "flash",
     "breadcrumbItems",
     "userinfo",
+    "notif",
     "perPage",
     "__edit",
     "__destroy_history",

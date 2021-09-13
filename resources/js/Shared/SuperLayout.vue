@@ -27,7 +27,7 @@ export default {
     Navbar,
     Footer,
   },
-  props: ["userinfo"],
+  props: ["userinfo", "notif"],
   methods: {
     handleLogout() {
       alert("Ini Sudah Logout");

@@ -185,7 +185,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__index", "__webpreview"],
+  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "notif", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__index", "__webpreview"],
   metaInfo: {
     title: "Admin Reference Approve Page"
   },
@@ -366,7 +366,7 @@ __webpack_require__.r(__webpack_exports__);
     Navbar: _components_user_Navbar__WEBPACK_IMPORTED_MODULE_1__["default"],
     Footer: _components_user_Footer__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
-  props: ["userinfo"],
+  props: ["userinfo", "notif"],
   methods: {
     handleLogout: function handleLogout() {
       alert("Ini Sudah Logout");
@@ -643,6 +643,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     items: Array
@@ -840,6 +843,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ["notif"],
   components: {
     SidebarItem: _components_SidebarItem__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -874,7 +878,8 @@ __webpack_require__.r(__webpack_exports__);
         title: "Approval Memo",
         link: "user.memo.approval.index",
         index: "user.memo.approval.index",
-        icon: "fas fa-fw fa-clipboard-check" //   child: [
+        icon: "fas fa-fw fa-clipboard-check",
+        badge: this.notif.approval_memo //   child: [
         //     {
         //       title: "Memo",
         //       link: "user.memo.approval.*",
@@ -6368,8 +6373,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "Layout",
-    { attrs: { userinfo: _vm.userinfo } },
+    "layout",
+    { attrs: { userinfo: _vm.userinfo, notif: _vm.notif } },
     [
       _c("flash-msg"),
       _vm._v(" "),
@@ -6770,7 +6775,7 @@ var render = function() {
     "div",
     { attrs: { id: "wrapper" } },
     [
-      _c("Sidebar"),
+      _c("Sidebar", { attrs: { notif: _vm.notif } }),
       _vm._v(" "),
       _c(
         "div",
@@ -7111,7 +7116,13 @@ var render = function() {
                 [
                   _c("i", { class: item.icon }),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(item.title))])
+                  _c("span", [_vm._v(_vm._s(item.title))]),
+                  _vm._v(" "),
+                  item.badge
+                    ? _c("span", { staticClass: "float-right" }, [
+                        _c("i", { staticClass: "fas fa-exclamation-circle" })
+                      ])
+                    : _vm._e()
                 ]
               )
         ],

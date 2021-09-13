@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,85 +10,109 @@
 
 
   <style type="text/css">
-  /* Take care of image borders and formatting */
+    /* Take care of image borders and formatting */
 
-  img {
-    max-width: 600px;
-    outline: none;
-    text-decoration: none;
-    -ms-interpolation-mode: bicubic;
-  }
+    img {
+      max-width: 600px;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
 
-  a img { border: none; }
-  table { border-collapse: collapse !important; }
-  #outlook a { padding:0; }
-  .ReadMsgBody { width: 100%; }
-  .ExternalClass {width:100%;}
-  .backgroundTable {margin:0 auto; padding:0; width:100%;}
-  table td {border-collapse: collapse;}
-  .ExternalClass * {line-height: 115%;}
+    a img {
+      border: none;
+    }
 
+    table {
+      border-collapse: collapse !important;
+    }
 
-  /* General styling */
+    #outlook a {
+      padding: 0;
+    }
 
-  td {
-    font-family: Arial, sans-serif;
-    color: #6f6f6f;
-  }
+    .ReadMsgBody {
+      width: 100%;
+    }
 
-  body {
-    -webkit-font-smoothing:antialiased;
-    -webkit-text-size-adjust:none;
-    width: 100%;
-    height: 100%;
-    color: #6f6f6f;
-    font-weight: 400;
-    font-size: 18px;
-  }
+    .ExternalClass {
+      width: 100%;
+    }
 
+    .backgroundTable {
+      margin: 0 auto;
+      padding: 0;
+      width: 100%;
+    }
 
-  h1 {
-    margin: 10px 0;
-  }
+    table td {
+      border-collapse: collapse;
+    }
 
-  a {
-    color: #27aa90;
-    text-decoration: none;
-  }
-
-  .force-full-width {
-    width: 100% !important;
-  }
-
-  .force-width-80 {
-    width: 80% !important;
-  }
+    .ExternalClass * {
+      line-height: 115%;
+    }
 
 
-  .body-padding {
-    padding: 0 75px;
-  }
+    /* General styling */
 
-  .mobile-align {
-    text-align: right;
-  }
+    td {
+      font-family: Arial, sans-serif;
+      color: #6f6f6f;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: none;
+      width: 100%;
+      height: 100%;
+      color: #6f6f6f;
+      font-weight: 400;
+      font-size: 18px;
+    }
 
 
+    h1 {
+      margin: 10px 0;
+    }
 
+    a {
+      color: #27aa90;
+      text-decoration: none;
+    }
+
+    .force-full-width {
+      width: 100% !important;
+    }
+
+    .force-width-80 {
+      width: 80% !important;
+    }
+
+
+    .body-padding {
+      padding: 0 75px;
+    }
+
+    .mobile-align {
+      text-align: right;
+    }
   </style>
 
   <style type="text/css" media="screen">
-      @media screen {
-        @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,900);
-        /* Thanks Outlook 2013! */
-        * {
-          font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif' !important;
-        }
-        .w280 {
-          width: 280px !important;
-        }
+    @media screen {
+      @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,900);
 
+      /* Thanks Outlook 2013! */
+      * {
+        font-family: 'Source Sans Pro', 'Helvetica Neue', 'Arial', 'sans-serif' !important;
       }
+
+      .w280 {
+        width: 280px !important;
+      }
+
+    }
   </style>
 
   <style type="text/css" media="only screen and (max-width: 480px)">
@@ -154,36 +179,37 @@
     }
   </style>
 </head>
-<body  class="body" style="padding:0; margin:0; display:block; background:#eeebeb; -webkit-text-size-adjust:none;" bgcolor="#eeebeb">
-<table align="center" cellpadding="0" cellspacing="0" width="100%">
-  <tr>
-    <td align="center" valign="top" style="background-color:#eeebeb" width="100%">
 
-    <center>
+<body class="body" style="padding:0; margin:0; display:block; background:#eeebeb; -webkit-text-size-adjust:none;" bgcolor="#eeebeb">
+  <table align="center" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="center" valign="top" style="background-color:#eeebeb" width="100%">
 
-      <table cellspacing="0" cellpadding="0" width="600" class="w320">
-        <tr>
-          <td align="center" valign="top">
-          <table cellspacing="0" cellpadding="0" class="force-full-width" style="background-color:#3bcdb0;">
+        <center>
+
+          <table cellspacing="0" cellpadding="0" width="600" class="w320">
             <tr>
-              <td style="background-color:#3bcdb0;">
-
-                <table cellspacing="0" cellpadding="0" class="force-full-width">
+              <td align="center" valign="top">
+                <table cellspacing="0" cellpadding="0" class="force-full-width" style="background-color:#3bcdb0;">
                   <tr>
-                    <td style="font-size:40px; font-weight: 600; color: #ffffff; text-align:center;" class="mobile-spacing">
-                    <div class="mobile-br">&nbsp;</div>
-                      Memo Approval
-                    <br/>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:24px; text-align:center; padding: 0 75px; color: #6f6f6f;" class="w320 mobile-spacing">
-                     {{ $details['subject'] }}
-                    </td>
-                  </tr>
-                </table>
+                    <td style="background-color:#3bcdb0;">
 
-                {{-- <table cellspacing="0" cellpadding="0" width="100%">
+                      <table cellspacing="0" cellpadding="0" class="force-full-width">
+                        <tr>
+                          <td style="font-size:40px; font-weight: 600; color: #ffffff; text-align:center;" class="mobile-spacing">
+                            <div class="mobile-br">&nbsp;</div>
+                            Memo Approval
+                            <br />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="font-size:24px; text-align:center; padding: 0 75px; color: #6f6f6f;" class="w320 mobile-spacing">
+                            {{ $details['subject'] }}
+                          </td>
+                        </tr>
+                      </table>
+
+                      {{-- <table cellspacing="0" cellpadding="0" width="100%">
                   <tr>
                     <td>
                       <img src="https://www.filepicker.io/api/file/4BgENLefRVCrgMGTAENj" style="max-width:100%; display:block;">
@@ -191,16 +217,16 @@
                   </tr>
                 </table> --}}
 
-              </td>
-            </tr>
-          </table>
+                    </td>
+                  </tr>
+                </table>
 
-          <table cellspacing="0" cellpadding="0" class="force-full-width" bgcolor="#ffffff" >
-            <tr>
-              <td style="background-color:#ffffff; padding-top: 15px;">
+                <table cellspacing="0" cellpadding="0" class="force-full-width" bgcolor="#ffffff">
+                  <tr>
+                    <td style="background-color:#ffffff; padding-top: 15px;">
 
-              <center>
-                {{-- <table style="margin:0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
+                      <center>
+                        {{-- <table style="margin:0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
                   <tr>
                     <td style="text-align:left;">
                     <br>
@@ -240,66 +266,68 @@
                 </table> --}}
 
 
-                <table style="margin: 0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
-                  <tr>
-                    <td style="text-align: left;">
-                    <br>
-                      Silahkan melakukan persetujuan memo {{ $details['doc_no'] }}
+                        <table style="margin: 0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
+                          <tr>
+                            <td style="text-align: left;">
+                              <br>
+                              Silahkan melakukan persetujuan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
+                            </td>
+                          </tr>
+                        </table>
+                      </center>
+
+                      <table style="margin:0 auto;" cellspacing="0" cellpadding="10" width="100%">
+                        <tr>
+                          <td style="text-align:center; margin:0 auto;">
+                            <br>
+                            <div>
+                              <a href="{{ $details['url'] }}">{{$details['url']}}</a>
+                              <!-- <a href="{{ $details['url'] }}"
+                        style="background-color:#27aa90;color:#ffffff;display:inline-block;font-family:'Source Sans Pro', Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:45px;text-align:center;text-decoration:none;width:180px;-webkit-text-size-adjust:none;">Approve</a> -->
+                            </div>
+                            <br>
+                          </td>
+                        </tr>
+                      </table>
+                      <table cellspacing="0" cellpadding="0" bgcolor="#363636" class="force-full-width">
+                        <tr>
+                          <td style="background-color:#363636; text-align:center;">
+                            <br>
+                            <br>
+                            <img width="62" height="56" img src="https://www.filepicker.io/api/file/FjkhDKXsTFyaHnXhhBCw">
+                            <img width="68" height="56" src="https://www.filepicker.io/api/file/W6gXqm5BRL6qSvQRcI7u">
+                            <img width="61" height="56" src="https://www.filepicker.io/api/file/eV9YfQkBTiaOu9PA9gxv">
+                            <br>
+                            <br>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color:#f0f0f0; font-size: 14px; text-align:center; padding-bottom:4px;">
+                            © 2021 All Rights Reserved
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color:#27aa90; font-size: 14px; text-align:center;">
+                            <a href="#">View in browser</a> | <a href="#">Contact</a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="font-size:12px;">
+                            &nbsp;
+                          </td>
+                        </tr>
+                      </table>
+
                     </td>
                   </tr>
                 </table>
-              </center>
-
-              <table style="margin:0 auto;" cellspacing="0" cellpadding="10" width="100%">
-                <tr>
-                  <td style="text-align:center; margin:0 auto;">
-                  <br>
-                    <div>
-                        <a href="{{ $details['url'] }}"
-                        style="background-color:#27aa90;color:#ffffff;display:inline-block;font-family:'Source Sans Pro', Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:45px;text-align:center;text-decoration:none;width:180px;-webkit-text-size-adjust:none;">Approve</a>
-                    </div>
-                    <br>
-                  </td>
-                </tr>
-              </table>
-              <table cellspacing="0" cellpadding="0" bgcolor="#363636"  class="force-full-width">
-                <tr>
-                  <td style="background-color:#363636; text-align:center;">
-                  <br>
-                  <br>
-                    <img width="62" height="56" img src="https://www.filepicker.io/api/file/FjkhDKXsTFyaHnXhhBCw">
-                    <img width="68" height="56" src="https://www.filepicker.io/api/file/W6gXqm5BRL6qSvQRcI7u">
-                    <img width="61" height="56" src="https://www.filepicker.io/api/file/eV9YfQkBTiaOu9PA9gxv">
-                  <br>
-                  <br>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="color:#f0f0f0; font-size: 14px; text-align:center; padding-bottom:4px;">
-                    © 2021 All Rights Reserved
-                  </td>
-                </tr>
-                <tr>
-                  <td style="color:#27aa90; font-size: 14px; text-align:center;">
-                    <a href="#">View in browser</a> | <a href="#">Contact</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="font-size:12px;">
-                    &nbsp;
-                  </td>
-                </tr>
-              </table>
-
               </td>
             </tr>
           </table>
-          </td>
-        </tr>
-      </table>
-    </center>
-    </td>
-  </tr>
-</table>
+        </center>
+      </td>
+    </tr>
+  </table>
 </body>
+
 </html>

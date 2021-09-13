@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Employee</h1>
@@ -102,7 +102,7 @@
         </b-card>
       </div>
     </div>
-  </Layout>
+  </layout>
 </template>
 <script>
 import Layout from "@/Shared/AdminLayout"; //import layouts
@@ -120,6 +120,7 @@ export default {
     "flash",
     "breadcrumbItems",
     "userinfo",
+    "notif",
     "filters",
     "perPage",
     "test",

@@ -27,6 +27,7 @@
 <script>
 import SidebarItem from "@/components/SidebarItem";
 export default {
+  props: ["notif"],
   components: {
     SidebarItem,
   },

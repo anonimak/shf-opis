@@ -1,5 +1,5 @@
 <template>
-  <layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <b-button type="button" variant="dark" class="float-right">Delete</b-button>
     <b-button
@@ -267,6 +267,7 @@ export default {
   props: [
     "_token",
     "userinfo",
+    "notif",
     "breadcrumbItems",
     "dataBranch",
     "dataTitle",

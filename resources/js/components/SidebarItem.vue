@@ -46,6 +46,9 @@
       <inertia-link v-else class="nav-link" :href="route(item.index)">
         <i :class="item.icon"></i>
         <span>{{ item.title }}</span>
+        <span v-if="item.badge" class="float-right"
+          ><i class="fas fa-exclamation-circle"></i
+        ></span>
       </inertia-link>
     </li>
   </div>

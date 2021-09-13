@@ -1,5 +1,5 @@
 <template>
-  <layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
@@ -13,17 +13,17 @@
               <b-col col lg="12" md="12" class="mb-4">
                 <b-button-group class="float-right">
                   <b-button
-                    @click="actionApprove(dataMemo.id_approver)"
+                    @click="actionApprove(dataMemo.approver.id)"
                     variant="info"
                     >Approve</b-button
                   >
                   <b-button
-                    @click="actionRevisi(dataMemo.id_approver)"
+                    @click="actionRevisi(dataMemo.approver.id)"
                     variant="secondary"
                     >Revisi</b-button
                   >
                   <b-button
-                    @click="actionReject(dataMemo.id_approver)"
+                    @click="actionReject(dataMemo.approver.id)"
                     variant="warning"
                     >Reject</b-button
                   >
@@ -248,11 +248,13 @@ import ModalFormMemoApproval from "@/components/ModalFormMemoApproval";
 export default {
   props: [
     "userinfo",
+    "notif",
     "breadcrumbItems",
     "dataMemo",
     "proposeEmployee",
     "memocost",
     "attachments",
+    "__approving",
   ],
   metaInfo: { title: "Admin Reference Approve Page" },
   components: {

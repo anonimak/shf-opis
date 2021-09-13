@@ -241,7 +241,7 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => url('')
+            'url'     => route('user.memo.approval.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
@@ -443,6 +443,7 @@ class MemoController extends Controller
 
     public function test()
     {
+        echo route('user.memo.approval.detail', 3);
         // $details = [
         //     'title' => 'Mail from ItSolutionStuff.com',
         //     'body' => 'This is for testing email using smtp'

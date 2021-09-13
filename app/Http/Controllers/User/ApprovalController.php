@@ -41,7 +41,7 @@ class ApprovalController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getMemoDetailWithCurrentApprover($id, auth()->user()->id_employee);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
@@ -65,7 +65,8 @@ class ApprovalController extends Controller
             'dataMemo' => $memo,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
-            'attachments' => $attachments
+            'attachments' => $attachments,
+            '__approving'  => 'user.memo.approval.approving',
         ]);
     }
 
@@ -74,8 +75,8 @@ class ApprovalController extends Controller
         $status_approver = $request->input('variant');
 
         $approver = D_Memo_Approver::where('id', $id)->first();
-        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
 
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
             'status'            => $status_approver
         ]);
@@ -104,7 +105,7 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => url('')
+                    'url'     => route('user.memo.approval.detail', $memo->id)
                 ];
 
                 $detailspropose = [

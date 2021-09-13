@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <!-- Begin Page Content -->
     <div class="container-fluid">
       <!-- Page Heading -->
@@ -163,7 +163,7 @@
       </div>
     </div>
     <!-- /.container-fluid -->
-  </Layout>
+  </layout>
 </template>
 
 <script>
@@ -188,7 +188,7 @@ export default {
     TimelineItem,
     TimelineTitle,
   },
-  props: ["meta", "dataMemo", "userinfo", "__create", "__allmemo"],
+  props: ["meta", "dataMemo", "userinfo", "notif", "__create", "__allmemo"],
   methods: {
     test: function () {
       alert("oke");

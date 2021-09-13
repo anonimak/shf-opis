@@ -70,6 +70,9 @@ class LoginController extends Controller
             } elseif ($role == 1) {
                 return Redirect()->route(RouteServiceProvider::HOMEADMIN);
             } else {
+                if (session('url.intended')) {
+                    return redirect()->intended(RouteServiceProvider::HOME);
+                }
                 return Redirect()->route(RouteServiceProvider::HOME);
             }
         } else {

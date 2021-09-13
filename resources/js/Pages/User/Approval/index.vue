@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Reference Approvers</h1>
@@ -82,7 +82,7 @@
       @handleOk="handleOk"
       @handleHidden="handleHidden"
     />
-  </Layout>
+  </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
@@ -99,6 +99,7 @@ export default {
     "breadcrumbItems",
     "dataMemo",
     "userinfo",
+    "notif",
     "__approving",
     "__detail",
     "__index",

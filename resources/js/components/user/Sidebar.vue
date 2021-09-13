@@ -27,6 +27,7 @@
 <script>
 import SidebarItem from "@/components/SidebarItem";
 export default {
+  props: ["notif"],
   components: {
     SidebarItem,
   },
@@ -69,6 +70,7 @@ export default {
           link: "user.memo.approval.index",
           index: "user.memo.approval.index",
           icon: "fas fa-fw fa-clipboard-check",
+          badge: this.notif.approval_memo,
           //   child: [
           //     {
           //       title: "Memo",

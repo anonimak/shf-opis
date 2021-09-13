@@ -1,5 +1,5 @@
 <template>
-  <layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
@@ -268,6 +268,7 @@ import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 export default {
   props: [
     "userinfo",
+    "notif",
     "breadcrumbItems",
     "dataMemo",
     "proposeEmployee",

@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <!-- Begin Page Content -->
     <div class="container-fluid">
       <!-- Page Heading -->
@@ -22,7 +22,12 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div
-                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                    class="
+                      text-xs
+                      font-weight-bold
+                      text-primary text-uppercase
+                      mb-1
+                    "
                   >
                     Earnings (Monthly)
                   </div>
@@ -45,7 +50,12 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div
-                    class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                    class="
+                      text-xs
+                      font-weight-bold
+                      text-success text-uppercase
+                      mb-1
+                    "
                   >
                     Earnings (Annual)
                   </div>
@@ -68,7 +78,12 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div
-                    class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                    class="
+                      text-xs
+                      font-weight-bold
+                      text-info text-uppercase
+                      mb-1
+                    "
                   >
                     Tasks
                   </div>
@@ -107,7 +122,12 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div
-                    class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                    class="
+                      text-xs
+                      font-weight-bold
+                      text-warning text-uppercase
+                      mb-1
+                    "
                   >
                     Pending Requests
                   </div>
@@ -130,7 +150,14 @@
           <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div
-              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              class="
+                card-header
+                py-3
+                d-flex
+                flex-row
+                align-items-center
+                justify-content-between
+              "
             >
               <h6 class="m-0 font-weight-bold text-primary">
                 Earnings Overview
@@ -148,7 +175,11 @@
                   <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                 </a>
                 <div
-                  class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                  class="
+                    dropdown-menu dropdown-menu-right
+                    shadow
+                    animated--fade-in
+                  "
                   aria-labelledby="dropdownMenuLink"
                 >
                   <div class="dropdown-header">Dropdown Header:</div>
@@ -173,7 +204,14 @@
           <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div
-              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+              class="
+                card-header
+                py-3
+                d-flex
+                flex-row
+                align-items-center
+                justify-content-between
+              "
             >
               <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
               <div class="dropdown no-arrow">
@@ -189,7 +227,11 @@
                   <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                 </a>
                 <div
-                  class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                  class="
+                    dropdown-menu dropdown-menu-right
+                    shadow
+                    animated--fade-in
+                  "
                   aria-labelledby="dropdownMenuLink"
                 >
                   <div class="dropdown-header">Dropdown Header:</div>
@@ -428,7 +470,7 @@
       </div>
     </div>
     <!-- /.container-fluid -->
-  </Layout>
+  </layout>
 </template>
 
 <script>

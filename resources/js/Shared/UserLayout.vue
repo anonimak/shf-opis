@@ -1,7 +1,7 @@
 <template>
   <div id="wrapper">
     <!-- Content Wrapper -->
-    <Sidebar />
+    <Sidebar :notif="notif" />
     <div id="content-wrapper" class="d-flex flex-column">
       <!-- Main Content -->
       <div id="content">
@@ -27,7 +27,7 @@ export default {
     Navbar,
     Footer,
   },
-  props: ["userinfo"],
+  props: ["userinfo", "notif"],
   methods: {
     handleLogout() {
       alert("Ini Sudah Logout");

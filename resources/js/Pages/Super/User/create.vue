@@ -1,5 +1,5 @@
 <template>
-  <layout :userinfo="userinfo">
+  <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Create New User</h1>
@@ -118,6 +118,7 @@ export default {
   props: [
     "_token",
     "userinfo",
+    "notif",
     "breadcrumbItems",
     "dataRoles",
     "dataEmployees",
