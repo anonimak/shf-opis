@@ -85,8 +85,11 @@
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody v-if="memo.data != undefined">
-                          <tr v-for="(item, index) in memo.data" :key="item.id">
+                        <tbody v-if="dataMemo.data != undefined">
+                          <tr
+                            v-for="(item, index) in dataMemo.data"
+                            :key="item.id"
+                          >
                             <th scope="row">
                               {{
                                 (filters.page !== undefined
@@ -104,7 +107,7 @@
                               {{ item.doc_no }}
                             </td>
                             <td>
-                              {{ item.history.content }}
+                              {{ item.latest_history.content }}
                             </td>
                             <td>
                               <inertia-link
@@ -120,8 +123,8 @@
                     </b-overlay>
                   </div>
                   <Pagination
-                    v-if="memo.links != undefined"
-                    :links="memo.links"
+                    v-if="dataMemo.links != undefined"
+                    :links="dataMemo.links"
                   />
                 </div>
               </div>
@@ -180,7 +183,7 @@ export default {
       form: {
         search: this.filters.search,
       },
-      memo: { data: [], link: [] },
+      // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
       timelineItems: [
@@ -270,26 +273,26 @@ export default {
     },
     setLsTabMemo() {
       this.isLoadMemo = true;
-      this.memo = { data: [], link: [] };
+      // this.memo = { data: [], link: [] };
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
       }
       this.$inertia
         .replace(route(this.__index, { tab: this.tab[this.tabIndex] }))
         .then(() => {
-          this.memo = { ...this.dataMemo };
+          // this.memo = { ...this.dataMemo };
           this.isLoadMemo = false;
         });
     },
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      this.memo = { data: [], link: [] };
+      // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
       this.$inertia
         .replace(route(this.__index, { tab: this.tab[tabIndex] }))
         .then(() => {
-          this.memo = { ...this.dataMemo };
+          // this.memo = { ...this.dataMemo };
           this.isLoadMemo = false;
         });
     },

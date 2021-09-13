@@ -90,10 +90,10 @@
                         variant="secondary"
                         >Memo Revisi</b-badge
                       >
-                      <p v-if="dataMemo.history" class="text-muted">
+                      <p v-if="dataMemo.latest_history" class="text-muted">
                         <small>
                           <em>
-                            {{ dataMemo.history.title }}
+                            {{ dataMemo.latest_history.title }}
                           </em>
                         </small>
                       </p>

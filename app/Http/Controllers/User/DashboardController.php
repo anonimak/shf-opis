@@ -12,9 +12,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $dataMemo = Memo::where('status', '!=', 'edit')->where('id_employee', auth()->user()->id_employee)->orderBy('propose_at', 'DESC')->with(['history' => function ($history) {
-            return $history->orderBy('id', 'DESC')->first();
-        }])->with(['histories' => function ($history) {
+        $dataMemo = Memo::where('status', '!=', 'edit')->where('id_employee', auth()->user()->id_employee)->orderBy('propose_at', 'DESC')->with('latestHistory')->with(['histories' => function ($history) {
             return $history->orderBy('id', 'DESC');
         }])->first();
 

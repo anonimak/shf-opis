@@ -209,7 +209,7 @@
                     <td>{{ $cost->Total }}</td>
                 </tr>
                 @endforeach
-                <tr>
+                {{-- <tr>
                     <td colspan="4" style="height: 20px"> </td>
                 </tr>
                 <tr>
@@ -224,7 +224,7 @@
                 <tr>
                     <th colspan="3">GRAND TOTAL</th>
                     <th>{{$grandtotal}}</th>
-                </tr>
+                </tr> --}}
             </tbody>
         </table>
         <br>

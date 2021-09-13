@@ -22,12 +22,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_mapValues__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lodash_mapValues__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var vue_cute_timeline__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-cute-timeline */ "./node_modules/vue-cute-timeline/dist/vue-cute-timeline.js");
 /* harmony import */ var vue_cute_timeline__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(vue_cute_timeline__WEBPACK_IMPORTED_MODULE_8__);
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
 //
 //
 //
@@ -195,10 +192,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       form: {
         search: this.filters.search
       },
-      memo: {
-        data: [],
-        link: []
-      },
+      // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
       timelineItems: [{
@@ -273,11 +267,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     setLsTabMemo: function setLsTabMemo() {
       var _this2 = this;
 
-      this.isLoadMemo = true;
-      this.memo = {
-        data: [],
-        link: []
-      };
+      this.isLoadMemo = true; // this.memo = { data: [], link: [] };
 
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
@@ -286,7 +276,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$inertia.replace(route(this.__index, {
         tab: this.tab[this.tabIndex]
       })).then(function () {
-        _this2.memo = _objectSpread({}, _this2.dataMemo);
+        // this.memo = { ...this.dataMemo };
         _this2.isLoadMemo = false;
       });
     },
@@ -294,16 +284,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       this.tabIndex = tabIndex;
-      this.isLoadMemo = true;
-      this.memo = {
-        data: [],
-        link: []
-      };
+      this.isLoadMemo = true; // this.memo = { data: [], link: [] };
+
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
       this.$inertia.replace(route(this.__index, {
         tab: this.tab[tabIndex]
       })).then(function () {
-        _this3.memo = _objectSpread({}, _this3.dataMemo);
+        // this.memo = { ...this.dataMemo };
         _this3.isLoadMemo = false;
       });
     }
@@ -6594,10 +6581,10 @@ var render = function() {
                                       ])
                                     ]),
                                     _vm._v(" "),
-                                    _vm.memo.data != undefined
+                                    _vm.dataMemo.data != undefined
                                       ? _c(
                                           "tbody",
-                                          _vm._l(_vm.memo.data, function(
+                                          _vm._l(_vm.dataMemo.data, function(
                                             item,
                                             index
                                           ) {
@@ -6642,7 +6629,8 @@ var render = function() {
                                                 _vm._v(
                                                   "\n                            " +
                                                     _vm._s(
-                                                      item.history.content
+                                                      item.latest_history
+                                                        .content
                                                     ) +
                                                     "\n                          "
                                                 )
@@ -6684,9 +6672,9 @@ var render = function() {
                             1
                           ),
                           _vm._v(" "),
-                          _vm.memo.links != undefined
+                          _vm.dataMemo.links != undefined
                             ? _c("Pagination", {
-                                attrs: { links: _vm.memo.links }
+                                attrs: { links: _vm.dataMemo.links }
                               })
                             : _vm._e()
                         ],

@@ -41,9 +41,9 @@ class Memo extends Model
         return $this->hasMany(D_Memo_History::class, 'id_memo', 'id');
     }
 
-    public function history()
+    public function latestHistory()
     {
-        return $this->hasOne(D_Memo_History::class, 'id_memo', 'id');
+        return $this->hasOne(D_Memo_History::class, 'id_memo', 'id')->latest('id');
     }
 
     public static function getMemoDetail($id)

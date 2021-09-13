@@ -30,9 +30,7 @@ class MemoController extends Controller
         }
         return Inertia::render('User/Memo', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with(['history' => function ($history) {
-                return $history->orderBy('id', 'DESC')->first();
-            }])->paginate(10),
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -375,18 +373,18 @@ class MemoController extends Controller
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
-        $sumtotal = 0;
+        // $sumtotal = 0;
         $memocost = (array) json_decode($memo->cost);
-        $memocost = array_map(function ($itemcost) use ($sumtotal) {
-            $itemcost->Total = $itemcost->QTY * $itemcost->Price;
-            $sumtotal += $itemcost->Total;
-            return $itemcost;
-        }, $memocost);
-        foreach ($memocost as $itemcost) {
-            $sumtotal += $itemcost->Total;
-        }
-        $ppn = $sumtotal * 10 / 100;
-        $grandtotal = $sumtotal - $ppn;
+        // $memocost = array_map(function ($itemcost) use ($sumtotal) {
+        //     $itemcost->Total = $itemcost->QTY * $itemcost->Price;
+        //     $sumtotal += $itemcost->Total;
+        //     return $itemcost;
+        // }, $memocost);
+        // foreach ($memocost as $itemcost) {
+        //     $sumtotal += $itemcost->Total;
+        // }
+        // $ppn = $sumtotal * 10 / 100;
+        // $grandtotal = $sumtotal - $ppn;
 
         $data = [
             'memo' => $memo,
@@ -395,9 +393,9 @@ class MemoController extends Controller
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
-            'sumtotal' => $sumtotal,
-            'ppn' => $ppn,
-            'grandtotal' => $grandtotal,
+            // 'sumtotal' => $sumtotal,
+            // 'ppn' => $ppn,
+            // 'grandtotal' => $grandtotal,
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');
