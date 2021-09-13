@@ -100,6 +100,7 @@
                       <th>Approver Name</th>
                       <th>Position</th>
                       <th>Status</th>
+                      <th>Message</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -143,6 +144,10 @@
                           variant="secondary"
                           >Revisi</b-badge
                         >
+                      </td>
+                      <td>
+                        <p v-if="approver.msg">{{ approver.msg }}</p>
+                        <span v-else>-</span>
                       </td>
                     </tr>
                   </tbody>

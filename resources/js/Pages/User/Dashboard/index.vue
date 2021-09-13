@@ -103,7 +103,7 @@
               </table>
 
               <inertia-link class="btn btn-secondary" :href="route(__allmemo)"
-                >all memo</inertia-link
+                >All memo</inertia-link
               >
             </div>
           </div>

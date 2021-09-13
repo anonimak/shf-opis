@@ -73,12 +73,14 @@ class ApprovalController extends Controller
     public function approving(Request $request, $id)
     {
         $status_approver = $request->input('variant');
-
+        $msg = ($request->input('message')) ? $request->input('message') : null;
+        $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Memo_Approver::where('id', $id)->first();
 
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
-            'status'            => $status_approver
+            'status'            => $status_approver,
+            'msg'               => $msg
         ]);
 
         if ($status_approver == 'approve') {
@@ -87,7 +89,7 @@ class ApprovalController extends Controller
                 'title'     => "Approved lvl {$approver->idx}",
                 'id_memo'   => $memo->id,
                 'type'      => 'success',
-                'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname})"
+                'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
             ]);
             $nextApprover = D_Memo_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
 
@@ -142,12 +144,12 @@ class ApprovalController extends Controller
                 'title'     => "Memo Revisi",
                 'id_memo'   => $memo->id,
                 'type'      => 'warning',
-                'content'   => "Memo {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). message ()"
+                'content'   => "Memo {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
                 'subject' => "Memo $memo->doc_no revisi",
-                'message' => "Memo $memo->doc_no has revisi"
+                'message' => "Memo $memo->doc_no has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -161,12 +163,12 @@ class ApprovalController extends Controller
                 'title'     => "Memo Rejected",
                 'id_memo'   => $memo->id,
                 'type'      => 'danger',
-                'content'   => "Memo {$memo->doc_no} has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). message ()"
+                'content'   => "Memo {$memo->doc_no} has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
-                'subject' => "Memo $memo->doc_no reject",
-                'message' => "Memo $memo->doc_no has reject"
+                'subject' => "Memo $memo->doc_no rejected",
+                'message' => "Memo $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
