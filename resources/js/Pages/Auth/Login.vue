@@ -1,5 +1,6 @@
 <template>
   <Layout>
+    <flash-msg/>
     <div class="card o-hidden border-0 shadow-lg">
       <div class="card-body p-0">
         <!-- Nested Row within Card Body -->
@@ -67,6 +68,7 @@
 
 <script>
 import Layout from "@/Shared/LoginLayout"; //import layouts
+import FlashMsg from "@/components/Alert";
 
 export default {
   metaInfo: { title: "Beranda" },
@@ -87,8 +89,9 @@ export default {
   },
   components: {
     Layout,
+    FlashMsg
   },
-  props: ["meta"],
+  props: ["meta","flash"],
   methods: {
     onSubmit() {
       this.$inertia.post("/login", this.form);
