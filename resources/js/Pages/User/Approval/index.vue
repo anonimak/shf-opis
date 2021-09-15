@@ -1,5 +1,5 @@
 <template>
-  <Layout :userinfo="userinfo">
+  <Layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Approval Memo</h1>
@@ -99,6 +99,7 @@ export default {
     "breadcrumbItems",
     "dataMemo",
     "userinfo",
+    "notif",
     "__approving",
     "__detail",
     "__index",
