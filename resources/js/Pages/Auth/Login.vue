@@ -92,13 +92,22 @@ export default {
     FlashMsg
   },
   props: ["meta","flash"],
+  mounted(){
+    // check remember exist
+    if(this.$ls.get("email")){
+      this.form.email = this.$ls.get("email")
+    }
+  },
   methods: {
     onSubmit() {
+      if(this.form.remember){
+        this.$ls.set("email", this.form.email);
+      }
       this.$inertia.post("/login", this.form);
     },
     onReset(e) {
       e.preventDefault();
-    },
+    }
   },
 };
 </script>
