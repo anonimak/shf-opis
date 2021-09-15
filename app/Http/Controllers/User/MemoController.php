@@ -55,7 +55,8 @@ class MemoController extends Controller
                 'revisi' => Memo::getMemo(auth()->user()->id_employee, 'revisi')->count(),
             ],
             '__index'   => 'user.memo.statusmemo.index',
-            '__webpreview'   => 'user.memo.statusmemo.webpreview'
+            '__webpreview'   => 'user.memo.statusmemo.webpreview',
+            '__senddraft'   => 'user.memo.statusmemo.senddraft'
         ]);
     }
 
@@ -64,7 +65,7 @@ class MemoController extends Controller
 
         return Inertia::render('User/Memo/Draft', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee, "edit", $request->input('search'))->paginate(10),
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -170,8 +171,7 @@ class MemoController extends Controller
             'payment'           => $request->input('payment'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
-        $memo = Memo::where('id', $id)->first();
-        return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Successfull updated.");
+        return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
     }
 
     public function store(Request $request)
@@ -206,7 +206,14 @@ class MemoController extends Controller
         if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
         }
-        $doc_no = $this->generateDocNo();
+
+        $check_history = D_Memo_History::where('id_memo', $id)->get();
+        if($check_history->count() > 0){
+            $doc_no = $memo->doc_no;
+        } else {
+            $doc_no = $this->generateDocNo();
+        }
+        
         // update status menjadi submit
         Memo::where('id', $id)->update([
             'status'   => 'submit',
@@ -438,10 +445,24 @@ class MemoController extends Controller
         ]);
     }
 
+    public function senddraft(Request $request, $id){
+        Memo::where('id', $id)->update([
+            'status'   => 'edit'
+        ]);
+
+        D_Memo_Approver::where('id_memo', $id)->update([
+            'status'   => 'edit'
+        ]);
+
+        $memo = Memo::where('id', $id)->first();
+        return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "memo has sent to draft.");
+    }
+
 
     public function test()
     {
-        echo route('user.memo.approval.detail', 3);
+        // $memo = D_Memo_History::where('id_memo', 6)->get();
+        // if($memo->count() > 1);
         // $details = [
         //     'title' => 'Mail from ItSolutionStuff.com',
         //     'body' => 'This is for testing email using smtp'

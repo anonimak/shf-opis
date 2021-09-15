@@ -54,17 +54,7 @@
                       </template>
                     </b-tab>
                   </b-tabs>
-                  <div class="row">
-                    <!-- <div class="col-12">
-                      <inertia-link
-                        :href="route(__create)"
-                        class="btn btn-primary my-2 float-right"
-                      >
-                        <i class="fas fa-plus"></i>
-                        Add</inertia-link
-                      >
-                    </div> -->
-                  </div>
+                  <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
@@ -110,12 +100,19 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                              <inertia-link
-                                :href="route(__webpreview, item.id)"
-                                class="btn btn-secondary btn-sm"
-                              >
-                                preview
-                              </inertia-link>
+                                <inertia-link
+                                  v-if="tabIndex == 3"
+                                  :href="route(__senddraft, item.id)"
+                                  class="btn btn-warning btn-sm my-2"
+                                >
+                                  send to draft
+                                </inertia-link>
+                                <inertia-link
+                                  :href="route(__webpreview, item.id)"
+                                  class="btn btn-secondary btn-sm"
+                                >
+                                  preview
+                                </inertia-link>
                             </td>
                           </tr>
                         </tbody>
@@ -129,18 +126,6 @@
                 </div>
               </div>
             </keep-alive>
-            <b-button v-b-modal.modal-1>Launch demo modal</b-button>
-
-            <b-modal id="modal-1" title="BootstrapVue">
-              <timeline>
-                <timeline-title>title</timeline-title>
-                <timeline-item bg-color="#9dd8e0">
-                  <p>test</p>
-                  <p>now</p>
-                </timeline-item>
-                <timeline-item :hollow="true">item2</timeline-item>
-              </timeline>
-            </b-modal>
           </b-card>
         </div>
       </div>
@@ -175,6 +160,7 @@ export default {
     "__destroy",
     "__index",
     "__webpreview",
+    "__senddraft",
   ],
   metaInfo: { title: "Admin Reference Approve Page" },
   data() {
@@ -186,17 +172,6 @@ export default {
       // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
-      timelineItems: [
-        {
-          timestamp: Date.parse("2021-05-29T20:20:46.444Z"),
-          title: "Dolore ullamco exercitation commodo",
-          content: "Esse dolore consectetur aliqua laboris sunt aliqua do non.",
-        },
-        {
-          timestamp: Date.parse("2021-05-28T20:20:46.444Z"),
-          title: "Voluptate pariatur dolore laborum eu",
-        },
-      ],
     };
   },
   components: {

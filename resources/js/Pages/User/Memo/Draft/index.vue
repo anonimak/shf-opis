@@ -33,6 +33,7 @@
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Title</th>
+                          <th scope="col">Status</th>
                           <th scope="col">Action</th>
                         </tr>
                       </thead>
@@ -53,6 +54,15 @@
                           </th>
                           <td>
                             {{ item.title }}
+                            <b-badge v-if="item.latest_history" variant="warning">
+                              revisi
+                            </b-badge>
+                          </td>
+                          <td>
+                            <small v-if="item.latest_history">
+                              {{item.latest_history.content}}
+                            </small>
+                            <span v-else>-</span>
                           </td>
                           <td>
                             <b-button-group size="sm">
