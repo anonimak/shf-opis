@@ -160,8 +160,14 @@
                 </tr>
                 <tr>
                     @foreach ($memo->approvers as $approver)
+                        @if($approver->status == 'submit' || $approver->status == 'edit')
                         {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
                         <td>-</td>
+                        @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
+                        <td><div style="font-family: ZapfDingbats, sans-serif;">8</div></td>
+                        @else
+                        <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
+                        @endif
                     @endforeach
                 </tr>
             </tbody>

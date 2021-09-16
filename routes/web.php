@@ -95,6 +95,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/', 'User\ApprovalController@index')->name('index');
             Route::get('/{memo}', 'User\ApprovalController@detail')->name('detail');
             Route::put('/{memo}', 'User\ApprovalController@approving')->name('approving');
+            Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
         });
     });
 

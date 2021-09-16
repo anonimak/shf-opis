@@ -43,6 +43,12 @@
                         </td>
                         <td>
                           <b-button-group>
+                            <a
+                              target="_blank"
+                              class="btn btn-success"
+                              :href="route(__previewpdf, item.id)"
+                              >Preview PDF</a
+                            >
                             <b-button
                               @click="actionApprove(item.id_approver)"
                               variant="info"
@@ -101,6 +107,7 @@ export default {
     "userinfo",
     "notif",
     "__approving",
+    "__previewpdf",
     "__detail",
     "__index",
   ],

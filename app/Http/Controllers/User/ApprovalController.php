@@ -33,6 +33,7 @@ class ApprovalController extends Controller
                 ]
             ),
             '__approving'  => 'user.memo.approval.approving',
+            '__previewpdf'  => 'user.memo.approval.preview',
             '__detail'    => 'user.memo.approval.detail',
             '__index'    => 'user.memo.approval.index',
         ]);
