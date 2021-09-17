@@ -48,6 +48,7 @@
         "tiptap-extensions": "^1.35.2",
         "vue-cookies": "^1.7.4",
         "vue-cute-timeline": "^1.2.8",
+        "vue-file-agent": "^1.7.3",
         "vue-grid-layout": "^2.3.8",
         "vue-ls": "^3.2.2",
         "vue-material-design-icons": "^4.11.0",

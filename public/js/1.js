@@ -156,21 +156,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
  //import layouts
 
 
@@ -182,7 +167,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "notif", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__index", "__webpreview"],
+  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "notif", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__index", "__webpreview", "__senddraft"],
   metaInfo: {
     title: "Admin Reference Approve Page"
   },
@@ -194,15 +179,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       // memo: { data: [], link: [] },
       isLoadMemo: false,
-      isCheched: false,
-      timelineItems: [{
-        timestamp: Date.parse("2021-05-29T20:20:46.444Z"),
-        title: "Dolore ullamco exercitation commodo",
-        content: "Esse dolore consectetur aliqua laboris sunt aliqua do non."
-      }, {
-        timestamp: Date.parse("2021-05-28T20:20:46.444Z"),
-        title: "Voluptate pariatur dolore laborum eu"
-      }]
+      isCheched: false
     };
   },
   components: {
@@ -6639,6 +6616,27 @@ var render = function() {
                                               _c(
                                                 "td",
                                                 [
+                                                  _vm.tabIndex == 3
+                                                    ? _c(
+                                                        "inertia-link",
+                                                        {
+                                                          staticClass:
+                                                            "btn btn-warning btn-sm my-2",
+                                                          attrs: {
+                                                            href: _vm.route(
+                                                              _vm.__senddraft,
+                                                              item.id
+                                                            )
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                                send to draft\n                              "
+                                                          )
+                                                        ]
+                                                      )
+                                                    : _vm._e(),
+                                                  _vm._v(" "),
                                                   _c(
                                                     "inertia-link",
                                                     {
@@ -6653,7 +6651,7 @@ var render = function() {
                                                     },
                                                     [
                                                       _vm._v(
-                                                        "\n                              preview\n                            "
+                                                        "\n                                preview\n                              "
                                                       )
                                                     ]
                                                   )
@@ -6681,50 +6679,7 @@ var render = function() {
                         1
                       )
                     ])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "b-button",
-                    {
-                      directives: [
-                        {
-                          name: "b-modal",
-                          rawName: "v-b-modal.modal-1",
-                          modifiers: { "modal-1": true }
-                        }
-                      ]
-                    },
-                    [_vm._v("Launch demo modal")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-modal",
-                    { attrs: { id: "modal-1", title: "BootstrapVue" } },
-                    [
-                      _c(
-                        "timeline",
-                        [
-                          _c("timeline-title", [_vm._v("title")]),
-                          _vm._v(" "),
-                          _c(
-                            "timeline-item",
-                            { attrs: { "bg-color": "#9dd8e0" } },
-                            [
-                              _c("p", [_vm._v("test")]),
-                              _vm._v(" "),
-                              _c("p", [_vm._v("now")])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c("timeline-item", { attrs: { hollow: true } }, [
-                            _vm._v("item2")
-                          ])
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
+                  ])
                 ],
                 1
               )

@@ -126,6 +126,11 @@ class MemoController extends Controller
 
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
                 [
@@ -208,12 +213,12 @@ class MemoController extends Controller
         }
 
         $check_history = D_Memo_History::where('id_memo', $id)->get();
-        if($check_history->count() > 0){
+        if ($check_history->count() > 0) {
             $doc_no = $memo->doc_no;
         } else {
             $doc_no = $this->generateDocNo();
         }
-        
+
         // update status menjadi submit
         Memo::where('id', $id)->update([
             'status'   => 'submit',
@@ -256,25 +261,16 @@ class MemoController extends Controller
 
     public function fileUploadAttach(Request $request, $id)
     {
-        // $memo = Memo::getMemoDetail($id);
-        // dd($request->all());
-        foreach ($request->post('attach') as $uploadedFile) {
-            $uploadedFile = json_decode($uploadedFile);
-            // var_dump($uploadedFile);
-            // die();
-            $filename = time() . '_' . $uploadedFile->name;
-
-            // $path = $uploadedFile->store($filename, 'uploads');
-            Storage::put('public/uploads/memo/attach/' . $filename, $uploadedFile);
+        foreach ($request->file('files') as $file) {
+            $filename = $file->store('public/uploads/memo/attach');
             D_Memo_Attachment::create([
                 'id_memo' => $id,
-                'name' => $filename,
-                'real_name' => $uploadedFile->name
+                'name' => $file->hashName(),
+                'real_name' => $file->getClientOriginalName()
             ]);
         }
 
-        return back()
-            ->with('success', 'You have successfully upload file.');
+        return Redirect::route('user.memo.draft.edit', $id)->with('success', "Successfull upload attachment.");
     }
 
     public function destroyAttach($id)
@@ -282,7 +278,7 @@ class MemoController extends Controller
         $attach = D_Memo_Attachment::where('id', $id)->first();
         $attach->delete();
         return
-            Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->name deleted.");
+            Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->real_name deleted.");
     }
 
     public function updateAcknowledge(Request $request, $id)
@@ -445,7 +441,8 @@ class MemoController extends Controller
         ]);
     }
 
-    public function senddraft(Request $request, $id){
+    public function senddraft(Request $request, $id)
+    {
         Memo::where('id', $id)->update([
             'status'   => 'edit'
         ]);

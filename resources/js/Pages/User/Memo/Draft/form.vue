@@ -44,6 +44,71 @@
                       </tr>
                     </tbody>
                   </table>
+                  <b-form-group
+                    id="input-group-text"
+                    label="Attachment:"
+                    label-for="input-text"
+                  >
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>File</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(attachment, index) in dataAttachments"
+                          :key="index"
+                        >
+                          <td>
+                            <a
+                              :href="attachment.name"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {{ attachment.real_name }}
+                            </a>
+                          </td>
+                          <td>
+                            <b-button
+                              size="sm"
+                              variant="danger"
+                              @click="removeAttachment(attachment.id)"
+                              >remove</b-button
+                            >
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <VueFileAgent
+                      class="mb-2"
+                      ref="vueFileAgent"
+                      :theme="'list'"
+                      :multiple="true"
+                      :deletable="true"
+                      :meta="true"
+                      :accept="'.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
+                      :maxSize="'2MB'"
+                      :maxFiles="4"
+                      :helpText="'Choose images, pdf, excel or word files'"
+                      :errorText="{
+                        type: 'Invalid file type. Only images, excel, pdf and word files allowed',
+                        size: 'Files should not exceed 2MB in size',
+                      }"
+                      @select="filesSelected($event)"
+                      @beforedelete="onBeforeDelete($event)"
+                      @delete="fileDeleted($event)"
+                      v-model="fileRecords"
+                    ></VueFileAgent>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      :disabled="!fileRecordsForUpload.length"
+                      @click="uploadFiles()"
+                    >
+                      Upload {{ fileRecordsForUpload.length }} files
+                    </button>
+                  </b-form-group>
                 </b-col>
                 <b-col col lg="6">
                   <b-row class="mb-4">
@@ -242,94 +307,7 @@
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <b-form-group
-                    id="input-group-text"
-                    label="Attachment:"
-                    label-for="input-text"
-                  >
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>File</th>
-                          <th>Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(attachment, index) in dataAttachments"
-                          :key="index"
-                        >
-                          <td>
-                            {{ attachment.name }}
-                          </td>
-                          <td>
-                            <b-button
-                              size="sm"
-                              variant="danger"
-                              @click="removeAttachment(attachment.id)"
-                              >remove</b-button
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <ul>
-                      <li v-for="(file, index) in files" :key="index">
-                        <span>{{ file.name }}</span>
-                        <b-badge variant="secondary"
-                          ><a href="#" @click.prevent="remove(file)"
-                            >-</a
-                          ></b-badge
-                        >
-                      </li>
-                    </ul>
-                    <file-upload
-                      :extensions="['jpg', 'png', 'xls', 'xlsx', 'pdf']"
-                      :maximum="3"
-                      class="btn btn-primary"
-                      ref="upload"
-                      v-model="files"
-                      :multiple="true"
-                      :headers="{
-                        'X-Token-CSRF': 'tdsr',
-                      }"
-                      :post-action="route(__attachment, dataMemo.id)"
-                      @input-file="inputFile"
-                      @input-filter="inputFilter"
-                    >
-                      Add Attachment file
-                    </file-upload>
-                    <!-- <button
-                                            v-show="
-                                                !$refs.upload ||
-                                                    !$refs.upload.active
-                                            "
-                                            @click.prevent="
-                                                $refs.upload.active = true
-                                            "
-                                            type="button"
-                                        >
-                                            Start upload
-                                        </button> -->
-                    <b-button
-                      v-show="
-                        (!$refs.upload || !$refs.upload.active) &&
-                        files.length > 0
-                      "
-                      @click.prevent="uploadFile"
-                      type="button"
-                      variant="primary"
-                    >
-                      Start upload
-                      <b-spinner
-                        v-show="false"
-                        label="Uploading..."
-                        small
-                      ></b-spinner>
-                    </b-button>
-                  </b-form-group>
-                </div>
+                <div class="col-12"></div>
               </b-row>
               <b-row align-h="center">
                 <b-button-group>
@@ -390,7 +368,6 @@ export default {
       selectedAcknowledge: null,
       form: {},
       dataApprovers: [],
-      files: [],
       dataCost: null,
       colHeaders: ["Product Name", "QTY", "Price", "Total"],
       hotSettings: {
@@ -436,19 +413,18 @@ export default {
           engine: HyperFormula.buildEmpty({ maxColumns: 1000 }),
         },
         licenseKey: "non-commercial-and-evaluation",
-        // columnSummary: [
-        //     {
-        //         destinationRow: 0,
-        //         destinationColumn: 3,
-        //         reversedRowCoords: true,
-        //         forceNumeric: true,
-        //         type: "sum"
-        //     }
-        // ],
+
         afterChange: () => {
           this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
         },
       },
+      fileRecords: [],
+      uploadUrl: "https://www.mocky.io/v2/5d4fb20b3000005c111099e3",
+      uploadHeaders: {
+        "X-Test-Header": "vue-file-agent",
+        "X-CSRF-TOKEN": this._token,
+      },
+      fileRecordsForUpload: [], // maintain an upload queue
     };
   },
   mounted() {
@@ -466,6 +442,69 @@ export default {
     },
   },
   methods: {
+    uploadFiles: function () {
+      // Using the default uploader. You may use another uploader instead.
+      var form_data = new FormData();
+
+      // console.log(this.fileRecordsForUpload[0].file);
+      // this.fileRecordsForUpload.forEach((item, index) => {
+      //   console.log(item.file);
+      //   form_data.append(`files[${index}]`, item.file);
+      // });
+      _.each(this.fileRecordsForUpload, (item, index) => {
+        console.log(item.file);
+        form_data.append(`files[${index}]`, item.file);
+      });
+      // console.log(form_data);
+      // this.$refs.vueFileAgent.upload(
+      //   route(this.__attachment, this.dataMemo.id),
+      //   this.uploadHeaders,
+      //   this.fileRecordsForUpload
+      // );
+      this.$inertia.post(
+        route(this.__attachment, this.dataMemo.id),
+        form_data,
+        {
+          forceFormData: true,
+        }
+      );
+    },
+    deleteUploadedFile: function (fileRecord) {
+      // Using the default uploader. You may use another uploader instead.
+      this.$refs.vueFileAgent.deleteUpload(
+        this.uploadUrl,
+        this.uploadHeaders,
+        fileRecord
+      );
+    },
+    filesSelected: function (fileRecordsNewlySelected) {
+      var validFileRecords = fileRecordsNewlySelected.filter(
+        (fileRecord) => !fileRecord.error
+      );
+      this.fileRecordsForUpload =
+        this.fileRecordsForUpload.concat(validFileRecords);
+    },
+    onBeforeDelete: function (fileRecord) {
+      var i = this.fileRecordsForUpload.indexOf(fileRecord);
+      if (i !== -1) {
+        // queued file, not yet uploaded. Just remove from the arrays
+        this.fileRecordsForUpload.splice(i, 1);
+        var k = this.fileRecords.indexOf(fileRecord);
+        if (k !== -1) this.fileRecords.splice(k, 1);
+      } else {
+        if (confirm("Are you sure you want to delete?")) {
+          this.$refs.vueFileAgent.deleteFileRecord(fileRecord); // will trigger 'delete' event
+        }
+      }
+    },
+    fileDeleted: function (fileRecord) {
+      var i = this.fileRecordsForUpload.indexOf(fileRecord);
+      if (i !== -1) {
+        this.fileRecordsForUpload.splice(i, 1);
+      } else {
+        this.deleteUploadedFile(fileRecord);
+      }
+    },
     fillForm() {
       this.form = { ...this.dataMemo };
       this.dataApprovers = [...this.form.approvers];
@@ -493,43 +532,6 @@ export default {
             this.$refs.upload.remove();
           });
       }
-    },
-    uploadFile: function () {
-      var formData = new FormData();
-      // console.log(this.$refs.upload.get(0));
-      _.forEach(this.files, function (file) {
-        formData.append("attach[]", JSON.stringify(file));
-      });
-
-      this.$inertia.post(route(this.__attachment, this.dataMemo.id), formData);
-    },
-    inputFile: function (newFile, oldFile) {
-      if (newFile && oldFile && !newFile.active && oldFile.active) {
-        // Get response data
-        console.log("response", newFile.response);
-        if (newFile.xhr) {
-          //  Get the response status code
-          console.log("status", newFile.xhr.status);
-        }
-      }
-    },
-    inputFilter: function (newFile, oldFile, prevent) {
-      if (newFile && !oldFile) {
-        // Filter non-image file
-        if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
-          return prevent();
-        }
-      }
-
-      // Create a blob field
-      newFile.blob = "";
-      let URL = window.URL || window.webkitURL;
-      if (URL && URL.createObjectURL) {
-        newFile.blob = URL.createObjectURL(newFile.file);
-      }
-    },
-    remove(file) {
-      this.$refs.upload.remove(file);
     },
     removeAttachment(id) {
       this.$inertia.delete(route(this.__removeAttachment, id)).then(() => {});
