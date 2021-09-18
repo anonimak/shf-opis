@@ -11,6 +11,7 @@ use App\Models\D_Memo_History;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ApprovalController extends Controller
@@ -46,6 +47,10 @@ class ApprovalController extends Controller
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
 
         return Inertia::render('User/Approval/preview', [
             'breadcrumbItems' => array(

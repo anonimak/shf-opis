@@ -375,7 +375,6 @@ class MemoController extends Controller
         }])->with('position')->get();
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-
         // $sumtotal = 0;
         $memocost = (array) json_decode($memo->cost);
         // $memocost = array_map(function ($itemcost) use ($sumtotal) {
@@ -413,7 +412,11 @@ class MemoController extends Controller
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+        
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
                 [

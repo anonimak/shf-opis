@@ -223,7 +223,13 @@
                   </thead>
                   <tbody>
                     <tr v-for="(attachment, index) in attachments" :key="index">
-                      <td>{{ attachment.name }}</td>
+                      <a
+                        :href="attachment.name"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {{ attachment.real_name }}
+                      </a>
                     </tr>
                   </tbody>
                 </table>
