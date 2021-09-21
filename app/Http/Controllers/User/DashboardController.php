@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\D_Memo_History;
 use App\Models\Memo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -26,5 +27,10 @@ class DashboardController extends Controller
             '__create'  => 'user.memo.create',
             '__allmemo'  => 'user.memo.statusmemo.index',
         ]);
+    }
+
+    public function linkstorage()
+    {
+        Artisan::call('storage:link');
     }
 }
