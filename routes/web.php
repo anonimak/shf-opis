@@ -104,5 +104,9 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
 Route::get('/', 'HomeController@index');
 
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+});
+
 // Logout
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
