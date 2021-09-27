@@ -32,7 +32,7 @@ class Ref_Type_Memo extends Model
     public function ref_module_approver_detail()
     {
         return $this->hasManyThrough(
-            Ref_Module_Approver_detail::class,
+            Ref_Module_Approver_Detail::class,
             Ref_Module_Approver::class,
             'id', // Local key on the ref_module_approver table...
             'id_ref_module_approver', // Foreign key on the ref_module_approver table...
