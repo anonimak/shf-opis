@@ -104,7 +104,7 @@
                     <button
                       class="btn btn-primary btn-sm"
                       :disabled="!fileRecordsForUpload.length"
-                      @click="uploadFiles()"
+                      @click.prevent="uploadFiles()"
                     >
                       Upload {{ fileRecordsForUpload.length }} files
                     </button>
