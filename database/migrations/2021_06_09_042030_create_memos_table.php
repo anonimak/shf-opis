@@ -32,42 +32,6 @@ class CreateMemosTable extends Migration
             $table->foreign('id_type')->references('id')->on('ref_type_memo');
             $table->foreign('id_employee')->references('id')->on('m_employees')->onDelete('cascade')->onUpdate('cascade');
         });
-
-        Schema::create('d_memo_attachments', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_memo');
-            $table->text('real_name');
-            $table->text('name');
-            $table->timestamps();
-
-            // foreign key
-            $table->foreign('id_memo')->references('id')->on('m_memos')->onDelete('cascade')->onUpdate('cascade');
-        });
-
-        Schema::create('d_memo_approvers', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_memo');
-            $table->unsignedBigInteger('id_employee');
-            $table->integer('idx');
-            $table->text('msg')->nullable();
-            $table->enum('status', ['submit', 'edit', 'reject', 'approve', 'revisi'])->default('edit');
-            $table->timestamps();
-
-            // foreign key
-            $table->foreign('id_memo')->references('id')->on('m_memos')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('id_employee')->references('id')->on('m_employee')->onDelete('cascade')->onUpdate('cascade');
-        });
-
-        Schema::create('d_memo_acknowledge', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_memo');
-            $table->unsignedBigInteger('id_employee');
-            $table->timestamps();
-
-            // foreign key
-            $table->foreign('id_memo')->references('id')->on('m_memos')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('id_employee')->references('id')->on('m_employee')->onDelete('cascade')->onUpdate('cascade');
-        });
     }
 
     /**
@@ -78,8 +42,5 @@ class CreateMemosTable extends Migration
     public function down()
     {
         Schema::dropIfExists('memos');
-        Schema::dropIfExists('d_memo_attachments');
-        Schema::dropIfExists('d_memo_approvers');
-        Schema::dropIfExists('d_memo_acknowledge');
     }
 }
