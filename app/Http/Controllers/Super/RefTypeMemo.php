@@ -38,6 +38,7 @@ class RefTypeMemo extends Controller
             '__edit'    => 'super.ref_type_memo.edit',
             '__show'    => 'super.ref_type_memo.show',
             '__destroy' => 'super.ref_type_memo.destroy',
+            '__template' => 'super.ref_template_memo.index',
             '__index'   => 'super.ref_type_memo.index'
         ]);
     }

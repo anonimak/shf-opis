@@ -13,7 +13,7 @@ class Employee_History extends Model
 
     public function branch()
     {
-        return $this->belongsTo(Branch::class, 'id_branch', 'id')->select('id', 'branch_name');
+        return $this->belongsTo(Branch::class, 'id_branch', 'id')->select('id', 'branch_name', 'is_head');
     }
 
     public function position()

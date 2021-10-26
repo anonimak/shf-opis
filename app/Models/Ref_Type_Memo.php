@@ -29,6 +29,11 @@ class Ref_Type_Memo extends Model
         return $this->belongsTo(Ref_Module_Approver::class, 'id_ref_module_approver', 'id');
     }
 
+    public function templatememo()
+    {
+        return $this->hasMany(Ref_Template_Cost::class, 'id_ref_type_memo', 'id');
+    }
+
     public function ref_module_approver_detail()
     {
         return $this->hasManyThrough(
@@ -58,13 +63,16 @@ class Ref_Type_Memo extends Model
         return $typememo;
     }
 
-    public static function get_ref_module_approver_detail_by_id($memo)
+    public static function get_ref_module_approver_detail_by_id($memo, $branch)
     {
-        return Self::where('id', (int) $memo->id_type)->with(['ref_module_approver_detail' => function ($detail) use ($memo) {
+        return Self::where('id', (int) $memo->id_type)->with(['ref_module_approver_detail' => function ($detail) use ($memo, $branch) {
             $detail->select(DB::raw("$memo->id as id_memo"), "emp_history.id_employee", DB::raw("'edit' AS status"), "idx")
                 ->leftJoin('emp_history', 'd_module_approvers.id_ref_position', '=', 'emp_history.id_position')
-                ->where('emp_history.year_started', '<', Carbon::now())
-                ->where('emp_history.year_finished', '>', Carbon::now())
+                ->where(function ($query) use ($branch) {
+                    $query->where('emp_history.year_started', '<', Carbon::now())
+                        ->where('emp_history.year_finished', '>', Carbon::now())
+                        ->whereIn('emp_history.id_branch', $branch);
+                })
                 ->orWhere('emp_history.year_finished', null);
             return $detail;
         }])->first();

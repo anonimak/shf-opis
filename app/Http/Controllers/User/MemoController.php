@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
@@ -10,6 +11,7 @@ use App\Models\D_Memo_History;
 use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Memo;
+use App\Models\Ref_Template_Cost;
 use App\Models\Ref_Type_Memo;
 use App\User;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -131,6 +133,22 @@ class MemoController extends Controller
             return $itemattach;
         });
 
+        $templateCost = Ref_Template_Cost::where('id_ref_type_memo', $memo->id_type)->get();
+
+        $templateCost = $templateCost->makeHidden(['id_ref_type_memo', 'created_at', 'updated_at']);
+
+        $headerCost = $templateCost->map(function ($item, $key) {
+            return $item['col_name'];
+        });
+
+        $columnCost = $templateCost->transform(function ($value) {
+            return [
+                'data' => $value->col_name,
+                'width' => $value->width
+            ];
+        });
+
+
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
                 [
@@ -161,7 +179,9 @@ class MemoController extends Controller
             'dataPosition' => $positions,
             'dataMemo' => $memo,
             'dataAttachments' => $attachments,
-            'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
+            'headerCost' => $headerCost,
+            'columnCost' => $columnCost,
+            // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
         ]);
     }
 
@@ -186,12 +206,16 @@ class MemoController extends Controller
             'title'        => 'required',
             'typememo'     => 'required',
         ]);
+
+        $employeeBranch = $employeeInfo->employee->position_now->branch->id;
+
         $memo = Memo::create([
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
         ]);
-        $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo);
+        $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
+        $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
         D_Memo_Approver::insert($dataDetailInsert);
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
@@ -416,7 +440,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        
+
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
                 [

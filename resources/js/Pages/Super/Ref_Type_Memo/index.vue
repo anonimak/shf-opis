@@ -64,6 +64,11 @@
                         <td>
                           <b-button-group size="sm">
                             <inertia-link
+                              :href="route(__template, item.id)"
+                              class="btn btn-info"
+                              >template</inertia-link
+                            >
+                            <inertia-link
                               :href="route(__edit, item.id)"
                               class="btn btn-secondary"
                               ><i class="fa fa-edit" aria-hidden="true"></i
@@ -113,6 +118,7 @@ export default {
     "__edit",
     "__show",
     "__destroy",
+    "__template",
     "__index",
   ],
   metaInfo: { title: "Admin Reference Type Memo Page" },

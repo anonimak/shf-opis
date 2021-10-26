@@ -71,6 +71,7 @@
                             </a>
                           </td>
                           <td>
+                            button
                             <b-button
                               size="sm"
                               variant="danger"
@@ -303,6 +304,7 @@
                       ref="formCost"
                       :settings="hotSettings"
                     ></hot-table>
+                    
                   </b-form-group>
                 </div>
               </b-row>
@@ -327,7 +329,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
-import Handsontable from "handsontable";
+// import Handsontable from "handsontable";
 import { HyperFormula } from "hyperformula";
 import draggable from "vuedraggable";
 // Import the editor
@@ -340,10 +342,12 @@ export default {
     "notif",
     "breadcrumbItems",
     "dataMemo",
-    "dataTypeMemo",
+    // "dataTypeMemo",
     "errors",
     "dataPosition",
     "dataAttachments",
+    "headerCost",
+    "columnCost",
     "__store",
     "__updateApprover",
     "__updateAcknowledge",
@@ -369,7 +373,7 @@ export default {
       form: {},
       dataApprovers: [],
       dataCost: null,
-      colHeaders: ["Product Name", "QTY", "Price", "Total"],
+      colHeaders: this.headerCost,
       hotSettings: {
         data: [],
         colHeaders: (index) => {
@@ -377,40 +381,17 @@ export default {
         },
         height: "auto",
         width: "100%",
-        startCols: 4,
+        startCols: 5,
         startRows: 10,
         minSpareRows: 1,
         rowHeaders: true,
-        columns: [
-          {
-            data: "Product Name",
-            type: "text",
-            width: 800,
-          },
-          {
-            data: "QTY",
-            // type: "numeric",
-            width: 100,
-          },
-          {
-            data: "Price",
-            // type: "numeric",
-            // pattern: "IDR 0.0,00",
-            culture: "en-ID",
-            width: 300,
-          },
-          {
-            data: "Total",
-            // type: "numeric",
-            // pattern: "IDR 0.0,00",
-            culture: "en-ID",
-            width: 350,
-          },
-        ],
+        columns: this.columnCost,
         manualColumnResize: true,
         contextMenu: true,
         formulas: {
-          engine: HyperFormula.buildEmpty({ maxColumns: 1000 }),
+          engine: HyperFormula.buildEmpty({
+            // licenseKey: "gpl-v3",
+          }),
         },
         licenseKey: "non-commercial-and-evaluation",
 

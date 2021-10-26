@@ -159,11 +159,11 @@ class RefModuleApprover extends Controller
             'name'     => 'required|max:50'
         ]);
 
-        Ref_Approver::where('id', $id)->update([
-            'name'   => $request->input('name')
-        ]);
+        $ref_approver = Ref_Approver::find($id);
+        $ref_approver->name = $request->input('name');
+        $ref_approver->save();
 
-        $refapprover = Ref_DetailApprover::where('id_ref_module_approver', $id)->get();
+        $refapprover = Ref_DetailApprover::where('id_ref_module_approver', $ref_approver->id_ref_module_approver)->get();
         $updatedrefapprover = $request->input('detail_approver');
         // filter yang tidak ada pada updaterefapprover
         $filteredapprove = $refapprover->filter(function ($item, $key) use ($updatedrefapprover) {
@@ -187,7 +187,7 @@ class RefModuleApprover extends Controller
         // update/insert pda updaterefapprover
         if (count($updatedrefapprover) > 0) {
             foreach ($updatedrefapprover as $key => $value) {
-                $itemapprover = Ref_DetailApprover::where('id_ref_position', $value['id_ref_position'])->first();
+                $itemapprover = Ref_DetailApprover::where('id_ref_position', $value['id_ref_position'])->where('id_ref_module_approver', $value['id_ref_module_approver'])->first();
                 $item = [
                     'id_ref_module_approver' => $value['id_ref_module_approver'],
                     'id_ref_position'   =>  $value['id_ref_position'],
