@@ -90,6 +90,8 @@ class RefTypeMemo extends Controller
             'name'                      => $request->input('name'),
             'id_department'             => $request->input('department'),
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
+            'with_po'                   => $request->input('with_po'),
+            'with_payment'              => $request->input('with_payment'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull Create new Reference Type Memo $position->name");
     }
@@ -134,7 +136,9 @@ class RefTypeMemo extends Controller
                 'name'              => $typememo->name,
                 'department'        => $typememo->id_department,
                 'refmoduleapprover' => $typememo->id_ref_module_approver,
-                'id'                => $typememo->id
+                'id'                => $typememo->id,
+                'with_po'           => $typememo->with_po,
+                'with_payment'      => $typememo->with_payment,
             ],
             'dataDepartments'           => Department::get(),
             'dataRefModuleApprovers'    => Ref_Module_Approver::get(),
@@ -163,6 +167,8 @@ class RefTypeMemo extends Controller
             'name'                      => $request->input('name'),
             'id_department'             => $request->input('department'),
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
+            'with_po'                   => $request->input('with_po'),
+            'with_payment'              => $request->input('with_payment'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
     }

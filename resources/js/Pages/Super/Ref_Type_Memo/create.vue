@@ -66,6 +66,22 @@
                   >
                   </v-select>
                 </b-form-group>
+                <b-form-checkbox
+                  v-model="form.with_po"
+                  name="checkbox-1"
+                  :value="true"
+                  :unchecked-value="false"
+                >
+                  with Purchase Order
+                </b-form-checkbox>
+                <b-form-checkbox
+                  v-model="form.with_payment"
+                  name="checkbox-2"
+                  :value="true"
+                  :unchecked-value="false"
+                >
+                  with Payment
+                </b-form-checkbox>
               </b-col>
               <b-row align-h="center">
                 <b-button-group>
@@ -108,6 +124,8 @@ export default {
         name: "",
         refmoduleapprover: null,
         department: null,
+        with_po: false,
+        with_payment: false,
       },
     };
   },

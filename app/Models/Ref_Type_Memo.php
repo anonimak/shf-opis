@@ -18,6 +18,11 @@ class Ref_Type_Memo extends Model
         'laravel_through_key'
     ];
 
+    protected $casts = [
+        'with_po'      => 'boolean',
+        'with_payment' => 'boolean',
+    ];
+
 
     public function department()
     {
