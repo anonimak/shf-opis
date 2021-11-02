@@ -148,18 +148,23 @@
             <thead>
                 <tr>
                     @foreach ($memo->approvers as $approver)
+                        @if ($approver->employee)
                         <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                        @endif
                     @endforeach
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     @foreach ($memo->approvers as $approver)
+                        @if ($approver->employee)
                         <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}</td>
+                        @endif
                     @endforeach
                 </tr>
                 <tr>
                     @foreach ($memo->approvers as $approver)
+                    @if ($approver->employee)
                         @if($approver->status == 'submit' || $approver->status == 'edit')
                         {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
                         <td>-</td>
@@ -168,6 +173,7 @@
                         @else
                         <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
                         @endif
+                    @endif
                     @endforeach
                 </tr>
             </tbody>
