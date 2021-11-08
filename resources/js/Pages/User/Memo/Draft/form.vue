@@ -153,6 +153,7 @@
                           <tr>
                             <th>Approver Name</th>
                             <th>Position</th>
+                            <th>Approver Type</th>
                             <th>Level</th>
                             <th v-if="isApproverEdited">#</th>
                           </tr>
@@ -184,6 +185,16 @@
                                   approver.employee.position_now.position
                                     .position_name
                                 }}
+                              </strong>
+                            </td>
+                            <td>
+                              <select-type-approver
+                                v-if="isApproverEdited"
+                                :approver="approver"
+                                @changeSelected="changeApproverSelected"
+                              />
+                              <strong class="text-capitalize" v-else>
+                                {{ approver.type_approver }}
                               </strong>
                             </td>
                             <td>
@@ -304,7 +315,6 @@
                       ref="formCost"
                       :settings="hotSettings"
                     ></hot-table>
-                    
                   </b-form-group>
                 </div>
               </b-row>
@@ -332,6 +342,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 // import Handsontable from "handsontable";
 import { HyperFormula } from "hyperformula";
 import draggable from "vuedraggable";
+import SelectTypeApprover from "@/components/SelectTypeApprover";
 // Import the editor
 
 import Editor2 from "@/components/Editor2";
@@ -361,6 +372,7 @@ export default {
     Breadcrumb,
     Editor2,
     draggable,
+    SelectTypeApprover,
   },
   data() {
     return {
@@ -594,6 +606,16 @@ export default {
     },
     actionApproverRemoveAt(index) {
       this.dataApprovers.splice(index, 1);
+    },
+
+    changeApproverSelected(approver) {
+      this.dataApprovers = _.map(this.dataApprovers, (item) => {
+        if (item.id === approver.id) {
+          item = approver;
+        }
+        return item;
+      });
+      console.log(this.dataApprovers);
     },
   },
 };

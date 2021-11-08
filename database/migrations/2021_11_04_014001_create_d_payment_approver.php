@@ -20,7 +20,7 @@ class CreateDPaymentApprover extends Migration
             $table->integer('idx');
             $table->text('msg')->nullable();
             $table->enum('status', ['submit', 'edit', 'reject', 'approve', 'revisi'])->default('edit');
-            $table->enum('type_approver', ['approve', 'acknowledge'])->default('approve');
+            $table->enum('type_approver', ['approver', 'acknowledge'])->default('approver');
             $table->timestamps();
 
             // foreign key

@@ -8,6 +8,8 @@ use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
 use App\Models\D_Memo_History;
+use App\Models\D_Payment_Approver;
+use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Memo;
@@ -214,10 +216,22 @@ class MemoController extends Controller
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
         ]);
+        $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
+
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
         D_Memo_Approver::insert($dataDetailInsert);
+
+        // check with_po
+        if ($typeMemo->with_po) {
+            D_Po_Approver::insert($dataDetailInsert);
+        }
+        // check with_payment
+        if ($typeMemo->with_payment) {
+            D_Payment_Approver::insert($dataDetailInsert);
+        }
+
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
     }
 
@@ -377,7 +391,8 @@ class MemoController extends Controller
                 $item = [
                     'id_memo' => $value['id_memo'],
                     'id_employee'   =>  $value['id_employee'],
-                    'idx' => $key + 1
+                    'idx' => $key + 1,
+                    'type_approver' => $value['type_approver']
                 ];
                 if ($itemapprover) {
                     $itemapprover->update($item);
