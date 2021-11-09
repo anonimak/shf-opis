@@ -163,7 +163,7 @@ class RefModuleApprover extends Controller
         $ref_approver->name = $request->input('name');
         $ref_approver->save();
 
-        $refapprover = Ref_DetailApprover::where('id_ref_module_approver', $ref_approver->id_ref_module_approver)->get();
+        $refapprover = Ref_DetailApprover::where('id_ref_module_approver', $ref_approver->id)->get();
         $updatedrefapprover = $request->input('detail_approver');
         // filter yang tidak ada pada updaterefapprover
         $filteredapprove = $refapprover->filter(function ($item, $key) use ($updatedrefapprover) {
