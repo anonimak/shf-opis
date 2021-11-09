@@ -90,13 +90,25 @@ class ApprovalController extends Controller
         ]);
 
         if ($status_approver == 'approve') {
+            // if type_approver is approver
+            if ($approver->type_approver == 'approver') {
+                $contentHistory = [
+                    'title'     => "Approved lvl {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            } else {
+                $contentHistory = [
+                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            }
             // insert to history when approved
-            D_Memo_History::create([
-                'title'     => "Approved lvl {$approver->idx}",
-                'id_memo'   => $memo->id,
-                'type'      => 'success',
-                'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
-            ]);
+            D_Memo_History::create($contentHistory);
+
             $nextApprover = D_Memo_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
 
             if ($nextApprover) {
@@ -116,10 +128,17 @@ class ApprovalController extends Controller
                     'url'     => route('user.memo.approval.detail', $memo->id)
                 ];
 
-                $detailspropose = [
-                    'subject' => "Memo $memo->doc_no approved by {$nextApprover->employee->firstname}",
-                    'message' => "Memo $memo->doc_no has approved by {$nextApprover->employee->firstname} {$nextApprover->employee->lastname}"
-                ];
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "Memo $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "Memo $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "Memo $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "Memo $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                }
 
                 Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -133,10 +152,17 @@ class ApprovalController extends Controller
                     'content'   => "Memo {$memo->doc_no} has approved."
                 ]);
 
-                $detailspropose = [
-                    'subject' => "Memo $memo->doc_no approved",
-                    'message' => "Memo $memo->doc_no has approved"
-                ];
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "Memo $memo->doc_no approved",
+                        'message' => "Memo $memo->doc_no has approved"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "Memo $memo->doc_no reviewed",
+                        'message' => "Memo $memo->doc_no has reviewed"
+                    ];
+                }
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }

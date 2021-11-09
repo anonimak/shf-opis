@@ -42,7 +42,9 @@
                           </inertia-link>
                         </td>
                         <td>
-                          <b-button-group>
+                          <b-button-group
+                            v-if="item.type_approver == 'approver'"
+                          >
                             <a
                               target="_blank"
                               class="btn btn-success"
@@ -63,6 +65,19 @@
                               @click="actionReject(item.id_approver)"
                               variant="warning"
                               >Reject</b-button
+                            >
+                          </b-button-group>
+                          <b-button-group v-else>
+                            <a
+                              target="_blank"
+                              class="btn btn-success"
+                              :href="route(__previewpdf, item.id)"
+                              >Preview PDF</a
+                            >
+                            <b-button
+                              @click="actionNext(item.id_approver)"
+                              variant="info"
+                              >Next</b-button
                             >
                           </b-button-group>
                         </td>
@@ -135,6 +150,14 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Approve";
       this.modalCaption = "Are you sure to approve?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    actionNext(id) {
+      this.buttonClicked = "approve";
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Acknowledge";
+      this.modalCaption = "Are you sure to next?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

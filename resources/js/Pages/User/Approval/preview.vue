@@ -118,6 +118,7 @@
                       <th>Level</th>
                       <th>Approver Name</th>
                       <th>Position</th>
+                      <th>Approver Type</th>
                       <th>Status</th>
                       <th>Message</th>
                     </tr>
@@ -141,6 +142,9 @@
                         {{
                           approver.employee.position_now.position.position_name
                         }}
+                      </td>
+                      <td>
+                        {{ approver.type_approver }}
                       </td>
                       <td>
                         <b-badge

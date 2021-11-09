@@ -145,7 +145,7 @@ class Memo extends Model
     {
 
         $memo = DB::select(
-            DB::raw("select a.*,c.id id_approver from m_memos a join
+            DB::raw("select a.*,c.id id_approver, c.type_approver from m_memos a join
             (
             select min(idx) as min_idx, id_memo from d_memo_approvers where status = 'submit' group by id_memo
             ) b on a.id = b.id_memo
