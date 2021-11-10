@@ -34,7 +34,7 @@ class MemoController extends Controller
         }
         return Inertia::render('User/Memo', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->paginate(10),
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [

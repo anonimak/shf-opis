@@ -113,6 +113,16 @@
                                 >
                                   preview
                                 </inertia-link>
+                                <b-button
+                                  v-b-tooltip.hover
+                                  title="Lanjut Payment"
+                                  href="#"
+                                  variant="primary"
+                                  class="btn btn-primary btn-sm"
+                                  v-if="item.ref_table.with_payment == 1 && item.status == 'approve'"
+                                >
+                                Lanjut Payment
+                                </b-button>
                             </td>
                           </tr>
                         </tbody>
