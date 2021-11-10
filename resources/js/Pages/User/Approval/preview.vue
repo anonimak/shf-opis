@@ -10,7 +10,7 @@
         <b-card no-body>
           <b-card-body>
             <b-row class="mb-2">
-              <b-col col lg="12" md="12" class="mb-4">
+              <b-col col lg="12" md="12" class="mb-4" v-if="dataMemo.approver.type_approver == 'approver'">
                 <b-button-group class="float-right">
                   <b-button
                     @click="actionApprove(dataMemo.approver.id)"
