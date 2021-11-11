@@ -98,6 +98,11 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 
+        Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
+            Route::get('/', 'User\MemoController@indexPayment')->name('index');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
+        });
+
 
         Route::prefix('/approval')->name('approval.')->group(function () {
             Route::get('/', 'User\ApprovalController@index')->name('index');

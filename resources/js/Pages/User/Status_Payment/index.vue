@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Status Memo</h1>
+      <h1 class="h3 mb-0 text-gray-800">Status Payment</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -113,18 +113,6 @@
                                 >
                                   preview
                                 </inertia-link>
-                                <b-button
-                                  v-b-tooltip.hover
-                                  title="Lanjut Payment"
-                                  href="#"
-                                  variant="primary"
-                                  class="btn btn-primary btn-sm"
-                                  @click="showMsgBoxProposePayment(item.id)"
-                                  v-if="item.ref_table.with_payment == 1 && item.status == 'approve'"
-                                  :disabled="item.status_payment != 'edit'"
-                                >
-                                Lanjut Payment
-                                </b-button>
                             </td>
                           </tr>
                         </tbody>
@@ -170,8 +158,7 @@ export default {
     "__edit",
     "__show",
     "__destroy",
-    "__proposepayment",
-    "__index",
+    "__indexpayment",
     "__webpreview",
     "__senddraft",
   ],
@@ -204,10 +191,6 @@ export default {
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
-    submitProposePayment(id) {
-      console.log("submit");
-      this.$inertia.put(route(this.__proposepayment, id));
-    },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
@@ -231,26 +214,6 @@ export default {
           value && this.submitDelete(id);
         })
         .catch((err) => {
-          // An error occurred
-        });
-    },
-    showMsgBoxProposePayment: function (id) {
-      this.$bvModal
-        .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-          title: "Please Confirm",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "YES",
-          cancelTitle: "NO",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        .then((value) => {
-          value && this.submitProposePayment(id);
-        })
-        .catch((err) => {
-          console.log(err);
           // An error occurred
         });
     },

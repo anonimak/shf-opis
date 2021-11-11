@@ -117,6 +117,23 @@ class Memo extends Model
         return $memo;
     }
 
+    public static function getPayment($id_employee, $status, $search = null)
+    {
+        $memo = Self::select('*')
+            ->orderBy('created_at', 'desc')
+            ->where('status_payment', '=', $status)
+            ->where('id_employee', '=', $id_employee);
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
     public static function getMemoWithLastApprover($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
