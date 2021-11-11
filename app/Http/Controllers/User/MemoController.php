@@ -60,7 +60,8 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
-            '__senddraft'   => 'user.memo.statusmemo.senddraft'
+            '__senddraft'   => 'user.memo.statusmemo.senddraft',
+            '__proposepayment' => 'user.memo.statusmemo.proposepayment'
         ]);
     }
 
@@ -295,6 +296,25 @@ class MemoController extends Controller
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
         // kirim email ke tiap acknowlegde
         return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
+    }
+
+    public function proposePayment($id)
+    {
+        $memo = Memo::where('id', $id)->first();
+        // cek apakah ada approver
+        if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
+            return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
+        }
+        // update status menjadi submit
+        Memo::where('id', $id)->update([
+            'status_payment'   => 'submit',
+        ]);
+
+        D_Payment_Approver::where('id_memo', $id)->update([
+            'status'   => 'submit'
+        ]);
+
+        return Redirect::route('user.memo.statusmemo.index')->with('success', "Successfull submit memo payment.");
     }
 
     public function fileUploadAttach(Request $request, $id)

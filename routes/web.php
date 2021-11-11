@@ -93,6 +93,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
+            Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
