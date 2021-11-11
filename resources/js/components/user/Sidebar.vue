@@ -62,6 +62,11 @@ export default {
               link: "user.memo.statusmemo.*",
               index: "user.memo.statusmemo.index",
             },
+            {
+              title: "Status Payment",
+              link: "user.memo.statuspayment.*",
+              index: "user.memo.statuspayment.index",
+            },
           ],
         },
         {
