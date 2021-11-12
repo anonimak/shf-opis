@@ -110,6 +110,32 @@ class Memo extends Model
             ->where('id', $id)->first();
     }
 
+    public static function getPaymentDetailWithCurrentApprover($id, $id_current_approver)
+    {
+        return Self::with(['approversPayment' => function ($approver) {
+            return $approver->with(['employee' => function ($employee) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch');
+                }]);
+            }])->orderBy('idx', 'asc');
+        }])->with(['acknowledges' => function ($approver) {
+            return $approver->with(['employee' => function ($employee) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch');
+                }]);
+            }])->orderBy('id', 'asc');
+        }])->with(['histories' => function ($history) {
+            return $history->orderBy('id', 'DESC');
+        }])->with(['approverPayment' => function ($approver) use ($id_current_approver) {
+            return $approver->where('id_employee', $id_current_approver);
+        }])
+            ->where('id', $id)->first();
+    }
+
     public static function getMemo($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
