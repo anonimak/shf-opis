@@ -379,7 +379,7 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => route('user.memo.approval.detail', $id)
+            'url'     => route('user.memo.approvalpayment.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));

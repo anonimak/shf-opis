@@ -21,6 +21,16 @@ class Memo extends Model
         return $this->hasOne(D_Memo_Approver::class, 'id_memo', 'id');
     }
 
+    public function approversPayment()
+    {
+        return $this->hasMany(D_Payment_Approver::class, 'id_memo', 'id');
+    }
+
+    public function approverPayment()
+    {
+        return $this->hasOne(D_Payment_Approver::class, 'id_memo', 'id');
+    }
+
     public function proposeemployee()
     {
         return $this->belongsTo(Employee::class, 'id_employee', 'id');
@@ -173,6 +183,22 @@ class Memo extends Model
             join d_memo_approvers c on a.id = c.id_memo
             where b.min_idx = c.idx
             and a.status = 'submit'
+            and c.id_employee = $id_employee")
+        );
+        return $memo;
+    }
+
+    public static function getMemoPaymentWithLastApproverRawQuery($id_employee)
+    {
+
+        $memo = DB::select(
+            DB::raw("select a.*,c.id id_approver, c.type_approver from m_memos a join
+            (
+            select min(idx) as min_idx, id_memo from d_payment_approver where status = 'submit' group by id_memo
+            ) b on a.id = b.id_memo
+            join d_payment_approver c on a.id = c.id_memo
+            where b.min_idx = c.idx
+            and a.status_payment = 'submit'
             and c.id_employee = $id_employee")
         );
         return $memo;

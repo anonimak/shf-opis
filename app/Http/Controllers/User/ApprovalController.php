@@ -40,6 +40,30 @@ class ApprovalController extends Controller
         ]);
     }
 
+    public function indexApprovalPayment(Request $request)
+    {
+        $memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
+        // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
+        return Inertia::render('User/Approval_Payment', [
+            'dataMemo' => $memo,
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Approval Payment",
+                    'active'  => true
+                ]
+            ),
+            '__approving'  => 'user.memo.approval.approving',
+            '__previewpdf'  => 'user.memo.approval.preview',
+            '__detail'    => 'user.memo.approvalpayment.detail',
+            '__index'    => 'user.memo.approvalpayment.index',
+        ]);
+    }
+
 
     public function detail(Request $request, $id)
     {
