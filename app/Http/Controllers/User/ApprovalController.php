@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Memo;
 use Illuminate\Http\Request;
 use App\Models\D_Memo_Approver;
+use App\Models\D_Payment_Approver;
 use App\Models\D_Memo_Attachment;
 use App\Models\D_Memo_History;
 use App\Models\Employee;
@@ -57,7 +58,7 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
-            '__approving'  => 'user.memo.approval.approving',
+            '__approving'  => 'user.memo.approvalpayment.approving',
             '__previewpdf'  => 'user.memo.approval.preview',
             '__detail'    => 'user.memo.approvalpayment.detail',
             '__index'    => 'user.memo.approvalpayment.index',
@@ -266,5 +267,138 @@ class ApprovalController extends Controller
         }
 
         return Redirect::route('user.memo.approval.index')->with('success', "Successfull " . $request->input('variant'));
+    }
+
+    public function approvingPayment(Request $request, $id)
+    {
+        $status_approver = $request->input('variant');
+        $msg = ($request->input('message')) ? $request->input('message') : null;
+        $message = ($msg ? "with message ($msg)" : "");
+        $approver = D_Payment_Approver::where('id', $id)->first();
+
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        D_Payment_Approver::where('id', $id)->update([
+            'status'            => $status_approver,
+            'msg'               => $msg
+        ]);
+
+        if ($status_approver == 'approve') {
+            // if type_approver is approver
+            if ($approver->type_approver == 'approver') {
+                $contentHistory = [
+                    'title'     => "Approved lvl {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            } else {
+                $contentHistory = [
+                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            }
+            // insert to history when approved
+            D_Memo_History::create($contentHistory);
+
+            $nextApprover = D_Payment_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+
+            if ($nextApprover) {
+                // insert to history next approval
+                D_Memo_History::create([
+                    'title' => "Process Approving {$nextApprover->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'  => 'info',
+                    'content' => "On process approving by approver {$nextApprover->idx}"
+                ]);
+                // send email to next approver
+                $mailApprover = $nextApprover->employee->email;
+                // kirim email ke approver pertama
+                $details = [
+                    'subject' => $memo->title,
+                    'doc_no'  => $memo->doc_no,
+                    'url'     => route('user.memo.approvalpayment.detail', $memo->id)
+                ];
+
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "Memo Payment $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "Memo Payment $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "Memo Payment $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "Memo Payment $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                }
+
+                Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            } else {
+                Memo::where('id', $approver->id_memo)->update(['status_payment' => 'approve']);
+                // insert to history when all approved by approver
+                D_Memo_History::create([
+                    'title'     => "Memo Payment Approved",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Memo Payment {$memo->doc_no} has approved."
+                ]);
+
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "Memo Payment $memo->doc_no approved",
+                        'message' => "Memo Payment $memo->doc_no has approved"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "Memo Payment $memo->doc_no reviewed",
+                        'message' => "Memo Payment $memo->doc_no has reviewed"
+                    ];
+                }
+                // notif ke user propose
+                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            }
+        }
+
+        if ($status_approver == 'revisi') {
+            // notif ke user propose
+            Memo::where('id', $approver->id_memo)->update(['status_payment' => 'revisi']);
+            // insert to history when revisi by approver
+            D_Memo_History::create([
+                'title'     => "Memo Payment Revisi",
+                'id_memo'   => $memo->id,
+                'type'      => 'warning',
+                'content'   => "Memo Payment {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ]);
+
+            $detailspropose = [
+                'subject' => "Memo Payment $memo->doc_no revisi",
+                'message' => "Memo Payment $memo->doc_no has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ];
+            // notif ke user propose
+            Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+        }
+
+        if ($status_approver == 'reject') {
+            // notif ke user propose
+            Memo::where('id', $approver->id_memo)->update(['status_payment' => 'reject']);
+            // insert to history when revisi by approver
+            D_Memo_History::create([
+                'title'     => "Memo Payment Rejected",
+                'id_memo'   => $memo->id,
+                'type'      => 'danger',
+                'content'   => "Memo Payment {$memo->doc_no} has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ]);
+
+            $detailspropose = [
+                'subject' => "Memo Payment $memo->doc_no rejected",
+                'message' => "Memo Payment $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ];
+            // notif ke user propose
+            Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+        }
+
+        return Redirect::route('user.memo.approvalpayment.index')->with('success', "Successfull " . $request->input('variant'));
     }
 }

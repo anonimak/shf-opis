@@ -114,7 +114,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/approval-payment')->name('approvalpayment.')->group(function () {
             Route::get('/', 'User\ApprovalController@indexApprovalPayment')->name('index');
             Route::get('/{memo}', 'User\ApprovalController@detailPayment')->name('detail');
-           // Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
+            Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
            // Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
         });
     });
