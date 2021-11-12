@@ -84,6 +84,21 @@ export default {
           //     },
           //   ],
         },
+        {
+          id: 3,
+          title: "Approval Payment",
+          link: "user.memo.approvalpayment.*",
+          index: "user.memo.approvalpayment.index",
+          icon: "fas fa-fw fa-clipboard-check",
+          badge: this.notif.approval_memo_payment,
+          //   child: [
+          //     {
+          //       title: "Memo",
+          //       link: "user.memo.approval.*",
+          //       index: "user.memo.approval.index",
+          //     },
+          //   ],
+        },
       ],
     };
   },
