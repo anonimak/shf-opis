@@ -100,7 +100,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
-            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
         });
 
 

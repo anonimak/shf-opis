@@ -97,7 +97,7 @@ class MemoController extends Controller
                 'revisi' => Memo::getPayment(auth()->user()->id_employee, 'revisi')->count(),
             ],
             '__index'   => 'user.memo.statuspayment.index',
-            '__webpreview'   => 'user.memo.statusmemo.webpreview',
+            '__webpreview'   => 'user.memo.statuspayment.webpreview',
         ]);
     }
 
@@ -561,6 +561,44 @@ class MemoController extends Controller
                 [
                     'title'   => "Status Memo",
                     'href'    => "user.memo.statusmemo.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments
+        ]);
+    }
+
+    public function webpreviewPayment(Request $request, $id)
+    {
+        $memo = Memo::getPaymentDetail($id);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
+        return Inertia::render('User/Status_Payment/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Payment",
+                    'href'    => "user.memo.statuspayment.index"
                 ],
                 [
                     'title'   => $memo->doc_no,
