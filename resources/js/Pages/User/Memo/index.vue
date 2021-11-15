@@ -100,31 +100,34 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                                <inertia-link
-                                  v-if="tabIndex == 3"
-                                  :href="route(__senddraft, item.id)"
-                                  class="btn btn-warning btn-sm my-2"
-                                >
-                                  send to draft
-                                </inertia-link>
-                                <inertia-link
-                                  :href="route(__webpreview, item.id)"
-                                  class="btn btn-secondary btn-sm"
-                                >
-                                  preview
-                                </inertia-link>
-                                <b-button
-                                  v-b-tooltip.hover
-                                  title="Lanjut Payment"
-                                  href="#"
-                                  variant="primary"
-                                  class="btn btn-primary btn-sm"
-                                  @click="showMsgBoxProposePayment(item.id)"
-                                  v-if="item.ref_table.with_payment == 1 && item.status == 'approve'"
-                                  :disabled="item.status_payment != 'edit'"
-                                >
+                              <inertia-link
+                                v-if="tabIndex == 3"
+                                :href="route(__senddraft, item.id)"
+                                class="btn btn-warning btn-sm my-2"
+                              >
+                                send to draft
+                              </inertia-link>
+                              <inertia-link
+                                :href="route(__webpreview, item.id)"
+                                class="btn btn-secondary btn-sm"
+                              >
+                                preview
+                              </inertia-link>
+                              <b-button
+                                v-b-tooltip.hover
+                                title="Lanjut Payment"
+                                href="#"
+                                variant="primary"
+                                class="btn btn-primary btn-sm"
+                                @click="showMsgBoxProposePayment(item.id)"
+                                v-if="
+                                  item.ref_table.with_payment == 1 &&
+                                  item.status == 'approve'
+                                "
+                                :disabled="item.status_payment != 'edit'"
+                              >
                                 Lanjut Payment
-                                </b-button>
+                              </b-button>
                             </td>
                           </tr>
                         </tbody>
@@ -289,24 +292,32 @@ export default {
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
       }
-      this.$inertia
-        .replace(route(this.__index, { tab: this.tab[this.tabIndex] }))
-        .then(() => {
-          // this.memo = { ...this.dataMemo };
-          this.isLoadMemo = false;
-        });
+
+      let param = { tab: this.tab[this.tabIndex] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        // this.memo = { ...this.dataMemo };
+        this.isLoadMemo = false;
+      });
     },
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
+      console.log(route().current());
       // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
-      this.$inertia
-        .replace(route(this.__index, { tab: this.tab[tabIndex] }))
-        .then(() => {
-          // this.memo = { ...this.dataMemo };
-          this.isLoadMemo = false;
-        });
+
+      let param = { tab: this.tab[tabIndex] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        // this.memo = { ...this.dataMemo };
+        this.isLoadMemo = false;
+      });
     },
   },
   watch: {
