@@ -33,8 +33,8 @@ class MemoController extends Controller
             $tab = $request->input('tab');
         }
         return Inertia::render('User/Memo', [
-            'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'perPage' => 2,
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(2),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -298,14 +298,14 @@ class MemoController extends Controller
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
         D_Memo_Approver::insert($dataDetailInsert);
 
-        // check with_po
-        if ($typeMemo->with_po) {
-            D_Po_Approver::insert($dataDetailInsert);
-        }
-        // check with_payment
-        if ($typeMemo->with_payment) {
-            D_Payment_Approver::insert($dataDetailInsert);
-        }
+        // // check with_po
+        // if ($typeMemo->with_po) {
+        //     D_Po_Approver::insert($dataDetailInsert);
+        // }
+        // // check with_payment
+        // if ($typeMemo->with_payment) {
+        //     D_Payment_Approver::insert($dataDetailInsert);
+        //}
 
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "Create new memo");
     }
@@ -374,7 +374,22 @@ class MemoController extends Controller
 
     public function proposePayment($id)
     {
-        $memo = Memo::where('id', $id)->first();
+        $memo = Memo::where('id', $id)->with('approvers')->first();
+
+        $approvers_payment = [];
+
+        foreach($memo->approvers as $approver) {
+           $approvers_payment[] = [
+               'id_memo' => $id,
+               'id_employee' => $approver->id_employee,
+               'idx' => $approver->idx,
+               'status' => $approver->status,
+               'type_approver' => $approver->type_approver
+           ];
+        }
+
+        D_Payment_Approver::insert($approvers_payment);
+        
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
