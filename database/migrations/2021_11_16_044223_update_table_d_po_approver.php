@@ -13,7 +13,7 @@ class UpdateTableDPoApprover extends Migration
      */
     public function up()
     {
-        Schema::table('d_po_approvers', function (Blueprint $table) {
+        Schema::table('d_po_approver', function (Blueprint $table) {
             $table->enum('type_approver', ['approver', 'acknowledge'])->default('approver');
         });
     }
@@ -25,7 +25,7 @@ class UpdateTableDPoApprover extends Migration
      */
     public function down()
     {
-        Schema::table('d_po_approvers', function (Blueprint $table) {
+        Schema::table('d_po_approver', function (Blueprint $table) {
             $table->dropColumn('type_approver');
         });
     }
