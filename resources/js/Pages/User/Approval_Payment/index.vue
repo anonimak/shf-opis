@@ -57,11 +57,6 @@
                               >Approve</b-button
                             >
                             <b-button
-                              @click="actionRevisi(item.id_approver)"
-                              variant="secondary"
-                              >Revisi</b-button
-                            >
-                            <b-button
                               @click="actionReject(item.id_approver)"
                               variant="warning"
                               >Reject</b-button
@@ -158,14 +153,6 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Acknowledge";
       this.modalCaption = "Are you sure to next?";
-
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
-    actionRevisi(id) {
-      this.buttonClicked = "revisi";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

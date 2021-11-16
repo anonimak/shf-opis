@@ -45,14 +45,6 @@
                         }}</b-badge>
                       </template>
                     </b-tab>
-                    <b-tab>
-                      <template #title>
-                        Revisi
-                        <b-badge v-if="counttab.revisi > 0" variant="primary">{{
-                          counttab.revisi
-                        }}</b-badge>
-                      </template>
-                    </b-tab>
                   </b-tabs>
                   <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
