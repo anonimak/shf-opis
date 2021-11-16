@@ -59,7 +59,7 @@ class ApprovalController extends Controller
                 ]
             ),
             '__approving'  => 'user.memo.approvalpayment.approving',
-            '__previewpdf'  => 'user.memo.approval.preview',
+            '__previewpdf'  => 'user.memo.approvalpayment.preview',
             '__detail'    => 'user.memo.approvalpayment.detail',
             '__index'    => 'user.memo.approvalpayment.index',
         ]);
@@ -132,7 +132,7 @@ class ApprovalController extends Controller
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
-            //'__approving'  => 'user.memo.approvalpayment.approving',
+            '__approving'  => 'user.memo.approvalpayment.approving',
         ]);
     }
 

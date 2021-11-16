@@ -643,6 +643,32 @@ class MemoController extends Controller
         return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
     }
 
+    public function previewPayment(Request $request, $id)
+    {
+        $memo = Memo::getPaymentDetail($id);
+        $employeeInfo = User::getUsersEmployeeInfo();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        $memocost = (array) json_decode($memo->cost);
+
+        $data = [
+            'memo' => $memo,
+            'employeeInfo' => $employeeInfo,
+            'positions' => $positions,
+            'dataTypeMemo' => $dataTypeMemo,
+            'dataAttachments' => $attachments,
+            'memocost' => $memocost
+        ];
+        //ddd($data);
+        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf->setPaper('A4', 'portrait');;
+        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
     public function webpreviewMemo(Request $request, $id)
     {
         $memo = Memo::getMemoDetail($id);
