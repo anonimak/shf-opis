@@ -100,19 +100,19 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                                <inertia-link
-                                  v-if="tabIndex == 3"
-                                  :href="route(__senddraft, item.id)"
-                                  class="btn btn-warning btn-sm my-2"
-                                >
-                                  send to draft
-                                </inertia-link>
-                                <inertia-link
-                                  :href="route(__webpreview, item.id)"
-                                  class="btn btn-secondary btn-sm"
-                                >
-                                  preview
-                                </inertia-link>
+                              <inertia-link
+                                v-if="tabIndex == 3"
+                                :href="route(__senddraft, item.id)"
+                                class="btn btn-warning btn-sm my-2"
+                              >
+                                send to draft
+                              </inertia-link>
+                              <inertia-link
+                                :href="route(__webpreview, item.id)"
+                                class="btn btn-secondary btn-sm"
+                              >
+                                preview
+                              </inertia-link>
                             </td>
                           </tr>
                         </tbody>
@@ -252,24 +252,31 @@ export default {
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
       }
-      this.$inertia
-        .replace(route(this.__index, { tab: this.tab[this.tabIndex] }))
-        .then(() => {
-          // this.memo = { ...this.dataMemo };
-          this.isLoadMemo = false;
-        });
+
+      let param = { tab: this.tab[this.tabIndex] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        // this.memo = { ...this.dataMemo };
+        this.isLoadMemo = false;
+      });
     },
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
-      this.$inertia
-        .replace(route(this.__index, { tab: this.tab[tabIndex] }))
-        .then(() => {
-          // this.memo = { ...this.dataMemo };
-          this.isLoadMemo = false;
-        });
+
+      let param = { tab: this.tab[tabIndex] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        // this.memo = { ...this.dataMemo };
+        this.isLoadMemo = false;
+      });
     },
   },
   watch: {
