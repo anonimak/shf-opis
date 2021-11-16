@@ -61,7 +61,8 @@ class MemoController extends Controller
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
-            '__proposepayment' => 'user.memo.statusmemo.proposepayment'
+            '__proposepayment' => 'user.memo.statusmemo.proposepayment',
+            '__proposepo' => 'user.memo.statusmemo.proposepo'
         ]);
     }
     public function indexPayment(Request $request)
@@ -98,6 +99,43 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspayment.index',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
+        ]);
+    }
+
+    public function indexPo(Request $request)
+    {
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+        return Inertia::render('User/Status_Po', [
+            'perPage' => 10,
+            'dataMemo' => Memo::getPo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'filters' => $request->all(),
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status PO",
+                    'active'  => true
+                ]
+            ),
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
+            'counttab' => [
+                'submit' => Memo::getPayment(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getPayment(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getPayment(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getPayment(auth()->user()->id_employee, 'revisi')->count(),
+            ],
+            '__index'   => 'user.memo.statuspo.index',
+            '__webpreview'   => 'user.memo.statuspo.webpreview',
         ]);
     }
 
@@ -388,6 +426,60 @@ class MemoController extends Controller
         return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
     }
 
+    public function proposePo($id)
+    {
+        $memo = Memo::where('id', $id)->first();
+        // cek apakah ada approver
+        if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
+            return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
+        }
+
+        $check_history = D_Memo_History::where('id_memo', $id)->get();
+        if ($check_history->count() > 0) {
+            $doc_no = $memo->doc_no;
+        } else {
+            $doc_no = $this->generateDocNo();
+        }
+
+        // update status menjadi submit
+        Memo::where('id', $id)->update([
+            'status_payment'   => 'submit',
+        ]);
+
+        D_Po_Approver::where('id_memo', $id)->update([
+            'status'   => 'submit'
+        ]);
+
+        // insert to history where first time submit
+        D_Memo_History::create([
+            'title' => 'PO Proposed',
+            'id_memo'   => $id,
+            'type'  => 'info',
+            'content' => "PO successful submitted with document no $doc_no"
+        ]);
+
+        $firstApprover = D_Po_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        // insert to history frist approval
+        D_Memo_History::create([
+            'title'     => "Process Approving {$firstApprover->idx}",
+            'id_memo'   => $id,
+            'type'      => 'info',
+            'content'   => "On process approving by approver {$firstApprover->idx}"
+        ]);
+        $mailApprover = $firstApprover->employee->email;
+        // kirim email ke approver pertama
+        $details = [
+            'subject' => $memo->title,
+            'doc_no'  => $memo->doc_no,
+            'url'     => route('user.memo.approvalpayment.detail', $id)
+        ];
+
+        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+        // kirim email ke tiap acknowlegde
+
+        return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit memo po.");
+    }
+
     public function fileUploadAttach(Request $request, $id)
     {
         foreach ($request->file('files') as $file) {
@@ -599,6 +691,44 @@ class MemoController extends Controller
                 [
                     'title'   => "Status Payment",
                     'href'    => "user.memo.statuspayment.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments
+        ]);
+    }
+
+    public function webpreviewPo(Request $request, $id)
+    {
+        $memo = Memo::getPoDetail($id);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
+        return Inertia::render('User/Status_Po/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Po",
+                    'href'    => "user.memo.statuspo.index"
                 ],
                 [
                     'title'   => $memo->doc_no,
