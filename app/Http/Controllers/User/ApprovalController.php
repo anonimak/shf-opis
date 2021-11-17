@@ -105,6 +105,7 @@ class ApprovalController extends Controller
     {
         $memo = Memo::getPaymentDetailWithCurrentApprover($id, auth()->user()->id_employee);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $attachments = $attachments->map(function ($itemattach) {
@@ -129,6 +130,7 @@ class ApprovalController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,

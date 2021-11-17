@@ -33,6 +33,13 @@ class MemoController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
+
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
+        //ddd($positions);
+
         return Inertia::render('User/Memo', [
             'perPage' => 2,
             'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(2),
@@ -59,6 +66,7 @@ class MemoController extends Controller
                 'reject' => Memo::getMemo(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemo(auth()->user()->id_employee, 'revisi')->count(),
             ],
+            'dataPosition' => $positions,
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
@@ -680,6 +688,7 @@ class MemoController extends Controller
     {
         $memo = Memo::getPaymentDetail($id);
         $employeeInfo = User::getUsersEmployeeInfo();
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -694,7 +703,8 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost
+            'memocost' => $memocost,
+            'dataPayments' => $dataPayments->payments,
         ];
         //ddd($data);
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
@@ -744,7 +754,6 @@ class MemoController extends Controller
     {
         $memo = Memo::getPaymentDetail($id);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
-        $dataPayments = $dataPayments->makeHidden(['id','created_at','updated_at', 'id_memo']);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();

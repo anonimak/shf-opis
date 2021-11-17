@@ -250,10 +250,31 @@
         </table>
         <br>
         @endif
-        @if ( $memo->payment != "<p></p>" && $memo->payment != '')
+        @if ( $dataPayments != "<p></p>" && $dataPayments != '')
         <h4>Payment</h4>
         <hr>
-        <p>{!!$memo->payment!!}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Bank Name</th>
+                    <th>Bank Account</th>
+                    <th>Amount</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($dataPayments as $payment)
+                <tr>
+                    <td>{{ $payment->name }}</td>
+                    <td>{{ $payment->bank_name }}</td>
+                    <td>{{ $payment->bank_account }}</td>
+                    <td>{{ $payment->amount }}</td>
+                    <td>{{ $payment->remark }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
         <br>
         <br>
         @endif
