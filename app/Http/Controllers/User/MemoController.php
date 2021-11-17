@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\D_Memo_Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\D_Memo_Acknowledge;
@@ -383,8 +384,25 @@ class MemoController extends Controller
         return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
     }
 
-    public function proposePayment($id)
+    public function proposePayment(Request $request, $id)
     {
+        $request->validate([
+            'name'              => 'required',
+            'bank_name'         => 'required',
+            'bank_account'      => 'required',
+            'amount'            => 'required',
+            'remark'            => 'required',
+        ]);
+        //ddd($id);
+        D_Memo_Payments::create([
+            'id_memo'           => $id,
+            'name'              => $request->input('name'),
+            'bank_name'         => $request->input('bank_name'),
+            'bank_account'      => $request->input('bank_account'),
+            'amount'            => $request->input('amount'),
+            'remark'            => $request->input('remark'),
+        ]);
+
         $memo = Memo::where('id', $id)->with('approvers')->first();
 
         $approvers_payment = [];
@@ -669,6 +687,32 @@ class MemoController extends Controller
         return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
     }
 
+    public function previewPayment(Request $request, $id)
+    {
+        $memo = Memo::getPaymentDetail($id);
+        $employeeInfo = User::getUsersEmployeeInfo();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        $memocost = (array) json_decode($memo->cost);
+
+        $data = [
+            'memo' => $memo,
+            'employeeInfo' => $employeeInfo,
+            'positions' => $positions,
+            'dataTypeMemo' => $dataTypeMemo,
+            'dataAttachments' => $attachments,
+            'memocost' => $memocost
+        ];
+        //ddd($data);
+        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf->setPaper('A4', 'portrait');;
+        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
     public function webpreviewMemo(Request $request, $id)
     {
         $memo = Memo::getMemoDetail($id);
@@ -710,6 +754,8 @@ class MemoController extends Controller
     public function webpreviewPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetail($id);
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
+        $dataPayments = $dataPayments->makeHidden(['id','created_at','updated_at', 'id_memo']);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
@@ -739,6 +785,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments

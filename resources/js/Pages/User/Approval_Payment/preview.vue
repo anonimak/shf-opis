@@ -18,11 +18,6 @@
                     >Approve</b-button
                   >
                   <b-button
-                    @click="actionRevisi(dataMemo.approver_payment.id)"
-                    variant="secondary"
-                    >Revisi</b-button
-                  >
-                  <b-button
                     @click="actionReject(dataMemo.approver_payment.id)"
                     variant="warning"
                     >Reject</b-button
@@ -60,11 +55,6 @@
                           v-if="dataMemo.status_payment == 'reject'"
                           variant="danger"
                           >Memo Payment Rejected</b-badge
-                        >
-                        <b-badge
-                          v-if="dataMemo.status_payment == 'revisi'"
-                          variant="secondary"
-                          >Memo Payment Revisi</b-badge
                         >
                       </td>
                     </tr>
@@ -161,11 +151,6 @@
                           v-if="approver.status == 'reject'"
                           variant="danger"
                           >Rejected</b-badge
-                        >
-                        <b-badge
-                          v-if="approver.status == 'revisi'"
-                          variant="secondary"
-                          >Revisi</b-badge
                         >
                       </td>
                       <td>
@@ -301,14 +286,6 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Approve";
       this.modalCaption = "Are you sure to approve?";
-
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
-    actionRevisi(id) {
-      this.buttonClicked = "revisi";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

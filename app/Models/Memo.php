@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,11 @@ class Memo extends Model
     public function approverPo()
     {
         return $this->hasOne(D_Po_Approver::class, 'id_memo', 'id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(D_Memo_Payments::class, 'id_memo', 'id');
     }
 
     public function proposeemployee()
