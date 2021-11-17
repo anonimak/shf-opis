@@ -119,7 +119,7 @@
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"
-                                @click="showMsgBoxProposePayment(item.id)"
+                                @click="showModal(item.id)"
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
                                   item.status == 'approve'
@@ -145,11 +145,16 @@
         </div>
       </div>
     </div>
+    <ModalFormPayment
+    :title="modalTitle"
+    :indexMemo="idItemClicked"
+    :errors="errors" />
   </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
+import ModalFormPayment from "@/components/ModalFormPayment";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
@@ -165,6 +170,7 @@ export default {
     "dataMemo",
     "userinfo",
     "notif",
+    "errors",
     "filters",
     "perPage",
     "tab",
@@ -188,6 +194,8 @@ export default {
       // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
+      idItemClicked: null,
+      modalTitle: "",
     };
   },
   components: {
@@ -199,11 +207,18 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
+    ModalFormPayment,
   },
   beforeMount() {
     this.setLsTabMemo();
   },
   methods: {
+    showModal(id) {
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Payment";
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+      //this.$refs.modalPayment.show(item);
+    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
