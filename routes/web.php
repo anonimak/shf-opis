@@ -93,6 +93,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
+            //Route::post('/{id}','User\MemoController@paymentStore')->name('storepayment');
             //Route::post('/{memo}/approverpayment', 'User\MemoController@updateApproverPayment')->name('updateapproverpayment');
             //Route::post('/{memo}/acknowledgepayment', 'User\MemoController@updateAcknowledgePayment')->name('updateacknowledgePayment');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');

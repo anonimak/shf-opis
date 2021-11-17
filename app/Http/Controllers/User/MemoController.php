@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\D_Memo_Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\D_Memo_Acknowledge;
@@ -372,24 +373,41 @@ class MemoController extends Controller
         return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
     }
 
-    public function proposePayment($id)
+    public function proposePayment(Request $request, $id)
     {
+        $request->validate([
+            'name'              => 'required',
+            'bank_name'         => 'required',
+            'bank_account'      => 'required',
+            'amount'            => 'required',
+            'remark'            => 'required',
+        ]);
+        //ddd($id);
+        D_Memo_Payments::create([
+            'id_memo'           => $id,
+            'name'              => $request->input('name'),
+            'bank_name'         => $request->input('bank_name'),
+            'bank_account'      => $request->input('bank_account'),
+            'amount'            => $request->input('amount'),
+            'remark'            => $request->input('remark'),
+        ]);
+
         $memo = Memo::where('id', $id)->with('approvers')->first();
 
         $approvers_payment = [];
 
-        foreach($memo->approvers as $approver) {
-           $approvers_payment[] = [
-               'id_memo' => $id,
-               'id_employee' => $approver->id_employee,
-               'idx' => $approver->idx,
-               'status' => $approver->status,
-               'type_approver' => $approver->type_approver
-           ];
+        foreach ($memo->approvers as $approver) {
+            $approvers_payment[] = [
+                'id_memo' => $id,
+                'id_employee' => $approver->id_employee,
+                'idx' => $approver->idx,
+                'status' => $approver->status,
+                'type_approver' => $approver->type_approver
+            ];
         }
 
         D_Payment_Approver::insert($approvers_payment);
-        
+
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
@@ -710,6 +728,8 @@ class MemoController extends Controller
     public function webpreviewPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetail($id);
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
+        $dataPayments = $dataPayments->makeHidden(['id','created_at','updated_at', 'id_memo']);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
@@ -739,6 +759,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments
