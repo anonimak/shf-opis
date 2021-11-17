@@ -129,10 +129,10 @@ class MemoController extends Controller
             ),
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => Memo::getPayment(auth()->user()->id_employee, 'submit')->count(),
-                'approve' => Memo::getPayment(auth()->user()->id_employee, 'approve')->count(),
-                'reject' => Memo::getPayment(auth()->user()->id_employee, 'reject')->count(),
-                'revisi' => Memo::getPayment(auth()->user()->id_employee, 'revisi')->count(),
+                'submit' => Memo::getPo(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getPo(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getPo(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getPo(auth()->user()->id_employee, 'revisi')->count(),
             ],
             '__index'   => 'user.memo.statuspo.index',
             '__webpreview'   => 'user.memo.statuspo.webpreview',
@@ -378,18 +378,18 @@ class MemoController extends Controller
 
         $approvers_payment = [];
 
-        foreach($memo->approvers as $approver) {
-           $approvers_payment[] = [
-               'id_memo' => $id,
-               'id_employee' => $approver->id_employee,
-               'idx' => $approver->idx,
-               'status' => $approver->status,
-               'type_approver' => $approver->type_approver
-           ];
+        foreach ($memo->approvers as $approver) {
+            $approvers_payment[] = [
+                'id_memo' => $id,
+                'id_employee' => $approver->id_employee,
+                'idx' => $approver->idx,
+                'status' => $approver->status,
+                'type_approver' => $approver->type_approver
+            ];
         }
 
         D_Payment_Approver::insert($approvers_payment);
-        
+
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
@@ -443,7 +443,20 @@ class MemoController extends Controller
 
     public function proposePo($id)
     {
-        $memo = Memo::where('id', $id)->first();
+        $memo = Memo::where('id', $id)->with('approvers')->first();
+
+        $approvers_po = $memo->approvers->map(function ($approver) use ($id) {
+            return [
+                'id_memo' => $id,
+                'id_employee' => $approver->id_employee,
+                'idx' => $approver->idx,
+                'status' => $approver->status,
+                'type_approver' => $approver->type_approver
+            ];
+        });
+
+        D_Po_Approver::insert($approvers_po->toArray());
+
         // cek apakah ada approver
         if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
@@ -452,13 +465,11 @@ class MemoController extends Controller
         $check_history = D_Memo_History::where('id_memo', $id)->get();
         if ($check_history->count() > 0) {
             $doc_no = $memo->doc_no;
-        } else {
-            $doc_no = $this->generateDocNo();
         }
 
         // update status menjadi submit
         Memo::where('id', $id)->update([
-            'status_payment'   => 'submit',
+            'status_po'   => 'submit',
         ]);
 
         D_Po_Approver::where('id_memo', $id)->update([
@@ -486,13 +497,13 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => route('user.memo.approvalpayment.detail', $id)
+            'url'     => route('user.memo.approvalpo.detail', $id)
         ];
 
-        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+        Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
         // kirim email ke tiap acknowlegde
 
-        return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit memo po.");
+        return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit PO.");
     }
 
     public function fileUploadAttach(Request $request, $id)
@@ -600,7 +611,11 @@ class MemoController extends Controller
             }
         }
 
-        return Redirect::back()->with('success', "Successfull updated approver.");
+        // return Redirect::back()->with('success', "Successfull updated approver.");
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull update approver.',
+        ]);
     }
 
     public function previewMemo(Request $request, $id)
