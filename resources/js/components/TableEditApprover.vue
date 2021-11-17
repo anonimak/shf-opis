@@ -185,7 +185,6 @@ export default {
           this.isApproverbusy = false;
           this.isApproverEdited = false;
 
-          console.log(response.data.message);
           if (response.data.status == 200) {
             this.pageFlashes.success = response.data.message;
           }
@@ -204,7 +203,6 @@ export default {
         }
         return item;
       });
-      console.log(this.dataApprovers);
       this.activeSelect = null;
     },
     showSelectTypeApprover(index) {
