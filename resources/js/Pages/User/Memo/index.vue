@@ -115,6 +115,21 @@
                               </inertia-link>
                               <b-button
                                 v-b-tooltip.hover
+                                title="Lanjut PO"
+                                href="#"
+                                variant="primary"
+                                class="btn btn-primary btn-sm"
+                                @click="showMsgBoxProposePO(item.id)"
+                                v-if="
+                                  item.ref_table.with_po == 1 &&
+                                  item.status == 'approve'
+                                "
+                                :disabled="item.status_po != 'edit'"
+                              >
+                                Lanjut PO
+                              </b-button>
+                              <b-button
+                                v-b-tooltip.hover
                                 title="Lanjut Payment"
                                 href="#"
                                 variant="primary"
@@ -174,6 +189,7 @@ export default {
     "__show",
     "__destroy",
     "__proposepayment",
+    "__proposepo",
     "__index",
     "__webpreview",
     "__senddraft",
@@ -210,6 +226,10 @@ export default {
     submitProposePayment(id) {
       console.log("submit");
       this.$inertia.put(route(this.__proposepayment, id));
+    },
+    showMsgBoxProposePO(id) {
+      console.log("submit");
+      this.$inertia.put(route(this.__proposepo, id));
     },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));

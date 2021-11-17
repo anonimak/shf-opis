@@ -67,6 +67,11 @@ export default {
               link: "user.memo.statuspayment.*",
               index: "user.memo.statuspayment.index",
             },
+            {
+              title: "Status PO",
+              link: "user.memo.statuspo.*",
+              index: "user.memo.statuspo.index",
+            },
           ],
         },
         {
@@ -91,6 +96,21 @@ export default {
           index: "user.memo.approvalpayment.index",
           icon: "fas fa-fw fa-clipboard-check",
           badge: this.notif.approval_memo_payment,
+          //   child: [
+          //     {
+          //       title: "Memo",
+          //       link: "user.memo.approval.*",
+          //       index: "user.memo.approval.index",
+          //     },
+          //   ],
+        },
+        {
+          id: 4,
+          title: "Approval PO",
+          link: "user.memo.approvalpo.*",
+          index: "user.memo.approvalpo.index",
+          icon: "fas fa-fw fa-clipboard-check",
+          badge: this.notif.approval_memo_po,
           //   child: [
           //     {
           //       title: "Memo",
