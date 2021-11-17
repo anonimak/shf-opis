@@ -94,6 +94,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
+            Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
@@ -101,6 +102,11 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
+        });
+
+        Route::prefix('/status-po')->name('statuspo.')->group(function () {
+            Route::get('/', 'User\MemoController@indexPo')->name('index');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewPo')->name('webpreview');
         });
 
 
@@ -115,7 +121,13 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/', 'User\ApprovalController@indexApprovalPayment')->name('index');
             Route::get('/{memo}', 'User\ApprovalController@detailPayment')->name('detail');
             Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
-           // Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
+            // Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
+        });
+
+        Route::prefix('/approval-po')->name('approvalpo.')->group(function () {
+            Route::get('/', 'User\ApprovalController@indexApprovalPo')->name('index');
+            Route::get('/{memo}', 'User\ApprovalController@detailPo')->name('detail');
+            Route::put('/{memo}', 'User\ApprovalController@approvingPo')->name('approving');
         });
     });
 
