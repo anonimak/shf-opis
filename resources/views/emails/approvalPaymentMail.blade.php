@@ -198,7 +198,7 @@
                         <tr>
                           <td style="font-size:40px; font-weight: 600; color: #ffffff; text-align:center;" class="mobile-spacing">
                             <div class="mobile-br">&nbsp;</div>
-                            Memo Approval
+                            Payment Approval
                             <br />
                           </td>
                         </tr>
@@ -270,11 +270,7 @@
                           <tr>
                             <td style="text-align: left;">
                               <br>
-                              @if ($details['type_approver'] == 'approver')
-                              Silahkan melakukan persetujuan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
-                              @else
-                              Silahkan melakukan peninjauan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
-                              @endif
+                              Silahkan melakukan persetujuan payment {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
                             </td>
                           </tr>
                         </table>
