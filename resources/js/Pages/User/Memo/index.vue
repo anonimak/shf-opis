@@ -148,7 +148,9 @@
     <ModalFormPayment
     :title="modalTitle"
     :indexMemo="idItemClicked"
-    :errors="errors" />
+    :errors="errors"
+    :dataMemo="dataMemo"
+    :dataPosition="dataPosition" />
   </layout>
 </template>
 <script>
@@ -168,6 +170,7 @@ export default {
     "flash",
     "breadcrumbItems",
     "dataMemo",
+    "dataPosition",
     "userinfo",
     "notif",
     "errors",
@@ -222,10 +225,10 @@ export default {
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
-    submitProposePayment(id) {
-      console.log("submit");
-      this.$inertia.put(route(this.__proposepayment, id));
-    },
+    // submitProposePayment(id) {
+    //   console.log("submit");
+    //   this.$inertia.put(route(this.__proposepayment, id));
+    // },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
@@ -252,26 +255,26 @@ export default {
           // An error occurred
         });
     },
-    showMsgBoxProposePayment: function (id) {
-      this.$bvModal
-        .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-          title: "Please Confirm",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "YES",
-          cancelTitle: "NO",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        .then((value) => {
-          value && this.submitProposePayment(id);
-        })
-        .catch((err) => {
-          console.log(err);
-          // An error occurred
-        });
-    },
+    // showMsgBoxProposePayment: function (id) {
+    //   this.$bvModal
+    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
+    //       title: "Please Confirm",
+    //       size: "sm",
+    //       buttonSize: "sm",
+    //       okTitle: "YES",
+    //       cancelTitle: "NO",
+    //       footerClass: "p-2",
+    //       hideHeaderClose: false,
+    //       centered: true,
+    //     })
+    //     .then((value) => {
+    //       value && this.submitProposePayment(id);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       // An error occurred
+    //     });
+    // },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
         .msgBoxConfirm(
