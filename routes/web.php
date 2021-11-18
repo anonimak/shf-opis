@@ -135,6 +135,20 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
     });
 
     Route::get('/test', 'User\MemoController@test')->name('test');
+
+    // api
+    Route::prefix('/api')->name('api.')->group(function () {
+        Route::prefix('/memo')->name('memo.')->group(function () {
+            Route::get('/{memo}/approvers', 'User\ApiMemoController@getApproversByIdMemo')->name('approvers');
+        });
+        Route::prefix('/po')->name('po.')->group(function () {
+            Route::get('/{id_memo}/approvers', 'User\ApiPoController@getApproversByIdMemo')->name('approvers');
+            Route::post('/{id_memo}/approvers-po', 'User\ApiPoController@updateApprover')->name('updateapprover');
+        });
+        Route::prefix('/employee')->name('employee.')->group(function () {
+            Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+    });
 });
 
 Route::get('/', 'HomeController@index');

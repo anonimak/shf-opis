@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class D_Po_Approver extends Model
 {
     protected $table = 'd_po_approver';
-
     protected $guarded = [];
+    public $timestamps = true;
 
     public function employee()
     {

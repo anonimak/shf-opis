@@ -177,6 +177,7 @@ export default {
 
     actionApproverSave() {
       this.isApproverbusy = true;
+      this.$emit("beforeSave");
       axios
         .post(route(this.__updateApprover, this.id_memo), {
           approver: this.dataApprovers,
@@ -188,6 +189,7 @@ export default {
           if (response.data.status == 200) {
             this.pageFlashes.success = response.data.message;
           }
+          this.$emit("onSave", response.data);
         });
     },
 

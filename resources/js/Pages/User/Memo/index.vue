@@ -119,7 +119,7 @@
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"
-                                @click="showMsgBoxProposePO(item.id)"
+                                @click="showModalProposePo(item.id)"
                                 v-if="
                                   item.ref_table.with_po == 1 &&
                                   item.status == 'approve'
@@ -161,15 +161,23 @@
       </div>
     </div>
     <ModalFormPayment
-    :title="modalTitle"
-    :indexMemo="idItemClicked"
-    :errors="errors" />
+      :title="modalTitle"
+      :indexMemo="idItemClicked"
+      :errors="errors"
+    />
+
+    <modal-form-po
+      :title="modalTitle"
+      :indexMemo="idItemPOClicked"
+      :errors="errors"
+    />
   </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import ModalFormPayment from "@/components/ModalFormPayment";
+import ModalFormPo from "@/components/ModalFormPo";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
@@ -211,6 +219,7 @@ export default {
       isLoadMemo: false,
       isCheched: false,
       idItemClicked: null,
+      idItemPOClicked: null,
       modalTitle: "",
     };
   },
@@ -224,6 +233,7 @@ export default {
     TimelineItem,
     TimelineTitle,
     ModalFormPayment,
+    ModalFormPo,
   },
   beforeMount() {
     this.setLsTabMemo();
@@ -235,16 +245,25 @@ export default {
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
+    showModalProposePo(id) {
+      // console.log("submit");
+      // this.$inertia.put(route(this.__proposepo, id));
+      this.idItemPOClicked = id;
+      this.modalTitle = "Modal PO";
+
+      this.$root.$emit(
+        "bv::show::modal",
+        "modal-propose-po",
+        "#btnShowModalPO"
+      );
+      //this.$refs.modalPayment.show(item);
+    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
     submitProposePayment(id) {
       console.log("submit");
       this.$inertia.put(route(this.__proposepayment, id));
-    },
-    showMsgBoxProposePO(id) {
-      console.log("submit");
-      this.$inertia.put(route(this.__proposepo, id));
     },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
