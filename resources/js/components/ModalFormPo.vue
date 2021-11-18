@@ -5,8 +5,11 @@
     :title="modalTitle"
     @shown="getData"
     @hidden="resetModal"
-    ok-title="Save"
+    ok-title="Purpose PO"
     @ok="handleOk"
+    :cancel-disabled="isSubmitbusy || isTableApproverbusy"
+    :ok-disabled="isSubmitbusy || isTableApproverbusy"
+    hide-header-close
   >
     <b-overlay
       :show="isTableApproverbusy"
@@ -38,6 +41,9 @@ export default {
     indexMemo: {
       type: Number,
     },
+    proposeLink: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -50,6 +56,7 @@ export default {
       url_approvers_po: "user.api.po.approvers",
       id_memo: null,
       isTableApproverbusy: false,
+      isSubmitbusy: false,
     };
   },
   methods: {
@@ -65,7 +72,7 @@ export default {
         this.isTableApproverbusy = false;
         this.dataPositions = results[0].data;
         this.dataApprovers =
-          results[2].data.length > 0 ? results[1].data : results[2].data;
+          results[1].data.length > 0 ? results[1].data : results[2].data;
       });
 
       // this.getDataPositions();
@@ -84,6 +91,8 @@ export default {
     },
     handleSubmit() {
       console.log("submit");
+      this.isSubmitbusy = true;
+      this.$inertia.put(route(this.proposeLink, this.indexMemo));
     },
 
     beforeSaveEditApprover() {

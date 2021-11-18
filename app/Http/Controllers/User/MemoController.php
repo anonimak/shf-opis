@@ -361,30 +361,19 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
-
-        $dataInsert = [
+        // insert to history frist approval
+        D_Memo_History::create([
+            'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-        ];
-
-        if ($firstApprover->type_approver == 'approver') {
-            $dataInsert['title'] = "Process Approving {$firstApprover->idx}";
-            $dataInsert['content'] = "On process approving by approver {$firstApprover->idx}";
-        } else {
-            $dataInsert['title'] = "Info to Acknowledge {$firstApprover->idx}";
-            $dataInsert['content'] = "On process info to acknowledge {$firstApprover->idx}";
-        }
-
-        // insert to history frist approval
-        D_Memo_History::create($dataInsert);
-
+            'content'   => "On process approving by approver {$firstApprover->idx}"
+        ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => route('user.memo.approval.detail', $id),
-            'type_approver' => $firstApprover->type_approver
+            'url'     => route('user.memo.approval.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
