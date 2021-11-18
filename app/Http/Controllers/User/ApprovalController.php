@@ -9,6 +9,7 @@ use App\Models\D_Memo_Approver;
 use App\Models\D_Payment_Approver;
 use App\Models\D_Memo_Attachment;
 use App\Models\D_Memo_History;
+use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -65,6 +66,29 @@ class ApprovalController extends Controller
         ]);
     }
 
+    public function indexApprovalPo(Request $request)
+    {
+        $memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
+        // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
+        return Inertia::render('User/Approval_PO', [
+            'dataMemo' => $memo,
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Approval PO",
+                    'active'  => true
+                ]
+            ),
+            '__approving'  => 'user.memo.approvalpo.approving',
+            '__previewpdf'  => 'user.memo.approval.preview',
+            '__detail'    => 'user.memo.approvalpo.detail',
+            '__index'    => 'user.memo.approvalpo.index',
+        ]);
+    }
 
     public function detail(Request $request, $id)
     {
@@ -138,6 +162,41 @@ class ApprovalController extends Controller
         ]);
     }
 
+    public function detailPo(Request $request, $id)
+    {
+        $memo = Memo::getPoDetailWithCurrentApprover($id, auth()->user()->id_employee);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
+        return Inertia::render('User/Approval_PO/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Approval PO",
+                    'href'  => "user.memo.approvalpo.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments,
+            '__approving'  => 'user.memo.approvalpo.approving',
+        ]);
+    }
+
     public function approving(Request $request, $id)
     {
         $status_approver = $request->input('variant');
@@ -187,7 +246,8 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => route('user.memo.approval.detail', $memo->id)
+                    'url'     => route('user.memo.approval.detail', $memo->id),
+                    'type_approver' => $nextApprover->type_approver
                 ];
 
                 if ($approver->type_approver == 'approver') {
@@ -320,7 +380,8 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => route('user.memo.approvalpayment.detail', $memo->id)
+                    'url'     => route('user.memo.approvalpayment.detail', $memo->id),
+                    'type_approver' => $nextApprover->type_approver
                 ];
 
                 if ($approver->type_approver == 'approver') {
@@ -402,5 +463,119 @@ class ApprovalController extends Controller
         }
 
         return Redirect::route('user.memo.approvalpayment.index')->with('success', "Successfull " . $request->input('variant'));
+    }
+
+    public function approvingPo(Request $request, $id)
+    {
+        $status_approver = $request->input('variant');
+        $msg = ($request->input('message')) ? $request->input('message') : null;
+        $message = ($msg ? "with message ($msg)" : "");
+        $approver = D_Po_Approver::where('id', $id)->first();
+
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        D_Po_Approver::where('id', $id)->update([
+            'status'            => $status_approver,
+            'msg'               => $msg
+        ]);
+
+        if ($status_approver == 'approve') {
+            // if type_approver is approver
+            if ($approver->type_approver == 'approver') {
+                $contentHistory = [
+                    'title'     => "Approved lvl {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Approved by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            } else {
+                $contentHistory = [
+                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                ];
+            }
+            // insert to history when approved
+            D_Memo_History::create($contentHistory);
+
+            $nextApprover = D_Po_Approver::where('id_memo', $approver->id_memo)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+
+            if ($nextApprover) {
+                // insert to history next approval
+                D_Memo_History::create([
+                    'title' => "Process Approving {$nextApprover->idx}",
+                    'id_memo'   => $memo->id,
+                    'type'  => 'info',
+                    'content' => "On process approving by approver {$nextApprover->idx}"
+                ]);
+                // send email to next approver
+                $mailApprover = $nextApprover->employee->email;
+                // kirim email ke approver pertama
+                $details = [
+                    'subject' => $memo->title,
+                    'doc_no'  => $memo->doc_no,
+                    'url'     => route('user.memo.approvalpo.detail', $memo->id)
+                ];
+
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "PO $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "PO $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "PO $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "PO $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                    ];
+                }
+
+                Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
+                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+            } else {
+                Memo::where('id', $approver->id_memo)->update(['status_po' => 'approve']);
+                // insert to history when all approved by approver
+                D_Memo_History::create([
+                    'title'     => "PO Approved",
+                    'id_memo'   => $memo->id,
+                    'type'      => 'success',
+                    'content'   => "PO {$memo->doc_no} has approved."
+                ]);
+
+                if ($approver->type_approver == 'approver') {
+                    $detailspropose = [
+                        'subject' => "PO $memo->doc_no approved",
+                        'message' => "PO $memo->doc_no has approved"
+                    ];
+                } else {
+                    $detailspropose = [
+                        'subject' => "PO $memo->doc_no reviewed",
+                        'message' => "PO $memo->doc_no has reviewed"
+                    ];
+                }
+                // notif ke user propose
+                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+            }
+        }
+
+        if ($status_approver == 'reject') {
+            // notif ke user propose
+            Memo::where('id', $approver->id_memo)->update(['status_po' => 'reject']);
+            // insert to history when revisi by approver
+            D_Memo_History::create([
+                'title'     => "PO Rejected",
+                'id_memo'   => $memo->id,
+                'type'      => 'danger',
+                'content'   => "PO {$memo->doc_no} has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ]);
+
+            $detailspropose = [
+                'subject' => "PO $memo->doc_no rejected",
+                'message' => "PO $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+            ];
+            // notif ke user propose
+            Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+        }
+
+        return Redirect::route('user.memo.approvalpo.index')->with('success', "Successfull " . $request->input('variant'));
     }
 }

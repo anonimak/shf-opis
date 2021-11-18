@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Status Memo</h1>
+      <h1 class="h3 mb-0 text-gray-800">Status PO</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -42,14 +42,6 @@
                         Rejected
                         <b-badge v-if="counttab.reject > 0" variant="primary">{{
                           counttab.reject
-                        }}</b-badge>
-                      </template>
-                    </b-tab>
-                    <b-tab>
-                      <template #title>
-                        Revisi
-                        <b-badge v-if="counttab.revisi > 0" variant="primary">{{
-                          counttab.revisi
                         }}</b-badge>
                       </template>
                     </b-tab>
@@ -113,36 +105,6 @@
                               >
                                 preview
                               </inertia-link>
-                              <b-button
-                                v-b-tooltip.hover
-                                title="Lanjut PO"
-                                href="#"
-                                variant="primary"
-                                class="btn btn-primary btn-sm"
-                                @click="showModalProposePo(item.id)"
-                                v-if="
-                                  item.ref_table.with_po == 1 &&
-                                  item.status == 'approve'
-                                "
-                                :disabled="item.status_po != 'edit'"
-                              >
-                                Lanjut PO
-                              </b-button>
-                              <b-button
-                                v-b-tooltip.hover
-                                title="Lanjut Payment"
-                                href="#"
-                                variant="primary"
-                                class="btn btn-primary btn-sm"
-                                @click="showModal(item.id)"
-                                v-if="
-                                  item.ref_table.with_payment == 1 &&
-                                  item.status == 'approve'
-                                "
-                                :disabled="item.status_payment != 'edit'"
-                              >
-                                Lanjut Payment
-                              </b-button>
                             </td>
                           </tr>
                         </tbody>
@@ -160,26 +122,11 @@
         </div>
       </div>
     </div>
-    <ModalFormPayment
-      :title="modalTitle"
-      :indexMemo="idItemClicked"
-      :errors="errors"
-      :dataMemo="dataMemo"
-    :dataPosition="dataPosition"
-    />
-
-    <modal-form-po
-      :title="modalTitle"
-      :indexMemo="idItemPOClicked"
-      :errors="errors"
-    />
   </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
-import ModalFormPayment from "@/components/ModalFormPayment";
-import ModalFormPo from "@/components/ModalFormPo";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
@@ -193,10 +140,8 @@ export default {
     "flash",
     "breadcrumbItems",
     "dataMemo",
-    "dataPosition",
     "userinfo",
     "notif",
-    "errors",
     "filters",
     "perPage",
     "tab",
@@ -205,9 +150,7 @@ export default {
     "__edit",
     "__show",
     "__destroy",
-    "__proposepayment",
-    "__proposepo",
-    "__index",
+    "__indexpayment",
     "__webpreview",
     "__senddraft",
   ],
@@ -221,9 +164,6 @@ export default {
       // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
-      idItemClicked: null,
-      idItemPOClicked: null,
-      modalTitle: "",
     };
   },
   components: {
@@ -235,39 +175,14 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
-    ModalFormPayment,
-    ModalFormPo,
   },
   beforeMount() {
     this.setLsTabMemo();
   },
   methods: {
-    showModal(id) {
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-      //this.$refs.modalPayment.show(item);
-    },
-    showModalProposePo(id) {
-      // console.log("submit");
-      // this.$inertia.put(route(this.__proposepo, id));
-      this.idItemPOClicked = id;
-      this.modalTitle = "Modal PO";
-
-      this.$root.$emit(
-        "bv::show::modal",
-        "modal-propose-po",
-        "#btnShowModalPO"
-      );
-      //this.$refs.modalPayment.show(item);
-    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
-    // submitProposePayment(id) {
-    //   console.log("submit");
-    //   this.$inertia.put(route(this.__proposepayment, id));
-    // },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
@@ -294,26 +209,6 @@ export default {
           // An error occurred
         });
     },
-    // showMsgBoxProposePayment: function (id) {
-    //   this.$bvModal
-    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-    //       title: "Please Confirm",
-    //       size: "sm",
-    //       buttonSize: "sm",
-    //       okTitle: "YES",
-    //       cancelTitle: "NO",
-    //       footerClass: "p-2",
-    //       hideHeaderClose: false,
-    //       centered: true,
-    //     })
-    //     .then((value) => {
-    //       value && this.submitProposePayment(id);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       // An error occurred
-    //     });
-    // },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
         .msgBoxConfirm(
@@ -363,7 +258,6 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      console.log(route().current());
       // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
 

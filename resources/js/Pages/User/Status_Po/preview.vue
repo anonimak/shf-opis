@@ -10,40 +10,6 @@
         <b-card no-body>
           <b-card-body>
             <b-row class="mb-2">
-              <b-col
-                col
-                lg="12"
-                md="12"
-                class="mb-4"
-                v-if="dataMemo.approver.type_approver == 'approver'"
-              >
-                <b-button-group class="float-right">
-                  <b-button
-                    @click="actionApprove(dataMemo.approver.id)"
-                    variant="info"
-                    >Approve</b-button
-                  >
-                  <b-button
-                    @click="actionRevisi(dataMemo.approver.id)"
-                    variant="secondary"
-                    >Revisi</b-button
-                  >
-                  <b-button
-                    @click="actionReject(dataMemo.approver.id)"
-                    variant="warning"
-                    >Reject</b-button
-                  >
-                </b-button-group>
-              </b-col>
-              <b-col col lg="12" md="12" class="mb-4" v-else>
-                <b-button-group class="float-right">
-                  <b-button
-                    @click="actionApprove(dataMemo.approver.id)"
-                    variant="info"
-                    >Next</b-button
-                  >
-                </b-button-group>
-              </b-col>
               <b-col col lg="6" md="auto">
                 <h5>Memo Information</h5>
                 <table class="table table-bordered">
@@ -62,22 +28,22 @@
                       <td>Status</td>
                       <td>
                         <b-badge
-                          v-if="dataMemo.status == 'submit'"
+                          v-if="dataMemo.status_payment == 'submit'"
                           variant="info"
                           >On process approving</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'approve'"
+                          v-if="dataMemo.status_payment == 'approve'"
                           variant="success"
                           >Memo Approved</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'reject'"
+                          v-if="dataMemo.status_payment == 'reject'"
                           variant="danger"
                           >Memo Rejected</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'revisi'"
+                          v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
                           >Memo Revisi</b-badge
                         >
@@ -140,7 +106,7 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="(approver, index) in dataMemo.approvers"
+                      v-for="(approver, index) in dataMemo.approvers_po"
                       :key="index"
                     >
                       <td>
@@ -190,6 +156,54 @@
                     </tr>
                   </tbody>
                 </table>
+                <div
+                  class="card mb-4"
+                  v-if="dataMemo && dataMemo.histories.length > 0"
+                >
+                  <div
+                    class="
+                      card-header
+                      py-3
+                      d-flex
+                      flex-row
+                      align-items-center
+                      justify-content-between
+                    "
+                  >
+                    <h6 class="m-0 font-weight-bold text-primary">History</h6>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="overflow-auto" style="height: 218px">
+                      <timeline>
+                        <timeline-item
+                          v-for="(itemHistory, index) in dataMemo.histories"
+                          :key="index"
+                          :bg-color="timelinecolor[itemHistory.type]"
+                        >
+                          <strong>
+                            {{ itemHistory.title }}
+                            <span class="float-right">
+                              <small class="text-muted">
+                                <em>
+                                  {{
+                                    itemHistory.created_at
+                                      | moment("D/M/YY,h:mm a")
+                                  }}
+                                </em>
+                              </small>
+                            </span>
+                          </strong>
+                          <p>
+                            <small class="text-muted">{{
+                              itemHistory.content
+                            }}</small>
+                          </p>
+                        </timeline-item>
+                      </timeline>
+                    </div>
+                  </div>
+                </div>
               </b-col>
             </b-row>
             <b-row
@@ -258,14 +272,6 @@
         </b-card>
       </div>
     </div>
-    <modal-form-memo-approval
-      :title="modalTitle"
-      :caption="modalCaption"
-      :variant="buttonClicked"
-      :idItemClicked="idItemClicked"
-      @handleOk="handleOk"
-      @handleHidden="handleHidden"
-    />
   </layout>
 </template>
 <script>
@@ -273,7 +279,6 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
-import ModalFormMemoApproval from "@/components/ModalFormMemoApproval";
 
 export default {
   props: [
@@ -284,9 +289,7 @@ export default {
     "proposeEmployee",
     "memocost",
     "attachments",
-    "__approving",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
   components: {
     Layout,
     FlashMsg,
@@ -294,7 +297,6 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
-    ModalFormMemoApproval,
   },
   data() {
     return {
@@ -304,80 +306,7 @@ export default {
         danger: "#e74a3b",
         warning: "#f6c23e",
       },
-      buttonClicked: "",
-      idItemClicked: null,
-      modalTitle: "",
-      modalCaption: "",
     };
-  },
-  methods: {
-    actionApprove(id) {
-      this.buttonClicked = "approve";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Approve";
-      this.modalCaption = "Are you sure to approve?";
-
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
-    actionRevisi(id) {
-      this.buttonClicked = "revisi";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
-
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
-    actionReject(id) {
-      this.buttonClicked = "reject";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Reject";
-      this.modalCaption = "Are you sure to reject?";
-
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
-    handleHidden() {
-      this.buttonClicked = "";
-      this.idItemClicked = null;
-      this.modalTitle = "";
-      this.modalCaption = "";
-    },
-    handleOk(item) {
-      this.$inertia.put(route(this.__approving, item.id), item).then(() => {
-        this.buttonClicked = "";
-        this.idItemClicked = null;
-        this.modalTitle = "";
-        this.modalCaption = "";
-      });
-    },
-    submitDelete(id) {
-      // this.$inertia.delete(route(this.__destroy, id));
-    },
-    showMsgBoxDelete: function (id) {
-      this.$bvModal
-        .msgBoxConfirm(
-          "Please confirm that you want to delete this reference approver.",
-          {
-            title: "Please Confirm",
-            size: "sm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "YES",
-            cancelTitle: "NO",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        )
-        .then((value) => {
-          value && this.submitDelete(id);
-        })
-        .catch((err) => {
-          // An error occurred
-        });
-    },
-    reset() {
-      this.form = mapValues(this.form, () => null);
-    },
   },
 };
 </script>

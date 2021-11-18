@@ -97,6 +97,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             //Route::post('/{memo}/approverpayment', 'User\MemoController@updateApproverPayment')->name('updateapproverpayment');
             //Route::post('/{memo}/acknowledgepayment', 'User\MemoController@updateAcknowledgePayment')->name('updateacknowledgePayment');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
+            Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
@@ -104,6 +105,11 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
+        });
+
+        Route::prefix('/status-po')->name('statuspo.')->group(function () {
+            Route::get('/', 'User\MemoController@indexPo')->name('index');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewPo')->name('webpreview');
         });
 
 
@@ -120,9 +126,29 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
             Route::get('/{memo}/preview', 'User\MemoController@previewPayment')->name('preview');
         });
+
+        Route::prefix('/approval-po')->name('approvalpo.')->group(function () {
+            Route::get('/', 'User\ApprovalController@indexApprovalPo')->name('index');
+            Route::get('/{memo}', 'User\ApprovalController@detailPo')->name('detail');
+            Route::put('/{memo}', 'User\ApprovalController@approvingPo')->name('approving');
+        });
     });
 
     Route::get('/test', 'User\MemoController@test')->name('test');
+
+    // api
+    Route::prefix('/api')->name('api.')->group(function () {
+        Route::prefix('/memo')->name('memo.')->group(function () {
+            Route::get('/{memo}/approvers', 'User\ApiMemoController@getApproversByIdMemo')->name('approvers');
+        });
+        Route::prefix('/po')->name('po.')->group(function () {
+            Route::get('/{id_memo}/approvers', 'User\ApiPoController@getApproversByIdMemo')->name('approvers');
+            Route::post('/{id_memo}/approvers-po', 'User\ApiPoController@updateApprover')->name('updateapprover');
+        });
+        Route::prefix('/employee')->name('employee.')->group(function () {
+            Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+    });
 });
 
 Route::get('/', 'HomeController@index');

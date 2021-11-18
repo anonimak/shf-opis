@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
+      <h1 class="h3 mb-0 text-gray-800">PO {{ dataMemo.doc_no }}</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -15,32 +15,23 @@
                 lg="12"
                 md="12"
                 class="mb-4"
-                v-if="dataMemo.approver.type_approver == 'approver'"
+                v-if="dataMemo.approver_payment.type_approver == 'approver'"
               >
                 <b-button-group class="float-right">
                   <b-button
-                    @click="actionApprove(dataMemo.approver.id)"
+                    @click="actionApprove(dataMemo.approver_payment.id)"
                     variant="info"
                     >Approve</b-button
                   >
                   <b-button
-                    @click="actionRevisi(dataMemo.approver.id)"
+                    @click="actionRevisi(dataMemo.approver_payment.id)"
                     variant="secondary"
                     >Revisi</b-button
                   >
                   <b-button
-                    @click="actionReject(dataMemo.approver.id)"
+                    @click="actionReject(dataMemo.approver_payment.id)"
                     variant="warning"
                     >Reject</b-button
-                  >
-                </b-button-group>
-              </b-col>
-              <b-col col lg="12" md="12" class="mb-4" v-else>
-                <b-button-group class="float-right">
-                  <b-button
-                    @click="actionApprove(dataMemo.approver.id)"
-                    variant="info"
-                    >Next</b-button
                   >
                 </b-button-group>
               </b-col>
@@ -62,24 +53,24 @@
                       <td>Status</td>
                       <td>
                         <b-badge
-                          v-if="dataMemo.status == 'submit'"
+                          v-if="dataMemo.status_payment == 'submit'"
                           variant="info"
-                          >On process approving</b-badge
+                          >On process approving payment</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'approve'"
+                          v-if="dataMemo.status_payment == 'approve'"
                           variant="success"
-                          >Memo Approved</b-badge
+                          >Memo Payment Approved</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'reject'"
+                          v-if="dataMemo.status_payment == 'reject'"
                           variant="danger"
-                          >Memo Rejected</b-badge
+                          >Memo Payment Rejected</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status == 'revisi'"
+                          v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Memo Payment Revisi</b-badge
                         >
                       </td>
                     </tr>
@@ -140,7 +131,7 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="(approver, index) in dataMemo.approvers"
+                      v-for="(approver, index) in dataMemo.approvers_payment"
                       :key="index"
                     >
                       <td>
