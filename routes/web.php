@@ -145,6 +145,10 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{id_memo}/approvers', 'User\ApiPoController@getApproversByIdMemo')->name('approvers');
             Route::post('/{id_memo}/approvers-po', 'User\ApiPoController@updateApprover')->name('updateapprover');
         });
+        Route::prefix('/payment')->name('payment.')->group(function () {
+            Route::get('/{id_memo}/approvers', 'User\ApiPaymentController@getApproversByIdMemo')->name('approvers');
+            Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
+        });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
         });

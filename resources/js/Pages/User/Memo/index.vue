@@ -161,14 +161,14 @@
       </div>
     </div>
     <ModalFormPayment
-      :title="modalTitle"
+    :proposeLink="__proposepayment"
       :indexMemo="idItemClicked"
       :errors="errors"
-      :dataMemo="dataMemo"
-    :dataPosition="dataPosition"
     />
 
-    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
+    <modal-form-po
+    :proposeLink="__proposepo"
+    :indexMemo="idItemPOClicked" />
   </layout>
 </template>
 <script>
@@ -241,7 +241,7 @@ export default {
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
