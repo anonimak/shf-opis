@@ -2,6 +2,7 @@
   <b-modal
     id="modal-propose-payment"
     ref="modal-propose-payment"
+    size="lg"
     :title="modalTitle"
     @shown="getData"
     @hidden="resetModal"
@@ -17,7 +18,6 @@
       opacity="0.6"
       spinner-small
       spinner-variant="primary"
-      class="d-inline-block"
     >
       <table-edit-approver
         :dataPosition="dataPositions"
@@ -93,12 +93,14 @@
               >
             </td>
             <td v-else>
+                <b-button-group size="sm">
               <b-button variant="primary" @click="actionEdit(index, item.id)"
                 ><i class="fa fa-edit"></i
               ></b-button>
               <b-button variant="secondary" @click="actionDelete(item.id)"
                 ><i class="fa fa-trash"></i
               ></b-button>
+                </b-button-group>
             </td>
           </tr>
         </tbody>
@@ -112,7 +114,7 @@
       @hidden="resetModalPayment"
       no-close-on-backdrop
     >
-      <form ref="form" @submit.stop.prevent="handleSubmitPayment">
+      <b-form ref="form" @submit.prevent="handleSubmitPayment">
         <b-card-body>
           <b-col col lg="6" md="auto">
             <b-form-group
@@ -165,7 +167,7 @@
                 type="number"
                 name="bank_account"
                 v-model="form.bank_account"
-                placeholder="Bank Account"
+                placeholder="Account Number"
                 :state="errors.bank_account ? false : null"
                 trim
                 required
@@ -209,7 +211,7 @@
             </b-form-group>
           </b-col>
         </b-card-body>
-      </form>
+      </b-form>
     </b-modal>
   </b-modal>
 </template>
@@ -221,7 +223,7 @@ export default {
   components: {
     TableEditApprover,
   },
-  props: ["indexMemo", "proposeLink", "errors"],
+  props: ["indexMemo", "proposeLink"],
   data() {
     return {
       form: {
@@ -247,6 +249,7 @@ export default {
       isFormPaymentEdited: false,
       activeItemPayment: {},
       activeIndex: null,
+      errors:{}
     };
   },
   methods: {
@@ -257,7 +260,6 @@ export default {
       //console.log(this.activeItemPayment.name)
     },
     actionDelete(idData) {
-      console.log(idData);
       this.$bvModal
         .msgBoxConfirm(
           "Please confirm that you want to delete this data payment.",
@@ -280,7 +282,6 @@ export default {
     },
 
     submitUpdate(id) {
-      console.log(this.activeItemPayment.id);
       this.$inertia
         .put(
           route("user.memo.statusmemo.updatepayment", [this.indexMemo, id]),
@@ -299,9 +300,17 @@ export default {
     },
 
     submitDelete(id) {
-      this.$inertia.delete(
-        route("user.memo.statusmemo.deletepayment", [this.indexMemo, id])
-      );
+    //   this.$inertia.delete(
+    //     route("user.memo.statusmemo.deletepayment", id)
+    //   );
+    console.log(id)
+      axios.delete(route("user.memo.statusmemo.deletepayment", id))
+      .then((response) => {
+          if(response.data.success) {
+              this.pageFlashes.success = "Successfull delete data payment"
+              this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
+          }
+      })
     },
 
     actionCancel() {
@@ -310,11 +319,9 @@ export default {
     },
     handleSubmitPayment() {
       axios
-        .put(
-          route("user.api.payment.storepayment", this.indexMemo),
-          this.form
-        )
+        .put(route("user.api.payment.storepayment", this.indexMemo), this.form)
         .then((response) => {
+            this.errors = {};
           if (Object.entries(this.errors).length === 0) {
             console.log("no error");
             this.$nextTick(() => {
@@ -324,6 +331,17 @@ export default {
           let id = response.data.id;
           this.form.id = id;
           this.dataPayments = [...this.dataPayments, this.form];
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          } else {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          if (error.response) {
+              this.errors = {...error.response.data.errors}
+            console.log(error.response.data);
+          }
         });
     },
     getData() {

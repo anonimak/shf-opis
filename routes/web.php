@@ -94,7 +94,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
             // Route::put('/{id}/addpayment','User\MemoController@paymentStore')->name('storepayment');
-            Route::delete('/{id}/payment/{idpayment}', 'User\MemoController@deletePayment')->name('deletepayment');
+            Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
