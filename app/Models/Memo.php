@@ -77,7 +77,7 @@ class Memo extends Model
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
     }
 
-    public static function getMemoDetail($id)
+    public static function getMemoDetailDraftEdit($id)
     {
         return Self::with(['approvers' => function ($approver) {
             return $approver->with(['employee' => function ($employee) {
@@ -85,6 +85,39 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch');
+                }]);
+            }])->orderBy('idx', 'asc');
+        }])->with(['acknowledges' => function ($approver) {
+            return $approver->with(['employee' => function ($employee) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch');
+                }]);
+            }])->orderBy('id', 'asc');
+        }])->with(['histories' => function ($history) {
+            return $history->orderBy('id', 'DESC');
+        }])
+            ->where('id', $id)->first();
+    }
+
+    public static function getMemoDetail($id)
+    {
+        $memo = Self::find($id);
+        return Self::with(['approvers' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($position_now) use ($memo) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {
@@ -103,12 +136,21 @@ class Memo extends Model
 
     public static function getPaymentDetail($id)
     {
-        return Self::with(['approversPayment' => function ($approver) {
-            return $approver->with(['employee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-                    return $position_now->with(['position' => function ($position) {
+        $memo = Self::find($id);
+        return Self::with(['approversPayment' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($emp_history) use ($memo) {
+                    return $emp_history->with(['position' => function ($position) {
                         return $position->with('department');
-                    }])->with('branch');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {
@@ -127,12 +169,21 @@ class Memo extends Model
 
     public static function getPoDetail($id)
     {
-        return Self::with(['approversPo' => function ($approver) {
-            return $approver->with(['employee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        $memo = Self::find($id);
+        return Self::with(['approversPo' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($position_now) use ($memo) {
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
-                    }])->with('branch');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {
@@ -151,12 +202,21 @@ class Memo extends Model
 
     public static function getMemoDetailWithCurrentApprover($id, $id_current_approver)
     {
-        return Self::with(['approvers' => function ($approver) {
-            return $approver->with(['employee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        $memo = Self::find($id);
+        return Self::with(['approvers' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($position_now) use ($memo) {
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
-                    }])->with('branch');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {
@@ -177,12 +237,21 @@ class Memo extends Model
 
     public static function getPaymentDetailWithCurrentApprover($id, $id_current_approver)
     {
-        return Self::with(['approversPayment' => function ($approver) {
-            return $approver->with(['employee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        $memo = Self::find($id);
+        return Self::with(['approversPayment' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($position_now) use ($memo) {
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
-                    }])->with('branch');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {
@@ -203,12 +272,21 @@ class Memo extends Model
 
     public static function getPoDetailWithCurrentApprover($id, $id_current_approver)
     {
-        return Self::with(['approversPo' => function ($approver) {
-            return $approver->with(['employee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        $memo = Self::find($id);
+        return Self::with(['approversPo' => function ($approver) use ($memo) {
+            return $approver->with(['employee' => function ($employee) use ($memo) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['emp_history' => function ($position_now) use ($memo) {
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
-                    }])->with('branch');
+                    }])->with('branch')
+                        ->where(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->where('year_finished', '>', $memo->propose_at);
+                        })
+                        ->orWhere(function ($query) use ($memo) {
+                            $query->where('year_started', '<', $memo->propose_at)
+                                ->orWhere('year_finished', null);
+                        });
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['acknowledges' => function ($approver) {

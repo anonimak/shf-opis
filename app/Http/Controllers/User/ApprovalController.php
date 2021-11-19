@@ -232,11 +232,16 @@ class ApprovalController extends Controller
 
             if ($nextApprover) {
                 // insert to history next approval
+                $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
+                $title_history .=  $nextApprover->idx;
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
+
                 D_Memo_History::create([
-                    'title' => "Process Approving {$nextApprover->idx}",
+                    'title' => $title_history,
                     'id_memo'   => $memo->id,
                     'type'  => 'info',
-                    'content' => "On process approving by approver {$nextApprover->idx}"
+                    'content' => $content_history
                 ]);
                 // send email to next approver
                 $mailApprover = $nextApprover->employee->email;
@@ -366,11 +371,16 @@ class ApprovalController extends Controller
 
             if ($nextApprover) {
                 // insert to history next approval
+                $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
+                $title_history .=  $nextApprover->idx;
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
+
                 D_Memo_History::create([
-                    'title' => "Process Approving {$nextApprover->idx}",
+                    'title' => $title_history,
                     'id_memo'   => $memo->id,
                     'type'  => 'info',
-                    'content' => "On process approving by approver {$nextApprover->idx}"
+                    'content' => $content_history
                 ]);
                 // send email to next approver
                 $mailApprover = $nextApprover->employee->email;
@@ -500,11 +510,16 @@ class ApprovalController extends Controller
 
             if ($nextApprover) {
                 // insert to history next approval
+                $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
+                $title_history .=  $nextApprover->idx;
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
+
                 D_Memo_History::create([
-                    'title' => "Process Approving {$nextApprover->idx}",
+                    'title' => $title_history,
                     'id_memo'   => $memo->id,
                     'type'  => 'info',
-                    'content' => "On process approving by approver {$nextApprover->idx}"
+                    'content' => $content_history
                 ]);
                 // send email to next approver
                 $mailApprover = $nextApprover->employee->email;

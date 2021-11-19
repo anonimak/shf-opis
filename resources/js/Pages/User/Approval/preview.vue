@@ -155,7 +155,7 @@
                       </td>
                       <td>
                         {{
-                          approver.employee.position_now.position.position_name
+                          approver.employee.emp_history.position.position_name
                         }}
                       </td>
                       <td>

@@ -121,7 +121,7 @@
                       </td>
                       <td>
                         {{
-                          approver.employee.position_now.position.position_name
+                          approver.employee.emp_history.position.position_name
                         }}
                       </td>
                       <td>
@@ -254,14 +254,9 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                    v-for="(item, index) in dataPayments"
-                    :key="item.id">
-
+                    <tr v-for="(item, index) in dataPayments" :key="item.id">
                       <th scope="row">
-                          {{
-                          index+1
-                        }}
+                        {{ index + 1 }}
                       </th>
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>

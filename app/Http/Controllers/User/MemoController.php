@@ -197,7 +197,7 @@ class MemoController extends Controller
 
     public function draftEdit($id)
     {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
 
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
