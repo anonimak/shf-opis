@@ -190,6 +190,7 @@ export default {
     "breadcrumbItems",
     "dataMemo",
     "dataPosition",
+    "dataPayments",
     "userinfo",
     "notif",
     "errors",

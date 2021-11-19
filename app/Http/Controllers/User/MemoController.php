@@ -17,6 +17,7 @@ use App\Models\Memo;
 use App\Models\Ref_Template_Cost;
 use App\Models\Ref_Type_Memo;
 use App\User;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -373,6 +374,7 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
+            'type_approver' => $firstApprover->type_approver,
             'url'     => route('user.memo.approval.detail', $id)
         ];
 
@@ -383,38 +385,8 @@ class MemoController extends Controller
 
     public function proposePayment(Request $request, $id)
     {
-        $request->validate([
-            'name'              => 'required',
-            'bank_name'         => 'required',
-            'bank_account'      => 'required',
-            'amount'            => 'required',
-            'remark'            => 'required',
-        ]);
-        //ddd($id);
-        D_Memo_Payments::create([
-            'id_memo'           => $id,
-            'name'              => $request->input('name'),
-            'bank_name'         => $request->input('bank_name'),
-            'bank_account'      => $request->input('bank_account'),
-            'amount'            => $request->input('amount'),
-            'remark'            => $request->input('remark'),
-        ]);
 
         $memo = Memo::where('id', $id)->with('approvers')->first();
-
-        $approvers_payment = [];
-
-        foreach ($memo->approvers as $approver) {
-            $approvers_payment[] = [
-                'id_memo' => $id,
-                'id_employee' => $approver->id_employee,
-                'idx' => $approver->idx,
-                'status' => $approver->status,
-                'type_approver' => $approver->type_approver
-            ];
-        }
-
-        D_Payment_Approver::insert($approvers_payment);
 
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
@@ -458,13 +430,69 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
+            'type_approver' => $firstApprover->type_approver,
             'url'     => route('user.memo.approvalpayment.detail', $id)
         ];
 
-        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+        Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
         // kirim email ke tiap acknowlegde
 
         return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
+    }
+
+    // public function paymentStore(Request $request, $id) {
+    //      $request->validate([
+    //          'name'              => 'required',
+    //          'bank_name'         => 'required',
+    //          'bank_account'      => 'required',
+    //          'amount'            => 'required',
+    //          'remark'            => 'required',
+    //      ]);
+    //     //ddd($id);
+    //      $memoPayment = D_Memo_Payments::create([
+    //          'id_memo'           => $id,
+    //          'name'              => $request->input('name'),
+    //          'bank_name'         => $request->input('bank_name'),
+    //          'bank_account'      => $request->input('bank_account'),
+    //          'amount'            => $request->input('amount'),
+    //          'remark'            => $request->input('remark'),
+    //      ]);
+
+    //     //  dd($memoPayment);
+
+    //      //$dataPayment = D_Memo_Payments::where('id_memo', $id)->first();
+    //     //  return Redirect::back()->with('success', "Successfull add data payment");
+    //      return response()->json([
+    //          'id' => $memoPayment->id
+    //      ]);
+    // }
+
+    public function updatePayment(Request $request, $id, $idpayment)
+    {
+        //ddd($request);
+        $request->validate([
+            'name'              => 'required',
+            'bank_name'         => 'required',
+            'bank_account'      => 'required',
+            'amount'            => 'required',
+            'remark'            => 'required',
+        ]);
+
+        D_Memo_Payments::where('id', $idpayment)->update([
+            'name'         => $request->input('name'),
+            'bank_name'       => $request->input('bank_name'),
+            'bank_account'      => $request->input('bank_account'),
+            'amount'     => $request->input('amount'),
+            'remark'     => $request->input('remark')
+        ]);
+        return Redirect::back()->with('success', "Successfull update data payment");
+    }
+
+    public function deletePayment($id, $idpayment)
+    {
+        $dataPayment = D_Memo_Payments::where('id', $idpayment)->first();
+        $dataPayment->delete();
+        return Redirect::back()->with('success', "Successfull delete data payment");
     }
 
     public function proposePo($id)
