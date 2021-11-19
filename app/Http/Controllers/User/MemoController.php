@@ -474,18 +474,6 @@ class MemoController extends Controller
     {
         $memo = Memo::where('id', $id)->with('approvers')->first();
 
-        $approvers_po = $memo->approvers->map(function ($approver) use ($id) {
-            return [
-                'id_memo' => $id,
-                'id_employee' => $approver->id_employee,
-                'idx' => $approver->idx,
-                'status' => $approver->status,
-                'type_approver' => $approver->type_approver
-            ];
-        });
-
-        D_Po_Approver::insert($approvers_po->toArray());
-
         // cek apakah ada approver
         if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
