@@ -161,14 +161,12 @@
       </div>
     </div>
     <ModalFormPayment
-    :proposeLink="__proposepayment"
+      :proposeLink="__proposepayment"
       :indexMemo="idItemClicked"
       :errors="errors"
     />
 
-    <modal-form-po
-    :proposeLink="__proposepo"
-    :indexMemo="idItemPOClicked" />
+    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
   </layout>
 </template>
 <script>
