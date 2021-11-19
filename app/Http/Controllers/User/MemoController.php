@@ -70,6 +70,8 @@ class MemoController extends Controller
             'dataPosition' => $positions,
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
+            '__webpreviewpo'   => 'user.memo.statuspo.webpreview',
+            '__webpreviewpayment'   => 'user.memo.statuspayment.webpreview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
             '__proposepayment' => 'user.memo.statusmemo.proposepayment',
             '__proposepo' => 'user.memo.statusmemo.proposepo'
