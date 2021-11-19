@@ -479,20 +479,24 @@ class MemoController extends Controller
         ]);
 
         D_Memo_Payments::where('id', $idpayment)->update([
-            'name'         => $request->input('name'),
-            'bank_name'       => $request->input('bank_name'),
+            'name'              => $request->input('name'),
+            'bank_name'         => $request->input('bank_name'),
             'bank_account'      => $request->input('bank_account'),
-            'amount'     => $request->input('amount'),
-            'remark'     => $request->input('remark')
+            'amount'            => $request->input('amount'),
+            'remark'            => $request->input('remark')
         ]);
         return Redirect::back()->with('success', "Successfull update data payment");
     }
 
-    public function deletePayment($id, $idpayment)
+    public function deletePayment($id)
     {
-        $dataPayment = D_Memo_Payments::where('id', $idpayment)->first();
+        $dataPayment = D_Memo_Payments::where('id', $id)->first();
         $dataPayment->delete();
-        return Redirect::back()->with('success', "Successfull delete data payment");
+
+        // return Redirect::back()->with('success', "Successfull delete data payment");
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     public function proposePo($id)

@@ -2,6 +2,7 @@
   <b-modal
     id="modal-propose-payment"
     ref="modal-propose-payment"
+    size="lg"
     :title="modalTitle"
     @shown="getData"
     @hidden="resetModal"
@@ -17,7 +18,6 @@
       opacity="0.6"
       spinner-small
       spinner-variant="primary"
-      class="d-inline-block"
     >
       <table-edit-approver
         :dataPosition="dataPositions"
@@ -260,7 +260,6 @@ export default {
       //console.log(this.activeItemPayment.name)
     },
     actionDelete(idData) {
-      console.log(idData);
       this.$bvModal
         .msgBoxConfirm(
           "Please confirm that you want to delete this data payment.",
@@ -301,9 +300,17 @@ export default {
     },
 
     submitDelete(id) {
-      this.$inertia.delete(
-        route("user.memo.statusmemo.deletepayment", [this.indexMemo, id])
-      );
+    //   this.$inertia.delete(
+    //     route("user.memo.statusmemo.deletepayment", id)
+    //   );
+    console.log(id)
+      axios.delete(route("user.memo.statusmemo.deletepayment", id))
+      .then((response) => {
+          if(response.data.success) {
+              this.pageFlashes.success = "Successfull delete data payment"
+              this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
+          }
+      })
     },
 
     actionCancel() {
