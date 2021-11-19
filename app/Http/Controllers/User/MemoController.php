@@ -17,6 +17,7 @@ use App\Models\Memo;
 use App\Models\Ref_Template_Cost;
 use App\Models\Ref_Type_Memo;
 use App\User;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,6 +34,13 @@ class MemoController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
+
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
+        //ddd($positions);
+
         return Inertia::render('User/Memo', [
             'perPage' => 2,
             'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(2),
@@ -59,6 +67,7 @@ class MemoController extends Controller
                 'reject' => Memo::getMemo(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemo(auth()->user()->id_employee, 'revisi')->count(),
             ],
+            'dataPosition' => $positions,
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
@@ -353,30 +362,20 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
-
-        $dataInsert = [
+        // insert to history frist approval
+        D_Memo_History::create([
+            'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-        ];
-
-        if ($firstApprover->type_approver == 'approver') {
-            $dataInsert['title'] = "Process Approving {$firstApprover->idx}";
-            $dataInsert['content'] = "On process approving by approver {$firstApprover->idx}";
-        } else {
-            $dataInsert['title'] = "Info to Acknowledge {$firstApprover->idx}";
-            $dataInsert['content'] = "On process info to acknowledge {$firstApprover->idx}";
-        }
-
-        // insert to history frist approval
-        D_Memo_History::create($dataInsert);
-
+            'content'   => "On process approving by approver {$firstApprover->idx}"
+        ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => route('user.memo.approval.detail', $id),
-            'type_approver' => $firstApprover->type_approver
+            'type_approver' => $firstApprover->type_approver,
+            'url'     => route('user.memo.approval.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
@@ -386,38 +385,8 @@ class MemoController extends Controller
 
     public function proposePayment(Request $request, $id)
     {
-        $request->validate([
-            'name'              => 'required',
-            'bank_name'         => 'required',
-            'bank_account'      => 'required',
-            'amount'            => 'required',
-            'remark'            => 'required',
-        ]);
-        //ddd($id);
-        D_Memo_Payments::create([
-            'id_memo'           => $id,
-            'name'              => $request->input('name'),
-            'bank_name'         => $request->input('bank_name'),
-            'bank_account'      => $request->input('bank_account'),
-            'amount'            => $request->input('amount'),
-            'remark'            => $request->input('remark'),
-        ]);
 
         $memo = Memo::where('id', $id)->with('approvers')->first();
-
-        $approvers_payment = [];
-
-        foreach ($memo->approvers as $approver) {
-            $approvers_payment[] = [
-                'id_memo' => $id,
-                'id_employee' => $approver->id_employee,
-                'idx' => $approver->idx,
-                'status' => $approver->status,
-                'type_approver' => $approver->type_approver
-            ];
-        }
-
-        D_Payment_Approver::insert($approvers_payment);
 
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
@@ -461,13 +430,69 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
+            'type_approver' => $firstApprover->type_approver,
             'url'     => route('user.memo.approvalpayment.detail', $id)
         ];
 
-        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+        Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
         // kirim email ke tiap acknowlegde
 
         return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
+    }
+
+    // public function paymentStore(Request $request, $id) {
+    //      $request->validate([
+    //          'name'              => 'required',
+    //          'bank_name'         => 'required',
+    //          'bank_account'      => 'required',
+    //          'amount'            => 'required',
+    //          'remark'            => 'required',
+    //      ]);
+    //     //ddd($id);
+    //      $memoPayment = D_Memo_Payments::create([
+    //          'id_memo'           => $id,
+    //          'name'              => $request->input('name'),
+    //          'bank_name'         => $request->input('bank_name'),
+    //          'bank_account'      => $request->input('bank_account'),
+    //          'amount'            => $request->input('amount'),
+    //          'remark'            => $request->input('remark'),
+    //      ]);
+
+    //     //  dd($memoPayment);
+
+    //      //$dataPayment = D_Memo_Payments::where('id_memo', $id)->first();
+    //     //  return Redirect::back()->with('success', "Successfull add data payment");
+    //      return response()->json([
+    //          'id' => $memoPayment->id
+    //      ]);
+    // }
+
+    public function updatePayment(Request $request, $id, $idpayment)
+    {
+        //ddd($request);
+        $request->validate([
+            'name'              => 'required',
+            'bank_name'         => 'required',
+            'bank_account'      => 'required',
+            'amount'            => 'required',
+            'remark'            => 'required',
+        ]);
+
+        D_Memo_Payments::where('id', $idpayment)->update([
+            'name'         => $request->input('name'),
+            'bank_name'       => $request->input('bank_name'),
+            'bank_account'      => $request->input('bank_account'),
+            'amount'     => $request->input('amount'),
+            'remark'     => $request->input('remark')
+        ]);
+        return Redirect::back()->with('success', "Successfull update data payment");
+    }
+
+    public function deletePayment($id, $idpayment)
+    {
+        $dataPayment = D_Memo_Payments::where('id', $idpayment)->first();
+        $dataPayment->delete();
+        return Redirect::back()->with('success', "Successfull delete data payment");
     }
 
     public function proposePo($id)
@@ -679,6 +704,7 @@ class MemoController extends Controller
     {
         $memo = Memo::getPaymentDetail($id);
         $employeeInfo = User::getUsersEmployeeInfo();
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -693,7 +719,8 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost
+            'memocost' => $memocost,
+            'dataPayments' => $dataPayments->payments,
         ];
         //ddd($data);
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
@@ -743,7 +770,6 @@ class MemoController extends Controller
     {
         $memo = Memo::getPaymentDetail($id);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
-        $dataPayments = $dataPayments->makeHidden(['id', 'created_at', 'updated_at', 'id_memo']);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();

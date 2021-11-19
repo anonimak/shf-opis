@@ -161,12 +161,14 @@
       </div>
     </div>
     <ModalFormPayment
-      :title="modalTitle"
+    :proposeLink="__proposepayment"
       :indexMemo="idItemClicked"
       :errors="errors"
     />
 
-    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
+    <modal-form-po
+    :proposeLink="__proposepo"
+    :indexMemo="idItemPOClicked" />
   </layout>
 </template>
 <script>
@@ -187,6 +189,8 @@ export default {
     "flash",
     "breadcrumbItems",
     "dataMemo",
+    "dataPosition",
+    "dataPayments",
     "userinfo",
     "notif",
     "errors",
@@ -238,7 +242,7 @@ export default {
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
@@ -257,10 +261,10 @@ export default {
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
-    submitProposePayment(id) {
-      console.log("submit");
-      this.$inertia.put(route(this.__proposepayment, id));
-    },
+    // submitProposePayment(id) {
+    //   console.log("submit");
+    //   this.$inertia.put(route(this.__proposepayment, id));
+    // },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
@@ -287,26 +291,26 @@ export default {
           // An error occurred
         });
     },
-    showMsgBoxProposePayment: function (id) {
-      this.$bvModal
-        .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-          title: "Please Confirm",
-          size: "sm",
-          buttonSize: "sm",
-          okTitle: "YES",
-          cancelTitle: "NO",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
-        .then((value) => {
-          value && this.submitProposePayment(id);
-        })
-        .catch((err) => {
-          console.log(err);
-          // An error occurred
-        });
-    },
+    // showMsgBoxProposePayment: function (id) {
+    //   this.$bvModal
+    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
+    //       title: "Please Confirm",
+    //       size: "sm",
+    //       buttonSize: "sm",
+    //       okTitle: "YES",
+    //       cancelTitle: "NO",
+    //       footerClass: "p-2",
+    //       hideHeaderClose: false,
+    //       centered: true,
+    //     })
+    //     .then((value) => {
+    //       value && this.submitProposePayment(id);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       // An error occurred
+    //     });
+    // },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
         .msgBoxConfirm(

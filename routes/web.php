@@ -93,9 +93,9 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
-            //Route::post('/{id}','User\MemoController@paymentStore')->name('storepayment');
-            //Route::post('/{memo}/approverpayment', 'User\MemoController@updateApproverPayment')->name('updateapproverpayment');
-            //Route::post('/{memo}/acknowledgepayment', 'User\MemoController@updateAcknowledgePayment')->name('updateacknowledgePayment');
+            // Route::put('/{id}/addpayment','User\MemoController@paymentStore')->name('storepayment');
+            Route::delete('/{id}/payment/{idpayment}', 'User\MemoController@deletePayment')->name('deletepayment');
+            Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
@@ -105,6 +105,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
+
         });
 
         Route::prefix('/status-po')->name('statuspo.')->group(function () {
@@ -144,6 +145,12 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/po')->name('po.')->group(function () {
             Route::get('/{id_memo}/approvers', 'User\ApiPoController@getApproversByIdMemo')->name('approvers');
             Route::post('/{id_memo}/approvers-po', 'User\ApiPoController@updateApprover')->name('updateapprover');
+        });
+        Route::prefix('/payment')->name('payment.')->group(function () {
+            Route::get('/{id_memo}/approvers', 'User\ApiPaymentController@getApproversByIdMemo')->name('approvers');
+            Route::get('/{id_memo}/data', 'User\ApiPaymentController@getPaymentsByIdMemo')->name('datapayments');
+            Route::put('/{id}/addpayment','User\ApiPaymentController@paymentStore')->name('storepayment');
+            Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
         });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
