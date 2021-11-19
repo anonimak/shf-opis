@@ -261,7 +261,7 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
-            '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
@@ -570,47 +570,47 @@ class MemoController extends Controller
             Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->real_name deleted.");
     }
 
-    public function updateAcknowledge(Request $request, $id)
-    {
-        $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
-        $updatedacknowledges = $request->input('acknowledge');
-        // filter yang tidak ada pada updatedacknowledges
-        $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
-            if (count($updatedacknowledges)) {
-                $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
-                $key = in_array($item->id_employee, $itemacknowledge);
-                if (!$key) {
-                    return $item;
-                }
-            }
-            return $item;
-        });
+    // public function updateAcknowledge(Request $request, $id)
+    // {
+    //     $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
+    //     $updatedacknowledges = $request->input('acknowledge');
+    //     // filter yang tidak ada pada updatedacknowledges
+    //     $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
+    //         if (count($updatedacknowledges)) {
+    //             $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
+    //             $key = in_array($item->id_employee, $itemacknowledge);
+    //             if (!$key) {
+    //                 return $item;
+    //             }
+    //         }
+    //         return $item;
+    //     });
 
-        // delete filter yang tidak ada pada D_Memo_Acknowledge
-        if (count($filteredacknowledges) > 0) {
-            foreach ($filteredacknowledges as $itemfiltered) {
-                $itemfiltered->delete();
-            }
-        }
+    //     // delete filter yang tidak ada pada D_Memo_Acknowledge
+    //     if (count($filteredacknowledges) > 0) {
+    //         foreach ($filteredacknowledges as $itemfiltered) {
+    //             $itemfiltered->delete();
+    //         }
+    //     }
 
-        // update/insert pda D_Memo_Acknowledge
-        if (count($updatedacknowledges) > 0) {
-            foreach ($updatedacknowledges as $key => $value) {
-                $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
-                $item = [
-                    'id_memo' => $id,
-                    'id_employee'   =>  $value['id_employee']
-                ];
-                if ($itemacknowledge) {
-                    $itemacknowledge->update($item);
-                } else {
-                    D_Memo_Acknowledge::create($item);
-                }
-            }
-        }
+    //     // update/insert pda D_Memo_Acknowledge
+    //     if (count($updatedacknowledges) > 0) {
+    //         foreach ($updatedacknowledges as $key => $value) {
+    //             $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
+    //             $item = [
+    //                 'id_memo' => $id,
+    //                 'id_employee'   =>  $value['id_employee']
+    //             ];
+    //             if ($itemacknowledge) {
+    //                 $itemacknowledge->update($item);
+    //             } else {
+    //                 D_Memo_Acknowledge::create($item);
+    //             }
+    //         }
+    //     }
 
-        return Redirect::back()->with('success', "Successfull updated acknowledge.");
-    }
+    //     return Redirect::back()->with('success', "Successfull updated acknowledge.");
+    // }
 
     public function updateApprover(Request $request, $id)
     {

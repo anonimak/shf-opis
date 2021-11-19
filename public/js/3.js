@@ -238,8 +238,8 @@ __webpack_require__.r(__webpack_exports__);
 
       this.isLoadMemo = true; // this.memo = { data: [], link: [] };
 
-      if (this.$ls.get("tabIndexMemo")) {
-        this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
+      if (this.$ls.get("tabIndexPo")) {
+        this.tabIndex = this.$ls.get("tabIndexPo") - 1;
       }
 
       var param = {
@@ -261,7 +261,7 @@ __webpack_require__.r(__webpack_exports__);
       this.tabIndex = tabIndex;
       this.isLoadMemo = true; // this.memo = { data: [], link: [] };
 
-      this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
+      this.$ls.set("tabIndexPo", this.tabIndex + 1, 60 * 60 * 1000);
       var param = {
         tab: this.tab[tabIndex]
       };

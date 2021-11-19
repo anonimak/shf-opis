@@ -95,7 +95,7 @@
                       <td>Type</td>
                       <td>Approval</td>
                     </tr>
-                    <tr v-if="dataMemo.acknowledges.length > 0">
+                    <!-- <tr v-if="dataMemo.acknowledges.length > 0">
                       <td>Acknowledge</td>
                       <td>
                         <span
@@ -112,7 +112,7 @@
                           </span>
                         </span>
                       </td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                 </table>
               </b-col>

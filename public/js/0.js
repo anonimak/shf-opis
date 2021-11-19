@@ -220,7 +220,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "notif", "errors", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__proposepayment", "__proposepo", "__index", "__webpreview", "__senddraft"],
+  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "dataPosition", "dataPayments", "userinfo", "notif", "errors", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__proposepayment", "__proposepo", "__index", "__webpreview", "__senddraft"],
   metaInfo: {
     title: "Admin Reference Approve Page"
   },
@@ -257,7 +257,7 @@ __webpack_require__.r(__webpack_exports__);
     showModal: function showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow"); //this.$refs.modalPayment.show(item);
+      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow"); //this.$refs.modalPayment.show(item);
     },
     showModalProposePo: function showModalProposePo(id) {
       // console.log("submit");
@@ -269,10 +269,10 @@ __webpack_require__.r(__webpack_exports__);
     submitDelete: function submitDelete(id) {
       this.$inertia["delete"](route(this.__destroy, id));
     },
-    submitProposePayment: function submitProposePayment(id) {
-      console.log("submit");
-      this.$inertia.put(route(this.__proposepayment, id));
-    },
+    // submitProposePayment(id) {
+    //   console.log("submit");
+    //   this.$inertia.put(route(this.__proposepayment, id));
+    // },
     submitDeleteAll: function submitDeleteAll(idx) {//   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
     showMsgBoxDelete: function showMsgBoxDelete(id) {
@@ -293,24 +293,26 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {// An error occurred
       });
     },
-    showMsgBoxProposePayment: function showMsgBoxProposePayment(id) {
-      var _this2 = this;
-
-      this.$bvModal.msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-        title: "Please Confirm",
-        size: "sm",
-        buttonSize: "sm",
-        okTitle: "YES",
-        cancelTitle: "NO",
-        footerClass: "p-2",
-        hideHeaderClose: false,
-        centered: true
-      }).then(function (value) {
-        value && _this2.submitProposePayment(id);
-      })["catch"](function (err) {
-        console.log(err); // An error occurred
-      });
-    },
+    // showMsgBoxProposePayment: function (id) {
+    //   this.$bvModal
+    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
+    //       title: "Please Confirm",
+    //       size: "sm",
+    //       buttonSize: "sm",
+    //       okTitle: "YES",
+    //       cancelTitle: "NO",
+    //       footerClass: "p-2",
+    //       hideHeaderClose: false,
+    //       centered: true,
+    //     })
+    //     .then((value) => {
+    //       value && this.submitProposePayment(id);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       // An error occurred
+    //     });
+    // },
     showMsgBoxDeleteAll: function showMsgBoxDeleteAll() {
       this.$bvModal.msgBoxConfirm("Please confirm that you want to delete this checked post.", {
         title: "Please Confirm",
@@ -334,7 +336,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     setLsTabMemo: function setLsTabMemo() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.isLoadMemo = true; // this.memo = { data: [], link: [] };
 
@@ -352,11 +354,11 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$inertia.replace(route(this.__index, param)).then(function () {
         // this.memo = { ...this.dataMemo };
-        _this3.isLoadMemo = false;
+        _this2.isLoadMemo = false;
       });
     },
     activeTab: function activeTab(tabIndex) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
@@ -373,7 +375,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$inertia.replace(route(this.__index, param)).then(function () {
         // this.memo = { ...this.dataMemo };
-        _this4.isLoadMemo = false;
+        _this3.isLoadMemo = false;
       });
     }
   },
@@ -581,6 +583,33 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_TableEditApprover_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/components/TableEditApprover.vue */ "./resources/js/components/TableEditApprover.vue");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -687,17 +716,122 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    indexMemo: {
-      type: Number,
-      "default": null
-    },
-    errors: {
-      type: Object,
-      "default": {}
-    }
+  components: {
+    TableEditApprover: _components_TableEditApprover_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
+  props: ["indexMemo", "proposeLink", "errors"],
   data: function data() {
     return {
       form: {
@@ -707,23 +841,110 @@ __webpack_require__.r(__webpack_exports__);
         amount: null,
         remark: null
       },
-      id_form: null,
-      modalTitle: ""
+      modalTitle: "",
+      dataPositions: [],
+      dataPayments: [],
+      dataApprovers: [],
+      updateApprover: "user.api.payment.updateapprover",
+      url_positions: "user.api.employee.positions",
+      url_approvers: "user.api.memo.approvers",
+      url_approvers_payment: "user.api.payment.approvers",
+      url_data_payment: "user.api.payment.datapayments",
+      id_memo: null,
+      isTableApproverbusy: false,
+      isSubmitbusy: false,
+      isFormPaymentEdited: false,
+      activeItemPayment: {},
+      activeIndex: null
     };
   },
   methods: {
+    actionEdit: function actionEdit(index, id) {
+      this.activeIndex = index;
+      this.isFormPaymentEdited = true;
+      this.activeItemPayment = _objectSpread({}, this.dataPayments[index]); //console.log(this.activeItemPayment.name)
+    },
+    actionDelete: function actionDelete(idData) {
+      var _this = this;
+
+      console.log(idData);
+      this.$bvModal.msgBoxConfirm("Please confirm that you want to delete this data payment.", {
+        title: "Please Confirm",
+        size: "sm",
+        buttonSize: "sm",
+        okVariant: "danger",
+        okTitle: "YES",
+        cancelTitle: "NO",
+        footerClass: "p-2",
+        hideHeaderClose: false,
+        centered: true
+      }).then(function (value) {
+        return value && _this.submitDelete(idData);
+      })["catch"](function (err) {// An error occurred
+      });
+    },
+    submitUpdate: function submitUpdate(id) {
+      var _this2 = this;
+
+      console.log(this.activeItemPayment.id);
+      this.$inertia.put(route("user.memo.statusmemo.updatepayment", [this.indexMemo, id]), this.activeItemPayment).then(function () {
+        _this2.dataPayments = _.map(_this2.dataPayments, function (item) {
+          if (item.id === _this2.activeItemPayment.id) {
+            item = _objectSpread({}, _this2.activeItemPayment);
+          }
+
+          return item;
+        });
+        _this2.activeItemPayment = {};
+        _this2.isFormPaymentEdited = false;
+      });
+    },
+    submitDelete: function submitDelete(id) {
+      this.$inertia["delete"](route("user.memo.statusmemo.deletepayment", [this.indexMemo, id]));
+    },
+    actionCancel: function actionCancel() {
+      this.activeItemPayment = {};
+      this.isFormPaymentEdited = false;
+    },
+    handleSubmitPayment: function handleSubmitPayment() {
+      var _this3 = this;
+
+      axios.put(route("user.api.payment.storepayment", this.indexMemo), this.form).then(function (response) {
+        if (Object.entries(_this3.errors).length === 0) {
+          console.log("no error");
+
+          _this3.$nextTick(function () {
+            _this3.$bvModal.hide("modal-add-payment");
+          });
+        }
+
+        var id = response.data.id;
+        _this3.form.id = id;
+        _this3.dataPayments = [].concat(_toConsumableArray(_this3.dataPayments), [_this3.form]);
+      });
+    },
     getData: function getData() {
-      this.modalTitle = "Add Detail Payment";
+      var _this4 = this;
+
+      this.isTableApproverbusy = true;
+      this.modalTitle = "Continue purpose Payment";
+      Promise.all([this.getDataPositions(), this.getDataApproversPayment(), this.getDataApprovers(), this.getDataPayments()]).then(function (results) {
+        _this4.isTableApproverbusy = false;
+        _this4.dataPositions = results[0].data;
+        _this4.dataApprovers = results[1].data.length > 0 ? results[1].data : results[2].data;
+        console.log(results);
+        _this4.dataPayments = results[3].data;
+      }); // this.getDataPositions();
+      // this.getDataApprovers();
     },
     resetModal: function resetModal() {
-      this.form = {
-        name: null,
-        bank_name: null,
-        bank_account: null,
-        amount: null,
-        remark: null
-      };
-      this.id_form = null;
+      this.dataPayments = [];
+      this.dataPositions = [];
+      this.dataApprovers = [];
+      this.id_memo = null;
+    },
+    resetModalPayment: function resetModalPayment() {
+      this.form = {};
     },
     handleOk: function handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -731,19 +952,110 @@ __webpack_require__.r(__webpack_exports__);
 
       this.handleSubmit();
     },
+    handleOkPayment: function handleOkPayment(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault(); // Trigger submit handler
+
+      this.handleSubmitPayment();
+    },
     handleSubmit: function handleSubmit() {
-      var _this = this;
+      console.log("submit");
+      this.isSubmitbusy = true;
+      this.$inertia.put(route(this.proposeLink, this.indexMemo));
+    },
+    beforeSaveEditApprover: function beforeSaveEditApprover() {
+      console.log("okee");
+    },
+    onSaveEditApprover: function onSaveEditApprover(response) {},
+    // axios
+    getDataPositions: function () {
+      var _getDataPositions = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt("return", axios.get(route(this.url_positions)));
 
-      this.$inertia.put(route("user.memo.statusmemo.proposepayment", this.indexMemo), this.form).then(function () {
-        if (Object.entries(_this.errors).length === 0) {
-          console.log("no error");
+              case 1:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
 
-          _this.$nextTick(function () {
-            _this.$bvModal.hide("modal-prevent-closing");
-          });
-        }
-      });
-    }
+      function getDataPositions() {
+        return _getDataPositions.apply(this, arguments);
+      }
+
+      return getDataPositions;
+    }(),
+    getDataApprovers: function () {
+      var _getDataApprovers = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                return _context2.abrupt("return", axios.get(route(this.url_approvers, this.indexMemo)));
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function getDataApprovers() {
+        return _getDataApprovers.apply(this, arguments);
+      }
+
+      return getDataApprovers;
+    }(),
+    getDataApproversPayment: function () {
+      var _getDataApproversPayment = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                return _context3.abrupt("return", axios.get(route(this.url_approvers_payment, this.indexMemo)));
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getDataApproversPayment() {
+        return _getDataApproversPayment.apply(this, arguments);
+      }
+
+      return getDataApproversPayment;
+    }(),
+    getDataPayments: function () {
+      var _getDataPayments = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                return _context4.abrupt("return", axios.get(route(this.url_data_payment, this.indexMemo)));
+
+              case 1:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function getDataPayments() {
+        return _getDataPayments.apply(this, arguments);
+      }
+
+      return getDataPayments;
+    }()
   }
 });
 
@@ -12028,7 +12340,7 @@ var render = function() {
       _vm._v(" "),
       _c("ModalFormPayment", {
         attrs: {
-          title: _vm.modalTitle,
+          proposeLink: _vm.__proposepayment,
           indexMemo: _vm.idItemClicked,
           errors: _vm.errors
         }
@@ -12227,206 +12539,509 @@ var render = function() {
   return _c(
     "b-modal",
     {
-      ref: "modal",
+      ref: "modal-propose-payment",
       attrs: {
-        id: "modal-prevent-closing",
+        id: "modal-propose-payment",
         title: _vm.modalTitle,
-        "ok-title": "Save"
+        "ok-title": "Purpose Payment",
+        "cancel-disabled": _vm.isSubmitbusy || _vm.isTableApproverbusy,
+        "ok-disabled": _vm.isSubmitbusy || _vm.isTableApproverbusy,
+        "hide-header-close": "",
+        scrollable: ""
       },
-      on: { show: _vm.getData, hidden: _vm.resetModal, ok: _vm.handleOk }
+      on: { shown: _vm.getData, hidden: _vm.resetModal, ok: _vm.handleOk }
     },
     [
       _c(
-        "form",
+        "b-overlay",
         {
-          ref: "form",
-          on: {
-            submit: function($event) {
-              $event.stopPropagation()
-              $event.preventDefault()
-              return _vm.handleSubmit($event)
-            }
+          staticClass: "d-inline-block",
+          attrs: {
+            show: _vm.isTableApproverbusy,
+            opacity: "0.6",
+            "spinner-small": "",
+            "spinner-variant": "primary"
           }
         },
         [
+          _c("table-edit-approver", {
+            attrs: {
+              dataPosition: _vm.dataPositions,
+              dataApprovers: _vm.dataApprovers,
+              __updateApprover: _vm.updateApprover,
+              id_memo: _vm.indexMemo
+            },
+            on: {
+              beforeSave: _vm.beforeSaveEditApprover,
+              onSave: _vm.onSaveEditApprover
+            }
+          }),
+          _vm._v(" "),
           _c(
-            "b-card-body",
+            "b-button",
+            {
+              directives: [
+                {
+                  name: "b-modal",
+                  rawName: "v-b-modal.modal-add-payment",
+                  modifiers: { "modal-add-payment": true }
+                }
+              ],
+              staticClass: "mt-2",
+              attrs: { variant: "primary" }
+            },
+            [_vm._v("\n      Add Data Payment\n    ")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("b-col", { staticClass: "mt-4" }, [
+        _c("h5", [_vm._v("Payment")]),
+        _vm._v(" "),
+        _c("table", { staticClass: "table table-striped" }, [
+          _c("thead", [
+            _c("tr", [
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Name")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Bank Name")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Bank Account")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Amount")]),
+              _vm._v(" "),
+              _c("th", { attrs: { scope: "col" } }, [_vm._v("Remark")]),
+              _vm._v(" "),
+              _c("th", [_vm._v("action")])
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.dataPayments, function(item, index) {
+              return _c("tr", { key: item.id }, [
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c("td", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.activeItemPayment.name,
+                            expression: "activeItemPayment.name"
+                          }
+                        ],
+                        attrs: { type: "text", name: "name" },
+                        domProps: { value: _vm.activeItemPayment.name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.activeItemPayment,
+                              "name",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  : _c("td", [_vm._v(_vm._s(item.name))]),
+                _vm._v(" "),
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c("td", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.activeItemPayment.bank_name,
+                            expression: "activeItemPayment.bank_name"
+                          }
+                        ],
+                        attrs: { type: "text", name: "bank_name" },
+                        domProps: { value: _vm.activeItemPayment.bank_name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.activeItemPayment,
+                              "bank_name",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  : _c("td", [_vm._v(_vm._s(item.bank_name))]),
+                _vm._v(" "),
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c("td", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.activeItemPayment.bank_account,
+                            expression: "activeItemPayment.bank_account"
+                          }
+                        ],
+                        attrs: { type: "text", name: "bank_account" },
+                        domProps: { value: _vm.activeItemPayment.bank_account },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.activeItemPayment,
+                              "bank_account",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  : _c("td", [_vm._v(_vm._s(item.bank_account))]),
+                _vm._v(" "),
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c("td", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.activeItemPayment.amount,
+                            expression: "activeItemPayment.amount"
+                          }
+                        ],
+                        attrs: { type: "text", name: "amount" },
+                        domProps: { value: _vm.activeItemPayment.amount },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.activeItemPayment,
+                              "amount",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  : _c("td", [_vm._v(_vm._s(item.amount))]),
+                _vm._v(" "),
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c("td", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.activeItemPayment.remark,
+                            expression: "activeItemPayment.remark"
+                          }
+                        ],
+                        attrs: { type: "text", name: "remark" },
+                        domProps: { value: _vm.activeItemPayment.remark },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.activeItemPayment,
+                              "remark",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  : _c("td", [_vm._v(_vm._s(item.remark))]),
+                _vm._v(" "),
+                _vm.isFormPaymentEdited && _vm.activeIndex == index
+                  ? _c(
+                      "td",
+                      [
+                        _c(
+                          "b-button",
+                          {
+                            attrs: { variant: "primary" },
+                            on: {
+                              click: function($event) {
+                                return _vm.submitUpdate(item.id)
+                              }
+                            }
+                          },
+                          [_vm._v("save")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-button",
+                          {
+                            attrs: { variant: "secondary" },
+                            on: { click: _vm.actionCancel }
+                          },
+                          [_vm._v("cancel")]
+                        )
+                      ],
+                      1
+                    )
+                  : _c(
+                      "td",
+                      [
+                        _c(
+                          "b-button",
+                          {
+                            attrs: { variant: "primary" },
+                            on: {
+                              click: function($event) {
+                                return _vm.actionEdit(index, item.id)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fa fa-edit" })]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-button",
+                          {
+                            attrs: { variant: "secondary" },
+                            on: {
+                              click: function($event) {
+                                return _vm.actionDelete(item.id)
+                              }
+                            }
+                          },
+                          [_c("i", { staticClass: "fa fa-trash" })]
+                        )
+                      ],
+                      1
+                    )
+              ])
+            }),
+            0
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: {
+            id: "modal-add-payment",
+            title: "Add Data Payment",
+            "ok-title": "Add",
+            "no-close-on-backdrop": ""
+          },
+          on: { ok: _vm.handleOkPayment, hidden: _vm.resetModalPayment }
+        },
+        [
+          _c(
+            "form",
+            {
+              ref: "form",
+              on: {
+                submit: function($event) {
+                  $event.stopPropagation()
+                  $event.preventDefault()
+                  return _vm.handleSubmitPayment($event)
+                }
+              }
+            },
             [
               _c(
-                "b-col",
-                { attrs: { col: "", lg: "6", md: "auto" } },
+                "b-card-body",
                 [
                   _c(
-                    "b-form-group",
-                    {
-                      attrs: {
-                        id: "input-group-title",
-                        label: "Name:",
-                        "label-for": "input-title",
-                        "invalid-feedback": _vm.errors.name
-                          ? _vm.errors.name[0]
-                          : "",
-                        state: _vm.errors.name ? false : null
-                      }
-                    },
+                    "b-col",
+                    { attrs: { col: "", lg: "6", md: "auto" } },
                     [
-                      _c("b-form-input", {
-                        attrs: {
-                          id: "input-title",
-                          type: "text",
-                          name: "name",
-                          placeholder: "Name",
-                          state: _vm.errors.name ? false : null,
-                          trim: ""
+                      _c(
+                        "b-form-group",
+                        {
+                          attrs: {
+                            id: "input-group-title",
+                            label: "Name:",
+                            "label-for": "input-title",
+                            "invalid-feedback": _vm.errors.name
+                              ? _vm.errors.name[0]
+                              : "",
+                            state: _vm.errors.name ? false : null
+                          }
                         },
-                        model: {
-                          value: _vm.form.name,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "name", $$v)
-                          },
-                          expression: "form.name"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-form-group",
-                    {
-                      attrs: {
-                        id: "input-group-title",
-                        label: "Bank Name:",
-                        "label-for": "input-title",
-                        "invalid-feedback": _vm.errors.bank_name
-                          ? _vm.errors.bank_name[0]
-                          : "",
-                        state: _vm.errors.bank_name ? false : null
-                      }
-                    },
-                    [
-                      _c("b-form-input", {
-                        attrs: {
-                          id: "input-title",
-                          type: "text",
-                          name: "bank_name",
-                          placeholder: "Bank Name",
-                          state: _vm.errors.bank_name ? false : null,
-                          trim: ""
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              id: "input-title",
+                              type: "text",
+                              name: "name",
+                              placeholder: "Name",
+                              state: _vm.errors.name ? false : null,
+                              trim: "",
+                              required: ""
+                            },
+                            model: {
+                              value: _vm.form.name,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "name", $$v)
+                              },
+                              expression: "form.name"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-form-group",
+                        {
+                          attrs: {
+                            id: "input-group-title",
+                            label: "Bank Name:",
+                            "label-for": "input-title",
+                            "invalid-feedback": _vm.errors.bank_name
+                              ? _vm.errors.bank_name[0]
+                              : "",
+                            state: _vm.errors.bank_name ? false : null
+                          }
                         },
-                        model: {
-                          value: _vm.form.bank_name,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "bank_name", $$v)
-                          },
-                          expression: "form.bank_name"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-form-group",
-                    {
-                      attrs: {
-                        id: "input-group-title",
-                        label: "Bank Account",
-                        "label-for": "input-title",
-                        "invalid-feedback": _vm.errors.bank_account
-                          ? _vm.errors.bank_account[0]
-                          : "",
-                        state: _vm.errors.bank_account ? false : null
-                      }
-                    },
-                    [
-                      _c("b-form-input", {
-                        attrs: {
-                          id: "input-title",
-                          type: "text",
-                          name: "bank_account",
-                          placeholder: "Bank Account",
-                          state: _vm.errors.bank_account ? false : null,
-                          trim: ""
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              id: "input-title",
+                              type: "text",
+                              name: "bank_name",
+                              placeholder: "Bank Name",
+                              state: _vm.errors.bank_name ? false : null,
+                              trim: "",
+                              required: ""
+                            },
+                            model: {
+                              value: _vm.form.bank_name,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "bank_name", $$v)
+                              },
+                              expression: "form.bank_name"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-form-group",
+                        {
+                          attrs: {
+                            id: "input-group-title",
+                            label: "Bank Account",
+                            "label-for": "input-title",
+                            "invalid-feedback": _vm.errors.bank_account
+                              ? _vm.errors.bank_account[0]
+                              : "",
+                            state: _vm.errors.bank_account ? false : null
+                          }
                         },
-                        model: {
-                          value: _vm.form.bank_account,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "bank_account", $$v)
-                          },
-                          expression: "form.bank_account"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-form-group",
-                    {
-                      attrs: {
-                        id: "input-group-title",
-                        label: "Amount:",
-                        "label-for": "input-title",
-                        "invalid-feedback": _vm.errors.amount
-                          ? _vm.errors.amount[0]
-                          : "",
-                        state: _vm.errors.amount ? false : null
-                      }
-                    },
-                    [
-                      _c("b-form-input", {
-                        attrs: {
-                          id: "input-title",
-                          type: "number",
-                          name: "amount",
-                          placeholder: "amount",
-                          state: _vm.errors.amount ? false : null,
-                          trim: ""
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              id: "input-title",
+                              type: "number",
+                              name: "bank_account",
+                              placeholder: "Bank Account",
+                              state: _vm.errors.bank_account ? false : null,
+                              trim: "",
+                              required: ""
+                            },
+                            model: {
+                              value: _vm.form.bank_account,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "bank_account", $$v)
+                              },
+                              expression: "form.bank_account"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-form-group",
+                        {
+                          attrs: {
+                            id: "input-group-title",
+                            label: "Amount:",
+                            "label-for": "input-title",
+                            "invalid-feedback": _vm.errors.amount
+                              ? _vm.errors.amount[0]
+                              : "",
+                            state: _vm.errors.amount ? false : null
+                          }
                         },
-                        model: {
-                          value: _vm.form.amount,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "amount", $$v)
-                          },
-                          expression: "form.amount"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-form-group",
-                    {
-                      attrs: {
-                        id: "input-group-title",
-                        label: "Remark:",
-                        "label-for": "input-title",
-                        "invalid-feedback": _vm.errors.remark
-                          ? _vm.errors.remark[0]
-                          : "",
-                        state: _vm.errors.remark ? false : null
-                      }
-                    },
-                    [
-                      _c("b-form-input", {
-                        attrs: {
-                          id: "input-title",
-                          type: "tel",
-                          name: "remark",
-                          placeholder: "Remark",
-                          state: _vm.errors.remark ? false : null,
-                          trim: ""
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              id: "input-title",
+                              type: "number",
+                              name: "amount",
+                              placeholder: "amount",
+                              state: _vm.errors.amount ? false : null,
+                              trim: "",
+                              required: ""
+                            },
+                            model: {
+                              value: _vm.form.amount,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "amount", $$v)
+                              },
+                              expression: "form.amount"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-form-group",
+                        {
+                          attrs: {
+                            id: "input-group-title",
+                            label: "Remark:",
+                            "label-for": "input-title",
+                            "invalid-feedback": _vm.errors.remark
+                              ? _vm.errors.remark[0]
+                              : "",
+                            state: _vm.errors.remark ? false : null
+                          }
                         },
-                        model: {
-                          value: _vm.form.remark,
-                          callback: function($$v) {
-                            _vm.$set(_vm.form, "remark", $$v)
-                          },
-                          expression: "form.remark"
-                        }
-                      })
+                        [
+                          _c("b-form-input", {
+                            attrs: {
+                              id: "input-title",
+                              type: "number",
+                              name: "remark",
+                              placeholder: "Remark",
+                              state: _vm.errors.remark ? false : null,
+                              trim: "",
+                              required: ""
+                            },
+                            model: {
+                              value: _vm.form.remark,
+                              callback: function($$v) {
+                                _vm.$set(_vm.form, "remark", $$v)
+                              },
+                              expression: "form.remark"
+                            }
+                          })
+                        ],
+                        1
+                      )
                     ],
                     1
                   )
@@ -12436,10 +13051,10 @@ var render = function() {
             ],
             1
           )
-        ],
-        1
+        ]
       )
-    ]
+    ],
+    1
   )
 }
 var staticRenderFns = []

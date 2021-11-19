@@ -21,7 +21,7 @@
           <b-form id="form" @submit.prevent="submit">
             <b-card-body>
               <b-row class="mb-2">
-                <b-col col lg="6" md="auto">
+                <b-col col lg="12" class="mb-4">
                   <h5>Memo Information</h5>
                   <table class="table table-bordered">
                     <tbody>
@@ -44,11 +44,54 @@
                       </tr>
                     </tbody>
                   </table>
-                  <b-form-group
-                    id="input-group-text"
-                    label="Attachment:"
-                    label-for="input-text"
-                  >
+                </b-col>
+                <b-col col lg="12" class="mb-4">
+                  <b-row>
+                    <table-edit-approver
+                      :dataPosition="dataPosition"
+                      :dataApprovers="dataApprovers"
+                      :__updateApprover="__updateApprover"
+                      :id_memo="dataMemo.id"
+                    />
+                  </b-row>
+                  <!-- <hr /> -->
+                  <!-- <b-row class="mb-4">
+                    <b-col>
+                      <h5>Acknowledge</h5>
+                      <b-form-group
+                        id="input-group-name"
+                        label-for="input-name"
+                      >
+                        <b-overlay
+                          :show="isAcknowledgebusy"
+                          opacity="0.6"
+                          spinner-small
+                          spinner-variant="primary"
+                        >
+                          <v-select
+                            class="mb-3"
+                            multiple
+                            :get-option-label="
+                              (option) =>
+                                `${option.employee.firstname} ${option.employee.lastname}`
+                            "
+                            placeholder="-- Add Acknowlege --"
+                            :options="dataPosition"
+                            v-model="selectedAcknowledge"
+                            :reduce="(position) => position.id_employee"
+                            @option:selected="actionAcknowledgeSelecting"
+                            @option:deselecting="actionAcknowledgeRemoving"
+                          ></v-select>
+                        </b-overlay>
+                      </b-form-group>
+                    </b-col>
+                  </b-row> -->
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col col lg="12" class="mb-4">
+                  <h5>Attachment:</h5>
+                  <b-form-group id="input-group-text" label-for="input-text">
                     <table class="table">
                       <thead>
                         <tr>
@@ -110,48 +153,6 @@
                       Upload {{ fileRecordsForUpload.length }} files
                     </button>
                   </b-form-group>
-                </b-col>
-                <b-col col lg="6">
-                  <b-row class="mb-4">
-                    <table-edit-approver
-                      :dataPosition="dataPosition"
-                      :dataApprovers="dataApprovers"
-                      :__updateApprover="__updateApprover"
-                      :id_memo="dataMemo.id"
-                    />
-                  </b-row>
-                  <hr />
-                  <b-row class="mb-4">
-                    <b-col>
-                      <h5>Acknowledge</h5>
-                      <b-form-group
-                        id="input-group-name"
-                        label-for="input-name"
-                      >
-                        <b-overlay
-                          :show="isAcknowledgebusy"
-                          opacity="0.6"
-                          spinner-small
-                          spinner-variant="primary"
-                        >
-                          <v-select
-                            class="mb-3"
-                            multiple
-                            :get-option-label="
-                              (option) =>
-                                `${option.employee.firstname} ${option.employee.lastname}`
-                            "
-                            placeholder="-- Add Acknowlege --"
-                            :options="dataPosition"
-                            v-model="selectedAcknowledge"
-                            :reduce="(position) => position.id_employee"
-                            @option:selected="actionAcknowledgeSelecting"
-                            @option:deselecting="actionAcknowledgeRemoving"
-                          ></v-select>
-                        </b-overlay>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
                 </b-col>
               </b-row>
               <b-row>
@@ -245,7 +246,7 @@ export default {
     "columnCost",
     "__store",
     "__updateApprover",
-    "__updateAcknowledge",
+    // "__updateAcknowledge",
     "__preview",
     "__attachment",
     "__removeAttachment",
@@ -263,7 +264,7 @@ export default {
     return {
       submitState: false,
       isAcknowledgebusy: false,
-      selectedAcknowledge: null,
+      // selectedAcknowledge: null,
       form: {},
       dataApprovers: [],
       dataCost: null,
@@ -383,7 +384,7 @@ export default {
     fillForm() {
       this.form = { ...this.dataMemo };
       this.dataApprovers = [...this.form.approvers];
-      this.selectedAcknowledge = [...this.form.acknowledges];
+      // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
       if (!this.submitState) {
@@ -415,31 +416,31 @@ export default {
       // Return focus to the button once hidden
       this.$refs.button.focus();
     },
-    actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
-      this.selectedAcknowledge = _.filter(
-        this.selectedAcknowledge,
-        (opt) => opt.id !== removeOption.id
-      );
-      this.isAcknowledgebusy = true;
-      this.$inertia
-        .post(route(this.__updateAcknowledge, this.dataMemo.id), {
-          acknowledge: this.selectedAcknowledge,
-        })
-        .then(() => {
-          this.isAcknowledgebusy = false;
-        });
-    },
-    actionAcknowledgeSelecting(selectedOption) {
-      this.isAcknowledgebusy = true;
-      this.$inertia
-        .post(route(this.__updateAcknowledge, this.dataMemo.id), {
-          acknowledge: selectedOption,
-        })
-        .then(() => {
-          this.isAcknowledgebusy = false;
-        });
-    },
+    // actionAcknowledgeRemoving(removeOption) {
+    //   console.log(removeOption);
+    //   this.selectedAcknowledge = _.filter(
+    //     this.selectedAcknowledge,
+    //     (opt) => opt.id !== removeOption.id
+    //   );
+    //   this.isAcknowledgebusy = true;
+    //   this.$inertia
+    //     .post(route(this.__updateAcknowledge, this.dataMemo.id), {
+    //       acknowledge: this.selectedAcknowledge,
+    //     })
+    //     .then(() => {
+    //       this.isAcknowledgebusy = false;
+    //     });
+    // },
+    // actionAcknowledgeSelecting(selectedOption) {
+    //   this.isAcknowledgebusy = true;
+    //   this.$inertia
+    //     .post(route(this.__updateAcknowledge, this.dataMemo.id), {
+    //       acknowledge: selectedOption,
+    //     })
+    //     .then(() => {
+    //       this.isAcknowledgebusy = false;
+    //     });
+    // },
   },
 };
 </script>
