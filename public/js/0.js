@@ -207,6 +207,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
  //import layouts
 
 
@@ -220,7 +247,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "dataPosition", "dataPayments", "userinfo", "notif", "errors", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__proposepayment", "__proposepo", "__index", "__webpreview", "__senddraft"],
+  props: ["meta", "flash", "breadcrumbItems", "dataMemo", "userinfo", "notif", "errors", "filters", "perPage", "tab", "counttab", "__create", "__edit", "__show", "__destroy", "__proposepayment", "__proposepo", "__index", "__webpreview", "__webpreviewpo", "__webpreviewpayment", "__senddraft"],
   metaInfo: {
     title: "Admin Reference Approve Page"
   },
@@ -257,7 +284,7 @@ __webpack_require__.r(__webpack_exports__);
     showModal: function showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow"); //this.$refs.modalPayment.show(item);
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow"); //this.$refs.modalPayment.show(item);
     },
     showModalProposePo: function showModalProposePo(id) {
       // console.log("submit");
@@ -269,10 +296,10 @@ __webpack_require__.r(__webpack_exports__);
     submitDelete: function submitDelete(id) {
       this.$inertia["delete"](route(this.__destroy, id));
     },
-    // submitProposePayment(id) {
-    //   console.log("submit");
-    //   this.$inertia.put(route(this.__proposepayment, id));
-    // },
+    submitProposePayment: function submitProposePayment(id) {
+      console.log("submit");
+      this.$inertia.put(route(this.__proposepayment, id));
+    },
     submitDeleteAll: function submitDeleteAll(idx) {//   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
     showMsgBoxDelete: function showMsgBoxDelete(id) {
@@ -293,26 +320,24 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {// An error occurred
       });
     },
-    // showMsgBoxProposePayment: function (id) {
-    //   this.$bvModal
-    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-    //       title: "Please Confirm",
-    //       size: "sm",
-    //       buttonSize: "sm",
-    //       okTitle: "YES",
-    //       cancelTitle: "NO",
-    //       footerClass: "p-2",
-    //       hideHeaderClose: false,
-    //       centered: true,
-    //     })
-    //     .then((value) => {
-    //       value && this.submitProposePayment(id);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       // An error occurred
-    //     });
-    // },
+    showMsgBoxProposePayment: function showMsgBoxProposePayment(id) {
+      var _this2 = this;
+
+      this.$bvModal.msgBoxConfirm("Please confirm that you want to submit this Memo.", {
+        title: "Please Confirm",
+        size: "sm",
+        buttonSize: "sm",
+        okTitle: "YES",
+        cancelTitle: "NO",
+        footerClass: "p-2",
+        hideHeaderClose: false,
+        centered: true
+      }).then(function (value) {
+        value && _this2.submitProposePayment(id);
+      })["catch"](function (err) {
+        console.log(err); // An error occurred
+      });
+    },
     showMsgBoxDeleteAll: function showMsgBoxDeleteAll() {
       this.$bvModal.msgBoxConfirm("Please confirm that you want to delete this checked post.", {
         title: "Please Confirm",
@@ -336,7 +361,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     setLsTabMemo: function setLsTabMemo() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.isLoadMemo = true; // this.memo = { data: [], link: [] };
 
@@ -354,11 +379,11 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$inertia.replace(route(this.__index, param)).then(function () {
         // this.memo = { ...this.dataMemo };
-        _this2.isLoadMemo = false;
+        _this3.isLoadMemo = false;
       });
     },
     activeTab: function activeTab(tabIndex) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
@@ -375,7 +400,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$inertia.replace(route(this.__index, param)).then(function () {
         // this.memo = { ...this.dataMemo };
-        _this3.isLoadMemo = false;
+        _this4.isLoadMemo = false;
       });
     }
   },
@@ -12218,7 +12243,8 @@ var render = function() {
                                                   ),
                                                   _vm._v(" "),
                                                   item.ref_table.with_po == 1 &&
-                                                  item.status == "approve"
+                                                  item.status == "approve" &&
+                                                  item.status_po == "edit"
                                                     ? _c(
                                                         "b-button",
                                                         {
@@ -12237,10 +12263,7 @@ var render = function() {
                                                           attrs: {
                                                             title: "Lanjut PO",
                                                             href: "#",
-                                                            variant: "primary",
-                                                            disabled:
-                                                              item.status_po !=
-                                                              "edit"
+                                                            variant: "primary"
                                                           },
                                                           on: {
                                                             click: function(
@@ -12260,9 +12283,44 @@ var render = function() {
                                                       )
                                                     : _vm._e(),
                                                   _vm._v(" "),
+                                                  item.ref_table.with_po == 1 &&
+                                                  item.status == "approve" &&
+                                                  item.status_po != "edit"
+                                                    ? _c(
+                                                        "inertia-link",
+                                                        {
+                                                          directives: [
+                                                            {
+                                                              name: "b-tooltip",
+                                                              rawName:
+                                                                "v-b-tooltip.hover",
+                                                              modifiers: {
+                                                                hover: true
+                                                              }
+                                                            }
+                                                          ],
+                                                          staticClass:
+                                                            "btn btn-info btn-sm",
+                                                          attrs: {
+                                                            href: _vm.route(
+                                                              _vm.__webpreviewpo,
+                                                              item.id
+                                                            ),
+                                                            title: "Info PO"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                              Info PO\n                            "
+                                                          )
+                                                        ]
+                                                      )
+                                                    : _vm._e(),
+                                                  _vm._v(" "),
                                                   item.ref_table.with_payment ==
                                                     1 &&
-                                                  item.status == "approve"
+                                                  item.status == "approve" &&
+                                                  item.status_payment == "edit"
                                                     ? _c(
                                                         "b-button",
                                                         {
@@ -12303,6 +12361,41 @@ var render = function() {
                                                           )
                                                         ]
                                                       )
+                                                    : _vm._e(),
+                                                  _vm._v(" "),
+                                                  item.ref_table.with_po == 1 &&
+                                                  item.status == "approve" &&
+                                                  item.status_payment != "edit"
+                                                    ? _c(
+                                                        "inertia-link",
+                                                        {
+                                                          directives: [
+                                                            {
+                                                              name: "b-tooltip",
+                                                              rawName:
+                                                                "v-b-tooltip.hover",
+                                                              modifiers: {
+                                                                hover: true
+                                                              }
+                                                            }
+                                                          ],
+                                                          staticClass:
+                                                            "btn btn-info btn-sm",
+                                                          attrs: {
+                                                            href: _vm.route(
+                                                              _vm.__webpreviewpayment,
+                                                              item.id
+                                                            ),
+                                                            title:
+                                                              "Info Payment"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                              Info Payment\n                            "
+                                                          )
+                                                        ]
+                                                      )
                                                     : _vm._e()
                                                 ],
                                                 1
@@ -12340,7 +12433,7 @@ var render = function() {
       _vm._v(" "),
       _c("ModalFormPayment", {
         attrs: {
-          proposeLink: _vm.__proposepayment,
+          title: _vm.modalTitle,
           indexMemo: _vm.idItemClicked,
           errors: _vm.errors
         }
@@ -13084,6 +13177,7 @@ var render = function() {
     {
       ref: "modal-propose-po",
       attrs: {
+        size: "lg",
         id: "modal-propose-po",
         title: _vm.modalTitle,
         "ok-title": "Purpose PO",
@@ -13097,7 +13191,6 @@ var render = function() {
       _c(
         "b-overlay",
         {
-          staticClass: "d-inline-block",
           attrs: {
             show: _vm.isTableApproverbusy,
             opacity: "0.6",

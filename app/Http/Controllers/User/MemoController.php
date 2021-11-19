@@ -664,25 +664,14 @@ class MemoController extends Controller
 
     public function previewMemo(Request $request, $id)
     {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-        // $sumtotal = 0;
         $memocost = (array) json_decode($memo->cost);
-        // $memocost = array_map(function ($itemcost) use ($sumtotal) {
-        //     $itemcost->Total = $itemcost->QTY * $itemcost->Price;
-        //     $sumtotal += $itemcost->Total;
-        //     return $itemcost;
-        // }, $memocost);
-        // foreach ($memocost as $itemcost) {
-        //     $sumtotal += $itemcost->Total;
-        // }
-        // $ppn = $sumtotal * 10 / 100;
-        // $grandtotal = $sumtotal - $ppn;
 
         $data = [
             'memo' => $memo,
@@ -690,10 +679,7 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            // 'sumtotal' => $sumtotal,
-            // 'ppn' => $ppn,
-            // 'grandtotal' => $grandtotal,
+            'memocost' => $memocost
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');
