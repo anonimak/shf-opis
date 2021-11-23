@@ -206,21 +206,23 @@
         <table>
             <thead>
                 <tr>
-                    <th>Product Name</th>
-                    <th>QTY</th>
-                    <th>Price</th>
-                    <th>Total</th>
+                    @foreach ($memocost as $cost)
+                        @foreach($cost as $attr => $value)
+                            <th>{{ $attr }}</th>
+                        @endforeach
+                    @endforeach
                 </tr>
             </thead>
             <tbody>
-                @foreach ($memocost as $cost)
                 <tr>
-                    <td>{{ $cost->{'Product Name'} }}</td>
-                    <td>{{ $cost->QTY }}</td>
-                    <td>{{ $cost->Price }}</td>
-                    <td>{{ $cost->Total }}</td>
+                    @foreach ($memocost as $cost)
+                        @foreach($cost as $attr => $value)
+                            <td>{{ $value }}</td>
+                        @endforeach
+                    @endforeach
                 </tr>
-                @endforeach
+            </tbody>
+
                 {{-- <tr>
                     <td colspan="4" style="height: 20px"> </td>
                 </tr>
