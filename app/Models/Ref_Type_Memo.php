@@ -60,7 +60,7 @@ class Ref_Type_Memo extends Model
             ->with(['ref_module_approver' => function ($query) {
                 return $query->select('id', 'name')->orderBy('id', 'ASC');
             }])
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $typememo->where('name', 'LIKE', '%' . $search . '%');

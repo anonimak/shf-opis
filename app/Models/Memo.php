@@ -322,7 +322,7 @@ class Memo extends Model
     public static function getMemo($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->where('status', '=', $status)
             ->where('id_employee', '=', $id_employee);
 
@@ -339,7 +339,7 @@ class Memo extends Model
     public static function getPayment($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->where('status_payment', '=', $status)
             ->where('id_employee', '=', $id_employee);
 
@@ -356,7 +356,7 @@ class Memo extends Model
     public static function getPo($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->where('status_po', '=', $status)
             ->where('id_employee', '=', $id_employee);
 
@@ -373,7 +373,7 @@ class Memo extends Model
     public static function getMemoWithLastApprover($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->where('status', '=', $status)
             ->with(['approver' => function ($approver) {
                 return $approver->orderBy('idx', "ASC")->first();

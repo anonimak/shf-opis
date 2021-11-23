@@ -29,7 +29,7 @@ class Ref_Title extends Model
     public static function getRef_Titles($search = null)
     {
         $title = Self::select('*')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $title->where('title_name', 'LIKE', '%' . $search . '%');

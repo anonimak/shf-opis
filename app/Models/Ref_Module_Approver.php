@@ -32,7 +32,7 @@ class Ref_Module_Approver extends Model
                 return $q->select('id', 'position_name');
             }])->orderBy('idx', 'ASC');
         }])
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $position->where('name', 'LIKE', '%' . $search . '%');
