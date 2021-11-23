@@ -377,7 +377,7 @@ class MemoController extends Controller
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
             'type_approver' => $firstApprover->type_approver,
-            'url'     => route('user.memo.approval.detail', $id)
+            'url'     => route('user.memo.approval.memo.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
@@ -433,7 +433,7 @@ class MemoController extends Controller
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
             'type_approver' => $firstApprover->type_approver,
-            'url'     => route('user.memo.approvalpayment.detail', $id)
+            'url'     => route('user.memo.approval.payment.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
@@ -545,7 +545,7 @@ class MemoController extends Controller
         $details = [
             'subject' => $memo->title,
             'doc_no'  => $memo->doc_no,
-            'url'     => route('user.memo.approvalpo.detail', $id)
+            'url'     => route('user.memo.approval.po.detail', $id)
         ];
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));

@@ -35,10 +35,10 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
-            '__approving'  => 'user.memo.approval.approving',
-            '__previewpdf'  => 'user.memo.approval.preview',
-            '__detail'    => 'user.memo.approval.detail',
-            '__index'    => 'user.memo.approval.index',
+            '__approving'  => 'user.memo.approval.memo.approving',
+            '__previewpdf'  => 'user.memo.approval.memo.preview',
+            '__detail'    => 'user.memo.approval.memo.detail',
+            '__index'    => 'user.memo.approval.memo.index',
         ]);
     }
 
@@ -59,10 +59,10 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
-            '__approving'  => 'user.memo.approvalpayment.approving',
-            '__previewpdf'  => 'user.memo.approvalpayment.preview',
-            '__detail'    => 'user.memo.approvalpayment.detail',
-            '__index'    => 'user.memo.approvalpayment.index',
+            '__approving'  => 'user.memo.approval.payment.approving',
+            '__previewpdf'  => 'user.memo.approval.payment.preview',
+            '__detail'    => 'user.memo.approval.payment.detail',
+            '__index'    => 'user.memo.approval.payment.index',
         ]);
     }
 
@@ -83,10 +83,10 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
-            '__approving'  => 'user.memo.approvalpo.approving',
-            '__previewpdf'  => 'user.memo.approval.preview',
-            '__detail'    => 'user.memo.approvalpo.detail',
-            '__index'    => 'user.memo.approvalpo.index',
+            '__approving'  => 'user.memo.approval.po.approving',
+            '__previewpdf'  => 'user.memo.approval.memo.preview',
+            '__detail'    => 'user.memo.approval.po.detail',
+            '__index'    => 'user.memo.approval.po.index',
         ]);
     }
 
@@ -110,7 +110,7 @@ class ApprovalController extends Controller
                 ],
                 [
                     'title'   => "Approval Memo",
-                    'href'  => "user.memo.approval.index"
+                    'href'  => "user.memo.approval.memo.index"
                 ],
                 [
                     'title'   => $memo->doc_no,
@@ -121,7 +121,7 @@ class ApprovalController extends Controller
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
-            '__approving'  => 'user.memo.approval.approving',
+            '__approving'  => 'user.memo.approval.memo.approving',
         ]);
     }
 
@@ -146,7 +146,7 @@ class ApprovalController extends Controller
                 ],
                 [
                     'title'   => "Approval Payment",
-                    'href'  => "user.memo.approvalpayment.index"
+                    'href'  => "user.memo.approval.payment.index"
                 ],
                 [
                     'title'   => $memo->doc_no,
@@ -158,7 +158,7 @@ class ApprovalController extends Controller
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
-            '__approving'  => 'user.memo.approvalpayment.approving',
+            '__approving'  => 'user.memo.approval.payment.approving',
         ]);
     }
 
@@ -182,7 +182,7 @@ class ApprovalController extends Controller
                 ],
                 [
                     'title'   => "Approval PO",
-                    'href'  => "user.memo.approvalpo.index"
+                    'href'  => "user.memo.approval.po.index"
                 ],
                 [
                     'title'   => $memo->doc_no,
@@ -193,7 +193,7 @@ class ApprovalController extends Controller
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
-            '__approving'  => 'user.memo.approvalpo.approving',
+            '__approving'  => 'user.memo.approval.po.approving',
         ]);
     }
 
@@ -251,7 +251,7 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => route('user.memo.approval.detail', $memo->id),
+                    'url'     => route('user.memo.approval.memo.detail', $memo->id),
                     'type_approver' => $nextApprover->type_approver
                 ];
 
@@ -333,7 +333,7 @@ class ApprovalController extends Controller
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
         }
 
-        return Redirect::route('user.memo.approval.index')->with('success', "Successfull " . $request->input('variant'));
+        return Redirect::route('user.memo.approval.memo.index')->with('success', "Successfull " . $request->input('variant'));
     }
 
     public function approvingPayment(Request $request, $id)
@@ -390,7 +390,7 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => route('user.memo.approvalpayment.detail', $memo->id),
+                    'url'     => route('user.memo.approval.payment.detail', $memo->id),
                     'type_approver' => $nextApprover->type_approver
                 ];
 
@@ -472,7 +472,7 @@ class ApprovalController extends Controller
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
         }
 
-        return Redirect::route('user.memo.approvalpayment.index')->with('success', "Successfull " . $request->input('variant'));
+        return Redirect::route('user.memo.approval.payment.index')->with('success', "Successfull " . $request->input('variant'));
     }
 
     public function approvingPo(Request $request, $id)
@@ -529,7 +529,7 @@ class ApprovalController extends Controller
                 $details = [
                     'subject' => $memo->title,
                     'doc_no'  => $memo->doc_no,
-                    'url'     => route('user.memo.approvalpo.detail', $memo->id)
+                    'url'     => route('user.memo.approval.po.detail', $memo->id)
                 ];
 
                 if ($approver->type_approver == 'approver') {
@@ -591,6 +591,6 @@ class ApprovalController extends Controller
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
         }
 
-        return Redirect::route('user.memo.approvalpo.index')->with('success', "Successfull " . $request->input('variant'));
+        return Redirect::route('user.memo.approval.po.index')->with('success', "Successfull " . $request->input('variant'));
     }
 }
