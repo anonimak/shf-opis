@@ -36,7 +36,7 @@
                   <tr>
                     <th class="fit">Title</th>
 
-                    <td>{{ employee.title.title_name }}</td>
+                    <td>{{ employee.title && employee.title.title_name }}</td>
                   </tr>
                   <tr>
                     <th class="fit">Gender</th>

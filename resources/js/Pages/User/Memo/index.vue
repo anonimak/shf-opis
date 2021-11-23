@@ -122,12 +122,25 @@
                                 @click="showModalProposePo(item.id)"
                                 v-if="
                                   item.ref_table.with_po == 1 &&
-                                  item.status == 'approve'
+                                  item.status == 'approve' &&
+                                  item.status_po == 'edit'
                                 "
-                                :disabled="item.status_po != 'edit'"
                               >
                                 Lanjut PO
                               </b-button>
+                              <inertia-link
+                                v-if="
+                                  item.ref_table.with_po == 1 &&
+                                  item.status == 'approve' &&
+                                  item.status_po != 'edit'
+                                "
+                                :href="route(__webpreviewpo, item.id)"
+                                v-b-tooltip.hover
+                                title="Info PO"
+                                class="btn btn-info btn-sm"
+                              >
+                                Info PO
+                              </inertia-link>
                               <b-button
                                 v-b-tooltip.hover
                                 title="Lanjut Payment"
@@ -137,12 +150,26 @@
                                 @click="showModal(item.id)"
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
-                                  item.status == 'approve'
+                                  item.status == 'approve' &&
+                                  item.status_payment == 'edit'
                                 "
                                 :disabled="item.status_payment != 'edit'"
                               >
                                 Lanjut Payment
                               </b-button>
+                              <inertia-link
+                                v-if="
+                                  item.ref_table.with_po == 1 &&
+                                  item.status == 'approve' &&
+                                  item.status_payment != 'edit'
+                                "
+                                :href="route(__webpreviewpayment, item.id)"
+                                v-b-tooltip.hover
+                                title="Info Payment"
+                                class="btn btn-info btn-sm"
+                              >
+                                Info Payment
+                              </inertia-link>
                             </td>
                           </tr>
                         </tbody>
@@ -161,14 +188,12 @@
       </div>
     </div>
     <ModalFormPayment
-    :proposeLink="__proposepayment"
+      :title="modalTitle"
       :indexMemo="idItemClicked"
       :errors="errors"
     />
 
-    <modal-form-po
-    :proposeLink="__proposepo"
-    :indexMemo="idItemPOClicked" />
+    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
   </layout>
 </template>
 <script>
@@ -189,8 +214,6 @@ export default {
     "flash",
     "breadcrumbItems",
     "dataMemo",
-    "dataPosition",
-    "dataPayments",
     "userinfo",
     "notif",
     "errors",
@@ -206,6 +229,8 @@ export default {
     "__proposepo",
     "__index",
     "__webpreview",
+    "__webpreviewpo",
+    "__webpreviewpayment",
     "__senddraft",
   ],
   metaInfo: { title: "Admin Reference Approve Page" },
@@ -242,7 +267,7 @@ export default {
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow");
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
@@ -261,10 +286,10 @@ export default {
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },
-    // submitProposePayment(id) {
-    //   console.log("submit");
-    //   this.$inertia.put(route(this.__proposepayment, id));
-    // },
+    submitProposePayment(id) {
+      console.log("submit");
+      this.$inertia.put(route(this.__proposepayment, id));
+    },
     submitDeleteAll(idx) {
       //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
     },
@@ -291,26 +316,26 @@ export default {
           // An error occurred
         });
     },
-    // showMsgBoxProposePayment: function (id) {
-    //   this.$bvModal
-    //     .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
-    //       title: "Please Confirm",
-    //       size: "sm",
-    //       buttonSize: "sm",
-    //       okTitle: "YES",
-    //       cancelTitle: "NO",
-    //       footerClass: "p-2",
-    //       hideHeaderClose: false,
-    //       centered: true,
-    //     })
-    //     .then((value) => {
-    //       value && this.submitProposePayment(id);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       // An error occurred
-    //     });
-    // },
+    showMsgBoxProposePayment: function (id) {
+      this.$bvModal
+        .msgBoxConfirm("Please confirm that you want to submit this Memo.", {
+          title: "Please Confirm",
+          size: "sm",
+          buttonSize: "sm",
+          okTitle: "YES",
+          cancelTitle: "NO",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        .then((value) => {
+          value && this.submitProposePayment(id);
+        })
+        .catch((err) => {
+          console.log(err);
+          // An error occurred
+        });
+    },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
         .msgBoxConfirm(

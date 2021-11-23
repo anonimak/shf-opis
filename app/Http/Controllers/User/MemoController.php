@@ -42,8 +42,8 @@ class MemoController extends Controller
         //ddd($positions);
 
         return Inertia::render('User/Memo', [
-            'perPage' => 2,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(2),
+            'perPage' => 10,
+            'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -70,6 +70,8 @@ class MemoController extends Controller
             'dataPosition' => $positions,
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
+            '__webpreviewpo'   => 'user.memo.statuspo.webpreview',
+            '__webpreviewpayment'   => 'user.memo.statuspayment.webpreview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
             '__proposepayment' => 'user.memo.statusmemo.proposepayment',
             '__proposepo' => 'user.memo.statusmemo.proposepo'
@@ -206,7 +208,7 @@ class MemoController extends Controller
 
     public function draftEdit($id)
     {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
 
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -261,7 +263,7 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
-            '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
@@ -503,18 +505,6 @@ class MemoController extends Controller
     {
         $memo = Memo::where('id', $id)->with('approvers')->first();
 
-        $approvers_po = $memo->approvers->map(function ($approver) use ($id) {
-            return [
-                'id_memo' => $id,
-                'id_employee' => $approver->id_employee,
-                'idx' => $approver->idx,
-                'status' => $approver->status,
-                'type_approver' => $approver->type_approver
-            ];
-        });
-
-        D_Po_Approver::insert($approvers_po->toArray());
-
         // cek apakah ada approver
         if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
@@ -586,47 +576,47 @@ class MemoController extends Controller
             Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->real_name deleted.");
     }
 
-    public function updateAcknowledge(Request $request, $id)
-    {
-        $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
-        $updatedacknowledges = $request->input('acknowledge');
-        // filter yang tidak ada pada updatedacknowledges
-        $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
-            if (count($updatedacknowledges)) {
-                $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
-                $key = in_array($item->id_employee, $itemacknowledge);
-                if (!$key) {
-                    return $item;
-                }
-            }
-            return $item;
-        });
+    // public function updateAcknowledge(Request $request, $id)
+    // {
+    //     $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
+    //     $updatedacknowledges = $request->input('acknowledge');
+    //     // filter yang tidak ada pada updatedacknowledges
+    //     $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
+    //         if (count($updatedacknowledges)) {
+    //             $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
+    //             $key = in_array($item->id_employee, $itemacknowledge);
+    //             if (!$key) {
+    //                 return $item;
+    //             }
+    //         }
+    //         return $item;
+    //     });
 
-        // delete filter yang tidak ada pada D_Memo_Acknowledge
-        if (count($filteredacknowledges) > 0) {
-            foreach ($filteredacknowledges as $itemfiltered) {
-                $itemfiltered->delete();
-            }
-        }
+    //     // delete filter yang tidak ada pada D_Memo_Acknowledge
+    //     if (count($filteredacknowledges) > 0) {
+    //         foreach ($filteredacknowledges as $itemfiltered) {
+    //             $itemfiltered->delete();
+    //         }
+    //     }
 
-        // update/insert pda D_Memo_Acknowledge
-        if (count($updatedacknowledges) > 0) {
-            foreach ($updatedacknowledges as $key => $value) {
-                $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
-                $item = [
-                    'id_memo' => $id,
-                    'id_employee'   =>  $value['id_employee']
-                ];
-                if ($itemacknowledge) {
-                    $itemacknowledge->update($item);
-                } else {
-                    D_Memo_Acknowledge::create($item);
-                }
-            }
-        }
+    //     // update/insert pda D_Memo_Acknowledge
+    //     if (count($updatedacknowledges) > 0) {
+    //         foreach ($updatedacknowledges as $key => $value) {
+    //             $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
+    //             $item = [
+    //                 'id_memo' => $id,
+    //                 'id_employee'   =>  $value['id_employee']
+    //             ];
+    //             if ($itemacknowledge) {
+    //                 $itemacknowledge->update($item);
+    //             } else {
+    //                 D_Memo_Acknowledge::create($item);
+    //             }
+    //         }
+    //     }
 
-        return Redirect::back()->with('success', "Successfull updated acknowledge.");
-    }
+    //     return Redirect::back()->with('success', "Successfull updated acknowledge.");
+    // }
 
     public function updateApprover(Request $request, $id)
     {
@@ -678,25 +668,14 @@ class MemoController extends Controller
 
     public function previewMemo(Request $request, $id)
     {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-        // $sumtotal = 0;
         $memocost = (array) json_decode($memo->cost);
-        // $memocost = array_map(function ($itemcost) use ($sumtotal) {
-        //     $itemcost->Total = $itemcost->QTY * $itemcost->Price;
-        //     $sumtotal += $itemcost->Total;
-        //     return $itemcost;
-        // }, $memocost);
-        // foreach ($memocost as $itemcost) {
-        //     $sumtotal += $itemcost->Total;
-        // }
-        // $ppn = $sumtotal * 10 / 100;
-        // $grandtotal = $sumtotal - $ppn;
 
         $data = [
             'memo' => $memo,
@@ -704,10 +683,7 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            // 'sumtotal' => $sumtotal,
-            // 'ppn' => $ppn,
-            // 'grandtotal' => $grandtotal,
+            'memocost' => $memocost
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');

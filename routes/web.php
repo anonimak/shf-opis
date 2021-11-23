@@ -87,7 +87,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::post('/{memo}/attachment', 'User\MemoController@fileUploadAttach')->name('attachment');
             Route::delete('/{memo}/attachment', 'User\MemoController@destroyAttach')->name('attachmentremove');
             Route::post('/{memo}/approver', 'User\MemoController@updateApprover')->name('updateapprover');
-            Route::post('/{memo}/acknowledge', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
+            // Route::post('/{memo}/acknowledge', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
         });
 
@@ -105,7 +105,6 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
-
         });
 
         Route::prefix('/status-po')->name('statuspo.')->group(function () {
@@ -149,7 +148,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/payment')->name('payment.')->group(function () {
             Route::get('/{id_memo}/approvers', 'User\ApiPaymentController@getApproversByIdMemo')->name('approvers');
             Route::get('/{id_memo}/data', 'User\ApiPaymentController@getPaymentsByIdMemo')->name('datapayments');
-            Route::put('/{id}/addpayment','User\ApiPaymentController@paymentStore')->name('storepayment');
+            Route::put('/{id}/addpayment', 'User\ApiPaymentController@paymentStore')->name('storepayment');
             Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
         });
         Route::prefix('/employee')->name('employee.')->group(function () {

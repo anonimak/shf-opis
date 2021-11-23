@@ -24,7 +24,15 @@ class Employee extends Model
 
     public function position_now()
     {
-        return $this->hasOne(Employee_History::class, 'id_employee', 'id')->select('id', 'id_employee', 'id_branch', 'id_position', 'year_started', 'year_finished')->where('year_started', '<', Carbon::now())->where('year_finished', '>', Carbon::now())->orWhere('year_finished', null);
+        return $this->hasOne(Employee_History::class, 'id_employee', 'id')->select('id', 'id_employee', 'id_branch', 'id_position', 'year_started', 'year_finished')
+            ->where(function ($query) {
+                $query->where('year_started', '<', Carbon::now())
+                    ->where('year_finished', '>', Carbon::now());
+            })
+            ->orWhere(function ($query) {
+                $query->where('year_started', '<', Carbon::now())
+                    ->orWhere('year_finished', null);
+            });
     }
 
     public function emp_history()

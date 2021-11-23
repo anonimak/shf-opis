@@ -129,7 +129,7 @@
                     <td colspan="2">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
                     <td colspan="1"><div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval</td>
                 </tr>
-                @if ( count($memo->acknowledges) > 0)
+                {{-- @if ( count($memo->acknowledges) > 0)
                 <tr>
                     <td>Acknowledge</td>
                     <td colspan="3">
@@ -138,7 +138,7 @@
                         @endforeach
                     </td>
                 </tr>
-                @endif
+                @endif --}}
             </tbody>
         </table>
         @if ( count($memo->approvers) > 0)

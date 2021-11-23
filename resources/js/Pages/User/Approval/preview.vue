@@ -104,7 +104,7 @@
                       <td>Type</td>
                       <td>Approval</td>
                     </tr>
-                    <tr v-if="dataMemo.acknowledges.length > 0">
+                    <!-- <tr v-if="dataMemo.acknowledges.length > 0">
                       <td>Acknowledge</td>
                       <td>
                         <span
@@ -121,7 +121,7 @@
                           </span>
                         </span>
                       </td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                 </table>
               </b-col>
@@ -155,7 +155,7 @@
                       </td>
                       <td>
                         {{
-                          approver.employee.position_now.position.position_name
+                          approver.employee.emp_history.position.position_name
                         }}
                       </td>
                       <td>

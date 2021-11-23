@@ -1,5 +1,6 @@
 <template>
   <b-modal
+    size="lg"
     id="modal-propose-po"
     ref="modal-propose-po"
     :title="modalTitle"
@@ -16,7 +17,6 @@
       opacity="0.6"
       spinner-small
       spinner-variant="primary"
-      class="d-inline-block"
     >
       <table-edit-approver
         :dataPosition="dataPositions"

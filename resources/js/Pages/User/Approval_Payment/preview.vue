@@ -10,7 +10,13 @@
         <b-card no-body>
           <b-card-body>
             <b-row class="mb-2">
-              <b-col col lg="12" md="12" class="mb-4" v-if="dataMemo.approver_payment.type_approver == 'approver'">
+              <b-col
+                col
+                lg="12"
+                md="12"
+                class="mb-4"
+                v-if="dataMemo.approver_payment.type_approver == 'approver'"
+              >
                 <b-button-group class="float-right">
                   <b-button
                     @click="actionApprove(dataMemo.approver_payment.id)"
@@ -79,7 +85,7 @@
                       <td>Type</td>
                       <td>Approval</td>
                     </tr>
-                    <tr v-if="dataMemo.acknowledges.length > 0">
+                    <!-- <tr v-if="dataMemo.acknowledges.length > 0">
                       <td>Acknowledge</td>
                       <td>
                         <span
@@ -96,7 +102,7 @@
                           </span>
                         </span>
                       </td>
-                    </tr>
+                    </tr> -->
                   </tbody>
                 </table>
               </b-col>
@@ -130,7 +136,7 @@
                       </td>
                       <td>
                         {{
-                          approver.employee.position_now.position.position_name
+                          approver.employee.emp_history.position.position_name
                         }}
                       </td>
                       <td>
@@ -210,14 +216,9 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr
-                    v-for="(item, index) in dataPayments"
-                    :key="item.id">
-
+                    <tr v-for="(item, index) in dataPayments" :key="item.id">
                       <th scope="row">
-                          {{
-                          index+1
-                        }}
+                        {{ index + 1 }}
                       </th>
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
