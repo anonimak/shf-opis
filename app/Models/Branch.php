@@ -26,7 +26,7 @@ class Branch extends Model
     public static function getBranches($search = null)
     {
         $branch = Self::select('*')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $branch->where('branch_name', 'LIKE', '%' . $search . '%');

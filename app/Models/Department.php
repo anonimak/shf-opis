@@ -20,7 +20,7 @@ class Department extends Model
     public static function getDepartments($search = null)
     {
         $department = Self::select('*')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $department->where('department_name', 'LIKE', '%' . $search . '%');

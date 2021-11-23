@@ -57,7 +57,7 @@ class User extends Authenticatable
     public static function getUsers($id = null, $search = null)
     {
         $user = Self::select('*')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($id) {
             $user->where('email', '!=', $id);

@@ -202,7 +202,7 @@ class MemoController extends Controller
             ),
             '_token' => csrf_token(),
             '__store'  => 'user.memo.store',
-            'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
+            'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
         ]);
     }
 
@@ -270,7 +270,7 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'headerCost' => $headerCost,
             'columnCost' => $columnCost,
-            // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get(),
+            // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
         ]);
     }
 
@@ -673,7 +673,7 @@ class MemoController extends Controller
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
 
@@ -700,7 +700,7 @@ class MemoController extends Controller
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('created_at', 'desc')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
         $memocost = (array) json_decode($memo->cost);

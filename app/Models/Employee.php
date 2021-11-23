@@ -64,7 +64,7 @@ class Employee extends Model
     public static function getEmployees($search = null)
     {
         $employee = Self::select('*')
-            ->orderBy('created_at', 'desc')->with('branch')->with('title');
+            ->orderBy('id', 'desc')->with('branch')->with('title');
 
         if ($search) {
             $employee->where('firstname', 'LIKE', '%' . $search . '%');

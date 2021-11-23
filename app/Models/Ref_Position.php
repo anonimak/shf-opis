@@ -38,7 +38,7 @@ class Ref_Position extends Model
     public static function getRef_Positions($search = null)
     {
         $position = Self::select('*')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         if ($search) {
             $position->where('position_name', 'LIKE', '%' . $search . '%');
