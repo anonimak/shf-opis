@@ -60,7 +60,7 @@
         hr {
             margin-bottom: 0.5em;
         }
-        
+
         ol {
             font-size: 12px;
             margin: 0 2em 0 2em;
@@ -134,7 +134,7 @@
                     <td>Acknowledge</td>
                     <td colspan="3">
                         @foreach ($memo->acknowledges as $acknowledge)
-                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}, 
+                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }},
                         @endforeach
                     </td>
                 </tr>
