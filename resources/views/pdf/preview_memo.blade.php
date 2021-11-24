@@ -205,22 +205,28 @@
         <hr>
         <table>
             <thead>
-                <tr>
-                    @foreach ($memocost as $cost)
+                    @foreach ($memocost as $id => $cost)
+                    @if ($id == 1)
+                        @break
+                    @endif
+                    <tr>
                         @foreach($cost as $attr => $value)
                             <th>{{ $attr }}</th>
                         @endforeach
+                    </tr>
                     @endforeach
-                </tr>
+
             </thead>
             <tbody>
-                <tr>
+
                     @foreach ($memocost as $cost)
+                    <tr>
                         @foreach($cost as $attr => $value)
                             <td>{{ $value }}</td>
                         @endforeach
+                    </tr>
                     @endforeach
-                </tr>
+
             </tbody>
 
                 {{-- <tr>
