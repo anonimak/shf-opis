@@ -214,22 +214,30 @@
         <hr>
         <table>
             <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>QTY</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
+                    @foreach ($memocost as $id => $cost)
+                    @if ($id == 1)
+                        @break
+                    @endif
+                    <tr>
+                        @foreach($cost as $attr => $value)
+                            <th>{{ $attr }}</th>
+                        @endforeach
+                    </tr>
+                    @endforeach
+
             </thead>
             <tbody>
-                @foreach ($memocost as $cost)
-                <tr>
-                    <td>{{ $cost->{'Product Name'} }}</td>
-                    <td>{{ $cost->QTY }}</td>
-                    <td>{{ $cost->Price }}</td>
-                    <td>{{ $cost->Total }}</td>
-                </tr>
-                @endforeach
+
+                    @foreach ($memocost as $cost)
+                    <tr>
+                        @foreach($cost as $attr => $value)
+                            <td>{{ $value }}</td>
+                        @endforeach
+                    </tr>
+                    @endforeach
+
+            </tbody>
+
                 {{-- <tr>
                     <td colspan="4" style="height: 20px"> </td>
                 </tr>

@@ -12,8 +12,10 @@
           Report</a
         > -->
       </div>
-      <b-jumbotron bg-variant="primary" text-variant="white">
-        <template #header>Hello {{ userinfo.name }}</template>
+       <b-jumbotron bg-variant="primary" text-variant="white">
+        <template #header>Hello {{ userinfo.name }}
+            <b-img right src="../images/test(300x300).png" alt="Right image"></b-img>
+        </template>
 
         <template #lead>
           Welcome to Sinarmas Hana Finance Memo Apps. Click button below to
@@ -30,6 +32,7 @@
           >
         </p>
       </b-jumbotron>
+
       <!-- Content Row -->
       <div class="row">
         <!-- Area Chart -->

@@ -190,6 +190,7 @@
     <ModalFormPayment
       :title="modalTitle"
       :indexMemo="idItemClicked"
+      :proposeLink="__proposepayment"
       :errors="errors"
     />
 
@@ -267,7 +268,7 @@ export default {
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
