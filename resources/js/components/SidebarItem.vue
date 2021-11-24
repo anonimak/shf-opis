@@ -18,6 +18,9 @@
         >
           <i :class="item.icon"></i>
           <span>{{ item.title }}</span>
+          <span v-if="item.badge"
+            ><i class="fas fa-exclamation-circle"></i
+          ></span>
         </a>
         <div
           v-if="isArrayRoutes(item) == true"
@@ -38,8 +41,17 @@
                   : 'collapse-item'
               "
               :href="route(itemChild.index)"
-              >{{ itemChild.title }}</inertia-link
             >
+              <span v-if="itemChild.badge">
+                <span :class="!isRoute(itemChild.link) && 'font-weight-bold'">{{
+                  itemChild.title
+                }}</span>
+                <span class="float-right"
+                  ><i class="fas fa-exclamation-circle"></i>
+                </span>
+              </span>
+              <span v-else>{{ itemChild.title }} </span>
+            </inertia-link>
           </div>
         </div>
       </div>

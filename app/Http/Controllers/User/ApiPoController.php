@@ -126,7 +126,7 @@ class ApiPoController extends Controller
     //     $details = [
     //         'subject' => $memo->title,
     //         'doc_no'  => $memo->doc_no,
-    //         'url'     => route('user.memo.approvalpo.detail', $id)
+    //         'url'     => route('user.memo.approval.po.detail', $id)
     //     ];
 
     //     Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));

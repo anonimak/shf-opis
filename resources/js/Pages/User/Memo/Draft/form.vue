@@ -295,7 +295,7 @@ export default {
         },
       },
       fileRecords: [],
-      uploadUrl: "https://www.mocky.io/v2/5d4fb20b3000005c111099e3",
+      uploadUrl: "#",
       uploadHeaders: {
         "X-Test-Header": "vue-file-agent",
         "X-CSRF-TOKEN": this._token,
