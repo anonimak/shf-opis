@@ -75,7 +75,7 @@
         <h3 style="text-align: center">Internal Memo</h3>
         <br>
         <br>
-        <h4>Memo Information :</h4>
+        <h4>Memo PO Information :</h4>
         <hr>
         <table>
             <thead>
@@ -147,7 +147,7 @@
         <table>
             <thead>
                 <tr>
-                    @foreach ($memo->approvers as $approver)
+                    @foreach ($memo->approversPo as $approver)
                         @if ($approver->employee)
                         <th>{{ $approver->employee->position_now->position->position_name }}</th>
                         @endif
@@ -156,7 +156,7 @@
             </thead>
             <tbody>
                 <tr>
-                    @foreach ($memo->approvers as $approver)
+                    @foreach ($memo->approversPo as $approver)
                         @if ($approver->employee)
                         <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
                             @if ($approver->type_approver == 'acknowledge')
@@ -167,7 +167,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    @foreach ($memo->approvers as $approver)
+                    @foreach ($memo->approversPo as $approver)
                     @if ($approver->employee)
                         @if($approver->status == 'submit' || $approver->status == 'edit')
                         {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
@@ -181,7 +181,7 @@
                     @endforeach
                 </tr>
                 <tr>
-                    @foreach ($memo->approvers as $approver)
+                    @foreach ($memo->approversPo as $approver)
                         @if($approver->employee)
                             @if($approver->status == 'approve' || $approver->status == 'reject')
                                 <td> {{ $approver->msg }} </td>

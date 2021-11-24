@@ -83,7 +83,7 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 10%">Fnc & Acc Manager</th>
+                    {{-- <th style="width: 10%">Fnc & Acc Manager</th> --}}
                     <th style="width: 30%" colspan="2">Approval</th>
                     <th style="width: 30%">Proposed by</th>
                     {{-- <th  style="width: 15%">Director</th>
@@ -92,7 +92,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td rowspan="2" style="height: 50px"></td>
+                    {{-- <td rowspan="2" style="height: 50px"></td> --}}
                     <td>Dept.</td>
                     <td>{{
                             $employeeInfo->employee
@@ -100,7 +100,7 @@
                                 ->position->department
                                 ->department_name
                         }}</td>
-                    <td rowspan="2"></td>
+                    <td style="height: 5%" rowspan="2"></td>
                     {{-- <td rowspan="2"></td>
                     <td rowspan="2"></td>
                     <td rowspan="2"></td> --}}
@@ -110,7 +110,7 @@
                     <td>{{$memo->doc_no}}</td>
                 </tr>
                 <tr>
-                    <td>Silvia Usman</td>
+                    {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
                     <td>{{ $memo->propose_at }}</td>
                     <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
@@ -119,17 +119,17 @@
                     <td>Seo Jisu</td> --}}
                 </tr>
                 <tr>
-                    <td colspan="3">Title</td>
+                    <td colspan="2">Title</td>
                     <td colspan="1">Final Approval Instruction</td>
                 </tr>
                 <tr>
                     <td>Purpose</td>
-                    <td colspan="2">{{$memo->title}}</td>
+                    <td colspan="1">{{$memo->title}}</td>
                     <td colspan="1"></td>
                 </tr>
                 <tr>
                     <td>Branch</td>
-                    <td colspan="2">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
+                    <td colspan="1">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
                     <td colspan="1">
                         <div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval
                     </td>
@@ -163,7 +163,11 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                    <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}</td>
+                    <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
+                        @if ($approver->type_approver == 'acknowledge')
+                            ({{ $approver->type_approver}})
+                        @endif
+                    </td>
                     @endif
                     @endforeach
                 </tr>

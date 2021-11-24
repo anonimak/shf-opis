@@ -131,6 +131,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
                 Route::get('/', 'User\ApprovalController@indexApprovalPo')->name('index');
                 Route::get('/{memo}', 'User\ApprovalController@detailPo')->name('detail');
                 Route::put('/{memo}', 'User\ApprovalController@approvingPo')->name('approving');
+                Route::get('/{memo}/preview', 'User\MemoController@previewPo')->name('preview');
             });
         });
     });

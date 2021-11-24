@@ -84,7 +84,7 @@ class ApprovalController extends Controller
                 ]
             ),
             '__approving'  => 'user.memo.approval.po.approving',
-            '__previewpdf'  => 'user.memo.approval.memo.preview',
+            '__previewpdf'  => 'user.memo.approval.po.preview',
             '__detail'    => 'user.memo.approval.po.detail',
             '__index'    => 'user.memo.approval.po.index',
         ]);

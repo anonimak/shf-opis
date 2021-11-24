@@ -15,7 +15,7 @@
                 lg="12"
                 md="12"
                 class="mb-4"
-                v-if="dataMemo.approver_payment.type_approver == 'approver' && dataMemo.approver_payment.status != 'approve'"
+                v-if="dataMemo.approver_payment.type_approver == 'approver' && dataMemo.approver_payment.status == 'submit'"
               >
                 <b-button-group class="float-right">
                   <b-button
@@ -30,7 +30,7 @@
                   >
                 </b-button-group>
               </b-col>
-              <b-col col lg="12" md="12" class="mb-4" v-else-if="dataMemo.approver_payment.type_approver != 'approver' && dataMemo.approver_payment.status != 'approve'">
+              <b-col col lg="12" md="12" class="mb-4" v-else-if="dataMemo.approver_payment.type_approver != 'approver' && dataMemo.approver_payment.status == 'submit'">
                   <b-button-group class="float-right">
                       <b-button
                         @click="actionApprove(dataMemo.approver_payment.id)"

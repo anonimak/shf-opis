@@ -28,22 +28,22 @@
                       <td>Status</td>
                       <td>
                         <b-badge
-                          v-if="dataMemo.status_payment == 'submit'"
+                          v-if="dataMemo.status_po == 'submit'"
                           variant="info"
                           >On process approving</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status_payment == 'approve'"
+                          v-if="dataMemo.status_po == 'approve'"
                           variant="success"
                           >Memo Approved</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status_payment == 'reject'"
+                          v-if="dataMemo.status_po == 'reject'"
                           variant="danger"
                           >Memo Rejected</b-badge
                         >
                         <b-badge
-                          v-if="dataMemo.status_payment == 'revisi'"
+                          v-if="dataMemo.status_po == 'revisi'"
                           variant="secondary"
                           >Memo Revisi</b-badge
                         >

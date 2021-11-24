@@ -692,6 +692,32 @@ class MemoController extends Controller
         return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
     }
 
+    public function previewPo(Request $request, $id)
+    {
+        $memo = Memo::getPoDetailApprovers($id);
+        $employeeInfo = User::getUsersEmployeeInfo();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $memocost = (array) json_decode($memo->cost);
+
+        $data = [
+            'memo' => $memo,
+            'employeeInfo' => $employeeInfo,
+            'positions' => $positions,
+            'dataTypeMemo' => $dataTypeMemo,
+            'dataAttachments' => $attachments,
+            'memocost' => $memocost
+        ];
+        $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf->setPaper('A4', 'portrait');
+        // download PDF file with download method
+        // return $pdf->download('pdf_file.pdf');
+        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
     public function previewPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetailApprovers($id);
