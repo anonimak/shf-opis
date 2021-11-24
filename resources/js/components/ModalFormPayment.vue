@@ -257,7 +257,6 @@ export default {
       this.activeIndex = index;
       this.isFormPaymentEdited = true;
       this.activeItemPayment = { ...this.dataPayments[index] };
-      //console.log(this.activeItemPayment.name)
     },
     actionDelete(idData) {
       this.$bvModal
@@ -300,10 +299,6 @@ export default {
     },
 
     submitDelete(id) {
-    //   this.$inertia.delete(
-    //     route("user.memo.statusmemo.deletepayment", id)
-    //   );
-    console.log(id)
       axios.delete(route("user.memo.statusmemo.deletepayment", id))
       .then((response) => {
           if(response.data.success) {
