@@ -14,7 +14,7 @@
     scrollable
   >
     <b-overlay
-      :show="isTableApproverbusy"
+      :show="isTableApproverbusy || isModalformbusy"
       opacity="0.6"
       spinner-small
       spinner-variant="primary"
@@ -32,7 +32,11 @@
         Add Data Payment
       </b-button>
     </b-overlay>
-
+    <b-overlay
+    :show="isModalformbusy"
+      opacity="0.6"
+      spinner-small
+      spinner-variant="primary">
     <b-col class="mt-4">
       <h5>Payment</h5>
       <table class="table table-striped">
@@ -106,6 +110,7 @@
         </tbody>
       </table>
     </b-col>
+    </b-overlay>
     <b-modal
       id="modal-add-payment"
       title="Add Data Payment"
@@ -246,6 +251,7 @@ export default {
       id_memo: null,
       isTableApproverbusy: false,
       isSubmitbusy: false,
+      isModalformbusy:false,
       isFormPaymentEdited: false,
       activeItemPayment: {},
       activeIndex: null,
@@ -384,6 +390,7 @@ export default {
     handleSubmit() {
       console.log("submit");
       this.isSubmitbusy = true;
+      this.isModalformbusy = true;
       this.$inertia.put(route(this.proposeLink, this.indexMemo));
     },
 
