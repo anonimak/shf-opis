@@ -49,7 +49,8 @@ class LoginController extends Controller
             'meta' => [
                 'title' => 'tests',
                 'foo' => 'bar'
-            ]
+            ],
+            '__forgetPassword' => 'forget-password.request'
         ]);
     }
 

@@ -8,8 +8,9 @@
           <div class="col">
             <div class="p-5">
               <div class="text-center">
-                <h1 class="h3 text-gray-900"><strong>LOGIN</strong></h1>
-                <h4 class="mb-4">E-Memo SHF</h4>
+                <h1 class="h3 text-gray-900">
+                  <strong>Reset Password</strong>
+                </h1>
               </div>
 
               <b-form @submit.prevent="onSubmit" v-if="show">
@@ -48,19 +49,29 @@
                     :state="$page.errors.password ? false : null"
                   ></b-form-input>
                 </b-form-group>
-                <b-form-group id="input-group-4">
-                  <b-form-checkbox value="true" v-model="form.remember"
-                    >Remember Me</b-form-checkbox
-                  >
+
+                <b-form-group
+                  id="input-group-2"
+                  label-for="input-2"
+                  :invalid-feedback="
+                    $page.errors.password_confirmation
+                      ? $page.errors.password_confirmation[0]
+                      : ''
+                  "
+                  :state="$page.errors.password_confirmation ? false : null"
+                >
+                  <b-form-input
+                    id="input-2"
+                    type="password"
+                    name="password_confirmation"
+                    v-model="form.password_confirmation"
+                    placeholder="Retype Password"
+                    :state="$page.errors.password_confirmation ? false : null"
+                  ></b-form-input>
                 </b-form-group>
 
                 <b-button class="btn-block" type="submit" variant="primary"
                   >Submit</b-button
-                >
-                <inertia-link
-                  :href="route(__forgetPassword)"
-                  class="float-right"
-                  >forget password</inertia-link
                 >
               </b-form>
             </div>
@@ -82,7 +93,8 @@ export default {
       form: {
         email: "",
         password: "",
-        remember: "",
+        password_confirmation: "",
+        token: "",
       },
       show: true,
     };
@@ -96,21 +108,13 @@ export default {
     Layout,
     FlashMsg,
   },
-  props: ["meta", "flash", "__forgetPassword"],
+  props: ["meta", "flash", "__postUpdate", "token"],
   mounted() {
-    // check remember exist
-    if (this.$ls.get("email")) {
-      this.form.email = this.$ls.get("email");
-    }
+    this.form.token = this.token;
   },
   methods: {
     onSubmit() {
-      if (this.form.remember) {
-        this.$ls.set("email", this.form.email);
-      }
-      this.$inertia.post("/login", this.form).then(() => {
-        this.form.password = "";
-      });
+      this.$inertia.post(route(this.__postUpdate), this.form);
     },
     onReset(e) {
       e.preventDefault();

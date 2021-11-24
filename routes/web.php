@@ -162,5 +162,12 @@ Route::get('/', 'HomeController@index');
 
 Route::get('/linkstorage', 'User\DashboardController@linkstorage');
 
+Route::prefix('/forget-password')->name('forget-password.')->group(function () {
+    Route::get('/', 'Auth\CustomForgotPasswordController@getEmail')->name('request');
+    Route::post('/', 'Auth\CustomForgotPasswordController@postEmail')->name('email');
+    Route::get('/reset-password/{token}', 'Auth\CustomResetPasswordController@getPassword')->name('reset');
+    Route::post('/reset-password', 'Auth\CustomResetPasswordController@updatePassword')->name('update');
+});
+
 // Logout
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
