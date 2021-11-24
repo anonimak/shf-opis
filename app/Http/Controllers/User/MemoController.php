@@ -694,7 +694,7 @@ class MemoController extends Controller
 
     public function previewPayment(Request $request, $id)
     {
-        $memo = Memo::getPaymentDetail($id);
+        $memo = Memo::getPaymentDetailApprovers($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -714,7 +714,6 @@ class MemoController extends Controller
             'memocost' => $memocost,
             'dataPayments' => $dataPayments->payments,
         ];
-        //ddd($data);
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');;
         return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));

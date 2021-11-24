@@ -92,11 +92,11 @@
                     <td rowspan="2" style="height: 50px"></td>
                     <td>Dept.</td>
                     <td>{{
-                                                        $employeeInfo->employee
-                                                            ->position_now
-                                                            ->position->department
-                                                            ->department_name
-                                                    }}</td>
+                            $employeeInfo->employee
+                                        ->position_now
+                                        ->position->department
+                                        ->department_name
+                        }}</td>
                     <td rowspan="2"></td>
                     {{-- <td rowspan="2"></td>
                     <td rowspan="2"></td>
@@ -109,7 +109,7 @@
                 <tr>
                     <td>Silvia Usman</td>
                     <td>Propose Date</td>
-                    <td></td>
+                    <td>{{ $memo->propose_at }}</td>
                     <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
@@ -174,6 +174,17 @@
                         <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
                         @endif
                     @endif
+                    @endforeach
+                </tr>
+                <tr>
+                    @foreach ($memo->approvers as $approver)
+                        @if($approver->employee)
+                            @if($approver->status == 'approve' || $approver->status == 'reject')
+                                <td> {{ $approver->msg }} </td>
+                            @else
+                                <td> - </td>
+                            @endif
+                        @endif
                     @endforeach
                 </tr>
             </tbody>

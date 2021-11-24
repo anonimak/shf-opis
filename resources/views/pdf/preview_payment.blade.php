@@ -185,6 +185,17 @@
                     @endif
                     @endforeach
                 </tr>
+                <tr>
+                    @foreach ($memo->approversPayment as $approver)
+                    @if($approver->employee)
+                        @if($approver->status == 'approve' || $approver->status == 'reject')
+                            <td> {{ $approver->msg }} </td>
+                        @else
+                            <td> - </td>
+                        @endif
+                    @endif
+                    @endforeach
+                </tr>
             </tbody>
         </table>
         @endif
