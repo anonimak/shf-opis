@@ -92,7 +92,7 @@
                     {{-- <td rowspan="2" style="height: 50px"></td> --}}
                     <td>Dept.</td>
                     <td>{{
-                            $employeeInfo->employee
+                            $employeeproposeinfo->proposeemployee
                                         ->position_now
                                         ->position->department
                                         ->department_name
@@ -110,7 +110,7 @@
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
                     <td>{{ $memo->propose_at }}</td>
-                    <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
+                    <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
