@@ -332,6 +332,7 @@ class MemoController extends Controller
     public function propose($id)
     {
         $memo = Memo::where('id', $id)->first();
+        $employeeInfo = User::getUsersEmployeeInfo();
         // cek apakah ada approver
         if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
             return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
@@ -348,6 +349,10 @@ class MemoController extends Controller
         Memo::where('id', $id)->update([
             'status'   => 'submit',
             'doc_no'   => $doc_no,
+            'po_no'   => $doc_no . '/' . $employeeInfo->employee
+                ->position_now
+                ->position->department
+                ->alias,
             'propose_at' => Carbon::now()
         ]);
 
@@ -392,7 +397,9 @@ class MemoController extends Controller
 
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
-            return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
+            $memo_approver = D_Memo_Approver::where('id_memo', $id)->get();
+            $memo_approver->makeHidden(['id', 'created_at', 'updated_at', 'msg', 'status']);
+            D_Payment_Approver::insert($memo_approver->toArray());
         }
 
         $check_history = D_Memo_History::where('id_memo', $id)->get();
@@ -507,7 +514,9 @@ class MemoController extends Controller
 
         // cek apakah ada approver
         if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
-            return Redirect::route('user.memo.statusmemo.index')->with('error', "Memo $memo->doc_no does not have approver.");
+            $memo_approver = D_Memo_Approver::where('id_memo', $id)->get();
+            $memo_approver->makeHidden(['id', 'created_at', 'updated_at', 'msg', 'status']);
+            D_Po_Approver::insert($memo_approver->toArray());
         }
 
         $check_history = D_Memo_History::where('id_memo', $id)->get();
@@ -846,11 +855,11 @@ class MemoController extends Controller
                     'active'  => true
                 ],
                 [
-                    'title'   => "Status Po",
+                    'title'   => "Status Purchase Order",
                     'href'    => "user.memo.statuspo.index"
                 ],
                 [
-                    'title'   => $memo->doc_no,
+                    'title'   => $memo->po_no,
                     'active'  => true
                 ]
             ),
