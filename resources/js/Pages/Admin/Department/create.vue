@@ -30,6 +30,23 @@
                     trim
                   ></b-form-input>
                 </b-form-group>
+                <b-form-group
+                  id="input-group-title"
+                  label="Alias Name:"
+                  label-for="input-title"
+                  :invalid-feedback="errors.alias ? errors.alias[0] : ''"
+                  :state="errors.alias ? false : null"
+                >
+                  <b-form-input
+                    id="input-title"
+                    type="text"
+                    name="alias"
+                    v-model="form.alias"
+                    placeholder="Input alias name"
+                    :state="errors.alias ? false : null"
+                    trim
+                  ></b-form-input>
+                </b-form-group>
               </b-col>
               <b-row align-h="center">
                 <b-button-group>
@@ -68,6 +85,7 @@ export default {
       submitState: false,
       form: {
         department: "",
+        alias: "",
       },
     };
   },

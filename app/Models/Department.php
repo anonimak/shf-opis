@@ -14,7 +14,7 @@ class Department extends Model
      */
     protected $table = 'm_departments';
 
-    protected $fillable = ['department_name'];
+    protected $fillable = ['department_name', 'alias'];
     use SoftDeletes;
 
     public static function getDepartments($search = null)

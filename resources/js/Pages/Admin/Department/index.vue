@@ -32,6 +32,7 @@
                       <tr>
                         <th scope="col">#</th>
                         <th scope="col">Department Name</th>
+                        <th scope="col">Alias Name</th>
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
@@ -52,6 +53,9 @@
                         </th>
                         <td>
                           {{ item.department_name }}
+                        </td>
+                        <td>
+                          {{ item.alias }}
                         </td>
                         <td>
                           <b-button-group size="sm">
