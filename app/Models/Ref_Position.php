@@ -22,7 +22,7 @@ class Ref_Position extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class, 'id_department', 'id')->select('id', 'department_name');
+        return $this->belongsTo(Department::class, 'id_department', 'id')->select('id', 'department_name', 'alias');
     }
 
     public function emp_history()
