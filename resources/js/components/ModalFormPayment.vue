@@ -398,7 +398,15 @@ export default {
       console.log("okee");
     },
 
-    onSaveEditApprover(response) {},
+    onSaveEditApprover(response) {
+        Promise.all([
+        this.getDataApproversPayment(),
+        ]).then((results) => {
+            this.isTableApproverbusy = false;
+            this.dataApprovers = results[0].data;
+        //console.log(results);
+      });
+    },
 
     // axios
     getDataPositions: async function () {

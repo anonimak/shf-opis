@@ -159,7 +159,7 @@
                               </b-button>
                               <inertia-link
                                 v-if="
-                                  item.ref_table.with_po == 1 &&
+                                  item.ref_table.with_payment == 1 &&
                                   item.status == 'approve' &&
                                   item.status_payment != 'edit'
                                 "
