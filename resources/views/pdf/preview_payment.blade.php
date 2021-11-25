@@ -292,7 +292,7 @@
                     <td>{{ $payment->name }}</td>
                     <td>{{ $payment->bank_name }}</td>
                     <td>{{ $payment->bank_account }}</td>
-                    <td>{{ $payment->amount }}</td>
+                    <td>{{  number_format($payment->amount, 2) }}</td>
                     <td>{{ $payment->remark }}</td>
                 </tr>
                 @endforeach

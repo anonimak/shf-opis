@@ -79,7 +79,7 @@
                 v-model="activeItemPayment.amount"
               />
             </td>
-            <td v-else>{{ item.amount }}</td>
+            <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
             <td v-if="isFormPaymentEdited && activeIndex == index">
               <input
                 type="text"
@@ -341,7 +341,7 @@ export default {
         .catch((error) => {
           if (error.response) {
               this.errors = {...error.response.data.errors}
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
     },
@@ -358,7 +358,7 @@ export default {
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
-        console.log(results);
+        //console.log(results);
         this.dataPayments = results[3].data;
       });
 
