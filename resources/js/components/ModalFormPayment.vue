@@ -28,7 +28,7 @@
         @onSave="onSaveEditApprover"
       />
 
-      <b-button v-b-modal.modal-add-payment class="mt-2" variant="primary">
+      <b-button v-b-modal.modal-add-payment class="mt-2 ml-2" variant="primary">
         Add Data Payment
       </b-button>
     </b-overlay>
@@ -39,8 +39,8 @@
       spinner-variant="primary">
     <b-col class="mt-4">
       <h5>Payment</h5>
-      <table class="table table-striped">
-        <thead>
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Bank Name</th>
@@ -347,7 +347,7 @@ export default {
     },
     getData() {
       this.isTableApproverbusy = true;
-      this.modalTitle = "Continue purpose Payment";
+      this.modalTitle = "Continue Purpose Payment";
       Promise.all([
         this.getDataPositions(),
         this.getDataApproversPayment(),

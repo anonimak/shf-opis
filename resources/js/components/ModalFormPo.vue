@@ -92,6 +92,7 @@ export default {
     handleSubmit() {
       console.log("submit");
       this.isSubmitbusy = true;
+      this.isTableApproverbusy = true;
       this.$inertia.put(route(this.proposeLink, this.indexMemo));
     },
 
