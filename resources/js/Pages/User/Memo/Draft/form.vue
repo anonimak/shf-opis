@@ -114,7 +114,6 @@
                             </a>
                           </td>
                           <td>
-                            button
                             <b-button
                               size="sm"
                               variant="danger"

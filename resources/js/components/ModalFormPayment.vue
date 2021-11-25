@@ -205,7 +205,7 @@
             >
               <b-form-input
                 id="input-title"
-                type="number"
+                type="text"
                 name="remark"
                 placeholder="Remark"
                 v-model="form.remark"
