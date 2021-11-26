@@ -566,6 +566,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     items: Array
@@ -6914,7 +6926,13 @@ var render = function() {
                   [
                     _c("i", { class: item.icon }),
                     _vm._v(" "),
-                    _c("span", [_vm._v(_vm._s(item.title))])
+                    _c("span", [_vm._v(_vm._s(item.title))]),
+                    _vm._v(" "),
+                    item.badge
+                      ? _c("span", [
+                          _c("i", { staticClass: "fas fa-exclamation-circle" })
+                        ])
+                      : _vm._e()
                   ]
                 ),
                 _vm._v(" "),
@@ -6947,7 +6965,34 @@ var render = function() {
                                   : "collapse-item",
                                 attrs: { href: _vm.route(itemChild.index) }
                               },
-                              [_vm._v(_vm._s(itemChild.title))]
+                              [
+                                itemChild.badge
+                                  ? _c("span", [
+                                      _c(
+                                        "span",
+                                        {
+                                          class:
+                                            !_vm.isRoute(itemChild.link) &&
+                                            "font-weight-bold"
+                                        },
+                                        [_vm._v(_vm._s(itemChild.title))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "span",
+                                        { staticClass: "float-right" },
+                                        [
+                                          _c("i", {
+                                            staticClass:
+                                              "fas fa-exclamation-circle"
+                                          })
+                                        ]
+                                      )
+                                    ])
+                                  : _c("span", [
+                                      _vm._v(_vm._s(itemChild.title) + " ")
+                                    ])
+                              ]
                             )
                           }),
                           1

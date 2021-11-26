@@ -614,6 +614,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     items: Array
@@ -851,46 +863,26 @@ __webpack_require__.r(__webpack_exports__);
         }]
       }, {
         id: 2,
-        title: "Approval Memo",
-        link: "user.memo.approval.index",
-        index: "user.memo.approval.index",
+        title: "Approval",
+        link: "#",
         icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
-      }, {
-        id: 3,
-        title: "Approval Payment",
-        link: "user.memo.approvalpayment.*",
-        index: "user.memo.approvalpayment.index",
-        icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo_payment //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
-      }, {
-        id: 4,
-        title: "Approval PO",
-        link: "user.memo.approvalpo.*",
-        index: "user.memo.approvalpo.index",
-        icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo_po //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
+        badge: this.notif.approval_memo || this.notif.approval_memo_payment || this.notif.approval_memo_po,
+        child: [{
+          title: "Approval Memo",
+          link: "user.memo.approval.memo.*",
+          index: "user.memo.approval.memo.index",
+          badge: this.notif.approval_memo
+        }, {
+          title: "Approval Payment",
+          link: "user.memo.approval.payment.*",
+          index: "user.memo.approval.payment.index",
+          badge: this.notif.approval_memo_payment
+        }, {
+          title: "Approval PO",
+          link: "user.memo.approval.po.*",
+          index: "user.memo.approval.po.index",
+          badge: this.notif.approval_memo_po
+        }]
       }]
     };
   },
@@ -7021,7 +7013,13 @@ var render = function() {
                   [
                     _c("i", { class: item.icon }),
                     _vm._v(" "),
-                    _c("span", [_vm._v(_vm._s(item.title))])
+                    _c("span", [_vm._v(_vm._s(item.title))]),
+                    _vm._v(" "),
+                    item.badge
+                      ? _c("span", [
+                          _c("i", { staticClass: "fas fa-exclamation-circle" })
+                        ])
+                      : _vm._e()
                   ]
                 ),
                 _vm._v(" "),
@@ -7054,7 +7052,34 @@ var render = function() {
                                   : "collapse-item",
                                 attrs: { href: _vm.route(itemChild.index) }
                               },
-                              [_vm._v(_vm._s(itemChild.title))]
+                              [
+                                itemChild.badge
+                                  ? _c("span", [
+                                      _c(
+                                        "span",
+                                        {
+                                          class:
+                                            !_vm.isRoute(itemChild.link) &&
+                                            "font-weight-bold"
+                                        },
+                                        [_vm._v(_vm._s(itemChild.title))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "span",
+                                        { staticClass: "float-right" },
+                                        [
+                                          _c("i", {
+                                            staticClass:
+                                              "fas fa-exclamation-circle"
+                                          })
+                                        ]
+                                      )
+                                    ])
+                                  : _c("span", [
+                                      _vm._v(_vm._s(itemChild.title) + " ")
+                                    ])
+                              ]
                             )
                           }),
                           1
