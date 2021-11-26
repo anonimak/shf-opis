@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
+      <h1 class="h3 mb-0 text-gray-800">Purchase Order {{ dataMemo.po_no }}</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -11,7 +11,7 @@
           <b-card-body>
             <b-row class="mb-2">
               <b-col col lg="6" md="auto">
-                <h5>Memo Information</h5>
+                <h5>Purchase Order Information</h5>
                 <table class="table table-bordered">
                   <tbody>
                     <tr>
@@ -35,17 +35,17 @@
                         <b-badge
                           v-if="dataMemo.status_po == 'approve'"
                           variant="success"
-                          >Memo Approved</b-badge
+                          >Purchase Order Approved</b-badge
                         >
                         <b-badge
                           v-if="dataMemo.status_po == 'reject'"
                           variant="danger"
-                          >Memo Rejected</b-badge
+                          >Purchase Order Rejected</b-badge
                         >
                         <b-badge
                           v-if="dataMemo.status_po == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Purchase Order Revisi</b-badge
                         >
                       </td>
                     </tr>
@@ -63,8 +63,8 @@
                       <td>{{ dataMemo.title }}</td>
                     </tr>
                     <tr>
-                      <td>Doc. No</td>
-                      <td>{{ dataMemo.doc_no }}</td>
+                      <td>PO No</td>
+                      <td>{{ dataMemo.po_no }}</td>
                     </tr>
                     <tr>
                       <td>Type</td>
@@ -92,7 +92,7 @@
                 </table>
               </b-col>
               <b-col col lg="6" md="auto">
-                <h5>Approver</h5>
+                <h5>Approver PO</h5>
                 <table class="table table-bordered mb-2">
                   <thead class="thead-dark">
                     <tr>

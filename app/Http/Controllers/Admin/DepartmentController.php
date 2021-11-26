@@ -78,10 +78,13 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'department'   => 'required|max:50'
+            'department'   => 'required|max:50',
+            'alias' => 'required|max:5'
         ]);
+        // dd($request);
         $department = Department::create([
-            'department_name'   => $request->input('department')
+            'department_name'   => $request->input('department'),
+            'alias'             => $request->input('alias')
         ]);
         return Redirect::route('admin.department.index')->with('success', "Successfull Create new Department $department->department_name");
     }
@@ -122,6 +125,7 @@ class DepartmentController extends Controller
                 ]
             ),
             'dataDepartment'      => [
+                'alias'           => $department->alias,
                 'department'      => $department->department_name,
                 'id'              => $department->id
             ],
@@ -142,10 +146,12 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'department'   => 'required|max:50',
+            'alias' => 'required|max:5'
         ]);
 
         Department::where('id', $id)->update([
-            'department_name'   => $request->input('department')
+            'department_name'   => $request->input('department'),
+            'alias'             => $request->input('alias')
         ]);
         return Redirect::route('admin.department.index')->with('success', "Successfull updated.");
     }
