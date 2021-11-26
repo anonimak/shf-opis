@@ -297,13 +297,15 @@ class MemoController extends Controller
         ]);
 
         $employeeBranch = $employeeInfo->employee->position_now->branch->id;
+        $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
 
         $memo = Memo::create([
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
+            'id_employee2'          => $typeMemo->id_overtake_memo
         ]);
-        $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
+
 
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
@@ -352,7 +354,7 @@ class MemoController extends Controller
             'po_no'   => $doc_no . '/' . $employeeInfo->employee
                 ->position_now
                 ->position->department
-                ->alias .'/PO',
+                ->alias . '/PO',
             'propose_at' => Carbon::now()
         ]);
 
