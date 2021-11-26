@@ -720,7 +720,7 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost
         ];
-        $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('A4', 'portrait');
         // download PDF file with download method
         // return $pdf->download('pdf_file.pdf');
