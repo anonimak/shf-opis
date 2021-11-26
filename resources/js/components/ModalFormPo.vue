@@ -27,6 +27,56 @@
         @onSave="onSaveEditApprover"
       />
     </b-overlay>
+    <b-overlay
+    :show="isModalformbusy"
+      opacity="0.6"
+      spinner-small
+      spinner-variant="primary"
+    >
+    <h5 class="ml-3">Vendor</h5>
+    <b-form ref="form">
+        <b-card-body>
+          <b-col col lg="3" md="auto">
+            <b-form-group
+              id="input-group-title"
+              label="Vendor Name:"
+              label-for="input-title"
+              :invalid-feedback="errors.name ? errors.name[0] : ''"
+              :state="errors.name ? false : null"
+            >
+              <b-form-input
+                id="input-title"
+                type="text"
+                name="name"
+                v-model="form.name"
+                placeholder="Vendor Name"
+                :state="errors.name ? false : null"
+                trim
+                required
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              id="input-group-title"
+              label="Vendor Address:"
+              label-for="input-title"
+              :invalid-feedback="errors.address ? errors.address[0] : ''"
+              :state="errors.address ? false : null"
+            >
+              <b-form-input
+                id="input-title"
+                type="text"
+                name="address"
+                v-model="form.address"
+                placeholder="Vendor Address"
+                :state="errors.address ? false : null"
+                trim
+                required
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-card-body>
+      </b-form>
+    </b-overlay>
   </b-modal>
 </template>
 
@@ -47,6 +97,10 @@ export default {
   },
   data() {
     return {
+        form: {
+            name: null,
+            address: null,
+        },
       modalTitle: "",
       dataPositions: [],
       dataApprovers: [],
@@ -56,13 +110,15 @@ export default {
       url_approvers_po: "user.api.po.approvers",
       id_memo: null,
       isTableApproverbusy: false,
+      isModalformbusy:false,
       isSubmitbusy: false,
+      errors:{}
     };
   },
   methods: {
     getData() {
       this.isTableApproverbusy = true;
-      this.modalTitle = "Continue purpose Purchase Order";
+      this.modalTitle = "Continue Purpose Purchase Order";
 
       Promise.all([
         this.getDataPositions(),
@@ -93,7 +149,19 @@ export default {
       console.log("submit");
       this.isSubmitbusy = true;
       this.isTableApproverbusy = true;
-      this.$inertia.put(route(this.proposeLink, this.indexMemo));
+      this.$inertia.put(route(this.proposeLink, this.indexMemo),this.form)
+        .then((response)=> {
+            this.errors = {};
+            this.isTableApproverbusy = false;
+            this.isSubmitbusy = false;
+        })
+        .catch((error) => {
+            if (error.response) {
+                this.isTableApproverbusy = false;
+                this.isSubmitbusy = false;
+                this.errors = {...error.response.data.errors};
+            }
+        });
     },
 
     beforeSaveEditApprover() {

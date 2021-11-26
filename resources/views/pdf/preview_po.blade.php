@@ -81,7 +81,7 @@
                         </p>
                     </td>
                     <td style="border:none; width:50%"></td>
-                    <td style="border:none; width:25%;vertical-align: top; text-align: left">        
+                    <td style="border:none; width:25%;vertical-align: top; text-align: left">
                         <h2>Purchase Order</h2>
                         <p>PO No  :{{ $memo->po_no}}</p>
                     </td>
@@ -94,13 +94,15 @@
                 <tr>
                     <td style="border:none; width:25%; text-align: left">
                         <h2>Vendor</h2>
-                        <p><strong>PT. Fiber Networks Indonesia</strong></p>
+                        @foreach ($dataPayments as $payment)
+                        <p><strong>{{ $payment->name }}</strong></p>
                         <p style="margin-top: 8px; font-size: 9px">
-                            Perkantoran Tanjung Mas B1/5, Jl. Raya Tanjung Barat, Jakarta Selatan 12530
+                            {{$payment->address}}
                         </p>
+                        @endforeach
                     </td>
                     <td style="border:none; width:50%"></td>
-                    <td style="border:none; width:25%"> 
+                    <td style="border:none; width:25%">
                         <br>
                         <table style="border:none";>
                             <tbody>
