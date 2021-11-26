@@ -38,23 +38,22 @@
             border-collapse: collapse;
             border: 1pt solid black;
         }
-
         table td {
             border: 1pt solid black;
             text-align: center;
-            font-size: 12px;
+            font-size: 10px;
             padding: 0 2px 0 2px;
         }
         table th {
             border: 1pt solid black;
             text-align: center;
             background-color: rgb(184, 184, 184);
-            font-size: 12px;
+            font-size: 10px;
             padding: 0 2px 0 2px;
         }
 
         p {
-            font-size: 12px;
+            font-size: 10px;
         }
 
         hr {
@@ -72,152 +71,58 @@
 
 <body>
     <div>
-        <h3 style="text-align: center">Internal Memo</h3>
-        <br>
-        <br>
-        <h4>Memo PO Information :</h4>
-        <hr>
-        <table>
-            <thead>
-                <tr>
-                    {{-- <th style="width: 10%">Fnc & Acc Manager</th> --}}
-                    <th  style="width: 30%" colspan="2">Approval</th>
-                    <th  style="width: 30%">Proposed by</th>
-                    {{-- <th  style="width: 15%">Director</th>
-                    <th  style="width: 15%">President Director</th> --}}
-                </tr>
-            </thead>
+        <table style="border:none">
             <tbody>
                 <tr>
-                    {{-- <td rowspan="2" style="height: 50px"></td> --}}
-                    <td>Dept.</td>
-                    <td>{{
-                            $employeeInfo->employee
-                                        ->position_now
-                                        ->position->department
-                                        ->department_name
-                        }}</td>
-                    <td style="height: 5%" rowspan="2"></td>
-                    {{-- <td rowspan="2"></td>
-                    <td rowspan="2"></td>
-                    <td rowspan="2"></td> --}}
-                </tr>
-                <tr>
-                    <td>Doc. No</td>
-                    <td>{{$memo->doc_no}}</td>
-                </tr>
-                <tr>
-                    {{-- <td>Silvia Usman</td> --}}
-                    <td>Propose Date</td>
-                    <td>{{ $memo->propose_at }}</td>
-                    <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
-                    {{-- <td>Andreas Kristian</td>
-                    <td>Agustinus Budi Antoro</td>
-                    <td>Seo Jisu</td> --}}
-                </tr>
-                <tr>
-                    <td colspan="2">Title</td>
-                    <td colspan="1">Final Approval Instruction</td>
-                </tr>
-                <tr>
-                    <td>Purpose</td>
-                    <td colspan="1">{{$memo->title}}</td>
-                    <td colspan="1"></td>
-                </tr>
-                <tr>
-                    <td>Branch</td>
-                    <td colspan="1">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
-                    <td colspan="1"><div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval</td>
-                </tr>
-                {{-- @if ( count($memo->acknowledges) > 0)
-                <tr>
-                    <td>Acknowledge</td>
-                    <td colspan="3">
-                        @foreach ($memo->acknowledges as $acknowledge)
-                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }},
-                        @endforeach
+                    <td style="border:none; width:25%; text-align: left">
+                        <img src="https://shf.co.id/img/brand.png" alt="" srcset="" width="160px">
+                        <p style="margin-top: 2px; font-size: 9px">
+                            Gedung Roxy Square Lt. 3 B 001 No. 02 Jl. Kyai Tapa No.1, Tomang, Grogol Petamburan, Jakarta Barat 11440
+                        </p>
+                    </td>
+                    <td style="border:none; width:50%"></td>
+                    <td style="border:none; width:25%;vertical-align: top; text-align: left">        
+                        <h2>Purchase Order</h2>
+                        <p>PO No  :{{ $memo->po_no}}</p>
                     </td>
                 </tr>
-                @endif --}}
             </tbody>
         </table>
-        @if ( count($memo->approvers) > 0)
-        <h4>Approver :</h4>
-        <hr>
-        <table>
-            <thead>
-                <tr>
-                    @foreach ($memo->approversPo as $approver)
-                        @if ($approver->employee)
-                        <th>{{ $approver->employee->position_now->position->position_name }}</th>
-                        @endif
-                    @endforeach
-                </tr>
-            </thead>
+        <br>
+        <table style="border:none">
             <tbody>
                 <tr>
-                    @foreach ($memo->approversPo as $approver)
-                        @if ($approver->employee)
-                        <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
-                            @if ($approver->type_approver == 'acknowledge')
-                                ({{ $approver->type_approver}})
-                            @endif
-                        </td>
-                        @endif
-                    @endforeach
-                </tr>
-                <tr>
-                    @foreach ($memo->approversPo as $approver)
-                    @if ($approver->employee)
-                        @if($approver->status == 'submit' || $approver->status == 'edit')
-                        {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
-                        <td>-</td>
-                        @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
-                        <td><div style="font-family: ZapfDingbats, sans-serif;">8</div></td>
-                        @else
-                        <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
-                        @endif
-                    @endif
-                    @endforeach
-                </tr>
-                <tr>
-                    @foreach ($memo->approversPo as $approver)
-                        @if($approver->employee)
-                            @if($approver->status == 'approve' || $approver->status == 'reject')
-                                <td> {{ $approver->msg }} </td>
-                            @else
-                                <td> - </td>
-                            @endif
-                        @endif
-                    @endforeach
+                    <td style="border:none; width:25%; text-align: left">
+                        <h2>Vendor</h2>
+                        <p><strong>PT. Fiber Networks Indonesia</strong></p>
+                        <p style="margin-top: 8px; font-size: 9px">
+                            Perkantoran Tanjung Mas B1/5, Jl. Raya Tanjung Barat, Jakarta Selatan 12530
+                        </p>
+                    </td>
+                    <td style="border:none; width:50%"></td>
+                    <td style="border:none; width:25%"> 
+                        <br>
+                        <table style="border:none";>
+                            <tbody>
+                                <tr>
+                                    <td style="border:none; text-align: left">Date</td>
+                                    <td style="border:none">:</td>
+                                    <td style="border:none; text-align: left">29-03-2021</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:none; text-align: left">Currency</td>
+                                    <td style="border:none">:</td>
+                                    <td style="border:none; text-align: left">IDR</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
             </tbody>
         </table>
-        @endif
-        @if ( $memo->background != "<p></p>" && $memo->background != '')
-        <h4>Background</h4>
-        <hr>
-        <p>{!!$memo->background!!}</p>
         <br>
-        <br>
-        @endif
-        @if ( $memo->information != "<p></p>" && $memo->information != '')
-        <h4>Information</h4>
-        <hr>
-        <p>{!!$memo->information!!}</p>
-        <br>
-        <br>
-        @endif
-        @if ( $memo->conclusion != "<p></p>" && $memo->conclusion != "")
-        <h4>Conclusion</h4>
-        <hr>
-        <p>{!!$memo->conclusion!!}</p>
-        <br>
-        <br>
-        @endif
+        <p style="font-weight: bold">Please supply the following items :</p>
         @if ( count($memocost) > 0)
-        <h4>Cost/Expenses</h4>
-        <hr>
         <table>
             <thead>
                     @foreach ($memocost as $id => $cost)
@@ -264,30 +169,52 @@
         </table>
         <br>
         @endif
-        @if ( $memo->payment != "<p></p>" && $memo->payment != '')
-        <h4>Payment</h4>
-        <hr>
-        <p>{!!$memo->payment!!}</p>
+        @if ( count($memo->approvers) > 0)
         <br>
         <br>
-        @endif
-        @if ( count($dataAttachments) > 0)
-        <h4>Attachment</h4>
-        <hr>
-        <table>
-            <thead>
-                <tr>
-                    <td>file</td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($dataAttachments as $attachment)
-                <tr>
-                    <td>{{ $attachment->name }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div style="width: 100%;">
+            <table style="width: 60%; position: absolute; right: 0px;">
+                <thead>
+                    <tr>
+                        @foreach ($memo->approversPo as $approver)
+                            @if ($approver->employee)
+                            <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                            @endif
+                        @endforeach
+                        <th> Confirm By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        @foreach ($memo->approversPo as $approver)
+                        @if ($approver->employee)
+                            @if($approver->status == 'submit' || $approver->status == 'edit')
+                            {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
+                            <td  style="height: 40px">-</td>
+                            @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
+                            <td><div style="font-family: ZapfDingbats, sans-serif;">8</div></td>
+                            @else
+                            <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
+                            @endif
+                        @endif
+                        @endforeach
+                        <td style="height: 40px"></td>
+                    </tr>
+                    <tr>
+                        @foreach ($memo->approversPo as $approver)
+                            @if ($approver->employee)
+                            <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
+                                @if ($approver->type_approver == 'acknowledge')
+                                    ({{ $approver->type_approver}})
+                                @endif
+                            </td>
+                            @endif
+                        @endforeach
+                        <td>VENDOR</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         @endif
     </div>
 </body>
