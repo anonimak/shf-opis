@@ -234,6 +234,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
  //import layouts
 
 
@@ -284,7 +285,7 @@ __webpack_require__.r(__webpack_exports__);
     showModal: function showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow"); //this.$refs.modalPayment.show(item);
+      this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow"); //this.$refs.modalPayment.show(item);
     },
     showModalProposePo: function showModalProposePo(id) {
       // console.log("submit");
@@ -851,12 +852,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     TableEditApprover: _components_TableEditApprover_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ["indexMemo", "proposeLink", "errors"],
+  props: ["indexMemo", "proposeLink"],
   data: function data() {
     return {
       form: {
@@ -880,19 +883,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       isSubmitbusy: false,
       isFormPaymentEdited: false,
       activeItemPayment: {},
-      activeIndex: null
+      activeIndex: null,
+      errors: {}
     };
   },
   methods: {
     actionEdit: function actionEdit(index, id) {
       this.activeIndex = index;
       this.isFormPaymentEdited = true;
-      this.activeItemPayment = _objectSpread({}, this.dataPayments[index]); //console.log(this.activeItemPayment.name)
+      this.activeItemPayment = _objectSpread({}, this.dataPayments[index]);
     },
     actionDelete: function actionDelete(idData) {
       var _this = this;
 
-      console.log(idData);
       this.$bvModal.msgBoxConfirm("Please confirm that you want to delete this data payment.", {
         title: "Please Confirm",
         size: "sm",
@@ -911,7 +914,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     submitUpdate: function submitUpdate(id) {
       var _this2 = this;
 
-      console.log(this.activeItemPayment.id);
       this.$inertia.put(route("user.memo.statusmemo.updatepayment", [this.indexMemo, id]), this.activeItemPayment).then(function () {
         _this2.dataPayments = _.map(_this2.dataPayments, function (item) {
           if (item.id === _this2.activeItemPayment.id) {
@@ -925,40 +927,62 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     submitDelete: function submitDelete(id) {
-      this.$inertia["delete"](route("user.memo.statusmemo.deletepayment", [this.indexMemo, id]));
+      var _this3 = this;
+
+      axios["delete"](route("user.memo.statusmemo.deletepayment", id)).then(function (response) {
+        if (response.data.success) {
+          _this3.pageFlashes.success = "Successfull delete data payment";
+          _this3.dataPayments = _.filter(_this3.dataPayments, function (item) {
+            return item.id != id;
+          });
+        }
+      });
     },
     actionCancel: function actionCancel() {
       this.activeItemPayment = {};
       this.isFormPaymentEdited = false;
     },
     handleSubmitPayment: function handleSubmitPayment() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.put(route("user.api.payment.storepayment", this.indexMemo), this.form).then(function (response) {
-        if (Object.entries(_this3.errors).length === 0) {
+        _this4.errors = {};
+
+        if (Object.entries(_this4.errors).length === 0) {
           console.log("no error");
 
-          _this3.$nextTick(function () {
-            _this3.$bvModal.hide("modal-add-payment");
+          _this4.$nextTick(function () {
+            _this4.$bvModal.hide("modal-add-payment");
           });
         }
 
         var id = response.data.id;
-        _this3.form.id = id;
-        _this3.dataPayments = [].concat(_toConsumableArray(_this3.dataPayments), [_this3.form]);
+        _this4.form.id = id;
+        _this4.dataPayments = [].concat(_toConsumableArray(_this4.dataPayments), [_this4.form]);
+
+        if (response.data.status == 200) {
+          _this4.pageFlashes.success = response.data.message;
+        } else {
+          _this4.pageFlashes.success = response.data.message;
+        }
+      })["catch"](function (error) {
+        if (error.response) {
+          _this4.errors = _objectSpread({}, error.response.data.errors);
+          console.log(error.response.data);
+        }
       });
     },
     getData: function getData() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.isTableApproverbusy = true;
       this.modalTitle = "Continue purpose Payment";
       Promise.all([this.getDataPositions(), this.getDataApproversPayment(), this.getDataApprovers(), this.getDataPayments()]).then(function (results) {
-        _this4.isTableApproverbusy = false;
-        _this4.dataPositions = results[0].data;
-        _this4.dataApprovers = results[1].data.length > 0 ? results[1].data : results[2].data;
+        _this5.isTableApproverbusy = false;
+        _this5.dataPositions = results[0].data;
+        _this5.dataApprovers = results[1].data.length > 0 ? results[1].data : results[2].data;
         console.log(results);
-        _this4.dataPayments = results[3].data;
+        _this5.dataPayments = results[3].data;
       }); // this.getDataPositions();
       // this.getDataApprovers();
     },
@@ -1412,6 +1436,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1942,46 +1978,26 @@ __webpack_require__.r(__webpack_exports__);
         }]
       }, {
         id: 2,
-        title: "Approval Memo",
-        link: "user.memo.approval.index",
-        index: "user.memo.approval.index",
+        title: "Approval",
+        link: "#",
         icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
-      }, {
-        id: 3,
-        title: "Approval Payment",
-        link: "user.memo.approvalpayment.*",
-        index: "user.memo.approvalpayment.index",
-        icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo_payment //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
-      }, {
-        id: 4,
-        title: "Approval PO",
-        link: "user.memo.approvalpo.*",
-        index: "user.memo.approvalpo.index",
-        icon: "fas fa-fw fa-clipboard-check",
-        badge: this.notif.approval_memo_po //   child: [
-        //     {
-        //       title: "Memo",
-        //       link: "user.memo.approval.*",
-        //       index: "user.memo.approval.index",
-        //     },
-        //   ],
-
+        badge: this.notif.approval_memo || this.notif.approval_memo_payment || this.notif.approval_memo_po,
+        child: [{
+          title: "Approval Memo",
+          link: "user.memo.approval.memo.*",
+          index: "user.memo.approval.memo.index",
+          badge: this.notif.approval_memo
+        }, {
+          title: "Approval Payment",
+          link: "user.memo.approval.payment.*",
+          index: "user.memo.approval.payment.index",
+          badge: this.notif.approval_memo_payment
+        }, {
+          title: "Approval PO",
+          link: "user.memo.approval.po.*",
+          index: "user.memo.approval.po.index",
+          badge: this.notif.approval_memo_po
+        }]
       }]
     };
   },
@@ -12435,6 +12451,7 @@ var render = function() {
         attrs: {
           title: _vm.modalTitle,
           indexMemo: _vm.idItemClicked,
+          proposeLink: _vm.__proposepayment,
           errors: _vm.errors
         }
       }),
@@ -12635,6 +12652,7 @@ var render = function() {
       ref: "modal-propose-payment",
       attrs: {
         id: "modal-propose-payment",
+        size: "lg",
         title: _vm.modalTitle,
         "ok-title": "Purpose Payment",
         "cancel-disabled": _vm.isSubmitbusy || _vm.isTableApproverbusy,
@@ -12648,7 +12666,6 @@ var render = function() {
       _c(
         "b-overlay",
         {
-          staticClass: "d-inline-block",
           attrs: {
             show: _vm.isTableApproverbusy,
             opacity: "0.6",
@@ -12890,29 +12907,36 @@ var render = function() {
                       "td",
                       [
                         _c(
-                          "b-button",
-                          {
-                            attrs: { variant: "primary" },
-                            on: {
-                              click: function($event) {
-                                return _vm.actionEdit(index, item.id)
-                              }
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-edit" })]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "b-button",
-                          {
-                            attrs: { variant: "secondary" },
-                            on: {
-                              click: function($event) {
-                                return _vm.actionDelete(item.id)
-                              }
-                            }
-                          },
-                          [_c("i", { staticClass: "fa fa-trash" })]
+                          "b-button-group",
+                          { attrs: { size: "sm" } },
+                          [
+                            _c(
+                              "b-button",
+                              {
+                                attrs: { variant: "primary" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.actionEdit(index, item.id)
+                                  }
+                                }
+                              },
+                              [_c("i", { staticClass: "fa fa-edit" })]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "b-button",
+                              {
+                                attrs: { variant: "secondary" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.actionDelete(item.id)
+                                  }
+                                }
+                              },
+                              [_c("i", { staticClass: "fa fa-trash" })]
+                            )
+                          ],
+                          1
                         )
                       ],
                       1
@@ -12937,12 +12961,11 @@ var render = function() {
         },
         [
           _c(
-            "form",
+            "b-form",
             {
               ref: "form",
               on: {
                 submit: function($event) {
-                  $event.stopPropagation()
                   $event.preventDefault()
                   return _vm.handleSubmitPayment($event)
                 }
@@ -13047,7 +13070,7 @@ var render = function() {
                               id: "input-title",
                               type: "number",
                               name: "bank_account",
-                              placeholder: "Bank Account",
+                              placeholder: "Account Number",
                               state: _vm.errors.bank_account ? false : null,
                               trim: "",
                               required: ""
@@ -13144,7 +13167,8 @@ var render = function() {
             ],
             1
           )
-        ]
+        ],
+        1
       )
     ],
     1
@@ -13427,7 +13451,13 @@ var render = function() {
                   [
                     _c("i", { class: item.icon }),
                     _vm._v(" "),
-                    _c("span", [_vm._v(_vm._s(item.title))])
+                    _c("span", [_vm._v(_vm._s(item.title))]),
+                    _vm._v(" "),
+                    item.badge
+                      ? _c("span", [
+                          _c("i", { staticClass: "fas fa-exclamation-circle" })
+                        ])
+                      : _vm._e()
                   ]
                 ),
                 _vm._v(" "),
@@ -13460,7 +13490,34 @@ var render = function() {
                                   : "collapse-item",
                                 attrs: { href: _vm.route(itemChild.index) }
                               },
-                              [_vm._v(_vm._s(itemChild.title))]
+                              [
+                                itemChild.badge
+                                  ? _c("span", [
+                                      _c(
+                                        "span",
+                                        {
+                                          class:
+                                            !_vm.isRoute(itemChild.link) &&
+                                            "font-weight-bold"
+                                        },
+                                        [_vm._v(_vm._s(itemChild.title))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "span",
+                                        { staticClass: "float-right" },
+                                        [
+                                          _c("i", {
+                                            staticClass:
+                                              "fas fa-exclamation-circle"
+                                          })
+                                        ]
+                                      )
+                                    ])
+                                  : _c("span", [
+                                      _vm._v(_vm._s(itemChild.title) + " ")
+                                    ])
+                              ]
                             )
                           }),
                           1
