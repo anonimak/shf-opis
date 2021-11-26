@@ -28,7 +28,7 @@
         @onSave="onSaveEditApprover"
       />
 
-      <b-button v-b-modal.modal-add-payment class="mt-2" variant="primary">
+      <b-button v-b-modal.modal-add-payment class="mt-2 ml-2" variant="primary">
         Add Data Payment
       </b-button>
     </b-overlay>
@@ -39,8 +39,8 @@
       spinner-variant="primary">
     <b-col class="mt-4">
       <h5>Payment</h5>
-      <table class="table table-striped">
-        <thead>
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Bank Name</th>
@@ -79,7 +79,7 @@
                 v-model="activeItemPayment.amount"
               />
             </td>
-            <td v-else>{{ item.amount }}</td>
+            <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
             <td v-if="isFormPaymentEdited && activeIndex == index">
               <input
                 type="text"
@@ -205,7 +205,7 @@
             >
               <b-form-input
                 id="input-title"
-                type="number"
+                type="text"
                 name="remark"
                 placeholder="Remark"
                 v-model="form.remark"
@@ -341,13 +341,13 @@ export default {
         .catch((error) => {
           if (error.response) {
               this.errors = {...error.response.data.errors}
-            console.log(error.response.data);
+            //console.log(error.response.data);
           }
         });
     },
     getData() {
       this.isTableApproverbusy = true;
-      this.modalTitle = "Continue purpose Payment";
+      this.modalTitle = "Continue Purpose Payment";
       Promise.all([
         this.getDataPositions(),
         this.getDataApproversPayment(),
@@ -358,7 +358,7 @@ export default {
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
-        console.log(results);
+        //console.log(results);
         this.dataPayments = results[3].data;
       });
 
@@ -398,7 +398,15 @@ export default {
       console.log("okee");
     },
 
-    onSaveEditApprover(response) {},
+    onSaveEditApprover(response) {
+        Promise.all([
+        this.getDataApproversPayment(),
+        ]).then((results) => {
+            this.isTableApproverbusy = false;
+            this.dataApprovers = results[0].data;
+        //console.log(results);
+      });
+    },
 
     // axios
     getDataPositions: async function () {

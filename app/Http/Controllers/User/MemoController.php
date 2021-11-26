@@ -678,6 +678,7 @@ class MemoController extends Controller
     public function previewMemo(Request $request, $id)
     {
         $memo = Memo::getMemoDetailDraftEdit($id);
+        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
@@ -689,6 +690,7 @@ class MemoController extends Controller
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
+            'employeeproposeinfo' => $employeeProposeInfo,
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
@@ -704,6 +706,7 @@ class MemoController extends Controller
     public function previewPo(Request $request, $id)
     {
         $memo = Memo::getPoDetailApprovers($id);
+        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
@@ -715,6 +718,7 @@ class MemoController extends Controller
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
+            'employeeproposeinfo' => $employeeProposeInfo,
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
@@ -731,6 +735,7 @@ class MemoController extends Controller
     {
         $memo = Memo::getPaymentDetailApprovers($id);
         $employeeInfo = User::getUsersEmployeeInfo();
+        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
@@ -743,6 +748,7 @@ class MemoController extends Controller
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
+            'employeeproposeinfo' => $employeeProposeInfo,
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,

@@ -103,6 +103,18 @@ class Memo extends Model
             ->where('id', $id)->first();
     }
 
+    public static function getMemoDetailEmployeePropose($id)
+    {
+        return Self::with(['proposeemployee' => function ($employee) {
+                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                    return $position_now->with(['position' => function ($position) {
+                        return $position->with('department');
+                    }])->with('branch');
+                }]);
+            }])
+            ->where('id', $id)->first();
+    }
+
     public static function getPaymentDetailApprovers($id)
     {
         return Self::with(['approversPayment' => function ($approver) {

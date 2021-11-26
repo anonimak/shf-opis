@@ -92,6 +92,7 @@ export default {
     handleSubmit() {
       console.log("submit");
       this.isSubmitbusy = true;
+      this.isTableApproverbusy = true;
       this.$inertia.put(route(this.proposeLink, this.indexMemo));
     },
 
@@ -99,7 +100,15 @@ export default {
       console.log("okee");
     },
 
-    onSaveEditApprover(response) {},
+    onSaveEditApprover(response) {
+        Promise.all([
+        this.getDataApproversPo(),
+        ]).then((results) => {
+            this.isTableApproverbusy = false;
+            this.dataApprovers = results[0].data;
+        //console.log(results);
+      });
+    },
 
     // axios
     getDataPositions: async function () {

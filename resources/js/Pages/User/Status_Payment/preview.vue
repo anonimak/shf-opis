@@ -261,7 +261,7 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>{{ item.amount }}</td>
+                      <td>{{ Number(item.amount).toLocaleString() }}</td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>

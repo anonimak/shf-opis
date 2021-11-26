@@ -95,10 +95,10 @@
                     {{-- <td rowspan="2" style="height: 50px"></td> --}}
                     <td>Dept.</td>
                     <td>{{
-                            $employeeInfo->employee
-                                ->position_now
-                                ->position->department
-                                ->department_name
+                            $employeeproposeinfo->proposeemployee
+                                        ->position_now
+                                        ->position->department
+                                        ->department_name
                         }}</td>
                     <td style="height: 5%" rowspan="2"></td>
                     {{-- <td rowspan="2"></td>
@@ -113,7 +113,7 @@
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
                     <td>{{ $memo->propose_at }}</td>
-                    <td>{{ $employeeInfo->employee->firstname." ".$employeeInfo->employee->lastname }}</td>
+                    <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
@@ -292,7 +292,7 @@
                     <td>{{ $payment->name }}</td>
                     <td>{{ $payment->bank_name }}</td>
                     <td>{{ $payment->bank_account }}</td>
-                    <td>{{ $payment->amount }}</td>
+                    <td>{{  number_format($payment->amount, 2) }}</td>
                     <td>{{ $payment->remark }}</td>
                 </tr>
                 @endforeach

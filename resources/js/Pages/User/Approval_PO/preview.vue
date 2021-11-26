@@ -23,11 +23,11 @@
                     variant="info"
                     >Approve</b-button
                   >
-                  <b-button
+                  <!-- <b-button
                     @click="actionRevisi(dataMemo.approver_po.id)"
                     variant="secondary"
                     >Revisi</b-button
-                  >
+                  > -->
                   <b-button
                     @click="actionReject(dataMemo.approver_po.id)"
                     variant="warning"
@@ -76,11 +76,11 @@
                           variant="danger"
                           >Memo PO Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="dataMemo.status_po == 'revisi'"
                           variant="secondary"
                           >Memo PO Revisi</b-badge
-                        >
+                        > -->
                       </td>
                     </tr>
                     <tr>
@@ -177,11 +177,11 @@
                           variant="danger"
                           >Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
                           >Revisi</b-badge
-                        >
+                        > -->
                       </td>
                       <td>
                         <p v-if="approver.msg">{{ approver.msg }}</p>
@@ -319,14 +319,14 @@ export default {
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
-    actionRevisi(id) {
-      this.buttonClicked = "revisi";
-      this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
+    // actionRevisi(id) {
+    //   this.buttonClicked = "revisi";
+    //   this.idItemClicked = id;
+    //   this.modalTitle = "Modal Revisi";
+    //   this.modalCaption = "Are you sure to revisi?";
 
-      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
-    },
+    //   this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    // },
     actionReject(id) {
       this.buttonClicked = "reject";
       this.idItemClicked = id;
