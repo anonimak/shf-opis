@@ -352,7 +352,7 @@ class MemoController extends Controller
             'po_no'   => $doc_no . '/' . $employeeInfo->employee
                 ->position_now
                 ->position->department
-                ->alias,
+                ->alias .'/PO',
             'propose_at' => Carbon::now()
         ]);
 

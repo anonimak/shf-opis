@@ -86,7 +86,7 @@
                               {{ item.title }}
                             </td>
                             <td>
-                              {{ item.doc_no }}
+                              {{ item.po_no }}
                             </td>
                             <td>
                               {{ item.latest_history.content }}

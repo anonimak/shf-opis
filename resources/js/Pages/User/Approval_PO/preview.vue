@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">PO {{ dataMemo.doc_no }}</h1>
+      <h1 class="h3 mb-0 text-gray-800">Purchase Order {{ dataMemo.po_no }}</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">

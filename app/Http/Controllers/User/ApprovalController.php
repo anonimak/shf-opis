@@ -185,7 +185,7 @@ class ApprovalController extends Controller
                     'href'  => "user.memo.approval.po.index"
                 ],
                 [
-                    'title'   => $memo->doc_no,
+                    'title'   => $memo->po_no,
                     'active'  => true
                 ]
             ),

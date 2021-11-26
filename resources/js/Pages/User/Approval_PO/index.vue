@@ -38,7 +38,7 @@
                         </td>
                         <td>
                           <inertia-link :href="route(__detail, item.id)">
-                            {{ item.doc_no }}
+                            {{ item.po_no }}
                           </inertia-link>
                         </td>
                         <td>
