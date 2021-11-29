@@ -230,7 +230,7 @@
         <table>
             <thead>
                     @foreach ($memocost as $id => $cost)
-                    @if ($id == 1)
+                    @if ($id >= 1)
                         @break
                     @endif
                     <tr>

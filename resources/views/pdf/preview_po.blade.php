@@ -109,7 +109,12 @@
                                 <tr>
                                     <td style="border:none; text-align: left">Date</td>
                                     <td style="border:none">:</td>
-                                    <td style="border:none; text-align: left">29-03-2021</td>
+                                    @foreach ($memo->approversPo as $id => $approver)
+                                    @if ($id >= 1)
+                                        @break
+                                    @endif
+                                    <td style="border:none; text-align: left">{{ $approver->created_at->todatestring() }}</td>
+                                    @endforeach
                                 </tr>
                                 <tr>
                                     <td style="border:none; text-align: left">Currency</td>
@@ -175,7 +180,7 @@
         <br>
         <br>
         <div style="width: 100%;">
-            <table style="width: 60%; position: absolute; right: 0px;">
+            <table style="width: 60%; position: absolute; right: 20px;">
                 <thead>
                     <tr>
                         @foreach ($memo->approversPo as $approver)
