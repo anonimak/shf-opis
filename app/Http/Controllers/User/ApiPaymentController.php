@@ -102,7 +102,7 @@ class ApiPaymentController extends Controller
         return response()->json([
             'id' => $memoPayment->id,
             'status' => 200,
-            'message' => 'Successfull add data payment',
+            'message' => 'Successfull add data vendor',
         ]);
    }
 }

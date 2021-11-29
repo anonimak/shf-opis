@@ -36,7 +36,7 @@
     <h5 class="ml-3">Vendor</h5>
     <b-form ref="form">
         <b-card-body>
-          <b-col col lg="3" md="auto">
+          <b-col col lg="7" md="auto">
             <b-form-group
               id="input-group-title"
               label="Vendor Name:"
@@ -53,6 +53,7 @@
                 :state="errors.name ? false : null"
                 trim
                 required
+                :disabled="isSubmitbusy"
               ></b-form-input>
             </b-form-group>
             <b-form-group
@@ -71,6 +72,7 @@
                 :state="errors.address ? false : null"
                 trim
                 required
+                :disabled="isSubmitbusy"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -149,11 +151,23 @@ export default {
       console.log("submit");
       this.isSubmitbusy = true;
       this.isTableApproverbusy = true;
-      this.$inertia.put(route(this.proposeLink, this.indexMemo),this.form)
+      axios.put(route(this.proposeLink, this.indexMemo),this.form)
         .then((response)=> {
             this.errors = {};
+            this.form = [];
             this.isTableApproverbusy = false;
             this.isSubmitbusy = false;
+            if (Object.entries(this.errors).length === 0) {
+            console.log("no error");
+            this.$nextTick(() => {
+              this.$bvModal.hide("modal-propose-po");
+            });
+          }
+            if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          } else {
+            this.pageFlashes.success = response.data.message;
+          }
         })
         .catch((error) => {
             if (error.response) {

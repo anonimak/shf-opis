@@ -94,12 +94,12 @@
                 <tr>
                     <td style="border:none; width:25%; text-align: left">
                         <h2>Vendor</h2>
-                        @foreach ($dataPayments as $payment)
-                        <p><strong>{{ $payment->name }}</strong></p>
+                        {{-- @foreach ($dataPayments as $payment) --}}
+                        <p><strong>{{ $dataPayments->name }}</strong></p>
                         <p style="margin-top: 8px; font-size: 9px">
-                            {{$payment->address}}
+                            {{$dataPayments->address}}
                         </p>
-                        @endforeach
+                        {{-- @endforeach --}}
                     </td>
                     <td style="border:none; width:50%"></td>
                     <td style="border:none; width:25%">
@@ -212,7 +212,7 @@
                             </td>
                             @endif
                         @endforeach
-                        <td>VENDOR</td>
+                        <td>{{ $dataPayments->name }}</td>
                     </tr>
                 </tbody>
             </table>
