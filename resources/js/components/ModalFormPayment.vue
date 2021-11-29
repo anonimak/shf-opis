@@ -33,83 +33,90 @@
       </b-button>
     </b-overlay>
     <b-overlay
-    :show="isModalformbusy"
+      :show="isModalformbusy"
       opacity="0.6"
       spinner-small
-      spinner-variant="primary">
-    <b-col class="mt-4">
-      <h5>Payment</h5>
-      <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Bank Name</th>
-            <th scope="col">Bank Account</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Remark</th>
-            <th>action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in dataPayments" :key="item.id">
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input type="text" name="name" v-model="activeItemPayment.name" />
-            </td>
-            <td v-else>{{ item.name }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="bank_name"
-                v-model="activeItemPayment.bank_name"
-              />
-            </td>
-            <td v-else>{{ item.bank_name }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="bank_account"
-                v-model="activeItemPayment.bank_account"
-              />
-            </td>
-            <td v-else>{{ item.bank_account }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="amount"
-                v-model="activeItemPayment.amount"
-              />
-            </td>
-            <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="remark"
-                v-model="activeItemPayment.remark"
-              />
-            </td>
-            <td v-else>{{ item.remark }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <b-button variant="primary" @click="submitUpdate(item.id)"
-                >save</b-button
-              >
-              <b-button variant="secondary" @click="actionCancel"
-                >cancel</b-button
-              >
-            </td>
-            <td v-else>
+      spinner-variant="primary"
+    >
+      <b-col class="mt-4">
+        <h5>Payment</h5>
+        <table class="table table-striped table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Bank Name</th>
+              <th scope="col">Bank Account</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Remark</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in dataPayments" :key="item.id">
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="name"
+                  v-model="activeItemPayment.name"
+                />
+              </td>
+              <td v-else>{{ item.name }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="bank_name"
+                  v-model="activeItemPayment.bank_name"
+                />
+              </td>
+              <td v-else>{{ item.bank_name }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="bank_account"
+                  v-model="activeItemPayment.bank_account"
+                />
+              </td>
+              <td v-else>{{ item.bank_account }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="amount"
+                  v-model="activeItemPayment.amount"
+                />
+              </td>
+              <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="remark"
+                  v-model="activeItemPayment.remark"
+                />
+              </td>
+              <td v-else>{{ item.remark }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <b-button variant="primary" @click="submitUpdate(item.id)"
+                  >save</b-button
+                >
+                <b-button variant="secondary" @click="actionCancel"
+                  >cancel</b-button
+                >
+              </td>
+              <td v-else>
                 <b-button-group size="sm">
-              <b-button variant="primary" @click="actionEdit(index, item.id)"
-                ><i class="fa fa-edit"></i
-              ></b-button>
-              <b-button variant="secondary" @click="actionDelete(item.id)"
-                ><i class="fa fa-trash"></i
-              ></b-button>
+                  <b-button
+                    variant="primary"
+                    @click="actionEdit(index, item.id)"
+                    ><i class="fa fa-edit"></i
+                  ></b-button>
+                  <b-button variant="secondary" @click="actionDelete(item.id)"
+                    ><i class="fa fa-trash"></i
+                  ></b-button>
                 </b-button-group>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </b-col>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </b-col>
     </b-overlay>
     <b-modal
       id="modal-add-payment"
@@ -251,11 +258,11 @@ export default {
       id_memo: null,
       isTableApproverbusy: false,
       isSubmitbusy: false,
-      isModalformbusy:false,
+      isModalformbusy: false,
       isFormPaymentEdited: false,
       activeItemPayment: {},
       activeIndex: null,
-      errors:{}
+      errors: {},
     };
   },
   methods: {
@@ -305,13 +312,17 @@ export default {
     },
 
     submitDelete(id) {
-      axios.delete(route("user.memo.statusmemo.deletepayment", id))
-      .then((response) => {
-          if(response.data.success) {
-              this.pageFlashes.success = "Successfull delete data payment"
-              this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
+      axios
+        .delete(route("user.memo.statusmemo.deletepayment", id))
+        .then((response) => {
+          if (response.data.success) {
+            this.pageFlashes.success = "Successfull delete data payment";
+            this.dataPayments = _.filter(
+              this.dataPayments,
+              (item) => item.id != id
+            );
           }
-      })
+        });
     },
 
     actionCancel() {
@@ -322,7 +333,7 @@ export default {
       axios
         .put(route("user.api.payment.storepayment", this.indexMemo), this.form)
         .then((response) => {
-            this.errors = {};
+          this.errors = {};
           if (Object.entries(this.errors).length === 0) {
             console.log("no error");
             this.$nextTick(() => {
@@ -340,7 +351,7 @@ export default {
         })
         .catch((error) => {
           if (error.response) {
-              this.errors = {...error.response.data.errors}
+            this.errors = { ...error.response.data.errors };
             //console.log(error.response.data);
           }
         });
@@ -389,6 +400,10 @@ export default {
     },
     handleSubmit() {
       console.log("submit");
+      if (this.dataPayments.length <= 0) {
+        this.pageFlashes.danger = "Please fill payment data!";
+        return;
+      }
       this.isSubmitbusy = true;
       this.isModalformbusy = true;
       this.$inertia.put(route(this.proposeLink, this.indexMemo));
@@ -399,11 +414,9 @@ export default {
     },
 
     onSaveEditApprover(response) {
-        Promise.all([
-        this.getDataApproversPayment(),
-        ]).then((results) => {
-            this.isTableApproverbusy = false;
-            this.dataApprovers = results[0].data;
+      Promise.all([this.getDataApproversPayment()]).then((results) => {
+        this.isTableApproverbusy = false;
+        this.dataApprovers = results[0].data;
         //console.log(results);
       });
     },
