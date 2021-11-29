@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Super;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Employee;
 use App\Models\Ref_Module_Approver;
 use App\Models\Ref_Type_Memo;
 use Illuminate\Http\Request;
@@ -50,6 +51,11 @@ class RefTypeMemo extends Controller
      */
     public function create()
     {
+        $employee = Employee::getAllWithPositionNow();
+        $employee = $employee->map(function ($item) {
+            $item->label = "$item->nik | $item->firstname $item->lastname (" . $item->emp_history->position->department->department_name . ")";
+            return $item;
+        });
         return Inertia::render('Super/Ref_Type_Memo/create', [
             'breadcrumbItems' => array(
                 [
@@ -66,8 +72,9 @@ class RefTypeMemo extends Controller
                     'active'  => true
                 ]
             ),
-            'dataDepartments'       => Department::get(),
-            'dataRefModuleApprovers' => Ref_Module_Approver::get(),
+            'dataDepartments'           => Department::get(),
+            'dataRefModuleApprovers'    => Ref_Module_Approver::get(),
+            'dataEmployee'              => $employee,
             '_token' => csrf_token(),
             '__store'  => 'super.ref_type_memo.store',
         ]);
@@ -85,6 +92,7 @@ class RefTypeMemo extends Controller
             'name'                 => 'required|max:50',
             'department'           => 'required',
             'refmoduleapprover'    => 'required',
+            'id_overtake' => 'nullable',
         ]);
         $position = Ref_Type_Memo::create([
             'name'                      => $request->input('name'),
@@ -92,6 +100,7 @@ class RefTypeMemo extends Controller
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
+            'id_overtake_memo'          => $request->input('id_overtake'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull Create new Reference Type Memo $position->name");
     }
@@ -115,6 +124,11 @@ class RefTypeMemo extends Controller
      */
     public function edit($id)
     {
+        $employee = Employee::getAllWithPositionNow();
+        $employee = $employee->map(function ($item) {
+            $item->label = "$item->nik | $item->firstname $item->lastname (" . $item->emp_history->position->department->department_name . ")";
+            return $item;
+        });
         $typememo = Ref_Type_Memo::where('id', $id)->first();
         return Inertia::render('Super/Ref_Type_Memo/edit', [
             'breadcrumbItems' => array(
@@ -139,9 +153,11 @@ class RefTypeMemo extends Controller
                 'id'                => $typememo->id,
                 'with_po'           => $typememo->with_po,
                 'with_payment'      => $typememo->with_payment,
+                'id_overtake'       => $typememo->id_overtake_memo
             ],
             'dataDepartments'           => Department::get(),
             'dataRefModuleApprovers'    => Ref_Module_Approver::get(),
+            'dataEmployee'              => $employee,
             '_token'                    => csrf_token(),
             '__create'                  => 'super.ref_type_memo.create',
             '__update'                  => 'super.ref_type_memo.update',
@@ -161,6 +177,7 @@ class RefTypeMemo extends Controller
             'name'                 => 'required|max:50',
             'department'           => 'required',
             'refmoduleapprover'    => 'required',
+            'id_overtake' => 'nullable',
         ]);
 
         Ref_Type_Memo::where('id', $id)->update([
@@ -169,6 +186,7 @@ class RefTypeMemo extends Controller
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
+            'id_overtake_memo'          => $request->input('id_overtake'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
     }

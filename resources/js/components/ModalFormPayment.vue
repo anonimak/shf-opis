@@ -33,7 +33,7 @@
       </b-button>
     </b-overlay>
     <b-overlay
-    :show="isModalformbusy"
+      :show="isModalformbusy"
       opacity="0.6"
       spinner-small
       spinner-variant="primary">
@@ -107,18 +107,20 @@
             </td>
             <td v-else>
                 <b-button-group size="sm">
-              <b-button variant="primary" @click="actionEdit(index, item.id)"
-                ><i class="fa fa-edit"></i
-              ></b-button>
-              <b-button variant="secondary" @click="actionDelete(item.id)"
-                ><i class="fa fa-trash"></i
-              ></b-button>
+                  <b-button
+                    variant="primary"
+                    @click="actionEdit(index, item.id)"
+                    ><i class="fa fa-edit"></i
+                  ></b-button>
+                  <b-button variant="secondary" @click="actionDelete(item.id)"
+                    ><i class="fa fa-trash"></i
+                  ></b-button>
                 </b-button-group>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </b-col>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </b-col>
     </b-overlay>
     <b-modal
       id="modal-add-payment"
@@ -279,11 +281,11 @@ export default {
       id_memo: null,
       isTableApproverbusy: false,
       isSubmitbusy: false,
-      isModalformbusy:false,
+      isModalformbusy: false,
       isFormPaymentEdited: false,
       activeItemPayment: {},
       activeIndex: null,
-      errors:{}
+      errors: {},
     };
   },
   methods: {
@@ -339,7 +341,7 @@ export default {
               this.pageFlashes.success = "Successfull delete data vendor"
               this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
           }
-      })
+        });
     },
 
     actionCancel() {
@@ -350,7 +352,7 @@ export default {
       axios
         .put(route("user.api.payment.storepayment", this.indexMemo), this.form)
         .then((response) => {
-            this.errors = {};
+          this.errors = {};
           if (Object.entries(this.errors).length === 0) {
             console.log("no error");
             this.$nextTick(() => {
@@ -368,7 +370,7 @@ export default {
         })
         .catch((error) => {
           if (error.response) {
-              this.errors = {...error.response.data.errors}
+            this.errors = { ...error.response.data.errors };
             //console.log(error.response.data);
           }
         });
@@ -417,6 +419,10 @@ export default {
     },
     handleSubmit() {
       console.log("submit");
+      if (this.dataPayments.length <= 0) {
+        this.pageFlashes.danger = "Please fill payment data!";
+        return;
+      }
       this.isSubmitbusy = true;
       this.isModalformbusy = true;
       this.$inertia.put(route(this.proposeLink, this.indexMemo));
@@ -427,11 +433,9 @@ export default {
     },
 
     onSaveEditApprover(response) {
-        Promise.all([
-        this.getDataApproversPayment(),
-        ]).then((results) => {
-            this.isTableApproverbusy = false;
-            this.dataApprovers = results[0].data;
+      Promise.all([this.getDataApproversPayment()]).then((results) => {
+        this.isTableApproverbusy = false;
+        this.dataApprovers = results[0].data;
         //console.log(results);
       });
     },

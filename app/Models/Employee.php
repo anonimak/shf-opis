@@ -61,6 +61,15 @@ class Employee extends Model
         }])->first();
     }
 
+    public static function getAllWithPositionNow()
+    {
+        return Self::select('firstname', 'lastname', 'id', 'nik')->with(['emp_history' => function ($emp_history) {
+            return $emp_history->where('year_started', '<', Carbon::now())->where('year_finished', '>', Carbon::now())->orWhere('year_finished', null)->with(['position' => function ($position) {
+                return $position->with('department');
+            }])->with('branch');
+        }])->get();
+    }
+
     public static function getEmployees($search = null)
     {
         $employee = Self::select('*')

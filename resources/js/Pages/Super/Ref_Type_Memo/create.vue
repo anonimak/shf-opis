@@ -35,7 +35,7 @@
                   :invalid-feedback="
                     errors.department ? errors.department[0] : ''
                   "
-                  :state="errors.departement ? false : null"
+                  :state="errors.department ? false : null"
                 >
                   <v-select
                     placeholder="-- Select Department --"
@@ -82,6 +82,28 @@
                 >
                   with Payment
                 </b-form-checkbox>
+                <b-form-group
+                  v-if="form.with_payment"
+                  class="mt-2"
+                  id="input-group-title"
+                  label="Overtake Payment By:"
+                  label-for="input-title"
+                  :invalid-feedback="
+                    errors.id_overtake ? errors.id_overtake[0] : ''
+                  "
+                  :state="errors.id_overtake ? false : null"
+                  description="Let this field blank if no need to overtake memo payment."
+                >
+                  <v-select
+                    placeholder=""
+                    label="label"
+                    :options="dataEmployee"
+                    v-model="form.id_overtake"
+                    :reduce="(employee) => employee.id"
+                    :required="!form.id_overtake"
+                  >
+                  </v-select>
+                </b-form-group>
               </b-col>
               <b-row align-h="center">
                 <b-button-group>
@@ -109,6 +131,7 @@ export default {
     "breadcrumbItems",
     "dataDepartments",
     "dataRefModuleApprovers",
+    "dataEmployee",
     "errors",
     "__store",
   ],
@@ -123,11 +146,17 @@ export default {
       form: {
         name: "",
         refmoduleapprover: null,
+        id_overtake: null,
         department: null,
         with_po: false,
         with_payment: false,
       },
     };
+  },
+  watch: {
+    "form.with_payment": function (val) {
+      if (!val) this.form.id_overtake = null;
+    },
   },
   methods: {
     submit() {

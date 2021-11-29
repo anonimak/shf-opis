@@ -14,6 +14,7 @@ use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Memo;
+use App\Models\Ref_Doc_No;
 use App\Models\Ref_Template_Cost;
 use App\Models\Ref_Type_Memo;
 use App\User;
@@ -77,6 +78,45 @@ class MemoController extends Controller
             '__proposepo' => 'user.memo.statusmemo.proposepo'
         ]);
     }
+
+    public function indexTakeoverBranch(Request $request)
+    {
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
+        //ddd($positions);
+
+        return Inertia::render('User/Memo/index_Takeover_Branch', [
+            'perPage' => 10,
+            'dataMemo' => Memo::getMemoTakeoverBranch(auth()->user()->id_employee, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'filters' => $request->all(),
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Memo Branch",
+                    'active'  => true
+                ]
+            ),
+            'dataPosition' => $positions,
+            '__index'   => 'user.memo.statusmemo.index',
+            '__proposepayment' => 'user.memo.statusmemo.proposepayment'
+        ]);
+    }
+
     public function indexPayment(Request $request)
     {
         $tab = 'submit';
@@ -111,6 +151,43 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspayment.index',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
+        ]);
+    }
+
+    public function indexPaymentTakeoverBranch(Request $request)
+    {
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+        return Inertia::render('User/Status_Payment_Takeover_Branch', [
+            'perPage' => 10,
+            'dataMemo' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'filters' => $request->all(),
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Payment Branch",
+                    'active'  => true
+                ]
+            ),
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
+            'counttab' => [
+                'submit' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'revisi')->count(),
+            ],
+            '__index'   => 'user.memo.statuspaymenttakeoverbranch.index',
+            '__webpreview'   => 'user.memo.statuspaymenttakeoverbranch.webpreview',
         ]);
     }
 
@@ -297,13 +374,15 @@ class MemoController extends Controller
         ]);
 
         $employeeBranch = $employeeInfo->employee->position_now->branch->id;
+        $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
 
         $memo = Memo::create([
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
+            'id_employee2'          => $typeMemo->id_overtake_memo
         ]);
-        $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
+
 
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
@@ -352,7 +431,7 @@ class MemoController extends Controller
             'po_no'   => $doc_no . '/' . $employeeInfo->employee
                 ->position_now
                 ->position->department
-                ->alias .'/PO',
+                ->alias . '/PO',
             'propose_at' => Carbon::now()
         ]);
 
@@ -857,6 +936,46 @@ class MemoController extends Controller
         ]);
     }
 
+    public function webpreviewPaymentTakeoverBranch(Request $request, $id)
+    {
+        $memo = Memo::getPaymentDetail($id);
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
+        $proposeEmployee = Employee::getWithPositionNowById($memo, true);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
+        return Inertia::render('User/Status_Payment_Takeover_Branch/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Payment",
+                    'href'    => "user.memo.statuspayment.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'dataPayments' => $dataPayments->payments,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments
+        ]);
+    }
+
     public function webpreviewPo(Request $request, $id)
     {
         $memo = Memo::getPoDetail($id);
@@ -912,6 +1031,7 @@ class MemoController extends Controller
 
     public function test()
     {
+        // $this->generateDocNo();
         // $memo = D_Memo_History::where('id_memo', 6)->get();
         // if($memo->count() > 1);
         // $details = [
@@ -924,13 +1044,18 @@ class MemoController extends Controller
 
     private function generateDocNo()
     {
-        $lastrow = Memo::whereNotNull('doc_no')->orderBy('id', 'desc')->first();
-        if ($lastrow) {
-            $lastdocno = $lastrow->doc_no;
+        $ref_doc_no = Ref_Doc_No::first();
+        if ($ref_doc_no) {
+            $lastdocno = $ref_doc_no->no;
             $arraylastdocno = explode('/', $lastdocno);
             $str = "SHF/" . (int) ($arraylastdocno[1] + 1) . "/" . Carbon::now()->format('m.y');
+            $ref_doc_no->no = $str;
+            $ref_doc_no->save();
         } else {
             $str = "SHF/1/" . Carbon::now()->format('m.y');
+            $doc_no = Ref_Doc_No::create([
+                'no' => $str
+            ]);
         }
         return $str;
     }

@@ -151,7 +151,8 @@
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
                                   item.status == 'approve' &&
-                                  item.status_payment == 'edit'
+                                  item.status_payment == 'edit' &&
+                                  !item.id_employee2
                                 "
                                 :disabled="item.status_payment != 'edit'"
                               >
