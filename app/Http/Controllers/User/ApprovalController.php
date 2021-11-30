@@ -344,6 +344,8 @@ class ApprovalController extends Controller
         $approver = D_Payment_Approver::where('id', $id)->first();
 
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo) : $memo->proposeemployee;
+
         D_Payment_Approver::where('id', $id)->update([
             'status'            => $status_approver,
             'msg'               => $msg
@@ -407,7 +409,7 @@ class ApprovalController extends Controller
                 }
 
                 Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
-                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             } else {
                 Memo::where('id', $approver->id_memo)->update(['status_payment' => 'approve']);
                 // insert to history when all approved by approver
@@ -430,7 +432,7 @@ class ApprovalController extends Controller
                     ];
                 }
                 // notif ke user propose
-                Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }
         }
 
@@ -450,7 +452,7 @@ class ApprovalController extends Controller
                 'message' => "Memo Payment $memo->doc_no has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
-            Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
         }
 
         if ($status_approver == 'reject') {
@@ -469,7 +471,7 @@ class ApprovalController extends Controller
                 'message' => "Memo Payment $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
-            Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
         }
 
         return Redirect::route('user.memo.approval.payment.index')->with('success', "Successfull " . $request->input('variant'));

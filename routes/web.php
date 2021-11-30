@@ -103,9 +103,10 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         });
 
         Route::prefix('/status-memo-takeover-branch')->name('statusmemotakeoverbranch.')->group(function () {
-            Route::get('/', 'User\MemoController@index')->name('indexTakeoverBranch');
+            Route::get('/', 'User\MemoController@indexTakeoverBranch')->name('indexTakeoverBranch');
             Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });

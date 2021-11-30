@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Status Memo</h1>
+      <h1 class="h3 mb-0 text-gray-800">Status Memos</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -27,6 +27,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
                             <th>Action</th>
@@ -51,19 +53,25 @@
                               {{ item.title }}
                             </td>
                             <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.firstname
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
+                            </td>
+                            <td>
                               {{ item.doc_no }}
                             </td>
                             <td>
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                              <inertia-link
-                                v-if="tabIndex == 3"
-                                :href="route(__senddraft, item.id)"
-                                class="btn btn-warning btn-sm my-2"
-                              >
-                                send to draft
-                              </inertia-link>
                               <inertia-link
                                 :href="route(__webpreview, item.id)"
                                 class="btn btn-secondary btn-sm"
@@ -150,8 +158,6 @@
       :proposeLink="__proposepayment"
       :errors="errors"
     />
-
-    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
   </layout>
 </template>
 <script>
@@ -178,6 +184,8 @@ export default {
     "filters",
     "perPage",
     "__proposepayment",
+    "__webpreview",
+    "__webpreviewpayment",
     "__index",
   ],
   metaInfo: { title: "Admin Reference Approve Page" },

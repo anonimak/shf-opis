@@ -81,11 +81,6 @@ class MemoController extends Controller
 
     public function indexTakeoverBranch(Request $request)
     {
-        $tab = 'submit';
-        if ($request->has('tab')) {
-            $tab = $request->input('tab');
-        }
-
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -112,8 +107,10 @@ class MemoController extends Controller
                 ]
             ),
             'dataPosition' => $positions,
-            '__index'   => 'user.memo.statusmemo.index',
-            '__proposepayment' => 'user.memo.statusmemo.proposepayment'
+            '__index'   => 'user.memo.statusmemotakeoverbranch.index',
+            '__proposepayment' => 'user.memo.statusmemotakeoverbranch.proposepayment',
+            '__webpreview'   => 'user.memo.statusmemotakeoverbranch.webpreview',
+            '__webpreviewpayment'   => 'user.memo.statuspaymentbranch.webpreview',
         ]);
     }
 
@@ -186,8 +183,8 @@ class MemoController extends Controller
                 'reject' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            '__index'   => 'user.memo.statuspaymenttakeoverbranch.index',
-            '__webpreview'   => 'user.memo.statuspaymenttakeoverbranch.webpreview',
+            '__index'   => 'user.memo.statuspaymentbranch.index',
+            '__webpreview'   => 'user.memo.statuspaymentbranch.webpreview',
         ]);
     }
 

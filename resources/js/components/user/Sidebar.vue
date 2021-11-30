@@ -120,7 +120,7 @@ export default {
 
     let userinfo = this.$inertia.page.props.userinfo;
     let position = userinfo.employee.position_now.position.position_name;
-    if (position === "IT OFFICER") {
+    if (position === "UNIT HEAD HRGA") {
       this.itemsNav[1].child.push(
         {
           title: "Status Memo Branch",
