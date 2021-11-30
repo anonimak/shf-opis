@@ -52,9 +52,11 @@ class Employee extends Model
         );
     }
 
-    public static function getWithPositionNowById($memo)
+    public static function getWithPositionNowById($memo, $isPaymentBranch = false)
     {
-        return Self::where('id', $memo->id_employee)->with(['emp_history' => function ($emp_history) use ($memo) {
+        $id_employee = ($isPaymentBranch) ? $memo->id_employee2 : $memo->id_employee;
+
+        return Self::where('id', $id_employee)->with(['emp_history' => function ($emp_history) use ($memo) {
             return $emp_history->where('year_started', '<', $memo->created_at)->where('year_finished', '>', $memo->created_at)->orWhere('year_finished', null)->with(['position' => function ($position) {
                 return $position->with('department');
             }])->with('branch');

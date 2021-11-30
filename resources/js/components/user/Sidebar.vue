@@ -116,6 +116,24 @@ export default {
     },
   },
   mounted() {
+    // console.log(this.itemsNav[1]);
+
+    let userinfo = this.$inertia.page.props.userinfo;
+    let position = userinfo.employee.position_now.position.position_name;
+    if (position === "IT OFFICER") {
+      this.itemsNav[1].child.push(
+        {
+          title: "Status Memo Branch",
+          link: "user.memo.statusmemotakeoverbranch.*",
+          index: "user.memo.statusmemotakeoverbranch.indexTakeoverBranch",
+        },
+        {
+          title: "Status Payment Branch",
+          link: "user.memo.statuspaymentbranch.*",
+          index: "user.memo.statuspaymentbranch.index",
+        }
+      );
+    }
     $("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       $("body").toggleClass("sidebar-toggled");
       $(".sidebar").toggleClass("toggled");

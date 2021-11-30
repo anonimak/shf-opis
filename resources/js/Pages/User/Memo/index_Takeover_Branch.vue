@@ -12,49 +12,6 @@
             <keep-alive>
               <div class="row">
                 <div class="col-12">
-                  <b-tabs
-                    content-class="mt-3"
-                    align="center"
-                    v-model="tabIndex"
-                    @activate-tab="activeTab"
-                    small
-                  >
-                    <b-tab>
-                      <template #title>
-                        On Process
-                        <b-badge v-if="counttab.submit > 0" variant="primary">{{
-                          counttab.submit
-                        }}</b-badge>
-                      </template>
-                    </b-tab>
-                    <b-tab>
-                      <template #title>
-                        Approved
-                        <b-badge
-                          v-if="counttab.approve > 0"
-                          variant="primary"
-                          >{{ counttab.approve }}</b-badge
-                        >
-                      </template>
-                    </b-tab>
-                    <b-tab>
-                      <template #title>
-                        Rejected
-                        <b-badge v-if="counttab.reject > 0" variant="primary">{{
-                          counttab.reject
-                        }}</b-badge>
-                      </template>
-                    </b-tab>
-                    <b-tab>
-                      <template #title>
-                        Revisi
-                        <b-badge v-if="counttab.revisi > 0" variant="primary">{{
-                          counttab.revisi
-                        }}</b-badge>
-                      </template>
-                    </b-tab>
-                  </b-tabs>
-                  <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
@@ -151,8 +108,7 @@
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
                                   item.status == 'approve' &&
-                                  item.status_payment == 'edit' &&
-                                  !item.id_employee2
+                                  item.status_payment == 'edit'
                                 "
                                 :disabled="item.status_payment != 'edit'"
                               >
@@ -162,8 +118,7 @@
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
                                   item.status == 'approve' &&
-                                  item.status_payment != 'edit' &&
-                                  !item.id_employee2
+                                  item.status_payment != 'edit'
                                 "
                                 :href="route(__webpreviewpayment, item.id)"
                                 v-b-tooltip.hover
@@ -222,19 +177,8 @@ export default {
     "errors",
     "filters",
     "perPage",
-    "tab",
-    "counttab",
-    "__create",
-    "__edit",
-    "__show",
-    "__destroy",
     "__proposepayment",
-    "__proposepo",
     "__index",
-    "__webpreview",
-    "__webpreviewpo",
-    "__webpreviewpayment",
-    "__senddraft",
   ],
   metaInfo: { title: "Admin Reference Approve Page" },
   data() {
@@ -243,7 +187,6 @@ export default {
       form: {
         search: this.filters.search,
       },
-      // memo: { data: [], link: [] },
       isLoadMemo: false,
       isCheched: false,
       idItemClicked: null,
@@ -262,9 +205,6 @@ export default {
     TimelineTitle,
     ModalFormPayment,
     ModalFormPo,
-  },
-  beforeMount() {
-    this.setLsTabMemo();
   },
   methods: {
     showModal(id) {
@@ -286,38 +226,9 @@ export default {
       );
       //this.$refs.modalPayment.show(item);
     },
-    submitDelete(id) {
-      this.$inertia.delete(route(this.__destroy, id));
-    },
     submitProposePayment(id) {
       console.log("submit");
       this.$inertia.put(route(this.__proposepayment, id));
-    },
-    submitDeleteAll(idx) {
-      //   this.$inertia.delete(route("admin.post.news.delete-all", idx.join()));
-    },
-    showMsgBoxDelete: function (id) {
-      this.$bvModal
-        .msgBoxConfirm(
-          "Please confirm that you want to delete this reference approver.",
-          {
-            title: "Please Confirm",
-            size: "sm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "YES",
-            cancelTitle: "NO",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        )
-        .then((value) => {
-          value && this.submitDelete(id);
-        })
-        .catch((err) => {
-          // An error occurred
-        });
     },
     showMsgBoxProposePayment: function (id) {
       this.$bvModal
@@ -339,86 +250,8 @@ export default {
           // An error occurred
         });
     },
-    showMsgBoxDeleteAll: function () {
-      this.$bvModal
-        .msgBoxConfirm(
-          "Please confirm that you want to delete this checked post.",
-          {
-            title: "Please Confirm",
-            size: "sm",
-            buttonSize: "sm",
-            okVariant: "danger",
-            okTitle: "YES",
-            cancelTitle: "NO",
-            footerClass: "p-2",
-            hideHeaderClose: false,
-            centered: true,
-          }
-        )
-        .then((value) => {
-          // value && this.submitDeleteAll(this.selected);
-        })
-        .catch((err) => {
-          // An error occurred
-        });
-    },
-    uncheckAll: function () {
-      // this.selected = []
-    },
     reset() {
       this.form = mapValues(this.form, () => null);
-    },
-    setLsTabMemo() {
-      this.isLoadMemo = true;
-      // this.memo = { data: [], link: [] };
-      if (this.$ls.get("tabIndexMemo")) {
-        this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
-      }
-
-      let param = { tab: this.tab[this.tabIndex] };
-      if (this.filters.page) {
-        param.page = this.filters.page;
-      }
-
-      this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
-        this.isLoadMemo = false;
-      });
-    },
-    activeTab(tabIndex) {
-      this.tabIndex = tabIndex;
-      this.isLoadMemo = true;
-      console.log(route().current());
-      // this.memo = { data: [], link: [] };
-      this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
-
-      let param = { tab: this.tab[tabIndex] };
-      if (this.filters.page) {
-        param.page = this.filters.page;
-      }
-      this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
-        this.isLoadMemo = false;
-      });
-    },
-  },
-  watch: {
-    form: {
-      handler: throttle(function () {
-        let query = this.form.search;
-        this.$inertia.replace(
-          this.route(
-            this.__index,
-            Object.keys(query).length
-              ? { search: query, tab: this.tab[this.tabIndex] }
-              : {
-                  remember: "forget",
-                  tab: this.tab[this.tabIndex],
-                }
-          )
-        );
-      }, 150),
-      deep: true,
     },
   },
 };

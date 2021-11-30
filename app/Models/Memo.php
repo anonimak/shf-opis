@@ -106,12 +106,12 @@ class Memo extends Model
     public static function getMemoDetailEmployeePropose($id)
     {
         return Self::with(['proposeemployee' => function ($employee) {
-                return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-                    return $position_now->with(['position' => function ($position) {
-                        return $position->with('department');
-                    }])->with('branch');
-                }]);
-            }])
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])
             ->where('id', $id)->first();
     }
 
@@ -126,7 +126,7 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['histories' => function ($history) {
-                return $history->orderBy('id', 'DESC');
+            return $history->orderBy('id', 'DESC');
         }])->where('id', $id)->first();
     }
 
@@ -141,7 +141,7 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])->with(['histories' => function ($history) {
-                return $history->orderBy('id', 'DESC');
+            return $history->orderBy('id', 'DESC');
         }])->where('id', $id)->first();
     }
 
@@ -378,12 +378,46 @@ class Memo extends Model
         return $memo;
     }
 
+    public static function getMemoTakeoverBranch($id_employee, $search = null)
+    {
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', '=', 'approve')
+            ->where('id_employee2', '=', $id_employee);
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
     public static function getPayment($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
             ->orderBy('id', 'desc')
             ->where('status_payment', '=', $status)
             ->where('id_employee', '=', $id_employee);
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
+    public static function getPaymentTakeoverBranch($id_employee2, $status, $search = null)
+    {
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status_payment', '=', $status)
+            ->where('id_employee2', '=', $id_employee2);
 
         if ($search) {
             $memo->where(function ($query) use ($search) {
