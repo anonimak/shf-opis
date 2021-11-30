@@ -29,79 +29,83 @@
       />
 
       <b-button v-b-modal.modal-add-payment class="mt-2 ml-2" variant="primary">
-        Add Data Payment
+        Add Data Vendor
       </b-button>
     </b-overlay>
     <b-overlay
       :show="isModalformbusy"
       opacity="0.6"
       spinner-small
-      spinner-variant="primary"
-    >
-      <b-col class="mt-4">
-        <h5>Payment</h5>
-        <table class="table table-striped table-bordered">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Bank Name</th>
-              <th scope="col">Bank Account</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Remark</th>
-              <th>action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in dataPayments" :key="item.id">
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <input
-                  type="text"
-                  name="name"
-                  v-model="activeItemPayment.name"
-                />
-              </td>
-              <td v-else>{{ item.name }}</td>
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <input
-                  type="text"
-                  name="bank_name"
-                  v-model="activeItemPayment.bank_name"
-                />
-              </td>
-              <td v-else>{{ item.bank_name }}</td>
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <input
-                  type="text"
-                  name="bank_account"
-                  v-model="activeItemPayment.bank_account"
-                />
-              </td>
-              <td v-else>{{ item.bank_account }}</td>
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <input
-                  type="text"
-                  name="amount"
-                  v-model="activeItemPayment.amount"
-                />
-              </td>
-              <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <input
-                  type="text"
-                  name="remark"
-                  v-model="activeItemPayment.remark"
-                />
-              </td>
-              <td v-else>{{ item.remark }}</td>
-              <td v-if="isFormPaymentEdited && activeIndex == index">
-                <b-button variant="primary" @click="submitUpdate(item.id)"
-                  >save</b-button
-                >
-                <b-button variant="secondary" @click="actionCancel"
-                  >cancel</b-button
-                >
-              </td>
-              <td v-else>
+      spinner-variant="primary">
+    <b-col class="mt-4">
+      <h5>Vendor</h5>
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Name Vendor</th>
+            <th scope="col">Bank Name</th>
+            <th scope="col">Bank Account</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Remark</th>
+            <th scope="col">Address</th>
+            <th>action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in dataPayments" :key="item.id">
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input type="text" name="name" v-model="activeItemPayment.name" />
+            </td>
+            <td v-else>{{ item.name }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input
+                type="text"
+                name="bank_name"
+                v-model="activeItemPayment.bank_name"
+              />
+            </td>
+            <td v-else>{{ item.bank_name }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input
+                type="text"
+                name="bank_account"
+                v-model="activeItemPayment.bank_account"
+              />
+            </td>
+            <td v-else>{{ item.bank_account }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input
+                type="text"
+                name="amount"
+                v-model="activeItemPayment.amount"
+              />
+            </td>
+            <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input
+                type="text"
+                name="remark"
+                v-model="activeItemPayment.remark"
+              />
+            </td>
+            <td v-else>{{ item.remark }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <input
+                type="text"
+                name="address"
+                v-model="activeItemPayment.address"
+              />
+            </td>
+            <td v-else>{{ item.address }}</td>
+            <td v-if="isFormPaymentEdited && activeIndex == index">
+              <b-button variant="primary" @click="submitUpdate(item.id)"
+                >save</b-button
+              >
+              <b-button variant="secondary" @click="actionCancel"
+                >cancel</b-button
+              >
+            </td>
+            <td v-else>
                 <b-button-group size="sm">
                   <b-button
                     variant="primary"
@@ -120,7 +124,7 @@
     </b-overlay>
     <b-modal
       id="modal-add-payment"
-      title="Add Data Payment"
+      title="Add Data Vendor"
       ok-title="Add"
       @ok="handleOkPayment"
       @hidden="resetModalPayment"
@@ -131,7 +135,7 @@
           <b-col col lg="6" md="auto">
             <b-form-group
               id="input-group-title"
-              label="Name:"
+              label="Vendor Name:"
               label-for="input-title"
               :invalid-feedback="errors.name ? errors.name[0] : ''"
               :state="errors.name ? false : null"
@@ -141,7 +145,7 @@
                 type="text"
                 name="name"
                 v-model="form.name"
-                placeholder="Name"
+                placeholder="Vendor Name"
                 :state="errors.name ? false : null"
                 trim
                 required
@@ -221,6 +225,24 @@
                 required
               ></b-form-input>
             </b-form-group>
+            <b-form-group
+              id="input-group-title"
+              label="Vendor Address"
+              label-for="input-title"
+              :invalid-feedback="errors.address ? errors.address[0] : ''"
+              :state="errors.address ? false : null"
+            >
+              <b-form-input
+                id="input-title"
+                type="text"
+                name="address"
+                placeholder="Vendor Address"
+                v-model="form.address"
+                :state="errors.address ? false : null"
+                trim
+                required
+              ></b-form-input>
+            </b-form-group>
           </b-col>
         </b-card-body>
       </b-form>
@@ -244,6 +266,7 @@ export default {
         bank_account: null,
         amount: null,
         remark: null,
+        address: null
       },
 
       modalTitle: "",
@@ -274,7 +297,7 @@ export default {
     actionDelete(idData) {
       this.$bvModal
         .msgBoxConfirm(
-          "Please confirm that you want to delete this data payment.",
+          "Please confirm that you want to delete this data vendor.",
           {
             title: "Please Confirm",
             size: "sm",
@@ -312,15 +335,11 @@ export default {
     },
 
     submitDelete(id) {
-      axios
-        .delete(route("user.memo.statusmemo.deletepayment", id))
-        .then((response) => {
-          if (response.data.success) {
-            this.pageFlashes.success = "Successfull delete data payment";
-            this.dataPayments = _.filter(
-              this.dataPayments,
-              (item) => item.id != id
-            );
+      axios.delete(route("user.memo.statusmemo.deletepayment", id))
+      .then((response) => {
+          if(response.data.success) {
+              this.pageFlashes.success = "Successfull delete data vendor"
+              this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
           }
         });
     },

@@ -290,7 +290,11 @@ export default {
         licenseKey: "non-commercial-and-evaluation",
 
         afterChange: () => {
-          this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
+          //this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
+          this.dataFormula =
+            this.hotSettings.formulas.engine.getAllSheetsValues();
+          //this.dataWithFormulaValue = this.dataFormula.Sheet1;
+          //console.log(this.dataFormula);
         },
       },
       fileRecords: [],
@@ -387,8 +391,31 @@ export default {
     },
     submit() {
       if (!this.submitState) {
-        let arrayCost = _.map(this.dataCost, (valueCost) => {
+        console.log("data = ", this.dataFormula.Sheet1.length);
+        let newData = {};
+        if (this.dataFormula.Sheet1.length != 0) {
+          newData = _.map(this.dataFormula.Sheet1, (value) => {
+            const res = {};
+            for (let idx in value) {
+              res[this.colHeaders[idx]] = value[idx];
+            }
+            return res;
+          });
+        } else {
+          newData = _.map(this.dataFormula.Sheet2, (value) => {
+            const res = {};
+            for (let idx in value) {
+              res[this.colHeaders[idx]] = value[idx];
+            }
+            return res;
+          });
+        }
+        //console.log(this.data)
+        //console.log("new = ", newData);
+        let arrayCost = _.map(newData, (valueCost) => {
           let objCost = {};
+          valueCost = Object.assign({}, valueCost);
+          //console.log("valueCost = ", valueCost);
           _.map(this.colHeaders, (v) => {
             objCost[v] = valueCost[v];
           });
@@ -397,6 +424,7 @@ export default {
             return objCost;
           }
         });
+        //console.log("arrayCost = ", arrayCost);
         arrayCost = _.pickBy(arrayCost, _.identity);
         if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;

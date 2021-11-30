@@ -81,7 +81,7 @@
                         </p>
                     </td>
                     <td style="border:none; width:50%"></td>
-                    <td style="border:none; width:25%;vertical-align: top; text-align: left">        
+                    <td style="border:none; width:25%;vertical-align: top; text-align: left">
                         <h2>Purchase Order</h2>
                         <p>PO No  :{{ $memo->po_no}}</p>
                     </td>
@@ -94,20 +94,27 @@
                 <tr>
                     <td style="border:none; width:25%; text-align: left">
                         <h2>Vendor</h2>
-                        <p><strong>PT. Fiber Networks Indonesia</strong></p>
+                        {{-- @foreach ($dataPayments as $payment) --}}
+                        <p><strong>{{ $dataPayments->name }}</strong></p>
                         <p style="margin-top: 8px; font-size: 9px">
-                            Perkantoran Tanjung Mas B1/5, Jl. Raya Tanjung Barat, Jakarta Selatan 12530
+                            {{$dataPayments->address}}
                         </p>
+                        {{-- @endforeach --}}
                     </td>
                     <td style="border:none; width:50%"></td>
-                    <td style="border:none; width:25%"> 
+                    <td style="border:none; width:25%">
                         <br>
                         <table style="border:none";>
                             <tbody>
                                 <tr>
                                     <td style="border:none; text-align: left">Date</td>
                                     <td style="border:none">:</td>
-                                    <td style="border:none; text-align: left">29-03-2021</td>
+                                    @foreach ($memo->approversPo as $id => $approver)
+                                    @if ($id >= 1)
+                                        @break
+                                    @endif
+                                    <td style="border:none; text-align: left">{{ $approver->created_at->todatestring() }}</td>
+                                    @endforeach
                                 </tr>
                                 <tr>
                                     <td style="border:none; text-align: left">Currency</td>
@@ -173,7 +180,7 @@
         <br>
         <br>
         <div style="width: 100%;">
-            <table style="width: 60%; position: absolute; right: 0px;">
+            <table style="width: 60%; position: absolute; right: 20px;">
                 <thead>
                     <tr>
                         @foreach ($memo->approversPo as $approver)
@@ -210,7 +217,7 @@
                             </td>
                             @endif
                         @endforeach
-                        <td>VENDOR</td>
+                        <td>{{ $dataPayments->name }}</td>
                     </tr>
                 </tbody>
             </table>

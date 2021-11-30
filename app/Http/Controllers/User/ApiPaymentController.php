@@ -86,6 +86,7 @@ class ApiPaymentController extends Controller
             'bank_account'      => 'required',
             'amount'            => 'required',
             'remark'            => 'required',
+            'address'           => 'required',
         ]);
 
         $memoPayment = D_Memo_Payments::create([
@@ -95,12 +96,13 @@ class ApiPaymentController extends Controller
             'bank_account'      => $request->input('bank_account'),
             'amount'            => $request->input('amount'),
             'remark'            => $request->input('remark'),
+            'address'           => $request->input('address')
         ]);
 
         return response()->json([
             'id' => $memoPayment->id,
             'status' => 200,
-            'message' => 'Successfull add data payment',
+            'message' => 'Successfull add data vendor',
         ]);
    }
 }

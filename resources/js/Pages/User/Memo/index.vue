@@ -196,7 +196,7 @@
       :errors="errors"
     />
 
-    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" />
+    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" :errors="errors"/>
   </layout>
 </template>
 <script>

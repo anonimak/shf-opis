@@ -564,6 +564,7 @@ class MemoController extends Controller
             'bank_account'      => 'required',
             'amount'            => 'required',
             'remark'            => 'required',
+            'address'           => 'required'
         ]);
 
         D_Memo_Payments::where('id', $idpayment)->update([
@@ -571,9 +572,10 @@ class MemoController extends Controller
             'bank_name'         => $request->input('bank_name'),
             'bank_account'      => $request->input('bank_account'),
             'amount'            => $request->input('amount'),
-            'remark'            => $request->input('remark')
+            'remark'            => $request->input('remark'),
+            'address'           => $request->input('address')
         ]);
-        return Redirect::back()->with('success', "Successfull update data payment");
+        return Redirect::back()->with('success', "Successfull update data vendor");
     }
 
     public function deletePayment($id)
@@ -587,8 +589,19 @@ class MemoController extends Controller
         ]);
     }
 
-    public function proposePo($id)
+    public function proposePo(Request $request, $id)
     {
+        $request->validate([
+            'name'              => 'required',
+            'address'           => 'required',
+        ]);
+
+        D_Memo_Payments::create([
+            'id_memo'           => $id,
+            'name'              => $request->input('name'),
+            'address'           => $request->input('address')
+        ]);
+
         $memo = Memo::where('id', $id)->with('approvers')->first();
 
         // cek apakah ada approver
@@ -639,7 +652,11 @@ class MemoController extends Controller
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
         // kirim email ke tiap acknowlegde
 
-        return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit PO.");
+        // return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit PO.");
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull add data vendor',
+        ]);
     }
 
     public function fileUploadAttach(Request $request, $id)
@@ -790,10 +807,11 @@ class MemoController extends Controller
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
+        $dataPayments = D_Memo_Payments::where('id_memo', $id)->first();
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
-
+        //ddd($dataPayments->payments);
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -801,7 +819,8 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost
+            'memocost' => $memocost,
+            'dataPayments' => $dataPayments,
         ];
         $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('A4', 'portrait');
