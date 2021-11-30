@@ -24,7 +24,7 @@
     >
       <v-select
         class="mb-3"
-        :get-option-label="(option) => option.position.position_name"
+        :get-option-label="(option) => option.position.position_name + ' - ' + option.employee.firstname + ' ' + option.employee.lastname"
         placeholder="-- Add Approver --"
         :options="dataPosition"
         v-model="selected"
