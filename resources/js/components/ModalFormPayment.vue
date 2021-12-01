@@ -36,76 +36,82 @@
       :show="isModalformbusy"
       opacity="0.6"
       spinner-small
-      spinner-variant="primary">
-    <b-col class="mt-4">
-      <h5>Vendor</h5>
-      <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Name Vendor</th>
-            <th scope="col">Bank Name</th>
-            <th scope="col">Bank Account</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Remark</th>
-            <th scope="col">Address</th>
-            <th>action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in dataPayments" :key="item.id">
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input type="text" name="name" v-model="activeItemPayment.name" />
-            </td>
-            <td v-else>{{ item.name }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="bank_name"
-                v-model="activeItemPayment.bank_name"
-              />
-            </td>
-            <td v-else>{{ item.bank_name }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="bank_account"
-                v-model="activeItemPayment.bank_account"
-              />
-            </td>
-            <td v-else>{{ item.bank_account }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="amount"
-                v-model="activeItemPayment.amount"
-              />
-            </td>
-            <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="remark"
-                v-model="activeItemPayment.remark"
-              />
-            </td>
-            <td v-else>{{ item.remark }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <input
-                type="text"
-                name="address"
-                v-model="activeItemPayment.address"
-              />
-            </td>
-            <td v-else>{{ item.address }}</td>
-            <td v-if="isFormPaymentEdited && activeIndex == index">
-              <b-button variant="primary" @click="submitUpdate(item.id)"
-                >save</b-button
-              >
-              <b-button variant="secondary" @click="actionCancel"
-                >cancel</b-button
-              >
-            </td>
-            <td v-else>
+      spinner-variant="primary"
+    >
+      <b-col class="mt-4">
+        <h5>Vendor</h5>
+        <table class="table table-striped table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Name Vendor</th>
+              <th scope="col">Bank Name</th>
+              <th scope="col">Bank Account</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Remark</th>
+              <th scope="col">Address</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in dataPayments" :key="item.id">
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="name"
+                  v-model="activeItemPayment.name"
+                />
+              </td>
+              <td v-else>{{ item.name }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="bank_name"
+                  v-model="activeItemPayment.bank_name"
+                />
+              </td>
+              <td v-else>{{ item.bank_name }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="bank_account"
+                  v-model="activeItemPayment.bank_account"
+                />
+              </td>
+              <td v-else>{{ item.bank_account }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="amount"
+                  v-model="activeItemPayment.amount"
+                />
+              </td>
+              <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <input
+                  type="text"
+                  name="remark"
+                  v-model="activeItemPayment.remark"
+                />
+              </td>
+              <td v-else>{{ item.remark }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <textarea
+                  type="text"
+                  name="address"
+                  v-model="activeItemPayment.address"
+                  rows="3"
+                ></textarea>
+              </td>
+              <td v-else>{{ item.address }}</td>
+              <td v-if="isFormPaymentEdited && activeIndex == index">
+                <b-button variant="primary" @click="submitUpdate(item.id)"
+                  >save</b-button
+                >
+                <b-button variant="secondary" @click="actionCancel"
+                  >cancel</b-button
+                >
+              </td>
+              <td v-else>
                 <b-button-group size="sm">
                   <b-button
                     variant="primary"
@@ -228,20 +234,22 @@
             <b-form-group
               id="input-group-title"
               label="Vendor Address"
-              label-for="input-title"
+              label-for="textarea"
               :invalid-feedback="errors.address ? errors.address[0] : ''"
               :state="errors.address ? false : null"
             >
-              <b-form-input
-                id="input-title"
+              <b-form-textarea
+                id="textarea"
                 type="text"
                 name="address"
                 placeholder="Vendor Address"
                 v-model="form.address"
                 :state="errors.address ? false : null"
+                rows="3"
+                max-rows="6"
                 trim
                 required
-              ></b-form-input>
+              ></b-form-textarea>
             </b-form-group>
           </b-col>
         </b-card-body>
@@ -266,7 +274,7 @@ export default {
         bank_account: null,
         amount: null,
         remark: null,
-        address: null
+        address: null,
       },
 
       modalTitle: "",
@@ -335,11 +343,15 @@ export default {
     },
 
     submitDelete(id) {
-      axios.delete(route("user.memo.statusmemo.deletepayment", id))
-      .then((response) => {
-          if(response.data.success) {
-              this.pageFlashes.success = "Successfull delete data vendor"
-              this.dataPayments = _.filter(this.dataPayments, item => item.id != id);
+      axios
+        .delete(route("user.memo.statusmemo.deletepayment", id))
+        .then((response) => {
+          if (response.data.success) {
+            this.pageFlashes.success = "Successfull delete data vendor";
+            this.dataPayments = _.filter(
+              this.dataPayments,
+              (item) => item.id != id
+            );
           }
         });
     },
