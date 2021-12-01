@@ -368,7 +368,7 @@ class Memo extends Model
             ->where('status', '=', $status)
             ->where('id_employee', '=', $id_employee);
         if ($status != 'approve') {
-            $memo->whereNull('id_employee2');
+            // $memo->whereNull('id_employee2');
         }
 
         if ($search) {

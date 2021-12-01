@@ -50,7 +50,7 @@ class User extends Authenticatable
                 return $position_now->with(['position' => function ($position) {
                     return $position->with('department')->first();
                 }])->with('branch')->first();
-            }])->first();
+            }])->with('overtake')->first();
         }])->where('id', auth()->id())->first();
     }
 

@@ -35,17 +35,17 @@
                         <b-badge
                           v-if="dataMemo.status_payment == 'approve'"
                           variant="success"
-                          >Memo Approved</b-badge
+                          >Memo Payment Approved</b-badge
                         >
                         <b-badge
                           v-if="dataMemo.status_payment == 'reject'"
                           variant="danger"
-                          >Memo Rejected</b-badge
+                          >Memo Payment Rejected</b-badge
                         >
                         <b-badge
                           v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Memo Payment Revisi</b-badge
                         >
                       </td>
                     </tr>
@@ -70,24 +70,6 @@
                       <td>Type</td>
                       <td>Approval</td>
                     </tr>
-                    <!-- <tr v-if="dataMemo.acknowledges.length > 0">
-                      <td>Acknowledge</td>
-                      <td>
-                        <span
-                          v-for="(acknowledge, index) in dataMemo.acknowledges"
-                          :key="index"
-                        >
-                          {{
-                            acknowledge.employee.firstname +
-                            " " +
-                            acknowledge.employee.lastname
-                          }}
-                          <span v-if="index != dataMemo.acknowledges.length - 1"
-                            >,{{ " " }}
-                          </span>
-                        </span>
-                      </td>
-                    </tr> -->
                   </tbody>
                 </table>
               </b-col>

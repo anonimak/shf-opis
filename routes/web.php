@@ -102,11 +102,11 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 
-        Route::prefix('/status-memo-takeover-branch')->name('statusmemotakeoverbranch.')->group(function () {
-            Route::get('/', 'User\MemoController@indexTakeoverBranch')->name('indexTakeoverBranch');
+        Route::prefix('/status-memo-takeover-branch')->name('statustakeovermemobranch.')->group(function () {
+            Route::get('/', 'User\MemoController@indexTakeoverBranch')->name('index');
             Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');
-            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
+            Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemoTakeover')->name('webpreview');
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
@@ -116,7 +116,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
         });
 
-        Route::prefix('/status-payment-takeover-branch')->name('statuspaymentbranch.')->group(function () {
+        Route::prefix('/status-payment-takeover-branch')->name('statustakeoverpaymentbranch.')->group(function () {
             Route::get('/', 'User\MemoController@indexPaymentTakeoverBranch')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPaymentTakeoverBranch')->name('webpreview');
         });

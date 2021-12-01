@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Status Memos</h1>
+      <h1 class="h3 mb-0 text-gray-800">Status Memo Branch</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -260,6 +260,20 @@ export default {
     },
     reset() {
       this.form = mapValues(this.form, () => null);
+    },
+  },
+  watch: {
+    form: {
+      handler: throttle(function () {
+        let query = pickBy(this.form);
+        this.$inertia.replace(
+          this.route(
+            this.__index,
+            Object.keys(query).length ? query : { remember: "forget" }
+          )
+        );
+      }, 150),
+      deep: true,
     },
   },
 };
