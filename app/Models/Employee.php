@@ -40,6 +40,11 @@ class Employee extends Model
         return $this->hasOne(Employee_History::class, 'id_employee', 'id');
     }
 
+    public function overtake()
+    {
+        return $this->hasOne(Ref_Type_Memo::class, 'id_overtake_memo', 'id')->select('id', 'id_overtake_memo');
+    }
+
     public function position()
     {
         return $this->hasManyThrough(

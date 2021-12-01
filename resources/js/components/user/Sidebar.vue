@@ -115,25 +115,28 @@ export default {
       }
     },
   },
-  mounted() {
-    // console.log(this.itemsNav[1]);
-
+  beforeMount() {
     let userinfo = this.$inertia.page.props.userinfo;
-    let position = userinfo.employee.position_now.position.position_name;
-    if (position === "UNIT HEAD HRGA") {
+    // let position = userinfo.employee.position_now.position.position_name;
+    let isovertakeMemo = userinfo.employee.overtake;
+    if (isovertakeMemo) {
       this.itemsNav[1].child.push(
         {
           title: "Status Memo Branch",
-          link: "user.memo.statusmemotakeoverbranch.*",
-          index: "user.memo.statusmemotakeoverbranch.indexTakeoverBranch",
+          link: "user.memo.statustakeovermemobranch.*",
+          index: "user.memo.statustakeovermemobranch.index",
         },
         {
           title: "Status Payment Branch",
-          link: "user.memo.statuspaymentbranch.*",
-          index: "user.memo.statuspaymentbranch.index",
+          link: "user.memo.statustakeoverpaymentbranch.*",
+          index: "user.memo.statustakeoverpaymentbranch.index",
         }
       );
     }
+  },
+  mounted() {
+    // console.log(this.itemsNav[1]);
+
     $("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       $("body").toggleClass("sidebar-toggled");
       $(".sidebar").toggleClass("toggled");

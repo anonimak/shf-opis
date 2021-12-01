@@ -344,8 +344,8 @@ class ApprovalController extends Controller
         $approver = D_Payment_Approver::where('id', $id)->first();
 
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
-        $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo) : $memo->proposeemployee;
-
+        $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
+        // dd($proposeEmployee);
         D_Payment_Approver::where('id', $id)->update([
             'status'            => $status_approver,
             'msg'               => $msg

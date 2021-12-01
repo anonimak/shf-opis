@@ -2,7 +2,7 @@
   <layout :userinfo="userinfo" :notif="notif">
     <flash-msg />
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Status Payment</h1>
+      <h1 class="h3 mb-0 text-gray-800">Status Payment Branch</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
     <div class="row">
@@ -277,7 +277,7 @@ export default {
         let query = this.form.search;
         this.$inertia.replace(
           this.route(
-            this.__index,
+            this.__indexpayment,
             Object.keys(query).length
               ? { search: query, tab: this.tab[this.tabIndex] }
               : {
