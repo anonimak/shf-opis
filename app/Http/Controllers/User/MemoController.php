@@ -13,6 +13,7 @@ use App\Models\D_Payment_Approver;
 use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
+use App\Models\M_Data_Cost_Total;
 use App\Models\Memo;
 use App\Models\Ref_Doc_No;
 use App\Models\Ref_Template_Cost;
@@ -287,7 +288,7 @@ class MemoController extends Controller
     {
         $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
-
+        $memoType = Memo::select('*')->where('id','=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -314,6 +315,7 @@ class MemoController extends Controller
             ];
         });
 
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
@@ -340,11 +342,14 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
+            //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
+            'dataMemoType' => $memoType,
             'dataAttachments' => $attachments,
+            'dataTotalCost' => $dataTotalCost,
             'headerCost' => $headerCost,
             'columnCost' => $columnCost,
             // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
@@ -361,6 +366,14 @@ class MemoController extends Controller
             'conclusion'        => $request->input('conclusion'),
             'payment'           => $request->input('payment'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
+        ]);
+
+        M_Data_Cost_Total::where('id_memo',$id)->update([
+            'id_memo' => $id,
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn' => $request->input('ppn'),
+            'grand_total' => $request->input('grand_total')
         ]);
         return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
     }
@@ -383,6 +396,13 @@ class MemoController extends Controller
             'id_employee2'          => $typeMemo->id_overtake_memo
         ]);
 
+        M_Data_Cost_Total::create ([
+            'id_memo' => $memo->id,
+            'sub_total' => 0,
+            'pph' => 0,
+            'ppn' => 0,
+            'grand_total' =>0
+        ]);
 
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
@@ -603,7 +623,6 @@ class MemoController extends Controller
         ]);
 
         $memo = Memo::where('id', $id)->with('approvers')->first();
-
         // cek apakah ada approver
         if (D_Po_Approver::where('id_memo', $id)->count() <= 0) {
             $memo_approver = D_Memo_Approver::where('id_memo', $id)->get();
@@ -782,7 +801,8 @@ class MemoController extends Controller
         $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
-
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
+        //ddd($dataTotalCost);
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -790,7 +810,8 @@ class MemoController extends Controller
             'positions' => $positions,
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
-            'memocost' => $memocost
+            'memocost' => $memocost,
+            'dataTotalCost' => $dataTotalCost
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');
@@ -812,6 +833,7 @@ class MemoController extends Controller
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
         //ddd($dataPayments->payments);
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -821,6 +843,7 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
             'dataPayments' => $dataPayments,
+            'dataTotalCost' => $dataTotalCost
         ];
         $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('A4', 'portrait');
@@ -842,7 +865,7 @@ class MemoController extends Controller
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
         $memocost = (array) json_decode($memo->cost);
-
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -852,6 +875,7 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
             'dataPayments' => $dataPayments->payments,
+            'dataTotalCost' => $dataTotalCost
         ];
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');;
@@ -868,6 +892,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
@@ -890,6 +915,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments
@@ -907,6 +933,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Status_Payment/preview', [
             'breadcrumbItems' => array(
@@ -929,6 +956,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
@@ -986,6 +1014,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Status_Po/preview', [
             'breadcrumbItems' => array(
@@ -1008,6 +1037,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments
