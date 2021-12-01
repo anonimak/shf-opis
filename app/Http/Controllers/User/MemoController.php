@@ -82,11 +82,6 @@ class MemoController extends Controller
 
     public function indexTakeoverBranch(Request $request)
     {
-        $tab = 'submit';
-        if ($request->has('tab')) {
-            $tab = $request->input('tab');
-        }
-
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -113,8 +108,10 @@ class MemoController extends Controller
                 ]
             ),
             'dataPosition' => $positions,
-            '__index'   => 'user.memo.statusmemo.index',
-            '__proposepayment' => 'user.memo.statusmemo.proposepayment'
+            '__index'   => 'user.memo.statustakeovermemobranch.index',
+            '__proposepayment' => 'user.memo.statustakeovermemobranch.proposepayment',
+            '__webpreview'   => 'user.memo.statustakeovermemobranch.webpreview',
+            '__webpreviewpayment'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
         ]);
     }
 
@@ -187,8 +184,8 @@ class MemoController extends Controller
                 'reject' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            '__index'   => 'user.memo.statuspaymenttakeoverbranch.index',
-            '__webpreview'   => 'user.memo.statuspaymenttakeoverbranch.webpreview',
+            '__index'   => 'user.memo.statustakeoverpaymentbranch.index',
+            '__webpreview'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
         ]);
     }
 
@@ -922,6 +919,44 @@ class MemoController extends Controller
         ]);
     }
 
+    public function webpreviewMemoTakeover(Request $request, $id)
+    {
+        $memo = Memo::getMemoDetail($id);
+        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $memocost = (array) json_decode($memo->cost);
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
+
+        return Inertia::render('User/Memo/preview', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Status Memo Branch",
+                    'href'    => "user.memo.statustakeovermemobranch.index"
+                ],
+                [
+                    'title'   => $memo->doc_no,
+                    'active'  => true
+                ]
+            ),
+            'dataMemo' => $memo,
+            'proposeEmployee' => $proposeEmployee,
+            'memocost' => $memocost,
+            'attachments' => $attachments
+        ]);
+    }
+
     public function webpreviewPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetail($id);
@@ -988,8 +1023,8 @@ class MemoController extends Controller
                     'active'  => true
                 ],
                 [
-                    'title'   => "Status Payment",
-                    'href'    => "user.memo.statuspayment.index"
+                    'title'   => "Status Payment Branch",
+                    'href'    => "user.memo.statustakeoverpaymentbranch.index"
                 ],
                 [
                     'title'   => $memo->doc_no,

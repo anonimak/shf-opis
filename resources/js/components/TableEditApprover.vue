@@ -24,7 +24,7 @@
     >
       <v-select
         class="mb-3"
-        :get-option-label="(option) => option.position.position_name + ' - ' + option.employee.firstname + ' ' + option.employee.lastname"
+        :get-option-label="getOptionLabel"
         placeholder="-- Add Approver --"
         :options="dataPosition"
         v-model="selected"
@@ -138,6 +138,12 @@ export default {
     };
   },
   methods: {
+    getOptionLabel(option) {
+      let firstname = option.employee ? option.employee.firstname : "";
+      let lastname = option.employee ? option.employee.lastname : "";
+
+      return option.position.position_name + " - " + firstname + " " + lastname;
+    },
     actionApproverSelecting(selectedOption) {
       this.actionApproverAddItem(selectedOption);
       this.selected = null;
