@@ -201,6 +201,75 @@
                   </b-form-group>
                 </div>
               </b-row>
+              <b-row v-if="dataMemoType.ref_table.with_po == 1 || dataMemoType.ref_table.with_payment == 1">
+                <div class="col-5">
+                  <b-form-group
+                    id="input-group-text"
+                    label=""
+                    label-for="input-text"
+                  >
+                    <b-input-group prepend="Sub Total" class="mb-2 mt-5">
+                      <b-form-input
+                        aria-label="sub_total"
+                        v-model="sub_total"
+                      ></b-form-input>
+                    </b-input-group>
+                    <b-input-group prepend="Pph23 (2%) x" class="mb-2 mt-2">
+                      <b-form-input
+                        aria-label="pph23"
+                        v-model="pph"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button
+                          size="sm"
+                          text="Button"
+                          variant="success"
+                          @click="actionPph(pph)"
+                          >Calculate Pph23</b-button
+                        >
+                      </b-input-group-append>
+                    </b-input-group>
+                    <b-input-group prepend="PPN (10%) x" class="mb-2 mt-2">
+                      <b-form-input
+                        aria-label="ppn"
+                        v-model="ppn"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button
+                          size="sm"
+                          text="Button"
+                          variant="success"
+                          @click="actionPpn(sub_total)"
+                          >Calculate PPN</b-button
+                        >
+                      </b-input-group-append>
+                    </b-input-group>
+                    <b-input-group prepend="Grand Total" class="mb-2 mt-2">
+                      <b-form-input
+                        aria-label="grand_total"
+                        v-model="grand_total"
+                        disabled
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button
+                          size="sm"
+                          text="Button"
+                          variant="success"
+                          @click="actionGTotal(sub_total,pph,ppn)"
+                          >Calculate Grand Total</b-button
+                        >
+                      </b-input-group-append>
+                    </b-input-group>
+                    <b-button
+                          size="sm"
+                          text="Button"
+                          variant="danger"
+                          @click="reset()"
+                          >Reset</b-button
+                        >
+                  </b-form-group>
+                </div>
+              </b-row>
               <b-row>
                 <div class="col-12"></div>
               </b-row>
@@ -240,11 +309,14 @@ export default {
     // "dataTypeMemo",
     "errors",
     "dataPosition",
+    "dataTotalCost",
     "dataAttachments",
     "headerCost",
     "columnCost",
+    "dataMemoType",
     "__store",
     "__updateApprover",
+    //"__addDataTotal",
     // "__updateAcknowledge",
     "__preview",
     "__attachment",
@@ -264,6 +336,10 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       // selectedAcknowledge: null,
+      sub_total:0,
+      pph:0,
+      ppn:0,
+      grand_total:0,
       form: {},
       dataApprovers: [],
       dataCost: null,
@@ -319,8 +395,32 @@ export default {
     dataMemo: function (val) {
       this.fillForm();
     },
+    dataTotalCost: function (val) {
+      this.fillForm();
+    },
   },
   methods: {
+    actionPph: function (val) {
+      let res = 0.02 * parseFloat(val);
+      this.pph = res;
+    },
+    actionPpn: function (val) {
+      let res = 0.1 * parseFloat(val);
+      this.ppn = res;
+    },
+    actionGTotal: function (sub_total, pph, ppn) {
+           let res = parseFloat(sub_total) + parseFloat(ppn) - parseFloat(pph);
+           //console.log(res);
+           this.grand_total = res;
+           //console.log(res);
+         //}
+    },
+    reset: function (){
+        this.sub_total = 0;
+        this.pph = 0;
+        this.ppn = 0;
+        this.grand_total = 0;
+    },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
       var form_data = new FormData();
@@ -387,6 +487,10 @@ export default {
     fillForm() {
       this.form = { ...this.dataMemo };
       this.dataApprovers = [...this.form.approvers];
+      this.sub_total = this.dataTotalCost.sub_total;
+      this.pph = this.dataTotalCost.pph;
+      this.ppn = this.dataTotalCost.ppn;
+      this.grand_total = this.dataTotalCost.grand_total;
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
@@ -428,6 +532,10 @@ export default {
         arrayCost = _.pickBy(arrayCost, _.identity);
         if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;
+        this.form.sub_total = this.sub_total;
+        this.form.pph = this.pph;
+        this.form.ppn = this.ppn;
+        this.form.grand_total = this.grand_total;
         this.$inertia
           .post(route(this.__update, this.dataMemo.id), this.form)
           .then(() => {
