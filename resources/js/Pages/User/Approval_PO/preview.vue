@@ -222,6 +222,38 @@
                 <h5>Cost/Expense</h5>
                 <b-table bordered :items="memocost"></b-table> </b-col
             ></b-row>
+            <b-row class="mb-2" v-if="dataTotalCost.grand_total != 0">
+                <b-col>
+                    <table class="table table-stripped table-bordered">
+                        <tbody>
+                            <tr>
+                                <th style="width: 50%">Sub Total </th>
+                                <td>
+                                    {{ Number(dataTotalCost.sub_total).toLocaleString() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">Pph23 (2%) </th>
+                                <td>
+                                    {{ Number(dataTotalCost.pph).toLocaleString() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">PPN (10%) </th>
+                                <td>
+                                    {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">Grand Total </th>
+                                <td>
+                                    {{ Number(dataTotalCost.grand_total).toLocaleString() }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </b-col>
+            </b-row>
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"
@@ -281,6 +313,7 @@ export default {
     "notif",
     "breadcrumbItems",
     "dataMemo",
+    "dataTotalCost",
     "proposeEmployee",
     "memocost",
     "attachments",

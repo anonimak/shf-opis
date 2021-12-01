@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Memo;
+use App\Models\M_Data_Cost_Total;
 use Illuminate\Http\Request;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Payment_Approver;
@@ -100,6 +101,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Approval/preview', [
             'breadcrumbItems' => array(
@@ -118,6 +120,7 @@ class ApprovalController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
@@ -136,6 +139,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Approval_Payment/preview', [
             'breadcrumbItems' => array(
@@ -154,6 +158,7 @@ class ApprovalController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
@@ -172,6 +177,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Approval_PO/preview', [
             'breadcrumbItems' => array(
@@ -190,6 +196,7 @@ class ApprovalController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,

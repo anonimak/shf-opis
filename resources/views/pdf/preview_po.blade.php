@@ -113,7 +113,7 @@
                                     @if ($id >= 1)
                                         @break
                                     @endif
-                                    <td style="border:none; text-align: left">{{ $approver->created_at->todatestring() }}</td>
+                                    <td style="border:none; text-align: left">{{ $approver->updated_at->todatestring() }}</td>
                                     @endforeach
                                 </tr>
                                 <tr>
@@ -155,25 +155,29 @@
                     @endforeach
 
             </tbody>
-
-                {{-- <tr>
-                    <td colspan="4" style="height: 20px"> </td>
-                </tr>
-                <tr>
-                    <th colspan="3">Amount</th>
-                    <th>{{$sumtotal}}</th>
-                </tr>
-                <tr>
-                    <th colspan="3">PPN</th>
-                    <th>{{$ppn}}</th>
-
-                </tr>
-                <tr>
-                    <th colspan="3">GRAND TOTAL</th>
-                    <th>{{$grandtotal}}</th>
-                </tr> --}}
-            </tbody>
         </table>
+        <table style="width: 50%; position: relative; left: 365px;">
+            <tbody>
+                <tr>
+                    <th style="width: 50%;">Sub Total</th>
+                    <td>{{ number_format($dataTotalCost['sub_total'], 2) }}</td>
+                </tr>
+                <tr>
+                    <th style="width: 50%;">Pph23 (2%)</th>
+                    <td>{{ number_format($dataTotalCost['pph'], 2) }}</td>
+
+                </tr>
+                <tr>
+                    <th style="width: 50%;">PPN (10%)</th>
+                    <td>{{ number_format($dataTotalCost['ppn'], 2) }}</td>
+
+                </tr>
+                <tr>
+                    <th style="width: 50%;">Grand Total</th>
+                    <td>{{ number_format($dataTotalCost['grand_total'], 2) }}</td>
+                </tr>
+            </tbody>
+    </table>
         <br>
         @endif
         @if ( count($memo->approvers) > 0)
