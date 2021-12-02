@@ -201,7 +201,12 @@
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row v-if="dataMemoType.ref_table.with_po == 1 || dataMemoType.ref_table.with_payment == 1">
+              <b-row
+                v-if="
+                  dataMemoType.ref_table.with_po == 1 ||
+                  dataMemoType.ref_table.with_payment == 1
+                "
+              >
                 <div class="col-5">
                   <b-form-group
                     id="input-group-text"
@@ -256,18 +261,18 @@
                           size="sm"
                           text="Button"
                           variant="success"
-                          @click="actionGTotal(sub_total,pph,ppn)"
+                          @click="actionGTotal(sub_total, pph, ppn)"
                           >Calculate Grand Total</b-button
                         >
                       </b-input-group-append>
                     </b-input-group>
                     <b-button
-                          size="sm"
-                          text="Button"
-                          variant="danger"
-                          @click="reset()"
-                          >Reset</b-button
-                        >
+                      size="sm"
+                      text="Button"
+                      variant="danger"
+                      @click="reset()"
+                      >Reset</b-button
+                    >
                   </b-form-group>
                 </div>
               </b-row>
@@ -337,10 +342,10 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       // selectedAcknowledge: null,
-      sub_total:0,
-      pph:0,
-      ppn:0,
-      grand_total:0,
+      sub_total: 0,
+      pph: 0,
+      ppn: 0,
+      grand_total: 0,
       form: {},
       dataApprovers: [],
       dataCost: null,
@@ -410,17 +415,17 @@ export default {
       this.ppn = res;
     },
     actionGTotal: function (sub_total, pph, ppn) {
-           let res = parseFloat(sub_total) + parseFloat(ppn) - parseFloat(pph);
-           //console.log(res);
-           this.grand_total = res;
-           //console.log(res);
-         //}
+      let res = parseFloat(sub_total) + parseFloat(ppn) - parseFloat(pph);
+      //console.log(res);
+      this.grand_total = res;
+      //console.log(res);
+      //}
     },
-    reset: function (){
-        this.sub_total = 0;
-        this.pph = 0;
-        this.ppn = 0;
-        this.grand_total = 0;
+    reset: function () {
+      this.sub_total = 0;
+      this.pph = 0;
+      this.ppn = 0;
+      this.grand_total = 0;
     },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
@@ -495,6 +500,10 @@ export default {
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
+      if (this.grand_total == 0 || this.sub_total == 0 || this.ppn == 0) {
+        this.pageFlashes.danger = "Please fill data completely!";
+        return;
+      }
       if (!this.submitState) {
         console.log("data = ", this.dataFormula.Sheet1.length);
         let newData = {};
