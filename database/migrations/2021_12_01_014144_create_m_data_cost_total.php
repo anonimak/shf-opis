@@ -14,6 +14,7 @@ class CreateMDataCostTotal extends Migration
     public function up()
     {
         Schema::create('m_data_cost_total', function (Blueprint $table) {
+            $table->engine = 'MyISAM';
             $table->id();
             $table->unsignedBigInteger('id_memo');
             $table->decimal('sub_total', 19, 2)->default(0);

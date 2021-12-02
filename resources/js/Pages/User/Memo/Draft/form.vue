@@ -233,6 +233,7 @@
                       <b-form-input
                         aria-label="ppn"
                         v-model="ppn"
+                        disabled
                       ></b-form-input>
                       <b-input-group-append>
                         <b-button
