@@ -177,6 +177,9 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -212,6 +215,9 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -246,6 +252,9 @@ class Memo extends Model
             // }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
+            }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
             }])
             ->where('id', $id)->first();
     }
