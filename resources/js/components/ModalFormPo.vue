@@ -153,7 +153,7 @@ export default {
       //   this.isTableApproverbusy = true;
       console.log("submit");
       if (this.form.name == null || this.form.address == null) {
-        this.pageFlashes.danger = "Please fill payment data!";
+        this.pageFlashes.danger = "Please fill vendor data!";
         return;
       }
         this.isSubmitbusy = true;
