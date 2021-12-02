@@ -156,25 +156,35 @@
 
             </tbody>
         </table>
-        <table style="width: 50%; position: relative; left: 365px;">
+        <table style="width: 30%; position: relative; left: 511px;">
             <tbody>
                 <tr>
-                    <th style="width: 50%;">Sub Total</th>
-                    <td>{{ number_format($dataTotalCost['sub_total'], 2) }}</td>
+                    <th style="width: 38%; text-align: left;">Sub Total</th>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['sub_total'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
-                    <th style="width: 50%;">Pph23 (2%)</th>
-                    <td>{{ number_format($dataTotalCost['pph'], 2) }}</td>
-
+                    <th style="width: 38%; text-align: left;">Pph23 (2%)</th>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['pph'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
-                    <th style="width: 50%;">PPN (10%)</th>
-                    <td>{{ number_format($dataTotalCost['ppn'], 2) }}</td>
-
+                    <th style="width: 38%; text-align: left;">PPN (10%)</th>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['ppn'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
-                    <th style="width: 50%;">Grand Total</th>
-                    <td>{{ number_format($dataTotalCost['grand_total'], 2) }}</td>
+                    <th style="width: 38%; text-align: left;">Grand Total</th>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['grand_total'], 2) }}</div>
+                    </td>
                 </tr>
             </tbody>
     </table>
