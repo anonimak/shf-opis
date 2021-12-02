@@ -177,6 +177,9 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -212,6 +215,9 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -246,6 +252,9 @@ class Memo extends Model
             // }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
+            }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
             }])
             ->where('id', $id)->first();
     }
@@ -284,6 +293,9 @@ class Memo extends Model
             }])->with(['approver' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -321,6 +333,9 @@ class Memo extends Model
             }])->with(['approverPayment' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
             }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
+            }])
             ->where('id', $id)->first();
     }
 
@@ -357,6 +372,9 @@ class Memo extends Model
                 return $history->orderBy('id', 'DESC');
             }])->with(['approverPo' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
+            }])
+            ->with(['ref_table' => function($reftable){
+                return $reftable;
             }])
             ->where('id', $id)->first();
     }
