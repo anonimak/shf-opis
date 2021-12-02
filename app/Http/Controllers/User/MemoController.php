@@ -668,11 +668,11 @@ class MemoController extends Controller
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
         // kirim email ke tiap acknowlegde
 
-        // return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit PO.");
-        return response()->json([
-            'status' => 200,
-            'message' => 'Successfull add data vendor',
-        ]);
+        return Redirect::route('user.memo.statuspo.index')->with('success', "Successfull submit PO.");
+        // return response()->json([
+        //     'status' => 200,
+        //     'message' => 'Successfull add data vendor',
+        // ]);
     }
 
     public function fileUploadAttach(Request $request, $id)
