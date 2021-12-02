@@ -28,13 +28,13 @@
       />
     </b-overlay>
     <b-overlay
-    :show="isModalformbusy"
+      :show="isModalformbusy"
       opacity="0.6"
       spinner-small
       spinner-variant="primary"
     >
-    <h5 class="ml-3">Vendor</h5>
-    <b-form ref="form">
+      <h5 class="ml-3">Vendor</h5>
+      <b-form ref="form">
         <b-card-body>
           <b-col col lg="7" md="auto">
             <b-form-group
@@ -99,10 +99,10 @@ export default {
   },
   data() {
     return {
-        form: {
-            name: null,
-            address: null,
-        },
+      form: {
+        name: null,
+        address: null,
+      },
       modalTitle: "",
       dataPositions: [],
       dataApprovers: [],
@@ -112,9 +112,9 @@ export default {
       url_approvers_po: "user.api.po.approvers",
       id_memo: null,
       isTableApproverbusy: false,
-      isModalformbusy:false,
+      isModalformbusy: false,
       isSubmitbusy: false,
-      errors:{}
+      errors: {},
     };
   },
   methods: {
@@ -148,34 +148,42 @@ export default {
       this.handleSubmit();
     },
     handleSubmit() {
+      //   console.log("submit");
+      //   this.isSubmitbusy = true;
+      //   this.isTableApproverbusy = true;
       console.log("submit");
-      this.isSubmitbusy = true;
-      this.isTableApproverbusy = true;
-      axios.put(route(this.proposeLink, this.indexMemo),this.form)
-        .then((response)=> {
-            this.errors = {};
-            this.form = [];
-            this.isTableApproverbusy = false;
-            this.isSubmitbusy = false;
-            if (Object.entries(this.errors).length === 0) {
-            console.log("no error");
-            this.$nextTick(() => {
-              this.$bvModal.hide("modal-propose-po");
-            });
-          }
-            if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
-          } else {
-            this.pageFlashes.success = response.data.message;
-          }
-        })
-        .catch((error) => {
-            if (error.response) {
-                this.isTableApproverbusy = false;
-                this.isSubmitbusy = false;
-                this.errors = {...error.response.data.errors};
-            }
-        });
+      if (this.form.name == null || this.form.address == null) {
+        this.pageFlashes.danger = "Please fill vendor data!";
+        return;
+      }
+        this.isSubmitbusy = true;
+        this.isTableApproverbusy = true;
+        this.$inertia.put(route(this.proposeLink, this.indexMemo), this.form);
+      //   axios.put(route(this.proposeLink, this.indexMemo),this.form)
+      //     .then((response)=> {
+      //         this.errors = {};
+      //         this.form = [];
+      //         this.isTableApproverbusy = false;
+      //         this.isSubmitbusy = false;
+      //         if (Object.entries(this.errors).length === 0) {
+      //         console.log("no error");
+      //         this.$nextTick(() => {
+      //           this.$bvModal.hide("modal-propose-po");
+      //         });
+      //       }
+      //         if (response.data.status == 200) {
+      //         this.pageFlashes.success = response.data.message;
+      //       } else {
+      //         this.pageFlashes.success = response.data.message;
+      //       }
+      //     })
+      //     .catch((error) => {
+      //         if (error.response) {
+      //             this.isTableApproverbusy = false;
+      //             this.isSubmitbusy = false;
+      //             this.errors = {...error.response.data.errors};
+      //         }
+      //     });
     },
 
     beforeSaveEditApprover() {
@@ -183,11 +191,9 @@ export default {
     },
 
     onSaveEditApprover(response) {
-        Promise.all([
-        this.getDataApproversPo(),
-        ]).then((results) => {
-            this.isTableApproverbusy = false;
-            this.dataApprovers = results[0].data;
+      Promise.all([this.getDataApproversPo()]).then((results) => {
+        this.isTableApproverbusy = false;
+        this.dataApprovers = results[0].data;
         //console.log(results);
       });
     },
