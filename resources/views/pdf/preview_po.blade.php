@@ -160,21 +160,31 @@
             <tbody>
                 <tr>
                     <th style="width: 38%; text-align: left;">Sub Total</th>
-                    <td style="text-align: right;">{{ number_format($dataTotalCost['sub_total'], 2) }}</td>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['sub_total'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width: 38%; text-align: left;">Pph23 (2%)</th>
-                    <td style="text-align: right;">{{ number_format($dataTotalCost['pph'], 2) }}</td>
-
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['pph'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width: 38%; text-align: left;">PPN (10%)</th>
-                    <td style="text-align: right;">{{ number_format($dataTotalCost['ppn'], 2) }}</td>
-
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['ppn'], 2) }}</div>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width: 38%; text-align: left;">Grand Total</th>
-                    <td style="text-align: right;">{{ number_format($dataTotalCost['grand_total'], 2) }}</td>
+                    <td nowrap>
+                        <div style="float: left;">Rp</div>
+                        <div style="float: right;">{{ number_format($dataTotalCost['grand_total'], 2) }}</div>
+                    </td>
                 </tr>
             </tbody>
     </table>
