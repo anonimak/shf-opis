@@ -87,7 +87,7 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'branch'         => 'required',
-            'title'          => 'required',
+            'title'          => 'nullable',
             'firstname'         => 'required|max:30',
             'lastname'          => 'required|max:30',
             'gender'            => 'required',
