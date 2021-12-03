@@ -63,17 +63,19 @@
               :invalid-feedback="errors.address ? errors.address[0] : ''"
               :state="errors.address ? false : null"
             >
-              <b-form-input
-                id="input-title"
+              <b-form-textarea
+                id="textarea"
                 type="text"
                 name="address"
                 v-model="form.address"
                 placeholder="Vendor Address"
                 :state="errors.address ? false : null"
+                rows="3"
+                max-rows="6"
                 trim
                 required
                 :disabled="isSubmitbusy"
-              ></b-form-input>
+              ></b-form-textarea>
             </b-form-group>
           </b-col>
         </b-card-body>
