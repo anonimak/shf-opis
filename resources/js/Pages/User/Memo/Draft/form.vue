@@ -239,7 +239,7 @@
                       :value="true"
                       :unchecked-value="false"
                     >
-                      included with sub total
+                      included with PPN
                     </b-form-checkbox>
                     <b-input-group prepend="Grand Total" class="mb-2 mt-2">
                       <b-form-input
