@@ -45,7 +45,7 @@
                         <b-badge
                           v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
-                          >Memo Payment Revisi</b-badge
+                          >Memo Payment Revised</b-badge
                         >
                       </td>
                     </tr>
@@ -128,7 +128,7 @@
                         <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
-                          >Revisi</b-badge
+                          >Revised</b-badge
                         >
                       </td>
                       <td>

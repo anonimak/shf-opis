@@ -45,7 +45,7 @@
                         <b-badge
                           v-if="dataMemo.status == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Memo Revised</b-badge
                         >
                       </td>
                     </tr>
@@ -146,7 +146,7 @@
                         <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
-                          >Revisi</b-badge
+                          >Revised</b-badge
                         >
                       </td>
                       <td>

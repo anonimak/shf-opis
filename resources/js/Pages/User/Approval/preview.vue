@@ -26,7 +26,7 @@
                   <b-button
                     @click="actionRevisi(dataMemo.approver.id)"
                     variant="secondary"
-                    >Revisi</b-button
+                    >Revision</b-button
                   >
                   <b-button
                     @click="actionReject(dataMemo.approver.id)"
@@ -79,7 +79,7 @@
                         <b-badge
                           v-if="dataMemo.status == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Memo Revised</b-badge
                         >
                       </td>
                     </tr>
@@ -180,7 +180,7 @@
                         <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
-                          >Revisi</b-badge
+                          >Revised</b-badge
                         >
                       </td>
                       <td>
@@ -355,8 +355,8 @@ export default {
     actionRevisi(id) {
       this.buttonClicked = "revisi";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

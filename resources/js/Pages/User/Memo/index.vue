@@ -47,7 +47,7 @@
                     </b-tab>
                     <b-tab>
                       <template #title>
-                        Revisi
+                        Revised
                         <b-badge v-if="counttab.revisi > 0" variant="primary">{{
                           counttab.revisi
                         }}</b-badge>
