@@ -239,7 +239,7 @@
                       :value="true"
                       :unchecked-value="false"
                     >
-                      included PPN with Sub Total
+                      Not included PPN
                     </b-form-checkbox>
                     <b-input-group prepend="Grand Total" class="mb-2 mt-2">
                       <b-form-input
@@ -404,6 +404,8 @@ export default {
       } else {
         this.ppn = 0.1 * parseFloat(this.sub_total);
       }
+      this.grand_total =
+        parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(this.pph);
     },
     dataMemo: function (val) {
       this.fillForm();
