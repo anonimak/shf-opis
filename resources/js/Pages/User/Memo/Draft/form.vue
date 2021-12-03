@@ -500,7 +500,7 @@ export default {
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
-      if (this.grand_total == 0 || this.sub_total == 0 || this.ppn == 0) {
+      if (this.grand_total == 0 || this.sub_total == 0) {
         this.pageFlashes.danger = "Please fill data completely!";
         return;
       }
