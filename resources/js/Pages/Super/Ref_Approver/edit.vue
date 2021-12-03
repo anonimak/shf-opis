@@ -31,11 +31,11 @@
                 <b-form-group id="input-group-name" label-for="input-name">
                   <v-select
                     class="mb-3"
-                    label="position_name"
+                    :label="getOptionLabel"
                     placeholder="-- Add Position Role --"
                     :options="dataPosition"
                     v-model="selected"
-                    :reduce="(position) => position.id"
+                    :reduce="(position) => position.id_position"
                     @option:selected="selecting"
                   ></v-select>
                 </b-form-group>
@@ -105,6 +105,12 @@ export default {
     this.fillForm();
   },
   methods: {
+    getOptionLabel(option) {
+      let firstname = option.employee ? option.employee.firstname : "";
+      let lastname = option.employee ? option.employee.lastname : "";
+
+      return option.position.position_name + " - " + firstname + " " + lastname;
+    },
     fillForm() {
       this.form = { ...this.dataRef_Approver };
     },
