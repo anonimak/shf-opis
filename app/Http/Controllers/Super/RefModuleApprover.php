@@ -94,7 +94,7 @@ class RefModuleApprover extends Controller
             foreach ($request->input('detailApprover') as $key => $value) {
                 Ref_DetailApprover::create([
                     'id_ref_module_approver' => $refapprover->id,
-                    'id_ref_position'   =>  $value['id'],
+                    'id_ref_position'   =>  $value['id_position'],
                     'idx' => $key + 1
                 ]);
             }

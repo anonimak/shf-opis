@@ -31,7 +31,7 @@
                 <b-form-group id="input-group-name" label-for="input-name">
                   <v-select
                     class="mb-3"
-                    :label="getOptionLabel"
+                    :get-option-label="getOptionLabel"
                     placeholder="-- Add Position Role --"
                     :options="dataPosition"
                     v-model="selected"
@@ -123,14 +123,14 @@ export default {
       }
     },
     selecting(selectedOption) {
-      console.log(selectedOption);
+    //  console.log(selectedOption);
       this.addItem(selectedOption);
       this.selected = null;
     },
     addItem: function (item) {
       let id = this.form.detail_approver.find((data) => {
-        console.log(item.id, data.id_ref_position);
-        return item.id === data.id_ref_position;
+       // console.log(item.id_position, data.id_ref_position);
+        return item.id_position === data.id_ref_position;
       });
       if (id !== undefined) {
         return;
@@ -138,14 +138,17 @@ export default {
 
       let new_detail_approver = {
         id_ref_module_approver: this.form.id,
-        id_ref_position: item.id,
-        position: item,
+        id_ref_position: item.id_position,
+        position: item.position,
       };
+
+     // console.log(new_detail_approver)
 
       this.form.detail_approver = [
         ...this.form.detail_approver,
         new_detail_approver,
       ];
+     // console.log(this.form.detail_approver)
     },
     removeAt(idx) {
       this.form.detail_approver.splice(idx, 1);

@@ -31,7 +31,7 @@
                 <b-form-group id="input-group-name" label-for="input-name">
                   <v-select
                     class="mb-3"
-                    :label="getOptionLabel"
+                    :get-option-label="getOptionLabel"
                     placeholder="-- Add Position Role --"
                     :options="dataPosition"
                     v-model="selected"
@@ -50,10 +50,10 @@
                   <b-list-group-item
                     class="handle"
                     v-for="(element, idx) in form.detailApprover"
-                    :key="element.position_name"
+                    :key="element.position.position_name"
                   >
                     <i class="fa fa-align-justify handle"></i>
-                    {{ element.position_name }}
+                    {{ element.position.position_name }}
                     <i class="fa fa-times close" @click="removeAt(idx)"></i>
                   </b-list-group-item>
                 </draggable>
