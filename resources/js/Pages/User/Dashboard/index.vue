@@ -91,7 +91,7 @@
                       <b-badge
                         v-if="dataMemo.status == 'revisi'"
                         variant="secondary"
-                        >Memo Revisi</b-badge
+                        >Memo Revised</b-badge
                       >
                       <p v-if="dataMemo.latest_history" class="text-muted">
                         <small>
