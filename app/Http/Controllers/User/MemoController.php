@@ -929,6 +929,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
@@ -951,6 +952,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments
@@ -1010,6 +1012,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
 
         return Inertia::render('User/Status_Payment_Takeover_Branch/preview', [
             'breadcrumbItems' => array(
@@ -1032,6 +1035,7 @@ class MemoController extends Controller
                 ]
             ),
             'dataMemo' => $memo,
+            'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,

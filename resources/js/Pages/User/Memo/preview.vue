@@ -237,32 +237,40 @@
                 <b-table bordered :items="memocost"></b-table> </b-col
             ></b-row>
             <b-row class="mb-2" v-if="dataMemo.ref_table.with_payment == true || dataMemo.ref_table.with_po == true">
-              <b-col>
-                <table class="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th style="width: 50%">Sub Total</th>
-                      <td>
-                        {{ Number(dataTotalCost.sub_total).toLocaleString() }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">Pph23 (2%)</th>
-                      <td>{{ Number(dataTotalCost.pph).toLocaleString() }}</td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">PPN (10%)</th>
-                      <td>{{ Number(dataTotalCost.ppn).toLocaleString() }}</td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">Grand Total</th>
-                      <td>
-                        {{ Number(dataTotalCost.grand_total).toLocaleString() }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </b-col>
+                <b-col>
+                    <table class="table table-stripped table-bordered">
+                        <tbody>
+                            <tr>
+                                <th style="width: 50%">Sub Total</th>
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">Pph23 (2%) </th>
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">PPN (10%) </th>
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%">Grand Total </th>
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </b-col>
             </b-row>
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"

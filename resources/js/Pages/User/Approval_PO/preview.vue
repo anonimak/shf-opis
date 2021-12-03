@@ -227,27 +227,31 @@
                     <table class="table table-stripped table-bordered">
                         <tbody>
                             <tr>
-                                <th style="width: 50%">Sub Total </th>
-                                <td>
-                                    {{ Number(dataTotalCost.sub_total).toLocaleString() }}
+                                <th style="width: 50%">Sub Total</th>
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Pph23 (2%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.pph).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">PPN (10%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Grand Total </th>
-                                <td>
-                                    {{ Number(dataTotalCost.grand_total).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
                                 </td>
                             </tr>
                         </tbody>
