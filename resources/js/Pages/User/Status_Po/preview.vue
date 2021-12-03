@@ -42,11 +42,11 @@
                           variant="danger"
                           >Purchase Order Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="dataMemo.status_po == 'revisi'"
                           variant="secondary"
                           >Purchase Order Revisi</b-badge
-                        >
+                        > -->
                       </td>
                     </tr>
                     <tr>
@@ -143,11 +143,11 @@
                           variant="danger"
                           >Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
                           >Revisi</b-badge
-                        >
+                        > -->
                       </td>
                       <td>
                         <p v-if="approver.msg">{{ approver.msg }}</p>

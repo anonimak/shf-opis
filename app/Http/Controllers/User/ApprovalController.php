@@ -307,15 +307,15 @@ class ApprovalController extends Controller
             Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
             // insert to history when revisi by approver
             D_Memo_History::create([
-                'title'     => "Memo Revisi",
+                'title'     => "Memo Revised",
                 'id_memo'   => $memo->id,
                 'type'      => 'warning',
-                'content'   => "Memo {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'content'   => "Memo {$memo->doc_no} has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
-                'subject' => "Memo $memo->doc_no revisi",
-                'message' => "Memo $memo->doc_no has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo $memo->doc_no revised",
+                'message' => "Memo $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -448,15 +448,15 @@ class ApprovalController extends Controller
             Memo::where('id', $approver->id_memo)->update(['status_payment' => 'revisi']);
             // insert to history when revisi by approver
             D_Memo_History::create([
-                'title'     => "Memo Payment Revisi",
+                'title'     => "Memo Payment Revised",
                 'id_memo'   => $memo->id,
                 'type'      => 'warning',
-                'content'   => "Memo Payment {$memo->doc_no} has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'content'   => "Memo Payment {$memo->doc_no} has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
-                'subject' => "Memo Payment $memo->doc_no revisi",
-                'message' => "Memo Payment $memo->doc_no has revisi by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo Payment $memo->doc_no revised",
+                'message' => "Memo Payment $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
