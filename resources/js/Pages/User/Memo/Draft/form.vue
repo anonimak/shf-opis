@@ -500,9 +500,14 @@ export default {
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
-      if (this.grand_total == 0 || this.sub_total == 0) {
-        this.pageFlashes.danger = "Please fill data completely!";
-        return;
+      if (
+        this.dataMemoType.ref_table.with_po == 1 ||
+        this.dataMemoType.ref_table.with_payment == 1
+      ) {
+        if (this.grand_total == 0 || this.sub_total == 0) {
+          this.pageFlashes.danger = "Please fill data completely!";
+          return;
+        }
       }
       if (!this.submitState) {
         console.log("data = ", this.dataFormula.Sheet1.length);
