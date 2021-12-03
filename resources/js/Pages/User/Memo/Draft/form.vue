@@ -239,7 +239,7 @@
                       :value="true"
                       :unchecked-value="false"
                     >
-                      included with sub total
+                      PPN included with sub total
                     </b-form-checkbox>
                     <b-input-group prepend="Grand Total" class="mb-2 mt-2">
                       <b-form-input
@@ -385,7 +385,7 @@ export default {
       if (!val) {
         val = 0;
       }
-      this.ppn = 0.1 * parseFloat(val);
+      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
       this.pph = 0.02 * parseFloat(val);
       this.grand_total =
         parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
@@ -404,6 +404,11 @@ export default {
       } else {
         this.ppn = 0.1 * parseFloat(this.sub_total);
       }
+
+      this.grand_total =
+        parseFloat(this.sub_total) +
+        parseFloat(this.ppn) -
+        parseFloat(this.pph);
     },
     dataMemo: function (val) {
       this.fillForm();
@@ -414,10 +419,11 @@ export default {
   },
   methods: {
     reset: function () {
-      this.sub_total = 0;
-      this.pph = 0;
-      this.ppn = 0;
-      this.grand_total = 0;
+      this.sub_total = this.dataTotalCost.sub_total;
+      this.pph = this.dataTotalCost.pph;
+      this.ppn = this.dataTotalCost.ppn;
+      this.grand_total = this.dataTotalCost.grand_total;
+      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
@@ -489,6 +495,7 @@ export default {
       this.pph = this.dataTotalCost.pph;
       this.ppn = this.dataTotalCost.ppn;
       this.grand_total = this.dataTotalCost.grand_total;
+      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
