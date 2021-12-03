@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Super;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee_History;
 use App\Models\Ref_Module_Approver as Ref_Approver;
 use App\Models\Ref_Module_Approver_Detail as Ref_DetailApprover;
 use App\Models\Ref_Position;
@@ -49,6 +50,10 @@ class RefModuleApprover extends Controller
      */
     public function create()
     {
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
         return Inertia::render('Super/Ref_Approver/create', [
             'breadcrumbItems' => array(
                 [
@@ -65,7 +70,7 @@ class RefModuleApprover extends Controller
                     'active'  => true
                 ]
             ),
-            'dataPosition' => Ref_Position::select('id', 'position_name')->get(),
+            'dataPosition' => $positions,
             '_token' => csrf_token(),
             '__store'  => 'super.ref_approver.store',
         ]);
@@ -89,7 +94,7 @@ class RefModuleApprover extends Controller
             foreach ($request->input('detailApprover') as $key => $value) {
                 Ref_DetailApprover::create([
                     'id_ref_module_approver' => $refapprover->id,
-                    'id_ref_position'   =>  $value['id'],
+                    'id_ref_position'   =>  $value['id_position'],
                     'idx' => $key + 1
                 ]);
             }
@@ -116,6 +121,11 @@ class RefModuleApprover extends Controller
      */
     public function edit($id)
     {
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
+
         $refapprover = Ref_Approver::where('id', $id)->with(['detailApprover' => function ($query) {
             return $query->select('id_ref_module_approver', 'id_ref_position')->with(['position' => function ($q) {
                 return $q->select('id', 'position_name');
@@ -138,7 +148,7 @@ class RefModuleApprover extends Controller
                 ]
             ),
             'dataRef_Approver'      => $refapprover,
-            'dataPosition' => Ref_Position::select('id', 'position_name')->get(),
+            'dataPosition' => $positions,
             '_token'        => csrf_token(),
             '__create'      => 'super.ref_approver.create',
             '__update'      => 'super.ref_approver.update',

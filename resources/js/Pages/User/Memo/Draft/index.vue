@@ -55,7 +55,7 @@
                           <td>
                             {{ item.title }}
                             <b-badge v-if="item.latest_history" variant="warning">
-                              revisi
+                              revised
                             </b-badge>
                           </td>
                           <td>

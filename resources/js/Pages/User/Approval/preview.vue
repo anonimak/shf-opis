@@ -26,7 +26,7 @@
                   <b-button
                     @click="actionRevisi(dataMemo.approver.id)"
                     variant="secondary"
-                    >Revisi</b-button
+                    >Revision</b-button
                   >
                   <b-button
                     @click="actionReject(dataMemo.approver.id)"
@@ -79,7 +79,7 @@
                         <b-badge
                           v-if="dataMemo.status == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
+                          >Memo Revised</b-badge
                         >
                       </td>
                     </tr>
@@ -180,7 +180,7 @@
                         <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
-                          >Revisi</b-badge
+                          >Revised</b-badge
                         >
                       </td>
                       <td>
@@ -228,26 +228,30 @@
                         <tbody>
                             <tr>
                                 <th style="width: 50%">Sub Total</th>
-                                <td>
-                                    {{ Number(dataTotalCost.sub_total).toLocaleString()}}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Pph23 (2%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.pph).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">PPN (10%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Grand Total </th>
-                                <td>
-                                    {{ Number(dataTotalCost.grand_total).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
                                 </td>
                             </tr>
                         </tbody>
@@ -355,8 +359,8 @@ export default {
     actionRevisi(id) {
       this.buttonClicked = "revisi";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

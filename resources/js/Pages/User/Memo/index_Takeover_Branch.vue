@@ -56,7 +56,7 @@
                               {{
                                 item.proposeemployee.firstname +
                                 " " +
-                                item.proposeemployee.firstname
+                                item.proposeemployee.lastname
                               }}
                             </td>
                             <td>

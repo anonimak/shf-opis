@@ -219,52 +219,34 @@
                         v-model="sub_total"
                       ></b-form-input>
                     </b-input-group>
-                    <b-input-group prepend="Pph23 (2%) x" class="mb-2 mt-2">
+                    <b-input-group prepend="Pph23 (2%)" class="mb-2 mt-2">
                       <b-form-input
                         aria-label="pph23"
                         v-model="pph"
                       ></b-form-input>
-                      <b-input-group-append>
-                        <b-button
-                          size="sm"
-                          text="Button"
-                          variant="success"
-                          @click="actionPph(pph)"
-                          >Calculate Pph23</b-button
-                        >
-                      </b-input-group-append>
                     </b-input-group>
-                    <b-input-group prepend="PPN (10%) x" class="mb-2 mt-2">
+                    <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
                       <b-form-input
+                        disabled
                         aria-label="ppn"
                         v-model="ppn"
-                        disabled
                       ></b-form-input>
-                      <b-input-group-append>
-                        <b-button
-                          size="sm"
-                          text="Button"
-                          variant="success"
-                          @click="actionPpn(sub_total)"
-                          >Calculate PPN</b-button
-                        >
-                      </b-input-group-append>
                     </b-input-group>
+                    <b-form-checkbox
+                      id="checkbox-1"
+                      v-model="checkPPNInclude"
+                      name="checkbox-1"
+                      :value="true"
+                      :unchecked-value="false"
+                    >
+                      PPN included with sub total
+                    </b-form-checkbox>
                     <b-input-group prepend="Grand Total" class="mb-2 mt-2">
                       <b-form-input
                         aria-label="grand_total"
                         v-model="grand_total"
                         disabled
                       ></b-form-input>
-                      <b-input-group-append>
-                        <b-button
-                          size="sm"
-                          text="Button"
-                          variant="success"
-                          @click="actionGTotal(sub_total, pph, ppn)"
-                          >Calculate Grand Total</b-button
-                        >
-                      </b-input-group-append>
                     </b-input-group>
                     <b-button
                       size="sm"
@@ -342,6 +324,7 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       // selectedAcknowledge: null,
+      checkPPNInclude: false,
       sub_total: 0,
       pph: 0,
       ppn: 0,
@@ -398,6 +381,32 @@ export default {
     }
   },
   watch: {
+    sub_total: function (val) {
+      if (!val) {
+        val = 0;
+      }
+      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
+      this.pph = 0.02 * parseFloat(val);
+      this.grand_total =
+        parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
+    },
+    pph: function (val) {
+      if (!val || !this.sub_total) {
+        val = 0;
+        this.sub_total = 0;
+      }
+      this.grand_total =
+        parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(val);
+    },
+    checkPPNInclude: function (val) {
+      if (val) {
+        this.ppn = 0;
+      } else {
+        this.ppn = 0.1 * parseFloat(this.sub_total);
+      }
+      this.grand_total =
+        parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(this.pph);
+    },
     dataMemo: function (val) {
       this.fillForm();
     },
@@ -406,26 +415,12 @@ export default {
     },
   },
   methods: {
-    actionPph: function (val) {
-      let res = 0.02 * parseFloat(val);
-      this.pph = res;
-    },
-    actionPpn: function (val) {
-      let res = 0.1 * parseFloat(val);
-      this.ppn = res;
-    },
-    actionGTotal: function (sub_total, pph, ppn) {
-      let res = parseFloat(sub_total) + parseFloat(ppn) - parseFloat(pph);
-      //console.log(res);
-      this.grand_total = res;
-      //console.log(res);
-      //}
-    },
     reset: function () {
-      this.sub_total = 0;
-      this.pph = 0;
-      this.ppn = 0;
-      this.grand_total = 0;
+      this.sub_total = this.dataTotalCost.sub_total;
+      this.pph = this.dataTotalCost.pph;
+      this.ppn = this.dataTotalCost.ppn;
+      this.grand_total = this.dataTotalCost.grand_total;
+      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
@@ -497,12 +492,18 @@ export default {
       this.pph = this.dataTotalCost.pph;
       this.ppn = this.dataTotalCost.ppn;
       this.grand_total = this.dataTotalCost.grand_total;
+      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
-      if (this.grand_total == 0 || this.sub_total == 0 || this.ppn == 0) {
-        this.pageFlashes.danger = "Please fill data completely!";
-        return;
+      if (
+        this.dataMemoType.ref_table.with_po == 1 ||
+        this.dataMemoType.ref_table.with_payment == 1
+      ) {
+        if (this.grand_total == 0 || this.sub_total == 0) {
+          this.pageFlashes.danger = "Please fill data completely!";
+          return;
+        }
       }
       if (!this.submitState) {
         console.log("data = ", this.dataFormula.Sheet1.length);

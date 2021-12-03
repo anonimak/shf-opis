@@ -35,18 +35,18 @@
                         <b-badge
                           v-if="dataMemo.status_payment == 'approve'"
                           variant="success"
-                          >Memo Approved</b-badge
+                          >Memo Payment Approved</b-badge
                         >
                         <b-badge
                           v-if="dataMemo.status_payment == 'reject'"
                           variant="danger"
-                          >Memo Rejected</b-badge
+                          >Memo Payment Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
                           >Memo Revisi</b-badge
-                        >
+                        > -->
                       </td>
                     </tr>
                     <tr>
@@ -143,11 +143,11 @@
                           variant="danger"
                           >Rejected</b-badge
                         >
-                        <b-badge
+                        <!-- <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
                           >Revisi</b-badge
-                        >
+                        > -->
                       </td>
                       <td>
                         <p v-if="approver.msg">{{ approver.msg }}</p>
@@ -242,26 +242,30 @@
                         <tbody>
                             <tr>
                                 <th style="width: 50%">Sub Total</th>
-                                <td>
-                                    {{ Number(dataTotalCost.sub_total).toLocaleString()}}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Pph23 (2%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.pph).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">PPN (10%) </th>
-                                <td>
-                                    {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
                                 </td>
                             </tr>
                             <tr>
                                 <th style="width: 50%">Grand Total </th>
-                                <td>
-                                    {{ Number(dataTotalCost.grand_total).toLocaleString() }}
+                                <td nowrap>
+                                    <div style="float: left;">Rp</div>
+                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
                                 </td>
                             </tr>
                         </tbody>

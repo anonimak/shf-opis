@@ -59,7 +59,7 @@
                             <b-button
                               @click="actionRevisi(item.id_approver)"
                               variant="secondary"
-                              >Revisi</b-button
+                              >Revision</b-button
                             >
                             <b-button
                               @click="actionReject(item.id_approver)"
@@ -164,8 +164,8 @@ export default {
     actionRevisi(id) {
       this.buttonClicked = "revisi";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Revisi";
-      this.modalCaption = "Are you sure to revisi?";
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
