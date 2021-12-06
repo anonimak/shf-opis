@@ -49,6 +49,25 @@
                 </b-form-group>
                 <b-form-group
                   id="input-group-title"
+                  label="Branch:"
+                  label-for="input-title"
+                  :invalid-feedback="
+                    errors.id_branch ? errors.id_branch[0] : ''
+                  "
+                  :state="errors.id_branch ? false : null"
+                >
+                  <v-select
+                    placeholder="-- Select Branch --"
+                    label="branch_name"
+                    :options="dataBranches"
+                    v-model="form.id_branch"
+                    :reduce="(branch) => branch.id"
+                    :required="!form.id_branch"
+                  >
+                  </v-select>
+                </b-form-group>
+                <b-form-group
+                  id="input-group-title"
                   label="Role Module Approver:"
                   label-for="input-title"
                   :invalid-feedback="
@@ -130,6 +149,7 @@ export default {
     "notif",
     "breadcrumbItems",
     "dataDepartments",
+    "dataBranches",
     "dataRefModuleApprovers",
     "dataEmployee",
     "errors",
@@ -147,6 +167,7 @@ export default {
         name: "",
         refmoduleapprover: null,
         id_overtake: null,
+        id_branch: null,
         department: null,
         with_po: false,
         with_payment: false,

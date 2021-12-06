@@ -259,6 +259,12 @@ class MemoController extends Controller
     public function create()
     {
         $employeeInfo = User::getUsersEmployeeInfo();
+        $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
+        if (!$isHeadOffice) {
+            $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orWhere('id_branch', $employeeInfo->employee->position_now->branch->id)->orderBy('id', 'desc')->get();
+        } else {
+            $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
+        }
         return Inertia::render('User/Memo/create', [
             'breadcrumbItems' => array(
                 [
@@ -277,7 +283,7 @@ class MemoController extends Controller
             ),
             '_token' => csrf_token(),
             '__store'  => 'user.memo.store',
-            'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
+            'dataTypeMemo'  => $dataTypeMemo,
         ]);
     }
 
@@ -285,7 +291,7 @@ class MemoController extends Controller
     {
         $memo = Memo::getMemoDetailDraftEdit($id);
         $employeeInfo = User::getUsersEmployeeInfo();
-        $memoType = Memo::select('*')->where('id','=', $id)->with('ref_table')->first();
+        $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -312,7 +318,7 @@ class MemoController extends Controller
             ];
         });
 
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Memo/Draft/form', [
             'breadcrumbItems' => array(
@@ -365,7 +371,7 @@ class MemoController extends Controller
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
 
-        M_Data_Cost_Total::where('id_memo',$id)->update([
+        M_Data_Cost_Total::where('id_memo', $id)->update([
             'id_memo' => $id,
             'sub_total' => $request->input('sub_total'),
             'pph' => $request->input('pph'),
@@ -393,12 +399,12 @@ class MemoController extends Controller
             'id_employee2'          => $typeMemo->id_overtake_memo
         ]);
 
-        M_Data_Cost_Total::create ([
+        M_Data_Cost_Total::create([
             'id_memo' => $memo->id,
             'sub_total' => 0,
             'pph' => 0,
             'ppn' => 0,
-            'grand_total' =>0
+            'grand_total' => 0
         ]);
 
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
@@ -830,7 +836,7 @@ class MemoController extends Controller
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
         //ddd($dataPayments->payments);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -862,7 +868,7 @@ class MemoController extends Controller
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
         $memocost = (array) json_decode($memo->cost);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -889,7 +895,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
@@ -929,7 +935,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Memo/preview', [
             'breadcrumbItems' => array(
@@ -970,7 +976,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Status_Payment/preview', [
             'breadcrumbItems' => array(
@@ -1012,7 +1018,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Status_Payment_Takeover_Branch/preview', [
             'breadcrumbItems' => array(
@@ -1053,7 +1059,7 @@ class MemoController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Status_Po/preview', [
             'breadcrumbItems' => array(
