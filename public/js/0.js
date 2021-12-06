@@ -854,11 +854,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -973,7 +968,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       })["catch"](function (error) {
         if (error.response) {
-          _this4.errors = _objectSpread({}, error.response.data.errors); //console.log(error.response.data);
+          _this4.errors = _objectSpread({}, error.response.data.errors);
+          console.log(error.response.data);
         }
       });
     },
@@ -985,8 +981,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       Promise.all([this.getDataPositions(), this.getDataApproversPayment(), this.getDataApprovers(), this.getDataPayments()]).then(function (results) {
         _this5.isTableApproverbusy = false;
         _this5.dataPositions = results[0].data;
-        _this5.dataApprovers = results[1].data.length > 0 ? results[1].data : results[2].data; //console.log(results);
-
+        _this5.dataApprovers = results[1].data.length > 0 ? results[1].data : results[2].data;
+        console.log(results);
         _this5.dataPayments = results[3].data;
       }); // this.getDataPositions();
       // this.getDataApprovers();
@@ -12852,73 +12848,27 @@ var render = function() {
                                 )
                               }
                             }
-                          })
-                        ])
-                      : _c("td", [_vm._v(_vm._s(item.bank_account))]),
-                    _vm._v(" "),
-                    _vm.isFormPaymentEdited && _vm.activeIndex == index
-                      ? _c("td", [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.activeItemPayment.amount,
-                                expression: "activeItemPayment.amount"
-                              }
-                            ],
-                            attrs: { type: "text", name: "amount" },
-                            domProps: { value: _vm.activeItemPayment.amount },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.activeItemPayment,
-                                  "amount",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          })
-                        ])
-                      : _c("td", [
-                          _vm._v(_vm._s(Number(item.amount).toLocaleString()))
-                        ]),
-                    _vm._v(" "),
-                    _vm.isFormPaymentEdited && _vm.activeIndex == index
-                      ? _c("td", [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.activeItemPayment.remark,
-                                expression: "activeItemPayment.remark"
-                              }
-                            ],
-                            attrs: { type: "text", name: "remark" },
-                            domProps: { value: _vm.activeItemPayment.remark },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.activeItemPayment,
-                                  "remark",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          })
-                        ])
-                      : _c("td", [_vm._v(_vm._s(item.remark))]),
-                    _vm._v(" "),
-                    _vm.isFormPaymentEdited && _vm.activeIndex == index
-                      ? _c(
-                          "td",
+                          },
+                          [_vm._v("save")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-button",
+                          {
+                            attrs: { variant: "secondary" },
+                            on: { click: _vm.actionCancel }
+                          },
+                          [_vm._v("cancel")]
+                        )
+                      ],
+                      1
+                    )
+                  : _c(
+                      "td",
+                      [
+                        _c(
+                          "b-button-group",
+                          { attrs: { size: "sm" } },
                           [
                             _c(
                               "b-button",
@@ -12926,20 +12876,24 @@ var render = function() {
                                 attrs: { variant: "primary" },
                                 on: {
                                   click: function($event) {
-                                    return _vm.submitUpdate(item.id)
+                                    return _vm.actionEdit(index, item.id)
                                   }
                                 }
                               },
-                              [_vm._v("save")]
+                              [_c("i", { staticClass: "fa fa-edit" })]
                             ),
                             _vm._v(" "),
                             _c(
                               "b-button",
                               {
                                 attrs: { variant: "secondary" },
-                                on: { click: _vm.actionCancel }
+                                on: {
+                                  click: function($event) {
+                                    return _vm.actionDelete(item.id)
+                                  }
+                                }
                               },
-                              [_vm._v("cancel")]
+                              [_c("i", { staticClass: "fa fa-trash" })]
                             )
                           ],
                           1

@@ -34,6 +34,7 @@
                         <th scope="col">Type Memo Name</th>
                         <th scope="col">Module Approver</th>
                         <th scope="col">Department</th>
+                        <th scope="col">Branch</th>
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
@@ -60,6 +61,9 @@
                         </td>
                         <td>
                           {{ item.department.department_name }}
+                        </td>
+                        <td>
+                          {{ item.branch ? item.branch.branch_name : "-" }}
                         </td>
                         <td>
                           <b-button-group size="sm">

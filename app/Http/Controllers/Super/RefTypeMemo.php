@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Super;
 
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Ref_Module_Approver;
@@ -73,6 +74,7 @@ class RefTypeMemo extends Controller
                 ]
             ),
             'dataDepartments'           => Department::get(),
+            'dataBranches'              => Branch::get(),
             'dataRefModuleApprovers'    => Ref_Module_Approver::get(),
             'dataEmployee'              => $employee,
             '_token' => csrf_token(),
@@ -93,6 +95,7 @@ class RefTypeMemo extends Controller
             'department'           => 'required',
             'refmoduleapprover'    => 'required',
             'id_overtake' => 'nullable',
+            'id_branch' => 'nullable',
         ]);
         $position = Ref_Type_Memo::create([
             'name'                      => $request->input('name'),
@@ -101,6 +104,7 @@ class RefTypeMemo extends Controller
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
             'id_overtake_memo'          => $request->input('id_overtake'),
+            'id_branch'                 => $request->input('id_branch'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull Create new Reference Type Memo $position->name");
     }
@@ -153,9 +157,11 @@ class RefTypeMemo extends Controller
                 'id'                => $typememo->id,
                 'with_po'           => $typememo->with_po,
                 'with_payment'      => $typememo->with_payment,
-                'id_overtake'       => $typememo->id_overtake_memo
+                'id_overtake'       => $typememo->id_overtake_memo,
+                'id_branch'         => $typememo->id_branch,
             ],
             'dataDepartments'           => Department::get(),
+            'dataBranches'              => Branch::get(),
             'dataRefModuleApprovers'    => Ref_Module_Approver::get(),
             'dataEmployee'              => $employee,
             '_token'                    => csrf_token(),
@@ -177,7 +183,8 @@ class RefTypeMemo extends Controller
             'name'                 => 'required|max:50',
             'department'           => 'required',
             'refmoduleapprover'    => 'required',
-            'id_overtake' => 'nullable',
+            'id_overtake'          => 'nullable',
+            'id_branch'            => 'nullable',
         ]);
 
         Ref_Type_Memo::where('id', $id)->update([
@@ -187,6 +194,7 @@ class RefTypeMemo extends Controller
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
             'id_overtake_memo'          => $request->input('id_overtake'),
+            'id_branch'                 => $request->input('id_branch'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
     }

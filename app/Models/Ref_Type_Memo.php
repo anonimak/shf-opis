@@ -29,6 +29,11 @@ class Ref_Type_Memo extends Model
         return $this->belongsTo(Department::class, 'id_department', 'id');
     }
 
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'id_branch', 'id');
+    }
+
     public function ref_module_approver()
     {
         return $this->belongsTo(Ref_Module_Approver::class, 'id_ref_module_approver', 'id');
@@ -56,6 +61,9 @@ class Ref_Type_Memo extends Model
         $typememo = Self::select('*')
             ->with(['department' => function ($query) {
                 return $query->select('id', 'department_name')->orderBy('id', 'ASC');
+            }])
+            ->with(['branch' => function ($query) {
+                return $query->select('id', 'branch_name')->orderBy('id', 'ASC');
             }])
             ->with(['ref_module_approver' => function ($query) {
                 return $query->select('id', 'name')->orderBy('id', 'ASC');
