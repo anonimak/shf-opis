@@ -99,6 +99,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
+            Route::get('/{memo}/preview-pfd', 'User\MemoController@previewMemo')->name('preview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 

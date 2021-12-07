@@ -113,6 +113,12 @@
                               >
                                 preview
                               </inertia-link>
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                >Preview PDF</a
+                              >
                               <b-button
                                 v-b-tooltip.hover
                                 title="Lanjut PO"
@@ -196,7 +202,11 @@
       :errors="errors"
     />
 
-    <modal-form-po :proposeLink="__proposepo" :indexMemo="idItemPOClicked" :errors="errors"/>
+    <modal-form-po
+      :proposeLink="__proposepo"
+      :indexMemo="idItemPOClicked"
+      :errors="errors"
+    />
   </layout>
 </template>
 <script>
@@ -231,6 +241,7 @@ export default {
     "__proposepayment",
     "__proposepo",
     "__index",
+    "__previewpdf",
     "__webpreview",
     "__webpreviewpo",
     "__webpreviewpayment",
