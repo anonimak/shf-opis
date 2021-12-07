@@ -74,6 +74,7 @@ class MemoController extends Controller
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
             '__webpreviewpo'   => 'user.memo.statuspo.webpreview',
             '__webpreviewpayment'   => 'user.memo.statuspayment.webpreview',
+            '__previewpdf'          => 'user.memo.statusmemo.preview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
             '__proposepayment' => 'user.memo.statusmemo.proposepayment',
             '__proposepo' => 'user.memo.statusmemo.proposepo'
