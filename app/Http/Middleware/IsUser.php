@@ -21,7 +21,8 @@ class IsUser
     {
 
         if (auth()->user()->role == 0) {
-            Inertia::share('userinfo', User::getUsersEmployeeInfo());
+            $user = User::getUsersEmployeeInfo();
+            Inertia::share('userinfo', $user);
 
             // share notif
             Inertia::share('notif', function () {

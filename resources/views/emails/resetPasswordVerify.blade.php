@@ -198,7 +198,7 @@
                         <tr>
                           <td style="font-size:40px; font-weight: 600; color: #ffffff; text-align:center;" class="mobile-spacing">
                             <div class="mobile-br">&nbsp;</div>
-                            Atur ulang sandi
+                            Reset Password
                             <br />
                           </td>
                         </tr>
@@ -216,7 +216,7 @@
                         <table style="margin: 0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
                           <tr>
                             <td style="text-align: left;">
-                              Untuk mereset sandi anda, silahkan klik tombol di bawah ini.
+                                Please click the "Reset Password" button below to reset your password.
                             </td>
                           </tr>
                         </table>
@@ -230,7 +230,7 @@
                               {{-- <a href="{{ $details['url'] }}">Atur ulang sandi</a> --}}
                               <a href="{{ $details['url'] }}"
                                 style="background-color:#27aa90;color:#ffffff;display:inline-block;font-family:'Source Sans Pro', Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:45px;text-align:center;text-decoration:none;width:180px;-webkit-text-size-adjust:none;">
-                                Atur ulang sandi</a>
+                                Reset Password</a>
                             </div>
                             <br>
                           </td>
