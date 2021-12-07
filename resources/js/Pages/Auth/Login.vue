@@ -55,7 +55,7 @@
                 </b-form-group>
 
                 <b-button class="btn-block" type="submit" variant="primary"
-                  >Submit</b-button
+                  >Login</b-button
                 >
                 <inertia-link
                   :href="route(__forgetPassword)"

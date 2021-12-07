@@ -185,7 +185,7 @@ export default {
           value && this.submitDelete(id);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           // An error occurred
         });
     },
@@ -205,7 +205,7 @@ export default {
           value && this.submitPropose(id);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           // An error occurred
         });
     },

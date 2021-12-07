@@ -254,7 +254,7 @@ export default {
           value && this.submitProposePayment(id);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           // An error occurred
         });
     },

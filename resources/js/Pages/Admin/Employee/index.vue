@@ -216,7 +216,7 @@ export default {
         this.submitState = false;
         return;
       }
-      console.log(file.type);
+      //console.log(file.type);
       if (
         file.type !== "application/vnd.ms-excel" &&
         file.type !==
