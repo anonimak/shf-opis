@@ -117,6 +117,7 @@
                                 target="_blank"
                                 class="btn btn-success btn-sm"
                                 :href="route(__previewpdf, item.id)"
+                                v-if="item.status == 'approve'"
                                 >Preview PDF</a
                               >
                               <b-button
