@@ -346,7 +346,7 @@ export default {
           value && this.submitProposePayment(id);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
           // An error occurred
         });
     },
@@ -399,7 +399,7 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      console.log(route().current());
+      //console.log(route().current());
       // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
 
