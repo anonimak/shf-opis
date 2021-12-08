@@ -1,7 +1,14 @@
 <template>
   <!-- Topbar -->
   <nav
-    class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+    class="
+      navbar navbar-expand navbar-light
+      bg-white
+      topbar
+      mb-4
+      static-top
+      shadow
+    "
   >
     <!-- Sidebar Toggle (Topbar) -->
     <button
@@ -77,7 +84,14 @@
           class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
           aria-labelledby="userDropdown"
         >
-          <!-- <div class="dropdown-divider"></div> -->
+          <inertia-link
+            class="dropdown-item"
+            :href="route('user.setting.changepassword.index')"
+          >
+            <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
+            Change Password
+          </inertia-link>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item" @click="show = true">
             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
             Logout
