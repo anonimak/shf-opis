@@ -121,7 +121,7 @@ export default {
     "__detail",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Approval Payment" },
   data() {
     return {
       isCheched: false,

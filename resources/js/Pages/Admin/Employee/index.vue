@@ -131,7 +131,7 @@ export default {
     "__index",
     "__importexcel",
   ],
-  metaInfo: { title: "Admin Employee Page" },
+  metaInfo: { title: "Admin Employee" },
   data() {
     return {
       tabIndexCfgHome: 0,

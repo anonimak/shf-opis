@@ -194,7 +194,7 @@ export default {
     "__update_cost",
     "__destroy_cost",
   ],
-  metaInfo: { title: "Admin Reference Type Memo Page" },
+  metaInfo: { title: "Admin Reference Type Memo" },
   components: {
     Layout,
     FlashMsg,

@@ -54,13 +54,16 @@
                           </th>
                           <td>
                             {{ item.title }}
-                            <b-badge v-if="item.latest_history" variant="warning">
+                            <b-badge
+                              v-if="item.latest_history"
+                              variant="warning"
+                            >
                               revised
                             </b-badge>
                           </td>
                           <td>
                             <small v-if="item.latest_history">
-                              {{item.latest_history.content}}
+                              {{ item.latest_history.content }}
                             </small>
                             <span v-else>-</span>
                           </td>
@@ -140,7 +143,7 @@ export default {
     "__propose",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Draft Memo" },
   data() {
     return {
       tabIndex: 0,

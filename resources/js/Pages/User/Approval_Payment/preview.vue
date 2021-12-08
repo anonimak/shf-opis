@@ -15,7 +15,10 @@
                 lg="12"
                 md="12"
                 class="mb-4"
-                v-if="dataMemo.approver_payment.type_approver == 'approver' && dataMemo.approver_payment.status == 'submit'"
+                v-if="
+                  dataMemo.approver_payment.type_approver == 'approver' &&
+                  dataMemo.approver_payment.status == 'submit'
+                "
               >
                 <b-button-group class="float-right">
                   <b-button
@@ -30,14 +33,23 @@
                   >
                 </b-button-group>
               </b-col>
-              <b-col col lg="12" md="12" class="mb-4" v-else-if="dataMemo.approver_payment.type_approver != 'approver' && dataMemo.approver_payment.status == 'submit'">
-                  <b-button-group class="float-right">
-                      <b-button
-                        @click="actionApprove(dataMemo.approver_payment.id)"
-                        variant="info"
-                        >Next</b-button
-                        >
-                  </b-button-group>
+              <b-col
+                col
+                lg="12"
+                md="12"
+                class="mb-4"
+                v-else-if="
+                  dataMemo.approver_payment.type_approver != 'approver' &&
+                  dataMemo.approver_payment.status == 'submit'
+                "
+              >
+                <b-button-group class="float-right">
+                  <b-button
+                    @click="actionApprove(dataMemo.approver_payment.id)"
+                    variant="info"
+                    >Next</b-button
+                  >
+                </b-button-group>
               </b-col>
               <b-col col lg="6" md="auto">
                 <h5>Memo Information</h5>
@@ -207,41 +219,57 @@
                 <h5>Cost/Expense</h5>
                 <b-table bordered :items="memocost"></b-table> </b-col
             ></b-row>
-            <b-row class="mb-2" v-if="dataMemo.ref_table.with_payment == true || dataMemo.ref_table.with_po == true">
-                <b-col>
-                    <table class="table table-stripped table-bordered">
-                        <tbody>
-                            <tr>
-                                <th style="width: 50%">Sub Total</th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">Pph23 (2%) </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">PPN (10%) </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">Grand Total </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </b-col>
+            <b-row
+              class="mb-2"
+              v-if="
+                dataMemo.ref_table.with_payment == true ||
+                dataMemo.ref_table.with_po == true
+              "
+            >
+              <b-col>
+                <table class="table table-stripped table-bordered">
+                  <tbody>
+                    <tr>
+                      <th style="width: 50%">Sub Total</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.sub_total).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">Pph23 (2%)</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.pph).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">PPN (10%)</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">Grand Total</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{
+                            Number(dataTotalCost.grand_total).toLocaleString()
+                          }}
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </b-col>
             </b-row>
             <b-row
               v-if="dataPayments && dataPayments != '<p></p>'"
@@ -332,7 +360,7 @@ export default {
     "attachments",
     "__approving",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Preview Approval Payment" },
   components: {
     Layout,
     FlashMsg,

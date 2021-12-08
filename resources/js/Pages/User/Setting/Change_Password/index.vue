@@ -69,6 +69,7 @@ import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 
 export default {
+  metaInfo: { title: "Change Password" },
   props: [
     "_token",
     "userinfo",

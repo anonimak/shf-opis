@@ -129,7 +129,7 @@ export default {
     "__destroy",
     "__index",
   ],
-  metaInfo: { title: "Super User Page" },
+  metaInfo: { title: "Super User" },
   data() {
     return {
       tabIndexCfgHome: 0,
