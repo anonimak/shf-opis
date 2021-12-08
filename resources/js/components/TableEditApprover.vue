@@ -205,7 +205,7 @@ export default {
     },
 
     changeApproverSelected(approver) {
-      console.log(approver);
+      //console.log(approver);
       this.dataApprovers = _.map(this.dataApprovers, (item) => {
         if (item.id_employee === approver.id_employee) {
           item = approver;

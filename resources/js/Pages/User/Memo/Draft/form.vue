@@ -96,7 +96,7 @@
                       <thead>
                         <tr>
                           <th>File</th>
-                          <th>Aksi</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -223,6 +223,7 @@
                       <b-form-input
                         aria-label="pph23"
                         v-model="pph"
+                        v-on:change="pphValueChange"
                       ></b-form-input>
                     </b-input-group>
                     <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
@@ -393,7 +394,7 @@ export default {
     pph: function (val) {
       if (!val || !this.sub_total) {
         val = 0;
-        this.sub_total = 0;
+        // this.sub_total = 0;
       }
       this.grand_total =
         parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(val);
@@ -422,6 +423,9 @@ export default {
       this.grand_total = this.dataTotalCost.grand_total;
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
+    pphValueChange: function(val) {
+        this.pph = 0.02 * parseFloat(val);
+    },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
       var form_data = new FormData();
@@ -432,7 +436,7 @@ export default {
       //   form_data.append(`files[${index}]`, item.file);
       // });
       _.each(this.fileRecordsForUpload, (item, index) => {
-        console.log(item.file);
+        //console.log(item.file);
         form_data.append(`files[${index}]`, item.file);
       });
       // console.log(form_data);
@@ -506,7 +510,7 @@ export default {
         }
       }
       if (!this.submitState) {
-        console.log("data = ", this.dataFormula.Sheet1.length);
+        //console.log("data = ", this.dataFormula.Sheet1.length);
         let newData = {};
         if (this.dataFormula.Sheet1.length != 0) {
           newData = _.map(this.dataFormula.Sheet1, (value) => {
