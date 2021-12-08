@@ -19,10 +19,10 @@ export default {
         if (key == "success") {
           this.$emit("onSuccess", true);
         }
-        this.pageFlashes[index] = null;
         this.dismissCountDown = 3;
         this.variant = key;
         this.msg = value;
+        this.pageFlashes[index] = null;
       }
     }
   },
@@ -36,10 +36,10 @@ export default {
             if (index == "success") {
               this.$emit("onSuccess", true);
             }
-            this.pageFlashes[index] = null;
             this.dismissCountDown = 3;
             this.variant = index;
             this.msg = flash;
+            this.pageFlashes[index] = null;
           }
         });
       },
