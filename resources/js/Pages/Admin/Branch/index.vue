@@ -118,7 +118,7 @@ export default {
     "__destroy",
     "__index",
   ],
-  metaInfo: { title: "Admin Branch Page" },
+  metaInfo: { title: "Admin Branch" },
   data() {
     return {
       tabIndexCfgHome: 0,

@@ -247,7 +247,7 @@ export default {
     "__webpreviewpayment",
     "__senddraft",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Memo" },
   data() {
     return {
       tabIndex: 0,

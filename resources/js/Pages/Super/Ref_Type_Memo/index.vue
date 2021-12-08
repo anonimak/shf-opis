@@ -125,7 +125,7 @@ export default {
     "__template",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Type Memo Page" },
+  metaInfo: { title: "Admin Reference Type Memo" },
   data() {
     return {
       tabIndexCfgHome: 0,

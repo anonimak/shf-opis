@@ -218,41 +218,57 @@
                 <h5>Cost/Expense</h5>
                 <b-table bordered :items="memocost"></b-table> </b-col
             ></b-row>
-            <b-row class="mb-2" v-if="dataMemo.ref_table.with_payment == true || dataMemo.ref_table.with_po == true">
-                <b-col>
-                    <table class="table table-stripped table-bordered">
-                        <tbody>
-                            <tr>
-                                <th style="width: 50%">Sub Total</th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.sub_total).toLocaleString()}} </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">Pph23 (2%) </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                     <div style="float: right;">{{ Number(dataTotalCost.pph).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">PPN (10%) </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.ppn).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%">Grand Total </th>
-                                <td nowrap>
-                                    <div style="float: left;">Rp</div>
-                                    <div style="float: right;">{{ Number(dataTotalCost.grand_total).toLocaleString() }}</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </b-col>
+            <b-row
+              class="mb-2"
+              v-if="
+                dataMemo.ref_table.with_payment == true ||
+                dataMemo.ref_table.with_po == true
+              "
+            >
+              <b-col>
+                <table class="table table-stripped table-bordered">
+                  <tbody>
+                    <tr>
+                      <th style="width: 50%">Sub Total</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.sub_total).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">Pph23 (2%)</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.pph).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">PPN (10%)</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th style="width: 50%">Grand Total</th>
+                      <td nowrap>
+                        <div style="float: left">Rp</div>
+                        <div style="float: right">
+                          {{
+                            Number(dataTotalCost.grand_total).toLocaleString()
+                          }}
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </b-col>
             </b-row>
             <b-row
               v-if="dataPayments && dataPayments != '<p></p>'"
@@ -322,6 +338,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
+  metaInfo: { title: "Preview Status Payment Takeover Branch" },
   props: [
     "userinfo",
     "notif",

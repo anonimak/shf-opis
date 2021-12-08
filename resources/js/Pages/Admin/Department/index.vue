@@ -118,7 +118,7 @@ export default {
     "__destroy",
     "__index",
   ],
-  metaInfo: { title: "Admin Department Page" },
+  metaInfo: { title: "Admin Department" },
   data() {
     return {
       tabIndexCfgHome: 0,
