@@ -270,7 +270,8 @@
                           <tr>
                             <td style="text-align: left;">
                               <br>
-                              Silahkan melakukan persetujuan payment {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
+                              Please approve the payment {{ $details['doc_no'] }} by clicking the link below.
+                              {{-- Silahkan melakukan persetujuan payment {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini. --}}
                             </td>
                           </tr>
                         </table>

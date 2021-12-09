@@ -271,9 +271,11 @@
                             <td style="text-align: left;">
                               <br>
                               @if ($details['type_approver'] == 'approver')
-                              Silahkan melakukan persetujuan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
+                              Please approve a memo {{ $details['doc_no'] }} by clicking the link below.
+                              {{-- Silahkan melakukan persetujuan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini. --}}
                               @else
-                              Silahkan melakukan peninjauan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini.
+                              Please review a memo {{ $details['doc_no'] }} by clicking the link below.
+                              {{-- Silahkan melakukan peninjauan memo {{ $details['doc_no'] }} dengan me-klik tautan dibawah ini. --}}
                               @endif
                             </td>
                           </tr>
