@@ -92,11 +92,11 @@
       header-bg-variant="primary"
       header-text-variant="light"
     >
-      Anda akan keluar
+      You will be log out
       <template v-slot:modal-footer>
-        <b-button variant="secondary" @click="show = false"> batal </b-button>
+        <b-button variant="secondary" @click="show = false"> Cancel </b-button>
         <b-link class="btn btn-primary" size="sm" :href="route('logout')">
-          Keluar
+          Log out
         </b-link>
       </template>
     </b-modal>

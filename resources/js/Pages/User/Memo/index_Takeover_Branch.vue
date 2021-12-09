@@ -91,7 +91,7 @@
                                   item.status_po == 'edit'
                                 "
                               >
-                                Lanjut PO
+                                Continue PO
                               </b-button>
                               <inertia-link
                                 v-if="
@@ -120,7 +120,7 @@
                                 "
                                 :disabled="item.status_payment != 'edit'"
                               >
-                                Lanjut Payment
+                                Continue Payment
                               </b-button>
                               <inertia-link
                                 v-if="

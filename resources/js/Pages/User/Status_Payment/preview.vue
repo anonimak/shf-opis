@@ -298,7 +298,7 @@
                   <thead>
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">Name</th>
+                      <th scope="col">Vendor Name</th>
                       <th scope="col">Bank Name</th>
                       <th scope="col">Bank Account</th>
                       <th scope="col">Amount</th>

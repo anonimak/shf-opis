@@ -294,7 +294,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Vendor Name</th>
                     <th>Bank Name</th>
                     <th>Bank Account</th>
                     <th>Amount</th>
