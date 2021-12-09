@@ -188,7 +188,7 @@ export default {
     "__webpreviewpayment",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Takeover Branch Memo" },
   data() {
     return {
       tabIndex: 0,

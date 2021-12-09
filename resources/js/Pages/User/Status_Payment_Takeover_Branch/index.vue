@@ -154,7 +154,7 @@ export default {
     "__webpreview",
     "__senddraft",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Status Payment Takeover Branch" },
   data() {
     return {
       tabIndex: 0,

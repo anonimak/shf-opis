@@ -151,6 +151,14 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         });
     });
 
+    // setting route
+    Route::prefix('/setting')->name('setting.')->group(function () {
+        Route::prefix('/change-password')->name('changepassword.')->group(function () {
+            Route::get('/', 'User\SettingController@indexChangePassword')->name('index');
+            Route::put('/', 'User\SettingController@ChangePassword')->name('update');
+        });
+    });
+
     Route::get('/test', 'User\MemoController@test')->name('test');
 
     // api

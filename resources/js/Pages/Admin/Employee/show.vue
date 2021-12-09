@@ -231,7 +231,7 @@ export default {
     "__edit",
     "__destroy_history",
   ],
-  metaInfo: { title: "Admin Employee Page" },
+  metaInfo: { title: "Admin Employee" },
   data() {
     return {
       itemClicked: null,

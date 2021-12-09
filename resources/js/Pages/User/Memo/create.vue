@@ -70,6 +70,7 @@ import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 
 export default {
+  metaInfo: { title: "Create New Memo" },
   props: [
     "_token",
     "userinfo",

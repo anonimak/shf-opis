@@ -107,7 +107,7 @@ export default {
     "__destroy",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Title Page" },
+  metaInfo: { title: "Admin Reference Title" },
   data() {
     return {
       tabIndexCfgHome: 0,

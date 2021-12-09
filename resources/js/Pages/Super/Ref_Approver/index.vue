@@ -121,7 +121,7 @@ export default {
     "__destroy",
     "__index",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Admin Reference Approve" },
   data() {
     return {
       tabIndexCfgHome: 0,

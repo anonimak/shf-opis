@@ -1,5 +1,6 @@
 <template>
   <layout :userinfo="userinfo" :notif="notif">
+    <flash-msg />
     <!-- Begin Page Content -->
     <div class="container-fluid">
       <!-- Page Heading -->
@@ -12,9 +13,14 @@
           Report</a
         > -->
       </div>
-       <b-jumbotron bg-variant="primary" text-variant="white">
-        <template #header>Hello {{ userinfo.name }}
-            <b-img right src="../images/test(300x300).png" alt="Right image"></b-img>
+      <b-jumbotron bg-variant="primary" text-variant="white">
+        <template #header
+          >Hello {{ userinfo.name }}
+          <b-img
+            right
+            src="../images/test(300x300).png"
+            alt="Right image"
+          ></b-img>
         </template>
 
         <template #lead>
@@ -171,10 +177,11 @@
 
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
+import FlashMsg from "@/components/Alert";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
-  metaInfo: { title: "Beranda" },
+  metaInfo: { title: "Dashboard" },
   data() {
     return {
       timelinecolor: {
@@ -190,12 +197,8 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
+    FlashMsg,
   },
   props: ["meta", "dataMemo", "userinfo", "notif", "__create", "__allmemo"],
-  methods: {
-    test: function () {
-      alert("oke");
-    },
-  },
 };
 </script>

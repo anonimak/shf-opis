@@ -117,6 +117,7 @@
                                 target="_blank"
                                 class="btn btn-success btn-sm"
                                 :href="route(__previewpdf, item.id)"
+                                v-if="item.status == 'approve'"
                                 >Preview PDF</a
                               >
                               <b-button
@@ -247,7 +248,7 @@ export default {
     "__webpreviewpayment",
     "__senddraft",
   ],
-  metaInfo: { title: "Admin Reference Approve Page" },
+  metaInfo: { title: "Memo" },
   data() {
     return {
       tabIndex: 0,

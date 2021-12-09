@@ -289,6 +289,7 @@ import SelectTypeApprover from "@/components/SelectTypeApprover";
 import Editor2 from "@/components/Editor2";
 import TableEditApprover from "@/components/TableEditApprover.vue";
 export default {
+  metaInfo: { title: "Form Draft Memo" },
   props: [
     "_token",
     "userinfo",
@@ -406,7 +407,9 @@ export default {
         this.ppn = 0.1 * parseFloat(this.sub_total);
       }
       this.grand_total =
-        parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(this.pph);
+        parseFloat(this.sub_total) +
+        parseFloat(this.ppn) -
+        parseFloat(this.pph);
     },
     dataMemo: function (val) {
       this.fillForm();
@@ -423,8 +426,8 @@ export default {
       this.grand_total = this.dataTotalCost.grand_total;
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
-    pphValueChange: function(val) {
-        this.pph = 0.02 * parseFloat(val);
+    pphValueChange: function (val) {
+      this.pph = 0.02 * parseFloat(val);
     },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
