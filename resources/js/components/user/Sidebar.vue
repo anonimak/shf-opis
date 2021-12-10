@@ -7,7 +7,7 @@
     <!-- Sidebar - Brand -->
     <inertia-link
       class="sidebar-brand d-flex align-items-center"
-      :href="route('admin.dashboard')"
+      :href="route('user.dashboard')"
     >
       <div class="sidebar-brand-text mx-3">User WebSHF</div>
     </inertia-link>

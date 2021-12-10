@@ -18,6 +18,7 @@
           >Hello {{ userinfo.name }}
           <b-img
             right
+            fluid
             src="../images/test(300x300).png"
             alt="Right image"
           ></b-img>
