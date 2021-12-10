@@ -52,6 +52,11 @@ class Memo extends Model
         return $this->belongsTo(Employee::class, 'id_employee', 'id');
     }
 
+    public function proposeemployee2()
+    {
+        return $this->belongsTo(Employee::class, 'id_employee2', 'id');
+    }
+
     // public function acknowledges()
     // {
     //     return $this->hasMany(D_Memo_Acknowledge::class, 'id_memo', 'id');
@@ -103,9 +108,13 @@ class Memo extends Model
             ->where('id', $id)->first();
     }
 
-    public static function getMemoDetailEmployeePropose($id)
+    public static function getMemoDetailEmployeePropose($id, $isTakeoverBranch = false)
     {
-        return Self::with(['proposeemployee' => function ($employee) {
+        $proposeEmployee = 'proposeemployee';
+        if ($isTakeoverBranch) {
+            $proposeEmployee = 'proposeemployee2';
+        }
+        return Self::with([$proposeEmployee => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
                 return $position_now->with(['position' => function ($position) {
                     return $position->with('department');
@@ -177,7 +186,7 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();
@@ -215,7 +224,7 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();
@@ -253,7 +262,7 @@ class Memo extends Model
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();
@@ -293,7 +302,7 @@ class Memo extends Model
             }])->with(['approver' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();
@@ -333,7 +342,7 @@ class Memo extends Model
             }])->with(['approverPayment' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();
@@ -373,7 +382,7 @@ class Memo extends Model
             }])->with(['approverPo' => function ($approver) use ($id_current_approver) {
                 return $approver->where('id_employee', $id_current_approver);
             }])
-            ->with(['ref_table' => function($reftable){
+            ->with(['ref_table' => function ($reftable) {
                 return $reftable;
             }])
             ->where('id', $id)->first();

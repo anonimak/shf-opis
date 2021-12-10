@@ -122,7 +122,7 @@
                               >
                               <b-button
                                 v-b-tooltip.hover
-                                title="Lanjut PO"
+                                title="Continue PO"
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"
@@ -150,7 +150,7 @@
                               </inertia-link>
                               <b-button
                                 v-b-tooltip.hover
-                                title="Lanjut Payment"
+                                title="Continue Payment"
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"

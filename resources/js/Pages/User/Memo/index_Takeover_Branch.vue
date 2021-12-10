@@ -78,6 +78,13 @@
                               >
                                 preview
                               </inertia-link>
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="item.status == 'approve'"
+                                >Preview PDF</a
+                              >
                               <b-button
                                 v-b-tooltip.hover
                                 title="Lanjut PO"
@@ -185,6 +192,7 @@ export default {
     "perPage",
     "__proposepayment",
     "__webpreview",
+    "__previewpdf",
     "__webpreviewpayment",
     "__index",
   ],

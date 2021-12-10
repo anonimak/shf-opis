@@ -61,55 +61,59 @@
             </div>
             <!-- Card Body -->
             <div class="card-body">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Document No</th>
-                    <th>Proposed At</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{{ dataMemo.title }}</td>
-                    <td>{{ dataMemo.doc_no }}</td>
-                    <td>
-                      {{
-                        dataMemo.propose_at
-                          | moment("dddd, MMMM Do YYYY, h:mm:ss a")
-                      }}
-                    </td>
-                    <td>
-                      <b-badge v-if="dataMemo.status == 'submit'" variant="info"
-                        >On process approving</b-badge
-                      >
-                      <b-badge
-                        v-if="dataMemo.status == 'approve'"
-                        variant="success"
-                        >Memo Approved</b-badge
-                      >
-                      <b-badge
-                        v-if="dataMemo.status == 'reject'"
-                        variant="danger"
-                        >Memo Rejected</b-badge
-                      >
-                      <b-badge
-                        v-if="dataMemo.status == 'revisi'"
-                        variant="secondary"
-                        >Memo Revised</b-badge
-                      >
-                      <p v-if="dataMemo.latest_history" class="text-muted">
-                        <small>
-                          <em>
-                            {{ dataMemo.latest_history.title }}
-                          </em>
-                        </small>
-                      </p>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Document No</th>
+                      <th>Proposed At</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ dataMemo.title }}</td>
+                      <td>{{ dataMemo.doc_no }}</td>
+                      <td>
+                        {{
+                          dataMemo.propose_at
+                            | moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                        }}
+                      </td>
+                      <td>
+                        <b-badge
+                          v-if="dataMemo.status == 'submit'"
+                          variant="info"
+                          >On process approving</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemo.status == 'approve'"
+                          variant="success"
+                          >Memo Approved</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemo.status == 'reject'"
+                          variant="danger"
+                          >Memo Rejected</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemo.status == 'revisi'"
+                          variant="secondary"
+                          >Memo Revised</b-badge
+                        >
+                        <p v-if="dataMemo.latest_history" class="text-muted">
+                          <small>
+                            <em>
+                              {{ dataMemo.latest_history.title }}
+                            </em>
+                          </small>
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
               <inertia-link class="btn btn-secondary" :href="route(__allmemo)"
                 >All memo</inertia-link

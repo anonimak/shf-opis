@@ -103,6 +103,7 @@
     <b-modal
       v-model="show"
       title="Logout"
+      centered
       header-bg-variant="primary"
       header-text-variant="light"
     >
