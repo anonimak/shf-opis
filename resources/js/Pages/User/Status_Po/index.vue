@@ -105,6 +105,13 @@
                               >
                                 preview
                               </inertia-link>
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="item.status_po == 'approve'"
+                                >Preview PDF</a
+                              >
                             </td>
                           </tr>
                         </tbody>
@@ -152,6 +159,7 @@ export default {
     "__destroy",
     "__indexpayment",
     "__webpreview",
+    "__previewpdf",
     "__senddraft",
   ],
   metaInfo: { title: "Status PO" },

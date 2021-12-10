@@ -23,36 +23,40 @@
               <b-row class="mb-2">
                 <b-col col lg="12" class="mb-4">
                   <h5>Memo Information</h5>
-                  <table class="table table-bordered">
-                    <tbody>
-                      <tr>
-                        <td>Department</td>
-                        <td>
-                          {{
-                            userinfo.employee.position_now.position.department
-                              .department_name
-                          }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Title</td>
-                        <td>{{ form.title }}</td>
-                      </tr>
-                      <tr>
-                        <td>Doc. No</td>
-                        <td>{{ form.doc_no }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <tbody>
+                        <tr>
+                          <td>Department</td>
+                          <td>
+                            {{
+                              userinfo.employee.position_now.position.department
+                                .department_name
+                            }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Title</td>
+                          <td>{{ form.title }}</td>
+                        </tr>
+                        <tr>
+                          <td>Doc. No</td>
+                          <td>{{ form.doc_no }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-                    <table-edit-approver
-                      :dataPosition="dataPosition"
-                      :dataApprovers="dataApprovers"
-                      :__updateApprover="__updateApprover"
-                      :id_memo="dataMemo.id"
-                    />
+                    <div class="table-responsive">
+                      <table-edit-approver
+                        :dataPosition="dataPosition"
+                        :dataApprovers="dataApprovers"
+                        :__updateApprover="__updateApprover"
+                        :id_memo="dataMemo.id"
+                      />
+                    </div>
                   </b-row>
                   <!-- <hr /> -->
                   <!-- <b-row class="mb-4">
@@ -92,38 +96,40 @@
                 <b-col col lg="12" class="mb-4">
                   <h5>Attachment:</h5>
                   <b-form-group id="input-group-text" label-for="input-text">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>File</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="(attachment, index) in dataAttachments"
-                          :key="index"
-                        >
-                          <td>
-                            <a
-                              :href="attachment.name"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {{ attachment.real_name }}
-                            </a>
-                          </td>
-                          <td>
-                            <b-button
-                              size="sm"
-                              variant="danger"
-                              @click="removeAttachment(attachment.id)"
-                              >remove</b-button
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>File</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(attachment, index) in dataAttachments"
+                            :key="index"
+                          >
+                            <td>
+                              <a
+                                :href="attachment.name"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {{ attachment.real_name }}
+                              </a>
+                            </td>
+                            <td>
+                              <b-button
+                                size="sm"
+                                variant="danger"
+                                @click="removeAttachment(attachment.id)"
+                                >remove</b-button
+                              >
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                     <VueFileAgent
                       class="mb-2"
                       ref="vueFileAgent"
