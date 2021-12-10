@@ -122,7 +122,7 @@
                               >
                               <b-button
                                 v-b-tooltip.hover
-                                title="Lanjut PO"
+                                title="Continue PO"
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"
@@ -133,7 +133,7 @@
                                   item.status_po == 'edit'
                                 "
                               >
-                                Lanjut PO
+                                Continue PO
                               </b-button>
                               <inertia-link
                                 v-if="
@@ -150,7 +150,7 @@
                               </inertia-link>
                               <b-button
                                 v-b-tooltip.hover
-                                title="Lanjut Payment"
+                                title="Continue Payment"
                                 href="#"
                                 variant="primary"
                                 class="btn btn-primary btn-sm"
@@ -163,7 +163,7 @@
                                 "
                                 :disabled="item.status_payment != 'edit'"
                               >
-                                Lanjut Payment
+                                Continue Payment
                               </b-button>
                               <inertia-link
                                 v-if="

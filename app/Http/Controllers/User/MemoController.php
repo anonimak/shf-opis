@@ -112,6 +112,7 @@ class MemoController extends Controller
             '__index'   => 'user.memo.statustakeovermemobranch.index',
             '__proposepayment' => 'user.memo.statustakeovermemobranch.proposepayment',
             '__webpreview'   => 'user.memo.statustakeovermemobranch.webpreview',
+            '__previewpdf'   => 'user.memo.statustakeovermemobranch.preview',
             '__webpreviewpayment'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
         ]);
     }
@@ -150,6 +151,7 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspayment.index',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
+            '__previewpdf'   => 'user.memo.statuspayment.preview',
         ]);
     }
 
@@ -187,6 +189,8 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statustakeoverpaymentbranch.index',
             '__webpreview'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
+            '__previewpdf'   => 'user.memo.statustakeoverpaymentbranch.preview',
+            '__previewmemopdf'   => 'user.memo.statustakeoverpaymentbranch.previewmemo',
         ]);
     }
 
@@ -224,6 +228,7 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspo.index',
             '__webpreview'   => 'user.memo.statuspo.webpreview',
+            '__previewpdf'   => 'user.memo.statuspo.preview',
         ]);
     }
 
@@ -861,6 +866,36 @@ class MemoController extends Controller
         $memo = Memo::getPaymentDetailApprovers($id);
         $employeeInfo = User::getUsersEmployeeInfo();
         $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
+        $dataPayments = Memo::where('id', $id)->with('payments')->first();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        $memocost = (array) json_decode($memo->cost);
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
+        $data = [
+            'memo' => $memo,
+            'employeeInfo' => $employeeInfo,
+            'employeeproposeinfo' => $employeeProposeInfo,
+            'positions' => $positions,
+            'dataTypeMemo' => $dataTypeMemo,
+            'dataAttachments' => $attachments,
+            'memocost' => $memocost,
+            'dataPayments' => $dataPayments->payments,
+            'dataTotalCost' => $dataTotalCost
+        ];
+        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
+        $pdf->setPaper('A4', 'portrait');;
+        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+    }
+
+    public function previewPaymentTakeoverBranch(Request $request, $id)
+    {
+        $memo = Memo::getPaymentDetailApprovers($id);
+        $employeeInfo = User::getUsersEmployeeInfo();
+        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');

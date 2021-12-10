@@ -105,6 +105,19 @@
                               >
                                 preview
                               </inertia-link>
+                              <a
+                                target="_blank"
+                                class="btn btn-primary btn-sm"
+                                :href="route(__previewmemopdf, item.id)"
+                                >Preview Memo PDF</a
+                              >
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="item.status_payment == 'approve'"
+                                >Preview PDF</a
+                              >
                             </td>
                           </tr>
                         </tbody>
@@ -152,6 +165,8 @@ export default {
     "__destroy",
     "__indexpayment",
     "__webpreview",
+    "__previewpdf",
+    "__previewmemopdf",
     "__senddraft",
   ],
   metaInfo: { title: "Status Payment Takeover Branch" },
