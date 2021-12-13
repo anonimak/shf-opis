@@ -76,6 +76,7 @@ class MemoController extends Controller
             '__webpreviewpayment'   => 'user.memo.statuspayment.webpreview',
             '__previewpdf'          => 'user.memo.statusmemo.preview',
             '__senddraft'   => 'user.memo.statusmemo.senddraft',
+            '__formpayment' => 'user.memo.statusmemo.formpayment',
             '__proposepayment' => 'user.memo.statusmemo.proposepayment',
             '__proposepo' => 'user.memo.statusmemo.proposepo'
         ]);
@@ -377,13 +378,13 @@ class MemoController extends Controller
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
 
-        M_Data_Cost_Total::where('id_memo', $id)->update([
-            'id_memo' => $id,
-            'sub_total' => $request->input('sub_total'),
-            'pph' => $request->input('pph'),
-            'ppn' => $request->input('ppn'),
-            'grand_total' => $request->input('grand_total')
-        ]);
+        // M_Data_Cost_Total::where('id_memo', $id)->update([
+        //     'id_memo' => $id,
+        //     'sub_total' => $request->input('sub_total'),
+        //     'pph' => $request->input('pph'),
+        //     'ppn' => $request->input('ppn'),
+        //     'grand_total' => $request->input('grand_total')
+        // ]);
         return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
     }
 
@@ -498,6 +499,82 @@ class MemoController extends Controller
         return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
     }
 
+    public function formPayment($id)
+    {
+        $memo = Memo::getMemoDetailDraftEdit($id);
+       // $employeeInfo = User::getUsersEmployeeInfo();
+        $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+
+        // $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+
+        // $attachments = $attachments->map(function ($itemattach) {
+        //     $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+        //     return $itemattach;
+        // });
+
+        $templateCost = Ref_Template_Cost::where('id_ref_type_memo', $memo->id_type)->get();
+
+        $templateCost = $templateCost->makeHidden(['id_ref_type_memo', 'created_at', 'updated_at']);
+
+        $headerCost = $templateCost->map(function ($item, $key) {
+            return $item['col_name'];
+        });
+
+        $columnCost = $templateCost->transform(function ($value) {
+            return [
+                'data' => $value->col_name,
+                'width' => $value->width
+            ];
+        });
+        $memocost = (array) json_decode($memo->cost);
+
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
+
+        return Inertia::render('User/Memo/form_payment', [
+            'breadcrumbItems' => array(
+                [
+                    'icon'    => "fa-home",
+                    'title'   => "Dashboard",
+                    'href'    => "user.dashboard"
+                ],
+                [
+                    'title'   => "Memo Payment",
+                    'active'  => true
+                ],
+                [
+                    'title'   => "Form Payment",
+                    'active'  => true
+                    // 'href'    => "user.memo.draft.index"
+                ],
+                [
+                    'title'   => $memo->title,
+                    'active'  => true
+                ]
+            ),
+            '_token' => csrf_token(),
+            'memocost' => $memocost,
+            //'__attachment'  => 'user.memo.draft.attachment',
+            //'__removeAttachment'  => 'user.memo.draft.attachmentremove',
+            //'__update' => 'user.memo.draft.update',
+            //'__updateApprover' => 'user.memo.draft.updateapprover',
+            //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
+            // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            //'__preview' => 'user.memo.draft.preview',
+            'dataPosition' => $positions,
+            'dataMemo' => $memo,
+            'dataMemoType' => $memoType,
+            //'dataAttachments' => $attachments,
+            'dataTotalCost' => $dataTotalCost,
+            'headerCost' => $headerCost,
+            'columnCost' => $columnCost,
+            '__proposepayment' => 'user.memo.statusmemo.proposepayment',
+            // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
+        ]);
+    }
+
     public function proposePayment(Request $request, $id)
     {
 
@@ -533,6 +610,13 @@ class MemoController extends Controller
             'type'  => 'info',
             'content' => "Memo Payment successful submitted with document no $doc_no"
         ]);
+         M_Data_Cost_Total::where('id_memo', $id)->update([
+             'id_memo' => $id,
+             'sub_total' => $request->input('sub_total'),
+             'pph' => $request->input('pph'),
+             'ppn' => $request->input('ppn'),
+             'grand_total' => $request->input('grand_total')
+         ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
@@ -604,7 +688,10 @@ class MemoController extends Controller
             'remark'            => $request->input('remark'),
             'address'           => $request->input('address')
         ]);
-        return Redirect::back()->with('success', "Successfull update data vendor");
+        return response()->json([
+            'success' => true
+        ]);
+        //return Redirect::back()->with('success', "Successfull update data vendor");
     }
 
     public function deletePayment($id)

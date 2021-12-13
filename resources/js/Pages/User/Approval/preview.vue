@@ -234,7 +234,7 @@
                 <h5>Cost/Expense</h5>
                 <b-table bordered :items="memocost"></b-table> </b-col
             ></b-row>
-            <b-row
+            <!-- <b-row
               class="mb-2"
               v-if="
                 dataMemo.ref_table.with_payment == true ||
@@ -285,7 +285,7 @@
                   </tbody>
                 </table>
               </b-col>
-            </b-row>
+            </b-row> -->
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"

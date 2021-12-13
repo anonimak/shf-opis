@@ -244,7 +244,7 @@
 
             </tbody>
         </table>
-        <table style="width: 30%; position: relative; left: 511px;">
+        {{-- <table style="width: 30%; position: relative; left: 511px;">
                 <tbody>
                     <tr>
                         <th style="width: 38%; text-align: left;">Sub Total</th>
@@ -275,7 +275,7 @@
                         </td>
                     </tr>
                 </tbody>
-        </table>
+        </table> --}}
         <br>
         @endif
         @if ( $memo->payment != "<p></p>" && $memo->payment != '')
