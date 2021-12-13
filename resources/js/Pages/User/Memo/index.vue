@@ -148,7 +148,7 @@
                               >
                                 Info PO
                               </inertia-link>
-                              <b-button
+                              <!-- <b-button
                                 v-b-tooltip.hover
                                 title="Continue Payment"
                                 href="#"
@@ -164,7 +164,23 @@
                                 :disabled="item.status_payment != 'edit'"
                               >
                                 Continue Payment
-                              </b-button>
+                              </b-button> -->
+                              <inertia-link
+                                v-b-tooltip.hover
+                                title="Continue Payment"
+                                :href="route(__formpayment,item.id)"
+                                variant="primary"
+                                class="btn btn-primary btn-sm"
+                                v-if="
+                                  item.ref_table.with_payment == 1 &&
+                                  item.status == 'approve' &&
+                                  item.status_payment == 'edit' &&
+                                  !item.id_employee2
+                                "
+                                :disabled="item.status_payment != 'edit'"
+                              >
+                                Continue Payment
+                              </inertia-link>
                               <inertia-link
                                 v-if="
                                   item.ref_table.with_payment == 1 &&
@@ -241,6 +257,7 @@ export default {
     "__destroy",
     "__proposepayment",
     "__proposepo",
+    "__formpayment",
     "__index",
     "__previewpdf",
     "__webpreview",
