@@ -21,6 +21,7 @@ use App\Models\Ref_Type_Memo;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -898,7 +899,7 @@ class MemoController extends Controller
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
         $memocost = (array) json_decode($memo->cost);
         $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        //ddd($dataTotalCost);
+        // dd($memo);
         $data = [
             'memo' => $memo,
             'employeeInfo' => $employeeInfo,
@@ -907,7 +908,8 @@ class MemoController extends Controller
             'dataTypeMemo' => $dataTypeMemo,
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
-            'dataTotalCost' => $dataTotalCost
+            'dataTotalCost' => $dataTotalCost,
+            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no))))
         ];
         $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');
@@ -939,7 +941,8 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
             'dataPayments' => $dataPayments,
-            'dataTotalCost' => $dataTotalCost
+            'dataTotalCost' => $dataTotalCost,
+            'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no))))
         ];
         $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('A4', 'portrait');
@@ -971,7 +974,8 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
             'dataPayments' => $dataPayments->payments,
-            'dataTotalCost' => $dataTotalCost
+            'dataTotalCost' => $dataTotalCost,
+            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
         ];
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');;
@@ -1001,7 +1005,8 @@ class MemoController extends Controller
             'dataAttachments' => $attachments,
             'memocost' => $memocost,
             'dataPayments' => $dataPayments->payments,
-            'dataTotalCost' => $dataTotalCost
+            'dataTotalCost' => $dataTotalCost,
+            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
         ];
         $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
         $pdf->setPaper('A4', 'portrait');;
