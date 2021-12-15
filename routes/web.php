@@ -190,6 +190,11 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
 Route::get('/', 'HomeController@index');
 
+// route check PO & Memo
+Route::get('/check-memo/{doc_no?}', 'CheckMemoController@checkMemo');
+Route::get('/check-po/{po_no?}', 'CheckMemoController@checkPO');
+Route::get('/check-memo-payment/{doc_no?}', 'CheckMemoController@checkMemoPayment');
+
 Route::get('/linkstorage', 'User\DashboardController@linkstorage');
 
 Route::prefix('/forget-password')->name('forget-password.')->group(function () {

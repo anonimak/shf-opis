@@ -100,7 +100,7 @@
                                         ->position->department
                                         ->department_name
                         }}</td>
-                    <td style="height: 5%" rowspan="2"></td>
+                    <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td>
                     {{-- <td rowspan="2"></td>
                     <td rowspan="2"></td>
                     <td rowspan="2"></td> --}}
@@ -108,12 +108,14 @@
                 <tr>
                     <td>Doc. No</td>
                     <td>{{$memo->doc_no}}</td>
+                    <td style="height: 5%" rowspan="2">
+                        <img style="margin:10px" src="data:image/png;base64, {!! $qrcode !!}">
+                    </td>
                 </tr>
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
                     <td>{{ $memo->propose_at }}</td>
-                    <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
