@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_History;
 use App\Models\Memo;
 use Illuminate\Http\Request;
@@ -17,6 +18,16 @@ class DashboardController extends Controller
             return $history->orderBy('id', 'DESC');
         }])->first();
 
+        $dataMemoApproved = D_Memo_Approver::where('status', '!=', 'submit')
+            ->orderBy('updated_at', 'DESC')
+            ->where('id_employee', auth()->user()->id_employee)
+            ->with(['memo' => function ($memo) {
+                return $memo->with('latestHistory')
+                    ->with(['histories' => function ($history) {
+                        return $history->orderBy('id', 'DESC');
+                    }]);
+            }])->first();
+
         // Synchronously
         return Inertia::render('User/Dashboard', [
             'meta' => [
@@ -24,8 +35,10 @@ class DashboardController extends Controller
                 'foo' => 'bar'
             ],
             'dataMemo' => $dataMemo,
+            'dataMemoApproved' => $dataMemoApproved,
             '__create'  => 'user.memo.create',
             '__allmemo'  => 'user.memo.statusmemo.index',
+            '__allmemoapproval' => 'user.memo.approval.memo.index'
         ]);
     }
 
