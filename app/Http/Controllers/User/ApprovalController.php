@@ -12,6 +12,7 @@ use App\Models\D_Memo_Attachment;
 use App\Models\D_Memo_History;
 use App\Models\D_Po_Approver;
 use App\Models\Employee;
+use App\Models\Employee_History;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -21,10 +22,21 @@ class ApprovalController extends Controller
 {
     public function index(Request $request)
     {
-        $memo = Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee);
-        // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
+
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        //$memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab);
+        //ddd($memo);
         return Inertia::render('User/Approval', [
-            'dataMemo' => $memo,
+            'perPage' => 10,
+           // 'dataMemo' => $memo,
+            'dataMemoTabList' => Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
                     'icon'    => "fa-home",
@@ -36,6 +48,14 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
+            'counttab' => [
+                'submit' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
+                'approve' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
+                'reject' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
+                'revisi' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+            ],
+            'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.memo.approving',
             '__previewpdf'  => 'user.memo.approval.memo.preview',
             '__detail'    => 'user.memo.approval.memo.detail',
@@ -45,10 +65,18 @@ class ApprovalController extends Controller
 
     public function indexApprovalPayment(Request $request)
     {
-        $memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
-            'dataMemo' => $memo,
+            'dataMemoTabList' => Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
                     'icon'    => "fa-home",
@@ -60,6 +88,15 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
+            'perPage' => 10,
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
+            'counttab' => [
+                'submit' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
+                'approve' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
+                'reject' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
+                'revisi' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+            ],
+            'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.payment.approving',
             '__previewpdf'  => 'user.memo.approval.payment.preview',
             '__detail'    => 'user.memo.approval.payment.detail',
@@ -69,10 +106,18 @@ class ApprovalController extends Controller
 
     public function indexApprovalPo(Request $request)
     {
-        $memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
+        $tab = 'submit';
+        if ($request->has('tab')) {
+            $tab = $request->input('tab');
+        }
+        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname');
+        }])->with('position')->get();
+        //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [
-            'dataMemo' => $memo,
+            'dataMemoTabList' => Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
                     'icon'    => "fa-home",
@@ -84,6 +129,15 @@ class ApprovalController extends Controller
                     'active'  => true
                 ]
             ),
+            'perPage' => 10,
+            'tab' => ['submit', 'approve', 'reject', 'revisi'],
+            'counttab' => [
+                'submit' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
+                'approve' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
+                'reject' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
+                'revisi' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+            ],
+            'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.po.approving',
             '__previewpdf'  => 'user.memo.approval.po.preview',
             '__detail'    => 'user.memo.approval.po.detail',
@@ -210,7 +264,7 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Memo_Approver::where('id', $id)->first();
-
+        //ddd($id);
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
             'status'            => $status_approver,
@@ -349,7 +403,6 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Payment_Approver::where('id', $id)->first();
-
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
         // dd($proposeEmployee);

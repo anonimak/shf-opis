@@ -183,7 +183,7 @@
                 <tr>
                     @foreach ($memo->approvers as $approver)
                         @if($approver->employee)
-                            @if($approver->status == 'approve' || $approver->status == 'reject')
+                            @if($approver->status == 'approve' || $approver->status == 'reject' || $approver->status == 'revisi')
                                 <td> {{ $approver->msg }} </td>
                             @else
                                 <td> - </td>
