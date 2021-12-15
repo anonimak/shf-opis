@@ -519,8 +519,8 @@ class Memo extends Model
                 ->orderBy('id', 'desc')
                 // ->where('status', '=', 'submit')
                 // ->orWhere('status', '=', $status)
-                ->with(['approver' => function ($approver) use ($id_employee, $status) {
-                    return $approver->where('id_employee', $id_employee)->where('status', '=', $status);
+                ->with(['approver' => function ($approver){
+                    return $approver;
                 }])
                 ->whereHas(
                     'approvers',
@@ -567,8 +567,8 @@ class Memo extends Model
                 ->orderBy('id', 'desc')
                 // ->where('status_payment','=','submit')
                 // ->orWhere('status_payment', '=', $status)
-                ->with(['approverPayment' => function ($approver) use ($id_employee, $status) {
-                    return $approver->where('id_employee', $id_employee)->where('status', '=', $status);
+                ->with(['approverPayment' => function ($approver) {
+                    return $approver;
                 }])
                 ->whereHas(
                     'approversPayment',
@@ -615,8 +615,8 @@ class Memo extends Model
                 ->orderBy('id', 'desc')
                 // ->where('status_po', '=', 'submit')
                 // ->orWhere('status_po', '=', $status)
-                ->with(['approverPo' => function ($approver) use ($id_employee, $status) {
-                    return $approver->where('id_employee', $id_employee)->where('status', '=', $status);
+                ->with(['approverPo' => function ($approver) {
+                    return $approver;
                 }])
                 ->whereHas(
                     'approversPo',
