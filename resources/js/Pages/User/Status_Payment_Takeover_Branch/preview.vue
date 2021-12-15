@@ -287,32 +287,30 @@
             >
               <b-col>
                 <h5>Payment</h5>
-                <div class="table-responsive">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Bank Name</th>
-                        <th scope="col">Bank Account</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Remark</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(item, index) in dataPayments" :key="item.id">
-                        <th scope="row">
-                          {{ index + 1 }}
-                        </th>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.bank_name }}</td>
-                        <td>{{ item.bank_account }}</td>
-                        <td>{{ Number(item.amount).toLocaleString() }}</td>
-                        <td>{{ item.remark }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Vendor Name</th>
+                      <th scope="col">Bank Name</th>
+                      <th scope="col">Bank Account</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Remark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in dataPayments" :key="item.id">
+                      <th scope="row">
+                        {{ index + 1 }}
+                      </th>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.bank_name }}</td>
+                      <td>{{ item.bank_account }}</td>
+                      <td>{{ Number(item.amount).toLocaleString() }}</td>
+                      <td>{{ item.remark }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </b-col>
             </b-row>
             <b-row v-if="attachments.length > 0" class="mb-2">

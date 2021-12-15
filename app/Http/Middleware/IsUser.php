@@ -27,9 +27,9 @@ class IsUser
             // share notif
             Inertia::share('notif', function () {
                 return [
-                    'approval_memo' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee)),
-                    'approval_memo_payment' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee)),
-                    'approval_memo_po' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee)),
+                    'approval_memo' => count(Memo::getMemoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
+                    'approval_memo_payment' => count(Memo::getMemoPaymentWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
+                    'approval_memo_po' => count(Memo::getMemoPoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                 ];
             });
             return $next($request);

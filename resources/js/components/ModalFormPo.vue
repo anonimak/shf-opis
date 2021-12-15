@@ -6,7 +6,7 @@
     :title="modalTitle"
     @shown="getData"
     @hidden="resetModal"
-    ok-title="Purpose PO"
+    ok-title="Propose PO"
     @ok="handleOk"
     :cancel-disabled="isSubmitbusy || isTableApproverbusy"
     :ok-disabled="isSubmitbusy || isTableApproverbusy"
@@ -122,7 +122,7 @@ export default {
   methods: {
     getData() {
       this.isTableApproverbusy = true;
-      this.modalTitle = "Continue Purpose Purchase Order";
+      this.modalTitle = "Continue Propose Purchase Order";
 
       Promise.all([
         this.getDataPositions(),

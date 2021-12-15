@@ -251,7 +251,7 @@
               "
             >
               <b-col>
-                <div class="table-responsive">
+                <div class="table-responsive" v-if="dataTotalCost.length > 0">
                   <table class="table table-stripped table-bordered">
                     <tbody>
                       <tr>

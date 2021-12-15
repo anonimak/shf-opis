@@ -54,18 +54,21 @@ class User extends Authenticatable
         }])->where('id', auth()->id())->first();
     }
 
-    public static function getUsers($id = null, $search = null)
+    public static function getUsers( $search = null)
     {
         $user = Self::select('*')
             ->orderBy('id', 'desc');
 
-        if ($id) {
-            $user->where('email', '!=', $id);
-        }
+        // if ($id) {
+        //     $user->where('email', '!=', $id);
+        // }
 
         if ($search) {
-            $user->where('name', 'LIKE', '%' . $search . '%')->orWhere('email', 'LIKE', '%' . $search . '%');
-        }
+            $user->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('email', 'LIKE', '%' . $search . '%');
+        });
+    }
         return $user;
     }
 }

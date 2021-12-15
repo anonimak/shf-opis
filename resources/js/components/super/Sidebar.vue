@@ -7,7 +7,7 @@
     <!-- Sidebar - Brand -->
     <inertia-link
       class="sidebar-brand d-flex align-items-center"
-      :href="route('admin.dashboard')"
+      :href="route('super.dashboard')"
     >
       <div class="sidebar-brand-text mx-3">SuperMenu WebSHF</div>
     </inertia-link>

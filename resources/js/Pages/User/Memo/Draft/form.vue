@@ -207,7 +207,7 @@
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row
+              <!-- <b-row
                 v-if="
                   dataMemoType.ref_table.with_po == 1 ||
                   dataMemoType.ref_table.with_payment == 1
@@ -264,7 +264,7 @@
                     >
                   </b-form-group>
                 </div>
-              </b-row>
+              </b-row> -->
               <b-row>
                 <div class="col-12"></div>
               </b-row>
@@ -332,11 +332,11 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       // selectedAcknowledge: null,
-      checkPPNInclude: false,
-      sub_total: 0,
-      pph: 0,
-      ppn: 0,
-      grand_total: 0,
+    //   checkPPNInclude: false,
+    //   sub_total: 0,
+    //   pph: 0,
+    //   ppn: 0,
+    //   grand_total: 0,
       form: {},
       dataApprovers: [],
       dataCost: null,
@@ -389,52 +389,52 @@ export default {
     }
   },
   watch: {
-    sub_total: function (val) {
-      if (!val) {
-        val = 0;
-      }
-      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
-      this.pph = 0.02 * parseFloat(val);
-      this.grand_total =
-        parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
-    },
-    pph: function (val) {
-      if (!val || !this.sub_total) {
-        val = 0;
-        // this.sub_total = 0;
-      }
-      this.grand_total =
-        parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(val);
-    },
-    checkPPNInclude: function (val) {
-      if (val) {
-        this.ppn = 0;
-      } else {
-        this.ppn = 0.1 * parseFloat(this.sub_total);
-      }
-      this.grand_total =
-        parseFloat(this.sub_total) +
-        parseFloat(this.ppn) -
-        parseFloat(this.pph);
-    },
+    // sub_total: function (val) {
+    //   if (!val) {
+    //     val = 0;
+    //   }
+    //   this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
+    //   this.pph = 0.02 * parseFloat(val);
+    //   this.grand_total =
+    //     parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
+    // },
+    // pph: function (val) {
+    //   if (!val || !this.sub_total) {
+    //     val = 0;
+    //     // this.sub_total = 0;
+    //   }
+    //   this.grand_total =
+    //     parseFloat(this.sub_total) + parseFloat(this.ppn) - parseFloat(val);
+    // },
+    // checkPPNInclude: function (val) {
+    //   if (val) {
+    //     this.ppn = 0;
+    //   } else {
+    //     this.ppn = 0.1 * parseFloat(this.sub_total);
+    //   }
+    //   this.grand_total =
+    //     parseFloat(this.sub_total) +
+    //     parseFloat(this.ppn) -
+    //     parseFloat(this.pph);
+    // },
     dataMemo: function (val) {
       this.fillForm();
     },
-    dataTotalCost: function (val) {
-      this.fillForm();
-    },
+    // dataTotalCost: function (val) {
+    //   this.fillForm();
+    // },
   },
   methods: {
-    reset: function () {
-      this.sub_total = this.dataTotalCost.sub_total;
-      this.pph = this.dataTotalCost.pph;
-      this.ppn = this.dataTotalCost.ppn;
-      this.grand_total = this.dataTotalCost.grand_total;
-      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
-    },
-    pphValueChange: function (val) {
-      this.pph = 0.02 * parseFloat(val);
-    },
+    // reset: function () {
+    //   this.sub_total = this.dataTotalCost.sub_total;
+    //   this.pph = this.dataTotalCost.pph;
+    //   this.ppn = this.dataTotalCost.ppn;
+    //   this.grand_total = this.dataTotalCost.grand_total;
+    //   this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
+    // },
+    // pphValueChange: function (val) {
+    //   this.pph = 0.02 * parseFloat(val);
+    // },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
       var form_data = new FormData();
@@ -501,23 +501,23 @@ export default {
     fillForm() {
       this.form = { ...this.dataMemo };
       this.dataApprovers = [...this.form.approvers];
-      this.sub_total = this.dataTotalCost.sub_total;
-      this.pph = this.dataTotalCost.pph;
-      this.ppn = this.dataTotalCost.ppn;
-      this.grand_total = this.dataTotalCost.grand_total;
-      this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
+    //   this.sub_total = this.dataTotalCost.sub_total;
+    //   this.pph = this.dataTotalCost.pph;
+    //   this.ppn = this.dataTotalCost.ppn;
+    //   this.grand_total = this.dataTotalCost.grand_total;
+    //   this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
-      if (
-        this.dataMemoType.ref_table.with_po == 1 ||
-        this.dataMemoType.ref_table.with_payment == 1
-      ) {
-        if (this.grand_total == 0 || this.sub_total == 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-      }
+    //   if (
+    //     this.dataMemoType.ref_table.with_po == 1 ||
+    //     this.dataMemoType.ref_table.with_payment == 1
+    //   ) {
+    //     if (this.grand_total == 0 || this.sub_total == 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //   }
       if (!this.submitState) {
         //console.log("data = ", this.dataFormula.Sheet1.length);
         let newData = {};
@@ -556,10 +556,10 @@ export default {
         arrayCost = _.pickBy(arrayCost, _.identity);
         if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;
-        this.form.sub_total = this.sub_total;
-        this.form.pph = this.pph;
-        this.form.ppn = this.ppn;
-        this.form.grand_total = this.grand_total;
+        // this.form.sub_total = this.sub_total;
+        // this.form.pph = this.pph;
+        // this.form.ppn = this.ppn;
+        // this.form.grand_total = this.grand_total;
         this.$inertia
           .post(route(this.__update, this.dataMemo.id), this.form)
           .then(() => {

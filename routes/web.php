@@ -93,6 +93,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
+            Route::get('/{memo}/form-payment','User\MemoController@formPayment')->name('formpayment');
             // Route::put('/{id}/addpayment','User\MemoController@paymentStore')->name('storepayment');
             Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');

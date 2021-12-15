@@ -6,7 +6,7 @@
     :title="modalTitle"
     @shown="getData"
     @hidden="resetModal"
-    ok-title="Purpose Payment"
+    ok-title="Propose Payment"
     @ok="handleOk"
     :cancel-disabled="isSubmitbusy || isTableApproverbusy"
     :ok-disabled="isSubmitbusy || isTableApproverbusy"
@@ -43,7 +43,7 @@
         <table class="table table-striped table-bordered">
           <thead class="thead-dark">
             <tr>
-              <th scope="col">Name Vendor</th>
+              <th scope="col">Vendor Name </th>
               <th scope="col">Bank Name</th>
               <th scope="col">Bank Account</th>
               <th scope="col">Amount</th>
@@ -389,7 +389,7 @@ export default {
     },
     getData() {
       this.isTableApproverbusy = true;
-      this.modalTitle = "Continue Purpose Payment";
+      this.modalTitle = "Continue Propose Payment";
       Promise.all([
         this.getDataPositions(),
         this.getDataApproversPayment(),

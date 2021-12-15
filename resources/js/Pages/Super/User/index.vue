@@ -206,11 +206,13 @@ export default {
   watch: {
     form: {
       handler: throttle(function () {
-        let query = pickBy(this.form);
+        let query = this.form.search;
         this.$inertia.replace(
           this.route(
             this.__index,
-            Object.keys(query).length ? query : { remember: "forget" }
+            Object.keys(query).length
+            ? { search: query }
+            : { remember: "forget" }
           )
         );
       }, 150),

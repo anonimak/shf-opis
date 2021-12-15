@@ -18,6 +18,7 @@
           >Hello {{ userinfo.name }}
           <b-img
             right
+            fluid
             src="../images/test(300x300).png"
             alt="Right image"
           ></b-img>
@@ -174,6 +175,140 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+          <div class="card shadow mb-4" v-if="dataMemoApproved">
+            <!-- Card Header - Dropdown -->
+            <div
+              class="
+                card-header
+                py-3
+                d-flex
+                flex-row
+                align-items-center
+                justify-content-between
+              "
+            >
+              <h6 class="m-0 font-weight-bold text-primary">
+                Last Approval Memo Status
+              </h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Document No</th>
+                      <th>Approved At</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ dataMemoApproved.memo.title }}</td>
+                      <td>{{ dataMemoApproved.memo.doc_no }}</td>
+                      <td>
+                        {{
+                          dataMemoApproved.updated_at
+                            | moment("dddd, MMMM Do YYYY, h:mm:ss a")
+                        }}
+                      </td>
+                      <td>
+                        <b-badge
+                          v-if="dataMemoApproved.memo.status == 'submit'"
+                          variant="info"
+                          >On process approving</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemoApproved.memo.status == 'approve'"
+                          variant="success"
+                          >Memo Approved</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemoApproved.memo.status == 'reject'"
+                          variant="danger"
+                          >Memo Rejected</b-badge
+                        >
+                        <b-badge
+                          v-if="dataMemoApproved.memo.status == 'revisi'"
+                          variant="secondary"
+                          >Memo Revised</b-badge
+                        >
+                        <p v-if="dataMemoApproved.memo.latest_history" class="text-muted">
+                          <small>
+                            <em>
+                              {{ dataMemoApproved.memo.latest_history.title }}
+                            </em>
+                          </small>
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <inertia-link class="btn btn-secondary" :href="route(__allmemoapproval)"
+                >All Approval Memo </inertia-link
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+          <div
+            class="card shadow mb-4"
+            v-if="dataMemoApproved && dataMemoApproved.memo.histories.length > 0"
+          >
+            <div
+              class="
+                card-header
+                py-3
+                d-flex
+                flex-row
+                align-items-center
+                justify-content-between
+              "
+            >
+              <h6 class="m-0 font-weight-bold text-primary">
+                History Last Approval Memo
+              </h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="overflow-auto" style="height: 218px">
+                <timeline>
+                  <timeline-item
+                    v-for="(itemHistory, index) in dataMemoApproved.memo.histories"
+                    :key="index"
+                    :bg-color="timelinecolor[itemHistory.type]"
+                  >
+                    <strong>
+                      {{ itemHistory.title }}
+                      <span class="float-right">
+                        <small class="text-muted">
+                          <em>
+                            {{
+                              itemHistory.created_at | moment("D/M/YY,h:mm a")
+                            }}
+                          </em>
+                        </small>
+                      </span>
+                    </strong>
+                    <p>
+                      <small class="text-muted">{{
+                        itemHistory.content
+                      }}</small>
+                    </p>
+                  </timeline-item>
+                </timeline>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- /.container-fluid -->
   </layout>
@@ -203,6 +338,6 @@ export default {
     TimelineTitle,
     FlashMsg,
   },
-  props: ["meta", "dataMemo", "userinfo", "notif", "__create", "__allmemo"],
+  props: ["meta", "dataMemo","dataMemoApproved", "userinfo", "notif", "__create", "__allmemo","__allmemoapproval"],
 };
 </script>

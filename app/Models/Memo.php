@@ -512,7 +512,39 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoWithLastApproverRawQuery($id_employee)
+    public static function getMemoWithLastApproverRawQuery($id_employee, $status)
+    {
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                // ->where('status', '=', 'submit')
+                // ->orWhere('status', '=', $status)
+                ->with(['approver' => function ($approver){
+                    return $approver;
+                }])
+                ->whereHas(
+                    'approvers',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                )->get();
+            return $memo;
+        } else {
+            $memo = DB::select(
+                DB::raw("select a.*,c.id id_approver, c.type_approver from m_memos a join
+            (
+            select min(idx) as min_idx, id_memo from d_memo_approvers where status = '$status' group by id_memo
+            ) b on a.id = b.id_memo
+            join d_memo_approvers c on a.id = c.id_memo
+            where b.min_idx = c.idx
+            and a.status = '$status'
+            and c.id_employee = $id_employee")
+            );
+            return $memo;
+        }
+    }
+
+    public static function getMemoWithLastApproverRawQueryNotif($id_employee)
     {
 
         $memo = DB::select(
@@ -528,7 +560,39 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPaymentWithLastApproverRawQuery($id_employee)
+    public static function getMemoPaymentWithLastApproverRawQuery($id_employee, $status)
+    {
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                // ->where('status_payment','=','submit')
+                // ->orWhere('status_payment', '=', $status)
+                ->with(['approverPayment' => function ($approver) {
+                    return $approver;
+                }])
+                ->whereHas(
+                    'approversPayment',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                )->get();
+            return $memo;
+        } else {
+            $memo = DB::select(
+                DB::raw("select a.*,c.id id_approver, c.type_approver from m_memos a join
+            (
+            select min(idx) as min_idx, id_memo from d_payment_approver where status = '$status' group by id_memo
+            ) b on a.id = b.id_memo
+            join d_payment_approver c on a.id = c.id_memo
+            where b.min_idx = c.idx
+            and a.status_payment = '$status'
+            and c.id_employee = $id_employee")
+            );
+            return $memo;
+        }
+    }
+
+    public static function getMemoPaymentWithLastApproverRawQueryNotif($id_employee)
     {
 
         $memo = DB::select(
@@ -544,7 +608,39 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPoWithLastApproverRawQuery($id_employee)
+    public static function getMemoPoWithLastApproverRawQuery($id_employee, $status)
+    {
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                // ->where('status_po', '=', 'submit')
+                // ->orWhere('status_po', '=', $status)
+                ->with(['approverPo' => function ($approver) {
+                    return $approver;
+                }])
+                ->whereHas(
+                    'approversPo',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                )->get();
+            return $memo;
+        } else {
+            $memo = DB::select(
+                DB::raw("select a.*,c.id id_approver, c.type_approver from m_memos a join
+            (
+            select min(idx) as min_idx, id_memo from d_po_approver where status = '$status' group by id_memo
+            ) b on a.id = b.id_memo
+            join d_po_approver c on a.id = c.id_memo
+            where b.min_idx = c.idx
+            and a.status_po = '$status'
+            and c.id_employee = $id_employee")
+            );
+            return $memo;
+        }
+    }
+
+    public static function getMemoPoWithLastApproverRawQueryNotif($id_employee)
     {
 
         $memo = DB::select(
