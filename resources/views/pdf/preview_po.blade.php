@@ -20,7 +20,42 @@
     <!-- Styles -->
     <link href="{{ public_path('css/main.css') }}" rel="stylesheet">
     <style>
-        * { padding: 0; margin: 0; }
+        /* * { padding: 0; margin: 0; } */
+
+        @page {
+                margin: 0cm 0cm;
+        }
+
+        header {
+            position: relative;
+            top: 0cm;
+            left: 0cm;
+            right: 0cm;
+
+            /** Extra personal styles **/
+            /* background-color: #03a9f4; */
+            /* color: white; */
+            text-align: center;
+        }
+
+        /** Define the footer rules **/
+        footer {
+            position: absolute; 
+            bottom: 0cm; 
+            left: 0cm; 
+            right: 0cm;
+            height: 2cm;
+
+            /** Extra personal styles **/
+            background-color: #03a9f4;
+            color: white;
+            text-align: center;
+            line-height: 1.5cm;
+        }
+
+        main {
+
+        }
 
         body {
         /*color: #7d7a7a;*/
@@ -70,7 +105,7 @@
 </head>
 
 <body>
-    <div>
+    <header>
         <table style="border:none">
             <tbody>
                 <tr>
@@ -80,15 +115,20 @@
                             Gedung Roxy Square Lt. 3 B 001 No. 02 Jl. Kyai Tapa No.1, Tomang, Grogol Petamburan, Jakarta Barat 11440
                         </p>
                     </td>
-                    <td style="border:none; width:50%"></td>
-                    <td style="border:none; width:25%;vertical-align: top; text-align: left">
+                    <td style="border:none; width:40%; text-align: left">
+                    </td>
+                    <td style="border:none; width:15%;vertical-align: top; text-align: left">
                         <h2>Purchase Order</h2>
-                        <p>PO No  :{{ $memo->po_no}}</p>
+                        <p>{{ $memo->po_no}}</p>
+                    </td>
+                    <td style="border:none; width:10%; text-align: right">
+                        <img style="margin:10px" src="data:image/png;base64, {!! $qrcode !!}">
                     </td>
                 </tr>
             </tbody>
         </table>
-        <br>
+    </header>
+    <main>
         <table style="border:none">
             <tbody>
                 <tr>
@@ -187,7 +227,7 @@
                     </td>
                 </tr>
             </tbody>
-    </table>
+        </table>
         <br>
         @endif
         @if ( count($memo->approvers) > 0)
@@ -237,7 +277,7 @@
             </table>
         </div>
         @endif
-    </div>
+    </main>
 </body>
 
 </html>
