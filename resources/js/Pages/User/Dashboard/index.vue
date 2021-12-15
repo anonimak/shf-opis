@@ -251,7 +251,7 @@
               </div>
 
               <inertia-link class="btn btn-secondary" :href="route(__allmemoapproval)"
-                >All Memo Approval</inertia-link
+                >All Approval Memo </inertia-link
               >
             </div>
           </div>
