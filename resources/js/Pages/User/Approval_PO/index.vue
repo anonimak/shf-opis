@@ -77,7 +77,7 @@
                         </thead>
                         <tbody>
                           <tr
-                            v-for="(item, index) in dataMemoTabList"
+                            v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
                           >
                             <th scope="row">

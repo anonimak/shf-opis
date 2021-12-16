@@ -77,7 +77,7 @@
                         </thead>
                         <tbody>
                           <tr
-                            v-for="(item, index) in dataMemoTabList"
+                            v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
                           >
                             <th scope="row">
@@ -151,10 +151,10 @@
                       </table>
                     </b-overlay>
                   </div>
-                  <!-- <Pagination
+                  <Pagination
                     v-if="dataMemoTabList.links != undefined"
                     :links="dataMemoTabList.links"
-                  /> -->
+                  />
                 </div>
               </div>
             </keep-alive>

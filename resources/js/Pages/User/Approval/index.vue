@@ -77,7 +77,7 @@
                         </thead>
                         <tbody >
                           <tr
-                            v-for="(item, index) in dataMemoTabList"
+                            v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
                           >
                             <th scope="row">
@@ -90,12 +90,12 @@
                                 1
                               }}
                             </th>
-                            <td>
+                            <td >
                               {{ item.title }}
                             </td>
-                            <td>
+                            <td >
                                 <!-- {{ item.doc_no }} -->
-                              <inertia-link :href="route(__detail, item.id)">
+                              <inertia-link :href="route(__detail, item.id)" >
                                 {{ item.doc_no }}
                               </inertia-link>
                             </td>
@@ -104,12 +104,12 @@
                             </td> -->
                             <td>
                               <b-button-group
-                                v-if="item.type_approver == 'approver' && item.status == 'submit'"
+                                v-if="item.type_approver == 'approver' && item.status_approver == 'submit'"
                               >
                                 <a
                                   target="_blank"
                                   class="btn btn-success"
-                                  :href="route(__previewpdf, item.id)"
+                                  :href="route(__previewpdf, item.id_approver)"
                                   >Preview PDF</a
                                 >
                                 <b-button
@@ -138,7 +138,7 @@
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge'"
+                                  v-if="item.type_approver == 'acknowledge' && item.status_approver == 'submit'"
                                   >Next</b-button
                                 >
                               </b-button-group>
@@ -284,7 +284,7 @@ export default {
     "filters",
     "tab",
     "counttab",
-    "dataPosition",
+    //"dataPosition",
   ],
   metaInfo: { title: "Approval Memo" },
   data() {

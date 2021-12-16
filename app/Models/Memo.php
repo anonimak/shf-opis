@@ -486,31 +486,100 @@ class Memo extends Model
 
     public static function getMemoWithLastApprover($id_employee, $status, $search = null)
     {
-        $memo = Self::select('*')
-            ->orderBy('id', 'desc')
-            ->where('status', '=', $status)
-            ->with(['approver' => function ($approver) {
-                return $approver->orderBy('idx', "ASC")->first();
-            }])
-            ->whereHas(
-                'approvers',
-                function (Builder $query) use ($id_employee, $status) {
-                    $query->where('id_employee', $id_employee)->where('status', '=', $status);
-                }
-            );
-        // ->with(['approvers' => function ($approver) {
-        //     return $approver->where('id_employee', "ASC");
-        // }]);
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                ->with(['approver' => function ($approver) use ($id_employee, $status) {
+                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+                }])
+                ->whereHas(
+                    'approvers',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                );
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
+            return $memo;
+        } else {
+            $lastApprover = DB::table('d_memo_approvers')
+                ->select(DB::raw('MIN(idx) as min_idx, id_memo'))
+                ->where('status', $status)
+                ->groupBy('id_memo');
 
-        if ($search) {
-            $memo->where(function ($query) use ($search) {
-                $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                $query->orWhere('status', 'LIKE', '%' . $search . '%');
-            });
+            $memo =  DB::table(DB::raw('m_memos a'))
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                // ->orderBy('id', 'desc')
+                // ->with(['approver' => function ($approver) {
+                //     return $approver->orderBy('idx', "ASC")->first();
+                // }])
+                ->joinSub($lastApprover, 'b', function ($join) {
+                    $join->on('a.id', '=', 'b.id_memo');
+                })
+                ->join(DB::raw('d_memo_approvers as c'), 'a.id', '=', 'c.id_memo')
+                ->whereColumn('b.min_idx', '=', 'c.idx')
+                ->where('a.status', '=', $status)
+                ->where('c.id_employee', $id_employee);
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
+
+            return $memo;
         }
-        return $memo;
     }
+    // public static function getMemoWithLastApprover($id_employee, $status)
+    // {
+    //     if ($status == 'approve') {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             // ->where('status', '=', 'submit')
+    //             // ->orWhere('status', '=', $status)
+    //             ->with(['approver' => function ($approver) use ($id_employee,$status) {
+    //                 return $approver->orderBy('idx','asc')->where('id_employee', $id_employee)->where('status',$status);
+    //             }])
+    //             ->whereHas(
+    //                 'approvers',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', '=', $status);
+    //                 }
+    //             );
+    //         return $memo;
+    //     } else {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             ->where('status', '=', $status)
+    //             ->with(['approver' => function ($approver) use ($status) {
+    //                 return $approver->orderBy('idx','asc')->where('status',$status)->min('idx');
+    //             }])
+    //             ->whereHas(
+    //                 'approvers',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', $status);
+    //                 }
+    //             );
+    //     // ->with(['approvers' => function ($approver) {
+    //     //     return $approver->where('id_employee', "ASC");
+    //     // }]);
+
+    //     // if ($search) {
+    //     //     $memo->where(function ($query) use ($search) {
+    //     //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
+    //     //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
+    //     //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
+    //     //     });
+    //     // }
+    //     return $memo;
+    //     }
+    // }
 
     public static function getMemoWithLastApproverRawQuery($id_employee, $status)
     {
@@ -519,7 +588,7 @@ class Memo extends Model
                 ->orderBy('id', 'desc')
                 // ->where('status', '=', 'submit')
                 // ->orWhere('status', '=', $status)
-                ->with(['approver' => function ($approver){
+                ->with(['approver' => function ($approver) {
                     return $approver;
                 }])
                 ->whereHas(
@@ -559,6 +628,90 @@ class Memo extends Model
         );
         return $memo;
     }
+
+    public static function getMemoPaymentWithLastApprover($id_employee, $status)
+    {
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                ->with(['approverPayment' => function ($approver) use ($id_employee, $status) {
+                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+                }])
+                ->whereHas(
+                    'approversPayment',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                );
+            return $memo;
+        } else {
+            $lastApprover = DB::table('d_payment_approver')
+                ->select(DB::raw('MIN(idx) as min_idx, id_memo'))
+                ->where('status', $status)
+                ->groupBy('id_memo');
+
+            $memo =  DB::table(DB::raw('m_memos a'))
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                // ->orderBy('id', 'desc')
+                // ->with(['approver' => function ($approver) {
+                //     return $approver->orderBy('idx', "ASC")->first();
+                // }])
+                ->joinSub($lastApprover, 'b', function ($join) {
+                    $join->on('a.id', '=', 'b.id_memo');
+                })
+                ->join(DB::raw('d_payment_approver as c'), 'a.id', '=', 'c.id_memo')
+                ->whereColumn('b.min_idx', '=', 'c.idx')
+                ->where('a.status_payment', '=', $status)
+                ->where('c.id_employee', $id_employee);
+
+            return $memo;
+        }
+    }
+
+    // public static function getMemoPaymentWithLastApprover($id_employee, $status)
+    // {
+    //     if ($status == 'approve') {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             // ->where('status', '=', 'submit')
+    //             // ->orWhere('status', '=', $status)
+    //             ->with(['approverPayment' => function ($approver) use ($id_employee, $status) {
+    //                 return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+    //             }])
+    //             ->whereHas(
+    //                 'approversPayment',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', '=', $status);
+    //                 }
+    //             );
+    //         return $memo;
+    //     } else {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             ->where('status_payment', '=', $status)
+    //             ->with(['approverPayment' => function ($approver) use ($status) {
+    //                 return $approver->orderBy('idx', 'asc')->where('status', $status)->min('idx');
+    //             }])
+    //             ->whereHas(
+    //                 'approversPayment',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', $status);
+    //                 }
+    //             );
+    //         // ->with(['approvers' => function ($approver) {
+    //         //     return $approver->where('id_employee', "ASC");
+    //         // }]);
+
+    //         // if ($search) {
+    //         //     $memo->where(function ($query) use ($search) {
+    //         //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
+    //         //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
+    //         //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
+    //         //     });
+    //         // }
+    //         return $memo;
+    //     }
+    // }
 
     public static function getMemoPaymentWithLastApproverRawQuery($id_employee, $status)
     {
@@ -607,6 +760,90 @@ class Memo extends Model
         );
         return $memo;
     }
+
+    public static function getMemoPoWithLastApprover($id_employee, $status)
+    {
+        if ($status == 'approve') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                ->with(['approverPo' => function ($approver) use ($id_employee, $status) {
+                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+                }])
+                ->whereHas(
+                    'approversPo',
+                    function (Builder $query) use ($id_employee, $status) {
+                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
+                    }
+                );
+            return $memo;
+        } else {
+            $lastApprover = DB::table('d_po_approver')
+                ->select(DB::raw('MIN(idx) as min_idx, id_memo'))
+                ->where('status', $status)
+                ->groupBy('id_memo');
+
+            $memo =  DB::table(DB::raw('m_memos a'))
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                // ->orderBy('id', 'desc')
+                // ->with(['approver' => function ($approver) {
+                //     return $approver->orderBy('idx', "ASC")->first();
+                // }])
+                ->joinSub($lastApprover, 'b', function ($join) {
+                    $join->on('a.id', '=', 'b.id_memo');
+                })
+                ->join(DB::raw('d_po_approver as c'), 'a.id', '=', 'c.id_memo')
+                ->whereColumn('b.min_idx', '=', 'c.idx')
+                ->where('a.status_po', '=', $status)
+                ->where('c.id_employee', $id_employee);
+
+            return $memo;
+        }
+    }
+
+    // public static function getMemoPoWithLastApprover($id_employee, $status)
+    // {
+    //     if ($status == 'approve') {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             // ->where('status', '=', 'submit')
+    //             // ->orWhere('status', '=', $status)
+    //             ->with(['approverPo' => function ($approver) use ($id_employee, $status) {
+    //                 return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+    //             }])
+    //             ->whereHas(
+    //                 'approversPo',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', '=', $status);
+    //                 }
+    //             );
+    //         return $memo;
+    //     } else {
+    //         $memo = Self::select('*')
+    //             ->orderBy('id', 'desc')
+    //             ->where('status_po', '=', $status)
+    //             ->with(['approverPo' => function ($approver) use ($status) {
+    //                 return $approver->orderBy('idx', 'asc')->where('status', $status)->min('idx');
+    //             }])
+    //             ->whereHas(
+    //                 'approversPo',
+    //                 function (Builder $query) use ($id_employee, $status) {
+    //                     $query->where('id_employee', $id_employee)->where('status', $status);
+    //                 }
+    //             );
+    //         // ->with(['approvers' => function ($approver) {
+    //         //     return $approver->where('id_employee', "ASC");
+    //         // }]);
+
+    //         // if ($search) {
+    //         //     $memo->where(function ($query) use ($search) {
+    //         //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
+    //         //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
+    //         //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
+    //         //     });
+    //         // }
+    //         return $memo;
+    //     }
+    // }
 
     public static function getMemoPoWithLastApproverRawQuery($id_employee, $status)
     {
