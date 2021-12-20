@@ -431,7 +431,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getAllMemoPayment($id_employee, $tab)
+    public static function getAllMemoPayment($id_employee, $tab, $search = null)
     {
         if ($tab == 'paid') {
             $memo = Self::select('*')
@@ -440,13 +440,13 @@ class Memo extends Model
                 ->where('confirmed_payment_by', '=', $id_employee)
                 ->whereNotNull('payment_at');
 
-            // if ($search) {
-            //     $memo->where(function ($query) use ($search) {
-            //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
-            //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
-            //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
-            //     });
-            // }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
             return $memo;
         } else {
             $memo = Self::select('*')->orderBy('id', 'desc')
@@ -454,13 +454,13 @@ class Memo extends Model
                 ->where('confirmed_payment_by', '=', $id_employee)
                 ->whereNull('payment_at');
 
-            // if ($search) {
-            //     $memo->where(function ($query) use ($search) {
-            //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
-            //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
-            //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
-            //     });
-            // }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
             return $memo;
         }
     }
