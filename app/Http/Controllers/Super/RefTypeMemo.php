@@ -96,6 +96,7 @@ class RefTypeMemo extends Controller
             'refmoduleapprover'    => 'required',
             'id_overtake' => 'nullable',
             'id_branch' => 'nullable',
+            'id_confirmed_payment_by' => 'nullable'
         ]);
         $position = Ref_Type_Memo::create([
             'name'                      => $request->input('name'),
@@ -105,6 +106,7 @@ class RefTypeMemo extends Controller
             'with_payment'              => $request->input('with_payment'),
             'id_overtake_memo'          => $request->input('id_overtake'),
             'id_branch'                 => $request->input('id_branch'),
+            'id_confirmed_payment_by'   => $request->input('id_confirmed_payment_by'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull Create new Reference Type Memo $position->name");
     }
@@ -159,6 +161,7 @@ class RefTypeMemo extends Controller
                 'with_payment'      => $typememo->with_payment,
                 'id_overtake'       => $typememo->id_overtake_memo,
                 'id_branch'         => $typememo->id_branch,
+                'id_confirmed_payment_by' => $typememo->id_confirmed_payment_by
             ],
             'dataDepartments'           => Department::get(),
             'dataBranches'              => Branch::get(),
@@ -185,6 +188,7 @@ class RefTypeMemo extends Controller
             'refmoduleapprover'    => 'required',
             'id_overtake'          => 'nullable',
             'id_branch'            => 'nullable',
+            'id_confirmed_payment_by' => 'nullable'
         ]);
 
         Ref_Type_Memo::where('id', $id)->update([
@@ -195,6 +199,7 @@ class RefTypeMemo extends Controller
             'with_payment'              => $request->input('with_payment'),
             'id_overtake_memo'          => $request->input('id_overtake'),
             'id_branch'                 => $request->input('id_branch'),
+            'id_confirmed_payment_by'   => $request->input('id_confirmed_payment_by'),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
     }
