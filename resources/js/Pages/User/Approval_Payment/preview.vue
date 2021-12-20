@@ -45,7 +45,7 @@
               >
                 <b-button-group class="float-right">
                   <b-button
-                    @click="actionApprove(dataMemo.approver_payment.id)"
+                    @click="actionNext(dataMemo.approver_payment.id)"
                     variant="info"
                     >Next</b-button
                   >
@@ -438,6 +438,14 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Approve";
       this.modalCaption = "Are you sure to approve?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    actionNext(id) {
+      this.buttonClicked = "approve";
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Acknowledge";
+      this.modalCaption = "Are you sure to next?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
