@@ -164,7 +164,7 @@
               spinner-small
               spinner-variant="primary"
             >
-              <b-col class="mt-4">
+              <b-col class="mt-4 table-responsive">
                 <h5>Vendor</h5>
                 <table class="table table-striped table-bordered">
                   <thead class="thead-dark">

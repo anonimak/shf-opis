@@ -55,9 +55,9 @@
                     </b-tab> -->
                   </b-tabs>
                   <div class="row"></div>
-                  <!-- <div class="col-lg-3 col-xs-12 mt-3">
+                  <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
-                  </div> -->
+                  </div>
                   <div class="table-responsive">
                     <b-overlay
                       :show="isLoadMemo"
@@ -258,7 +258,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
-//import Search from "@/components/Search";
+import Search from "@/components/Search";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 import throttle from "lodash/throttle";
 import mapValues from "lodash/mapValues";
@@ -294,6 +294,9 @@ export default {
       modalTitle: "",
       modalCaption: "",
       tabIndex: 0,
+      form: {
+        search: this.filters.search,
+      },
     };
   },
   components: {
@@ -301,12 +304,15 @@ export default {
     FlashMsg,
     Breadcrumb,
     Pagination,
-    //Search,
+    Search,
     Timeline,
     TimelineItem,
     TimelineTitle,
     ModalFormMemoApproval,
     UndrawNoData,
+  },
+  beforeMount() {
+    this.setLsTabMemo();
   },
   mounted() {},
   methods: {
@@ -409,6 +415,25 @@ export default {
         // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
+    },
+  },
+  watch: {
+    form: {
+      handler: throttle(function () {
+        let query = this.form.search;
+        this.$inertia.replace(
+          this.route(
+            this.__index,
+            Object.keys(query).length
+              ? { search: query, tab: this.tab[this.tabIndex] }
+              : {
+                  remember: "forget",
+                  tab: this.tab[this.tabIndex],
+                }
+          )
+        );
+      }, 150),
+      deep: true,
     },
   },
 };

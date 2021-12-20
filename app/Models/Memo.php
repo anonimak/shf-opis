@@ -431,6 +431,40 @@ class Memo extends Model
         return $memo;
     }
 
+    public static function getAllMemoPayment($id_employee, $tab)
+    {
+        if ($tab == 'paid') {
+            $memo = Self::select('*')
+                ->orderBy('id', 'desc')
+                ->where('status_payment', '=', 'approve')
+                ->where('confirmed_payment_by', '=', $id_employee)
+                ->whereNotNull('payment_at');
+
+            // if ($search) {
+            //     $memo->where(function ($query) use ($search) {
+            //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
+            //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
+            //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            //     });
+            // }
+            return $memo;
+        } else {
+            $memo = Self::select('*')->orderBy('id', 'desc')
+                ->where('status_payment', '=', 'approve')
+                ->where('confirmed_payment_by', '=', $id_employee)
+                ->whereNull('payment_at');
+
+            // if ($search) {
+            //     $memo->where(function ($query) use ($search) {
+            //         $query->where('doc_no', 'LIKE', '%' . $search . '%');
+            //         $query->orWhere('title', 'LIKE', '%' . $search . '%');
+            //         $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            //     });
+            // }
+            return $memo;
+        }
+    }
+
     public static function getPayment($id_employee, $status, $search = null)
     {
         $memo = Self::select('*')
@@ -529,7 +563,7 @@ class Memo extends Model
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
 
@@ -629,7 +663,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPaymentWithLastApprover($id_employee, $status)
+    public static function getMemoPaymentWithLastApprover($id_employee, $status, $search = null)
     {
         if ($status == 'approve') {
             $memo = Self::select('*')
@@ -643,6 +677,13 @@ class Memo extends Model
                         $query->where('id_employee', $id_employee)->where('status', '=', $status);
                     }
                 );
+                if ($search) {
+                    $memo->where(function ($query) use ($search) {
+                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    });
+                }
             return $memo;
         } else {
             $lastApprover = DB::table('d_payment_approver')
@@ -663,6 +704,14 @@ class Memo extends Model
                 ->whereColumn('b.min_idx', '=', 'c.idx')
                 ->where('a.status_payment', '=', $status)
                 ->where('c.id_employee', $id_employee);
+
+                if ($search) {
+                    $memo->where(function ($query) use ($search) {
+                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
+                    });
+                }
 
             return $memo;
         }
@@ -761,7 +810,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPoWithLastApprover($id_employee, $status)
+    public static function getMemoPoWithLastApprover($id_employee, $status, $search = null)
     {
         if ($status == 'approve') {
             $memo = Self::select('*')
@@ -775,6 +824,13 @@ class Memo extends Model
                         $query->where('id_employee', $id_employee)->where('status', '=', $status);
                     }
                 );
+                if ($search) {
+                    $memo->where(function ($query) use ($search) {
+                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    });
+                }
             return $memo;
         } else {
             $lastApprover = DB::table('d_po_approver')
@@ -795,6 +851,14 @@ class Memo extends Model
                 ->whereColumn('b.min_idx', '=', 'c.idx')
                 ->where('a.status_po', '=', $status)
                 ->where('c.id_employee', $id_employee);
+
+                if ($search) {
+                    $memo->where(function ($query) use ($search) {
+                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                        $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
+                    });
+                }
 
             return $memo;
         }
