@@ -269,11 +269,18 @@
                 <div class="col-12"></div>
               </b-row>
               <b-row align-h="center">
-                <b-button-group>
-                  <b-button type="submit" variant="primary" class="btn-lg"
-                    >Save Memo</b-button
-                  >
-                </b-button-group>
+                <b-overlay
+                  :show="submitState"
+                  opacity="0.6"
+                  spinner-small
+                  spinner-variant="primary"
+                >
+                  <b-button-group>
+                    <b-button type="submit" variant="primary" class="btn-lg"
+                      >Save Memo</b-button
+                    >
+                  </b-button-group>
+                </b-overlay>
               </b-row>
             </b-card-body>
           </b-form>
@@ -332,11 +339,11 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       // selectedAcknowledge: null,
-    //   checkPPNInclude: false,
-    //   sub_total: 0,
-    //   pph: 0,
-    //   ppn: 0,
-    //   grand_total: 0,
+      //   checkPPNInclude: false,
+      //   sub_total: 0,
+      //   pph: 0,
+      //   ppn: 0,
+      //   grand_total: 0,
       form: {},
       dataApprovers: [],
       dataCost: null,
@@ -501,23 +508,23 @@ export default {
     fillForm() {
       this.form = { ...this.dataMemo };
       this.dataApprovers = [...this.form.approvers];
-    //   this.sub_total = this.dataTotalCost.sub_total;
-    //   this.pph = this.dataTotalCost.pph;
-    //   this.ppn = this.dataTotalCost.ppn;
-    //   this.grand_total = this.dataTotalCost.grand_total;
-    //   this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
+      //   this.sub_total = this.dataTotalCost.sub_total;
+      //   this.pph = this.dataTotalCost.pph;
+      //   this.ppn = this.dataTotalCost.ppn;
+      //   this.grand_total = this.dataTotalCost.grand_total;
+      //   this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
       // this.selectedAcknowledge = [...this.form.acknowledges];
     },
     submit() {
-    //   if (
-    //     this.dataMemoType.ref_table.with_po == 1 ||
-    //     this.dataMemoType.ref_table.with_payment == 1
-    //   ) {
-    //     if (this.grand_total == 0 || this.sub_total == 0) {
-    //       this.pageFlashes.danger = "Please fill data completely!";
-    //       return;
-    //     }
-    //   }
+      //   if (
+      //     this.dataMemoType.ref_table.with_po == 1 ||
+      //     this.dataMemoType.ref_table.with_payment == 1
+      //   ) {
+      //     if (this.grand_total == 0 || this.sub_total == 0) {
+      //       this.pageFlashes.danger = "Please fill data completely!";
+      //       return;
+      //     }
+      //   }
       if (!this.submitState) {
         //console.log("data = ", this.dataFormula.Sheet1.length);
         let newData = {};
