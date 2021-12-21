@@ -396,8 +396,8 @@ export default {
     setLsTabMemo() {
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
-      if (this.$ls.get("tabIndexMemo")) {
-        this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
+      if (this.$ls.get("tabIndexApprovalMemo")) {
+        this.tabIndex = this.$ls.get("tabIndexApprovalMemo") - 1;
       }
 
       let param = { tab: this.tab[this.tabIndex] };
@@ -415,7 +415,7 @@ export default {
       this.isLoadMemo = true;
       //console.log(route().current());
       // this.memo = { data: [], link: [] };
-      this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
+      this.$ls.set("tabIndexApprovalMemo", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
       if (this.filters.page) {

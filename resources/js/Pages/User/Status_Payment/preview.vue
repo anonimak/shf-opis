@@ -252,8 +252,9 @@
             <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true
+                (dataMemo.ref_table.with_payment == true ||
+                dataMemo.ref_table.with_po == true) &&
+                memocost.length > 0
               "
             >
               <b-col>

@@ -249,7 +249,7 @@
                 </div>
               </b-col>
             </b-row>
-            <b-row
+            <!-- <b-row
               class="mb-2"
               v-if="
                 dataMemo.ref_table.with_payment == true ||
@@ -304,7 +304,7 @@
                   </table>
                 </div>
               </b-col>
-            </b-row>
+            </b-row> -->
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"
