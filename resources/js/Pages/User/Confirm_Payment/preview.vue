@@ -17,7 +17,8 @@
                 class="mb-4"
                 v-if="dataMemo.payment_at == null"
               >
-                <b-button-group class="float-right">
+                <b-button-group class="float-right"
+                v-if="userinfo.id_employee == dataMemo.confirmed_payment_by">
                   <b-button
                     @click="
                       actionConfirm(dataMemo.id, dataMemo.confirmed_payment_by)

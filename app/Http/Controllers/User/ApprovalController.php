@@ -264,7 +264,6 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Memo_Approver::where('id', $id)->first();
-        //ddd($id);
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
             'status'            => $status_approver,
@@ -403,7 +402,10 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Payment_Approver::where('id', $id)->first();
-        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->with('ref_table')->first();
+        $id_confirmer_payment = $memo->ref_table->id_confirmed_payment_by;
+        $confirmer_payment = Employee::where('id', $id_confirmer_payment)->first();
+        //ddd($confirmer_payment->email);
         $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
         // dd($proposeEmployee);
         D_Payment_Approver::where('id', $id)->update([
@@ -491,8 +493,16 @@ class ApprovalController extends Controller
                         'message' => "Memo Payment $memo->doc_no has reviewed"
                     ];
                 }
+
+                $details2 = [
+                    'subject' => "Confirm Payment Memo $memo->title",
+                    'doc_no' => $memo->doc_no,
+                    'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
+                ];
                 // notif ke user propose
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                //notif ke confirmer payment
+                Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
             }
         }
 
