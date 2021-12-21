@@ -30,6 +30,7 @@ class IsUser
                     'approval_memo' => count(Memo::getMemoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                     'approval_memo_payment' => count(Memo::getMemoPaymentWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                     'approval_memo_po' => count(Memo::getMemoPoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
+                    'confirmed_paymentmemo' => Memo::getAllMemoPayment(auth()->user()->id_employee, 'unpaid' )->count(),
                 ];
             });
             return $next($request);

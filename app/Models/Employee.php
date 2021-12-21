@@ -45,6 +45,11 @@ class Employee extends Model
         return $this->hasOne(Ref_Type_Memo::class, 'id_overtake_memo', 'id')->select('id', 'id_overtake_memo');
     }
 
+    public function confirmedPayment()
+    {
+        return $this->hasOne(Ref_Type_Memo::class, 'id_confirmed_payment_by', 'id')->select('id', 'id_confirmed_payment_by');
+    }
+
     public function position()
     {
         return $this->hasManyThrough(

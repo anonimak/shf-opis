@@ -115,6 +115,13 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 
+        Route::prefix('/confirm-payment')->name('confirmpayment.')->group(function () {
+            Route::get('/', 'User\ConfirmPaymentController@index')->name('index');
+            Route::get('/{memo}/preview', 'User\ConfirmPaymentController@detailPayment')->name('webpreview');
+            Route::get('/{memo}/preview-pdf', 'User\ConfirmPaymentController@previewPDF')->name('preview');
+            Route::put('/{memo}/confirm-payment/{id}', 'User\ConfirmPaymentController@confirmingPayment')->name('confirming');
+        });
+
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');

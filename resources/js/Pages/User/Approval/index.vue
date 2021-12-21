@@ -55,9 +55,9 @@
                     </b-tab>
                   </b-tabs>
                   <div class="row"></div>
-                  <!-- <div class="col-lg-3 col-xs-12 mt-3">
+                  <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
-                  </div> -->
+                  </div>
                   <div class="table-responsive">
                     <b-overlay
                       :show="isLoadMemo"
@@ -77,7 +77,7 @@
                         </thead>
                         <tbody >
                           <tr
-                            v-for="(item, index) in dataMemoTabList"
+                            v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
                           >
                             <th scope="row">
@@ -90,12 +90,12 @@
                                 1
                               }}
                             </th>
-                            <td>
+                            <td >
                               {{ item.title }}
                             </td>
-                            <td>
+                            <td >
                                 <!-- {{ item.doc_no }} -->
-                              <inertia-link :href="route(__detail, item.id)">
+                              <inertia-link :href="route(__detail, item.id)" >
                                 {{ item.doc_no }}
                               </inertia-link>
                             </td>
@@ -104,7 +104,7 @@
                             </td> -->
                             <td>
                               <b-button-group
-                                v-if="item.type_approver == 'approver' && item.status == 'submit'"
+                                v-if="item.type_approver == 'approver' && item.status_approver == 'submit'"
                               >
                                 <a
                                   target="_blank"
@@ -138,7 +138,7 @@
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge'"
+                                  v-if="item.type_approver == 'acknowledge' && item.status_approver == 'submit'"
                                   >Next</b-button
                                 >
                               </b-button-group>
@@ -260,7 +260,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
-//import Search from "@/components/Search";
+import Search from "@/components/Search";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 import throttle from "lodash/throttle";
 import mapValues from "lodash/mapValues";
@@ -284,7 +284,7 @@ export default {
     "filters",
     "tab",
     "counttab",
-    "dataPosition",
+    //"dataPosition",
   ],
   metaInfo: { title: "Approval Memo" },
   data() {
@@ -296,9 +296,9 @@ export default {
       modalTitle: "",
       modalCaption: "",
       tabIndex: 0,
-    //   form: {
-    //     search: this.filters.search,
-    //   },
+      form: {
+        search: this.filters.search,
+      },
     };
   },
   components: {
@@ -306,7 +306,7 @@ export default {
     FlashMsg,
     Breadcrumb,
     Pagination,
-    //Search,
+    Search,
     Timeline,
     TimelineItem,
     TimelineTitle,
@@ -427,24 +427,24 @@ export default {
       });
     },
   },
-//   watch: {
-//     form: {
-//       handler: throttle(function () {
-//         let query = this.form.search;
-//         this.$inertia.replace(
-//           this.route(
-//             this.__index,
-//             Object.keys(query).length
-//               ? { search: query, tab: this.tab[this.tabIndex] }
-//               : {
-//                   remember: "forget",
-//                   tab: this.tab[this.tabIndex],
-//                 }
-//           )
-//         );
-//       }, 150),
-//       deep: true,
-//     },
-//   },
+  watch: {
+    form: {
+      handler: throttle(function () {
+        let query = this.form.search;
+        this.$inertia.replace(
+          this.route(
+            this.__index,
+            Object.keys(query).length
+              ? { search: query, tab: this.tab[this.tabIndex] }
+              : {
+                  remember: "forget",
+                  tab: this.tab[this.tabIndex],
+                }
+          )
+        );
+      }, 150),
+      deep: true,
+    },
+  },
 };
 </script>

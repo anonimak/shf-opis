@@ -46,6 +46,8 @@ export default {
           title: "Memo",
           link: "#",
           icon: "fas fa-fw fa-clipboard",
+          badge:
+            this.notif.confirmed_paymentmemo,
           child: [
             {
               title: "New Memo",
@@ -119,6 +121,7 @@ export default {
     let userinfo = this.$inertia.page.props.userinfo;
     // let position = userinfo.employee.position_now.position.position_name;
     let isovertakeMemo = userinfo.employee.overtake;
+    let isConfirmedPayment = userinfo.employee.confirmed_payment;
     if (isovertakeMemo) {
       this.itemsNav[1].child.push(
         {
@@ -130,6 +133,17 @@ export default {
           title: "Status Payment Branch",
           link: "user.memo.statustakeoverpaymentbranch.*",
           index: "user.memo.statustakeoverpaymentbranch.index",
+        }
+      );
+    }
+    if (isConfirmedPayment) {
+      this.itemsNav[1].child.push(
+        {
+          title: "Confirm Payment",
+          link: "user.memo.confirmpayment.*",
+          index: "user.memo.confirmpayment.index",
+          badge: this.notif.confirmed_paymentmemo,
+
         }
       );
     }

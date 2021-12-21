@@ -111,55 +111,62 @@
                 "
               >
                 <div class="col-5">
-                  <b-form-group
-                    id="input-group-text"
-                    label=""
-                    label-for="input-text"
+                  <b-overlay
+                    :show="isSubmitbusy"
+                    opacity="0.6"
+                    spinner-small
+                    spinner-variant="primary"
                   >
-                    <b-input-group prepend="Sub Total" class="mb-2 mt-5">
-                      <b-form-input
-                        aria-label="sub_total"
-                        v-model="sub_total"
-                      ></b-form-input>
-                    </b-input-group>
-                    <b-input-group prepend="Pph23 (2%)" class="mb-2 mt-2">
-                      <b-form-input
-                        aria-label="pph23"
-                        v-model="pph"
-                        v-on:change="pphValueChange"
-                      ></b-form-input>
-                    </b-input-group>
-                    <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
-                      <b-form-input
-                        disabled
-                        aria-label="ppn"
-                        v-model="ppn"
-                      ></b-form-input>
-                    </b-input-group>
-                    <b-form-checkbox
-                      id="checkbox-1"
-                      v-model="checkPPNInclude"
-                      name="checkbox-1"
-                      :value="true"
-                      :unchecked-value="false"
+                    <b-form-group
+                      id="input-group-text"
+                      label=""
+                      label-for="input-text"
                     >
-                      PPN included with sub total
-                    </b-form-checkbox>
-                    <b-input-group prepend="Grand Total" class="mb-2 mt-2">
-                      <b-form-input
-                        aria-label="grand_total"
-                        v-model="grand_total"
-                        disabled
-                      ></b-form-input>
-                    </b-input-group>
-                    <b-button
-                      size="sm"
-                      text="Button"
-                      variant="danger"
-                      @click="reset()"
-                      >Reset</b-button
-                    >
-                  </b-form-group>
+                      <b-input-group prepend="Sub Total" class="mb-2 mt-5">
+                        <b-form-input
+                          aria-label="sub_total"
+                          v-model="sub_total"
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-input-group prepend="Pph23 (2%)" class="mb-2 mt-2">
+                        <b-form-input
+                          aria-label="pph23"
+                          v-model="pph"
+                          v-on:change="pphValueChange"
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
+                        <b-form-input
+                          disabled
+                          aria-label="ppn"
+                          v-model="ppn"
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-form-checkbox
+                        id="checkbox-1"
+                        v-model="checkPPNInclude"
+                        name="checkbox-1"
+                        :value="true"
+                        :unchecked-value="false"
+                      >
+                        PPN included with sub total
+                      </b-form-checkbox>
+                      <b-input-group prepend="Grand Total" class="mb-2 mt-2">
+                        <b-form-input
+                          aria-label="grand_total"
+                          v-model="grand_total"
+                          disabled
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-button
+                        size="sm"
+                        text="Button"
+                        variant="danger"
+                        @click="reset()"
+                        >Reset</b-button
+                      >
+                    </b-form-group>
+                  </b-overlay>
                 </div>
               </b-row>
               <b-row>
@@ -174,15 +181,22 @@
               </b-row> -->
             </b-card-body>
             <b-row class="ml-2">
-              <b-button-group>
-                <b-button
-                  v-b-modal.modal-add-payment
-                  class="mt-2 ml-2"
-                  variant="primary"
-                >
-                  Add Data Vendor
-                </b-button>
-              </b-button-group>
+              <b-overlay
+                :show="isSubmitbusy"
+                opacity="0.6"
+                spinner-small
+                spinner-variant="primary"
+              >
+                <b-button-group>
+                  <b-button
+                    v-b-modal.modal-add-payment
+                    class="mt-2 ml-2"
+                    variant="primary"
+                  >
+                    Add Data Vendor
+                  </b-button>
+                </b-button-group>
+              </b-overlay>
             </b-row>
             <b-overlay
               :show="isModalformbusy"
@@ -190,7 +204,7 @@
               spinner-small
               spinner-variant="primary"
             >
-              <b-col class="mt-4">
+              <b-col class="mt-4 table-responsive">
                 <h5>Vendor</h5>
                 <table class="table table-striped table-bordered">
                   <thead class="thead-dark">
@@ -285,14 +299,21 @@
               </b-col>
             </b-overlay>
             <b-row align-h="center">
-              <b-button-group>
-                <b-button
-                  type="submit"
-                  variant="primary"
-                  class="btn-lg mt-3 mb-3"
-                  >Propose Payment</b-button
-                >
-              </b-button-group>
+              <b-overlay
+                :show="isSubmitbusy"
+                opacity="0.6"
+                spinner-small
+                spinner-variant="primary"
+              >
+                <b-button-group>
+                  <b-button
+                    type="submit"
+                    variant="primary"
+                    class="btn-lg mt-3 mb-3"
+                    >Propose Payment</b-button
+                  >
+                </b-button-group>
+              </b-overlay>
             </b-row>
           </b-form>
         </b-card>

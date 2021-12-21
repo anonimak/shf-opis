@@ -266,11 +266,18 @@
                 <div class="col-12"></div>
               </b-row>
               <b-row align-h="center">
-                <b-button-group>
-                  <b-button type="submit" variant="primary" class="btn-lg"
-                    >Save Memo</b-button
-                  >
-                </b-button-group>
+                <b-overlay
+                  :show="submitState"
+                  opacity="0.6"
+                  spinner-small
+                  spinner-variant="primary"
+                >
+                  <b-button-group>
+                    <b-button type="submit" variant="primary" class="btn-lg"
+                      >Save Memo</b-button
+                    >
+                  </b-button-group>
+                </b-overlay>
               </b-row>
             </b-card-body>
           </b-form>

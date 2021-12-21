@@ -407,7 +407,8 @@ class MemoController extends Controller
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
-            'id_employee2'          => $typeMemo->id_overtake_memo
+            'id_employee2'          => $typeMemo->id_overtake_memo,
+            'confirmed_payment_by' => $typeMemo->id_confirmed_payment_by
         ]);
 
         M_Data_Cost_Total::create([

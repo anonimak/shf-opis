@@ -30,15 +30,15 @@ class ApprovalController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        //$memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab);
-        //ddd($memo);
+        // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+        //     return $employee->select('id', 'firstname', 'lastname');
+        // }])->with('position')->get();
+        $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab,  $request->input('search'))->paginate(10);
+        //ddd($memo->get());
         return Inertia::render('User/Approval', [
             'perPage' => 10,
             // 'dataMemo' => $memo,
-            'dataMemoTabList' => Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'dataMemoTabList' => $memo,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -53,12 +53,12 @@ class ApprovalController extends Controller
             ),
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            'dataPosition' => $positions,
+            //'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.memo.approving',
             '__previewpdf'  => 'user.memo.approval.memo.preview',
             '__detail'    => 'user.memo.approval.memo.detail',
@@ -78,7 +78,7 @@ class ApprovalController extends Controller
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
-            'dataMemoTabList' => Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'dataMemoTabList' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, $tab,  $request->input('search'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -94,10 +94,10 @@ class ApprovalController extends Controller
             'perPage' => 10,
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
             'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.payment.approving',
@@ -119,7 +119,7 @@ class ApprovalController extends Controller
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [
-            'dataMemoTabList' => Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'dataMemoTabList' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, $tab, $request->input('search'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -135,10 +135,10 @@ class ApprovalController extends Controller
             'perPage' => 10,
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
             'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.po.approving',
@@ -267,7 +267,6 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Memo_Approver::where('id', $id)->first();
-        //ddd($id);
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
             'status'            => $status_approver,
@@ -425,7 +424,10 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Payment_Approver::where('id', $id)->first();
-        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->with('ref_table')->first();
+        $id_confirmer_payment = $memo->ref_table->id_confirmed_payment_by;
+        $confirmer_payment = Employee::where('id', $id_confirmer_payment)->first();
+        //ddd($confirmer_payment->email);
         $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
         // dd($proposeEmployee);
         D_Payment_Approver::where('id', $id)->update([
@@ -533,8 +535,15 @@ class ApprovalController extends Controller
                 });
 
 
+                $details2 = [
+                    'subject' => "Confirm Payment Memo $memo->title",
+                    'doc_no' => $memo->doc_no,
+                    'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
+                ];
                 // notif ke user propose
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                //notif ke confirmer payment
+                Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
             }
         }
 
