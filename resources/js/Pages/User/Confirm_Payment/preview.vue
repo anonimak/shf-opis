@@ -5,7 +5,10 @@
       <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
-    <div class="row">
+    <div
+      class="row"
+      v-if="userinfo.id_employee == dataMemo.confirmed_payment_by"
+    >
       <div class="col-12">
         <b-card no-body>
           <b-card-body>
@@ -17,8 +20,10 @@
                 class="mb-4"
                 v-if="dataMemo.payment_at == null"
               >
-                <b-button-group class="float-right"
-                v-if="userinfo.id_employee == dataMemo.confirmed_payment_by">
+                <b-button-group
+                  class="float-right"
+                  v-if="userinfo.id_employee == dataMemo.confirmed_payment_by"
+                >
                   <b-button
                     @click="
                       actionConfirm(dataMemo.id, dataMemo.confirmed_payment_by)
@@ -363,6 +368,9 @@
           </b-card-body>
         </b-card>
       </div>
+    </div>
+    <div v-else class="my-5 text-center">
+      <h1 class="display-6 text-muted">You're not a Confirmer Payment</h1>
     </div>
     <modal-form-confirm-payment
       :title="modalTitle"
