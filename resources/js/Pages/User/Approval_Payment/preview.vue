@@ -51,7 +51,7 @@
                   >
                 </b-button-group>
               </b-col>
-              <b-col col lg="6" md="auto">
+              <b-col col lg="12" md="auto">
                 <h5>Memo Information</h5>
                 <table class="table table-bordered">
                   <tbody>
@@ -106,16 +106,19 @@
                       <td>Type</td>
                       <td>Approval</td>
                     </tr>
-                    <!-- <tr v-if="dataMemo.acknowledges.length > 0">
-                      <td>Acknowledge</td>
+                    <tr v-if="dataMemo.acknowledges.length > 0">
+                      <td>Send email after memo payment approved to</td>
                       <td>
                         <span
                           v-for="(acknowledge, index) in dataMemo.acknowledges"
                           :key="index"
                         >
                           {{
-                            acknowledge.employee.firstname +
-                            " " +
+                            acknowledge.employee &&
+                            acknowledge.employee.firstname
+                          }}
+                          {{
+                            acknowledge.employee &&
                             acknowledge.employee.lastname
                           }}
                           <span v-if="index != dataMemo.acknowledges.length - 1"
@@ -123,11 +126,11 @@
                           </span>
                         </span>
                       </td>
-                    </tr> -->
+                    </tr>
                   </tbody>
                 </table>
               </b-col>
-              <b-col col lg="6" md="auto">
+              <b-col col lg="12" md="auto">
                 <h5>Approver</h5>
                 <table class="table table-bordered mb-2">
                   <thead class="thead-dark">

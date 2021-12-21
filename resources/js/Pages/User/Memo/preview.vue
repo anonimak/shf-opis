@@ -82,9 +82,10 @@
                           >
                             {{
                               acknowledge.employee &&
-                              acknowledge.employee.firstname +
-                                " " +
-                                acknowledge.employee &&
+                              acknowledge.employee.firstname
+                            }}
+                            {{
+                              acknowledge.employee &&
                               acknowledge.employee.lastname
                             }}
                             <span

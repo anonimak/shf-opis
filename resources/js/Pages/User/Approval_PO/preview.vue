@@ -56,7 +56,7 @@
                   >
                 </b-button-group>
               </b-col>
-              <b-col col lg="6" md="auto">
+              <b-col col lg="12" md="auto">
                 <h5>Memo Information</h5>
                 <table class="table table-bordered">
                   <tbody>
@@ -137,7 +137,7 @@
                   </tbody>
                 </table>
               </b-col>
-              <b-col col lg="6" md="auto">
+              <b-col col lg="12" md="auto">
                 <h5>Approver</h5>
                 <table class="table table-bordered mb-2">
                   <thead class="thead-dark">
