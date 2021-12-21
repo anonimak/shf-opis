@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\D_Memo_Acknowledge;
 use App\Models\Memo;
 use App\Models\M_Data_Cost_Total;
 use Illuminate\Http\Request;
@@ -13,9 +14,11 @@ use App\Models\D_Memo_History;
 use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ApprovalController extends Controller
@@ -27,15 +30,15 @@ class ApprovalController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        //$memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab);
-        //ddd($memo);
+        // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
+        //     return $employee->select('id', 'firstname', 'lastname');
+        // }])->with('position')->get();
+        $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab,  $request->input('search'))->paginate(10);
+        //ddd($memo->get());
         return Inertia::render('User/Approval', [
             'perPage' => 10,
-           // 'dataMemo' => $memo,
-            'dataMemoTabList' => Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            // 'dataMemo' => $memo,
+            'dataMemoTabList' => $memo,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -50,12 +53,12 @@ class ApprovalController extends Controller
             ),
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            'dataPosition' => $positions,
+            //'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.memo.approving',
             '__previewpdf'  => 'user.memo.approval.memo.preview',
             '__detail'    => 'user.memo.approval.memo.detail',
@@ -75,7 +78,7 @@ class ApprovalController extends Controller
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
-            'dataMemoTabList' => Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'dataMemoTabList' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, $tab,  $request->input('search'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -91,10 +94,10 @@ class ApprovalController extends Controller
             'perPage' => 10,
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
             'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.payment.approving',
@@ -116,7 +119,7 @@ class ApprovalController extends Controller
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [
-            'dataMemoTabList' => Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
+            'dataMemoTabList' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, $tab, $request->input('search'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -132,10 +135,10 @@ class ApprovalController extends Controller
             'perPage' => 10,
             'tab' => ['submit', 'approve', 'reject', 'revisi'],
             'counttab' => [
-                'submit' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'submit')),
-                'approve' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'approve')),
-                'reject' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'reject')),
-                'revisi' => count(Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee, 'revisi')),
+                'submit' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'submit')->count(),
+                'approve' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'approve')->count(),
+                'reject' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
+                'revisi' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
             'dataPosition' => $positions,
             '__approving'  => 'user.memo.approval.po.approving',
@@ -155,7 +158,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval/preview', [
             'breadcrumbItems' => array(
@@ -193,7 +196,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval_Payment/preview', [
             'breadcrumbItems' => array(
@@ -231,7 +234,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval_PO/preview', [
             'breadcrumbItems' => array(
@@ -264,7 +267,6 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Memo_Approver::where('id', $id)->first();
-        //ddd($id);
         $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
         D_Memo_Approver::where('id', $id)->update([
             'status'            => $status_approver,
@@ -351,6 +353,25 @@ class ApprovalController extends Controller
                         'message' => "Memo $memo->doc_no has reviewed"
                     ];
                 }
+
+                $contentAcknowledge = [
+                    'title'   => "Memo $memo->doc_no",
+                    'subject' => "Memo $memo->title - $memo->doc_no",
+                    'msg' => "Memo $memo->title - $memo->doc_no has approved. For detail information about memo $memo->title, you can see file attach bellow."
+                ];
+
+                // kirim email ke setiap CC
+                $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'memo')->get();
+                $pdfMemo = generatePDFMemo($memo->id, false);
+                $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemo, $pdfName) {
+                    $message->to($mailApprovers)
+                        ->subject($contentAcknowledge["title"])
+                        ->attachData($pdfMemo->output(), $pdfName);
+                });
+
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }
@@ -403,7 +424,10 @@ class ApprovalController extends Controller
         $msg = ($request->input('message')) ? $request->input('message') : null;
         $message = ($msg ? "with message ($msg)" : "");
         $approver = D_Payment_Approver::where('id', $id)->first();
-        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->first();
+        $memo = Memo::where('id', $approver->id_memo)->with('proposeemployee')->with('ref_table')->first();
+        $id_confirmer_payment = $memo->ref_table->id_confirmed_payment_by;
+        $confirmer_payment = Employee::where('id', $id_confirmer_payment)->first();
+        //ddd($confirmer_payment->email);
         $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
         // dd($proposeEmployee);
         D_Payment_Approver::where('id', $id)->update([
@@ -491,8 +515,35 @@ class ApprovalController extends Controller
                         'message' => "Memo Payment $memo->doc_no has reviewed"
                     ];
                 }
+
+                $contentAcknowledge = [
+                    'title'   => "Memo Payment $memo->doc_no",
+                    'subject' => "Memo Payment $memo->title - $memo->doc_no",
+                    'msg' => "Memo Payment $memo->title - $memo->doc_no has approved. For detail information about memo $memo->title, you can see file attach bellow."
+                ];
+
+                // kirim email ke setiap CC
+                $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'payment')->get();
+                $pdfMemoPayment = generatePDFPayment($memo->id, false);
+                $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
+                    $message->to($mailApprovers)
+                        ->subject($contentAcknowledge["title"])
+                        ->attachData($pdfMemoPayment->output(), $pdfName);
+                });
+
+
+                $details2 = [
+                    'subject' => "Confirm Payment Memo $memo->title",
+                    'doc_no' => $memo->doc_no,
+                    'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
+                ];
                 // notif ke user propose
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                //notif ke confirmer payment
+                Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
             }
         }
 
