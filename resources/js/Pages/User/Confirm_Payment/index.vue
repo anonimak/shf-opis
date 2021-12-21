@@ -54,6 +54,7 @@
                             <th scope="col">Title</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Payment At</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -83,6 +84,12 @@
                             </td>
                             <td>
                               {{ item.latest_history.content }}
+                            </td>
+                            <td v-if="item.payment_at != null">
+                                {{ item.payment_at | moment("dddd, MMMM Do YYYY, h:mm:ss a")}}
+                            </td>
+                            <td v-else>
+                                -
                             </td>
                             <td>
                               <b-button-group>
