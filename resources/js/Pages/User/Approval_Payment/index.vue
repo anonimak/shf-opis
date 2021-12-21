@@ -98,6 +98,22 @@
                               <inertia-link :href="route(__detail, item.id)">
                                 {{ item.doc_no }}
                               </inertia-link>
+                               <b-badge
+                                v-if="
+                                  item.payment_at != null
+                                "
+                                variant="success"
+                              >
+                                Paid
+                              </b-badge>
+                              <b-badge
+                                v-if="
+                                  item.payment_at == null
+                                "
+                                variant="warning"
+                              >
+                                Unpaid
+                              </b-badge>
                             </td>
                             <!-- <td>
                               {{ item.latest_history.content }}
