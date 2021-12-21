@@ -256,8 +256,8 @@ export default {
     setLsTabMemo() {
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
-      if (this.$ls.get("tabIndexPayment")) {
-        this.tabIndex = this.$ls.get("tabIndexPayment") - 1;
+      if (this.$ls.get("tabIndexPaymentBranch")) {
+        this.tabIndex = this.$ls.get("tabIndexPaymentBranch") - 1;
       }
 
       let param = { tab: this.tab[this.tabIndex] };
@@ -274,7 +274,7 @@ export default {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
-      this.$ls.set("tabIndexPayment", this.tabIndex + 1, 60 * 60 * 1000);
+      this.$ls.set("tabIndexPaymentBranch", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
       if (this.filters.page) {

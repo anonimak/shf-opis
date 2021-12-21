@@ -86,7 +86,7 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td v-if="item.payment_at != null">
-                                {{ item.payment_at | moment("dddd, MMMM Do YYYY, h:mm:ss a")}}
+                                {{ item.payment_at | moment("dddd, MMMM Do YYYY")}}
                             </td>
                             <td v-else>
                                 -
@@ -283,8 +283,8 @@ export default {
     setLsTabMemo() {
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
-      if (this.$ls.get("tabIndexMemo")) {
-        this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
+      if (this.$ls.get("tabIndexConfirm")) {
+        this.tabIndex = this.$ls.get("tabIndexConfirm") - 1;
       }
 
       let param = { tab: this.tab[this.tabIndex] };
@@ -302,7 +302,7 @@ export default {
       this.isLoadMemo = true;
       //console.log(route().current());
       // this.memo = { data: [], link: [] };
-      this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
+      this.$ls.set("tabIndexConfirm", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
       if (this.filters.page) {
