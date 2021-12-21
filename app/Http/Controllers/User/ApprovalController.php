@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\D_Memo_Acknowledge;
 use App\Models\Memo;
 use App\Models\M_Data_Cost_Total;
 use Illuminate\Http\Request;
@@ -13,9 +14,11 @@ use App\Models\D_Memo_History;
 use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ApprovalController extends Controller
@@ -34,7 +37,7 @@ class ApprovalController extends Controller
         //ddd($memo);
         return Inertia::render('User/Approval', [
             'perPage' => 10,
-           // 'dataMemo' => $memo,
+            // 'dataMemo' => $memo,
             'dataMemoTabList' => Memo::getMemoWithLastApproverRawQuery(auth()->user()->id_employee, $tab),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -155,7 +158,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval/preview', [
             'breadcrumbItems' => array(
@@ -193,7 +196,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval_Payment/preview', [
             'breadcrumbItems' => array(
@@ -231,7 +234,7 @@ class ApprovalController extends Controller
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo',$id)->first();
+        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
 
         return Inertia::render('User/Approval_PO/preview', [
             'breadcrumbItems' => array(
@@ -351,6 +354,25 @@ class ApprovalController extends Controller
                         'message' => "Memo $memo->doc_no has reviewed"
                     ];
                 }
+
+                $contentAcknowledge = [
+                    'title'   => "Memo $memo->doc_no",
+                    'subject' => "Memo $memo->title - $memo->doc_no",
+                    'msg' => "Memo $memo->title - $memo->doc_no has approved. For detail information about memo $memo->title, you can see file attach bellow."
+                ];
+
+                // kirim email ke setiap CC
+                $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'memo')->get();
+                $pdfMemo = generatePDFMemo($memo->id, false);
+                $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemo, $pdfName) {
+                    $message->to($mailApprovers)
+                        ->subject($contentAcknowledge["title"])
+                        ->attachData($pdfMemo->output(), $pdfName);
+                });
+
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }
@@ -491,6 +513,26 @@ class ApprovalController extends Controller
                         'message' => "Memo Payment $memo->doc_no has reviewed"
                     ];
                 }
+
+                $contentAcknowledge = [
+                    'title'   => "Memo Payment $memo->doc_no",
+                    'subject' => "Memo Payment $memo->title - $memo->doc_no",
+                    'msg' => "Memo Payment $memo->title - $memo->doc_no has approved. For detail information about memo $memo->title, you can see file attach bellow."
+                ];
+
+                // kirim email ke setiap CC
+                $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'payment')->get();
+                $pdfMemoPayment = generatePDFPayment($memo->id, false);
+                $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
+                    $message->to($mailApprovers)
+                        ->subject($contentAcknowledge["title"])
+                        ->attachData($pdfMemoPayment->output(), $pdfName);
+                });
+
+
                 // notif ke user propose
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }

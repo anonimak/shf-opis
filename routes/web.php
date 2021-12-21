@@ -87,13 +87,14 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::post('/{memo}/attachment', 'User\MemoController@fileUploadAttach')->name('attachment');
             Route::delete('/{memo}/attachment', 'User\MemoController@destroyAttach')->name('attachmentremove');
             Route::post('/{memo}/approver', 'User\MemoController@updateApprover')->name('updateapprover');
-            // Route::post('/{memo}/acknowledge', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
+            Route::post('/{memo}/acknowledge/{type}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
+            Route::delete('/{memo}/acknowledge/{id_employee}/{type}', 'User\MemoController@deleteAcknowledge')->name('deleteacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
         });
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
             Route::get('/', 'User\MemoController@index')->name('index');
-            Route::get('/{memo}/form-payment','User\MemoController@formPayment')->name('formpayment');
+            Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             // Route::put('/{id}/addpayment','User\MemoController@paymentStore')->name('storepayment');
             Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');

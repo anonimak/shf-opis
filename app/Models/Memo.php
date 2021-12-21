@@ -57,10 +57,10 @@ class Memo extends Model
         return $this->belongsTo(Employee::class, 'id_employee2', 'id');
     }
 
-    // public function acknowledges()
-    // {
-    //     return $this->hasMany(D_Memo_Acknowledge::class, 'id_memo', 'id');
-    // }
+    public function acknowledges()
+    {
+        return $this->hasMany(D_Memo_Acknowledge::class, 'id_memo', 'id');
+    }
 
     public function attachment()
     {
@@ -82,7 +82,7 @@ class Memo extends Model
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
     }
 
-    public static function getMemoDetailDraftEdit($id)
+    public static function getMemoDetailDraftEdit($id, $formType = 'memo')
     {
         return Self::with(['approvers' => function ($approver) {
             return $approver->with(['employee' => function ($employee) {
@@ -93,15 +93,22 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) use ($formType) {
+                return $approver->with(['position_now' => function ($position_now) {
+                    $position_now->with(['employee' => function ($employee) {
+                        return $employee->select('id', 'firstname', 'lastname');
+                    }])->with('position')->get();
+                }])
+                    ->where('type', $formType)
+                    ->orderBy('id', 'asc');
+                // return $approver->with(['employee' => function ($employee) {
+                //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                //         return $position_now->with(['position' => function ($position) {
+                //             return $position->with('department');
+                //         }])->with('branch');
+                //     }]);
+                // }])->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
@@ -174,15 +181,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($acknowledge) {
+                return $acknowledge->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'memo')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
@@ -212,15 +221,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) {
+                return $approver->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'payment')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
@@ -250,15 +261,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) {
+                return $approver->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'po')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])
@@ -288,15 +301,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) {
+                return $approver->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'memo')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])->with(['approver' => function ($approver) use ($id_current_approver) {
@@ -328,15 +343,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) {
+                return $approver->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'payment')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])->with(['approverPayment' => function ($approver) use ($id_current_approver) {
@@ -368,15 +385,17 @@ class Memo extends Model
                 }]);
             }])->orderBy('idx', 'asc');
         }])
-            // ->with(['acknowledges' => function ($approver) {
-            //     return $approver->with(['employee' => function ($employee) {
-            //         return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-            //             return $position_now->with(['position' => function ($position) {
-            //                 return $position->with('department');
-            //             }])->with('branch');
-            //         }]);
-            //     }])->orderBy('id', 'asc');
-            // }])
+            ->with(['acknowledges' => function ($approver) {
+                return $approver->with(['employee' => function ($employee) {
+                    return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                        return $position_now->with(['position' => function ($position) {
+                            return $position->with('department');
+                        }])->with('branch');
+                    }]);
+                }])
+                    ->where('type', 'po')
+                    ->orderBy('id', 'asc');
+            }])
             ->with(['histories' => function ($history) {
                 return $history->orderBy('id', 'DESC');
             }])->with(['approverPo' => function ($approver) use ($id_current_approver) {
@@ -519,7 +538,7 @@ class Memo extends Model
                 ->orderBy('id', 'desc')
                 // ->where('status', '=', 'submit')
                 // ->orWhere('status', '=', $status)
-                ->with(['approver' => function ($approver){
+                ->with(['approver' => function ($approver) {
                     return $approver;
                 }])
                 ->whereHas(
@@ -663,9 +682,9 @@ class Memo extends Model
             $memo->approvers()->each(function ($approver) {
                 $approver->delete(); // <-- direct deletion
             });
-            // $memo->acknowledges()->each(function ($acknowledge) {
-            //     $acknowledge->delete(); // <-- direct deletion
-            // });
+            $memo->acknowledges()->each(function ($acknowledge) {
+                $acknowledge->delete(); // <-- direct deletion
+            });
             $memo->attachment()->each(function ($attachment) {
                 $attachment->delete(); // <-- direct deletion
             });

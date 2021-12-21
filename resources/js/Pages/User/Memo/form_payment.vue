@@ -70,6 +70,32 @@
                 </b-col>
               </b-row>
 
+              <b-row class="mb-4">
+                <b-col>
+                  <h5>Send email after memo payment approved to:</h5>
+                  <b-form-group id="input-group-name" label-for="input-name">
+                    <b-overlay
+                      :show="isAcknowledgebusy"
+                      opacity="0.6"
+                      spinner-small
+                      spinner-variant="primary"
+                    >
+                      <v-select
+                        class="mb-3"
+                        multiple
+                        :get-option-label="getOptionLabel"
+                        placeholder="-- Employee --"
+                        :options="dataPosition"
+                        v-model="selectedAcknowledge"
+                        :reduce="(position) => position.id_employee"
+                        @option:selected="actionAcknowledgeSelecting"
+                        @option:deselecting="actionAcknowledgeRemoving"
+                      ></v-select>
+                    </b-overlay>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
               <b-row v-if="memocost.length > 0" class="mb-2">
                 <b-col>
                   <h5>Cost/Expense</h5>
@@ -425,6 +451,7 @@ export default {
     "notif",
     "breadcrumbItems",
     "dataMemo",
+    "formType",
     "memocost",
     "__proposepayment",
     "dataPosition",
@@ -432,12 +459,16 @@ export default {
     "dataAttachments",
     "headerCost",
     "columnCost",
+    "__updateAcknowledge",
+    "__deleteAcknowledge",
     "dataMemoType",
   ],
   data() {
     return {
       form: {},
-      form_payment:{},
+      form_payment: {},
+      isAcknowledgebusy: false,
+      selectedAcknowledge: null,
       checkPPNInclude: false,
       sub_total: 0,
       pph: 0,
@@ -503,6 +534,12 @@ export default {
     // fillForm() {},
   },
   methods: {
+    getOptionLabel: (option) => {
+      let firstname = option.employee ? option.employee.firstname : "";
+      let lastname = option.employee ? option.employee.lastname : "";
+
+      return option.position.position_name + " - " + firstname + " " + lastname;
+    },
     reset: function () {
       this.sub_total = this.dataTotalCost.sub_total;
       this.pph = this.dataTotalCost.pph;
@@ -522,6 +559,10 @@ export default {
       this.grand_total = this.dataTotalCost.grand_total;
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
       // this.selectedAcknowledge = [...this.form.acknowledges];
+      this.selectedAcknowledge = _.map(
+        this.dataMemo.acknowledges,
+        (acknowledge) => acknowledge.position_now
+      );
     },
     actionEdit(index, id) {
       this.activeIndex = index;
@@ -708,6 +749,37 @@ export default {
         this.dataApprovers = results[0].data;
         console.log(results);
       });
+    },
+    actionAcknowledgeRemoving(removeOption) {
+      console.log(removeOption);
+      this.isAcknowledgebusy = true;
+      this.$inertia
+        .delete(
+          route(this.__deleteAcknowledge, {
+            memo: this.dataMemo.id,
+            id_employee: removeOption.id_employee,
+            type: this.formType,
+          })
+        )
+        .then(() => {
+          this.isAcknowledgebusy = false;
+        });
+    },
+    actionAcknowledgeSelecting(selectedOption) {
+      this.isAcknowledgebusy = true;
+      this.$inertia
+        .post(
+          route(this.__updateAcknowledge, {
+            memo: this.dataMemo.id,
+            type: this.formType,
+          }),
+          {
+            acknowledge: selectedOption,
+          }
+        )
+        .then(() => {
+          this.isAcknowledgebusy = false;
+        });
     },
 
     // axios

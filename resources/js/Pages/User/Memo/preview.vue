@@ -71,24 +71,29 @@
                         <td>Type</td>
                         <td>Approval</td>
                       </tr>
-                      <!-- <tr v-if="dataMemo.acknowledges.length > 0">
-                      <td>Acknowledge</td>
-                      <td>
-                        <span
-                          v-for="(acknowledge, index) in dataMemo.acknowledges"
-                          :key="index"
-                        >
-                          {{
-                            acknowledge.employee.firstname +
-                            " " +
-                            acknowledge.employee.lastname
-                          }}
-                          <span v-if="index != dataMemo.acknowledges.length - 1"
-                            >,{{ " " }}
+                      <tr v-if="dataMemo.acknowledges.length > 0">
+                        <td>Send email after memo approved to</td>
+                        <td>
+                          <span
+                            v-for="(
+                              acknowledge, index
+                            ) in dataMemo.acknowledges"
+                            :key="index"
+                          >
+                            {{
+                              acknowledge.employee &&
+                              acknowledge.employee.firstname +
+                                " " +
+                                acknowledge.employee &&
+                              acknowledge.employee.lastname
+                            }}
+                            <span
+                              v-if="index != dataMemo.acknowledges.length - 1"
+                              >,{{ " " }}
+                            </span>
                           </span>
-                        </span>
-                      </td>
-                    </tr> -->
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
