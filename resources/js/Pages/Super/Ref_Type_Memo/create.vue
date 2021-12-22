@@ -123,6 +123,28 @@
                   >
                   </v-select>
                 </b-form-group>
+                <b-form-group
+                  v-if="form.with_payment"
+                  class="mt-2"
+                  id="input-group-title"
+                  label="Confirmed Payment By:"
+                  label-for="input-title"
+                  :invalid-feedback="
+                    errors.id_confirmed_payment_by ? errors.id_confirmed_payment_by[0] : ''
+                  "
+                  :state="errors.id_confirmed_payment_by ? false : null"
+                  description="Fill in this column to indicate the employee who is responsible for confirming payments."
+                >
+                  <v-select
+                    placeholder=""
+                    label="label"
+                    :options="dataEmployee"
+                    v-model="form.id_confirmed_payment_by"
+                    :reduce="(employee) => employee.id"
+                    :required="!form.id_confirmed_payment_by"
+                  >
+                  </v-select>
+                </b-form-group>
               </b-col>
               <b-row align-h="center">
                 <b-button-group>
@@ -167,6 +189,7 @@ export default {
         name: "",
         refmoduleapprover: null,
         id_overtake: null,
+        id_confirmed_payment_by:null,
         id_branch: null,
         department: null,
         with_po: false,
@@ -176,7 +199,10 @@ export default {
   },
   watch: {
     "form.with_payment": function (val) {
-      if (!val) this.form.id_overtake = null;
+      if (!val) {
+          this.form.id_overtake = null;
+          this.form.id_confirmed_payment_by = null;
+      }
     },
   },
   methods: {

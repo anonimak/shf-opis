@@ -5,11 +5,35 @@
       <h1 class="h3 mb-0 text-gray-800">Memo {{ dataMemo.doc_no }}</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
-    <div class="row">
+    <div
+      class="row"
+      v-if="userinfo.id_employee == dataMemo.confirmed_payment_by"
+    >
       <div class="col-12">
         <b-card no-body>
           <b-card-body>
             <b-row class="mb-2">
+              <b-col
+                col
+                lg="12"
+                md="12"
+                class="mb-4"
+                v-if="dataMemo.payment_at == null"
+              >
+                <b-button-group
+                  class="float-right"
+                  v-if="userinfo.id_employee == dataMemo.confirmed_payment_by"
+                >
+                  <b-button
+                    @click="
+                      actionConfirm(dataMemo.id, dataMemo.confirmed_payment_by)
+                    "
+                    variant="info"
+                  >
+                    Confirm Payment
+                  </b-button>
+                </b-button-group>
+              </b-col>
               <b-col col lg="12" md="auto">
                 <h5>Memo Information</h5>
                 <div class="table-responsive">
@@ -72,7 +96,7 @@
                         <td>Approval</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
-                        <td>Send email after memo payment approved to</td>
+                        <td>Send email after memo approved to</td>
                         <td>
                           <span
                             v-for="(
@@ -252,9 +276,8 @@
             <b-row
               class="mb-2"
               v-if="
-                (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
-                memocost.length > 0
+                dataMemo.ref_table.with_payment == true ||
+                dataMemo.ref_table.with_po == true
               "
             >
               <b-col>
@@ -370,19 +393,32 @@
         </b-card>
       </div>
     </div>
+    <div v-else class="my-5 text-center">
+      <h1 class="display-6 text-muted">You're not a Confirmer Payment</h1>
+    </div>
+    <modal-form-confirm-payment
+      :title="modalTitle"
+      :caption="modalCaption"
+      :idConfirmedPayment="idConfirmedPayment"
+      :idItemClicked="idItemClicked"
+      @handleOk="handleOk"
+      @handleHidden="handleHidden"
+    />
   </layout>
 </template>
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import ModalFormConfirmPayment from "@/components/ModalFormConfirmPayment";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
-  metaInfo: { title: "Preview Status Payment Takeover Branch" },
+  metaInfo: { title: "Preview Confirming Memo Payment Approved" },
   props: [
     "userinfo",
     "notif",
+    "__confirming",
     "breadcrumbItems",
     "dataMemo",
     "dataTotalCost",
@@ -398,9 +434,15 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
+    ModalFormConfirmPayment,
   },
   data() {
     return {
+      buttonClicked: "",
+      idItemClicked: null,
+      idConfirmedPayment: null,
+      modalTitle: "",
+      modalCaption: "",
       timelinecolor: {
         success: "#1cc88a",
         info: "#36b9cc",
@@ -408,6 +450,34 @@ export default {
         warning: "#f6c23e",
       },
     };
+  },
+  methods: {
+    actionConfirm(id, idConfirmedPay) {
+      //   this.buttonClicked = "approve";
+      this.idItemClicked = id;
+      this.idConfirmedPayment = idConfirmedPay;
+      this.modalTitle = "Modal Confirming Payment";
+      this.modalCaption =
+        "Are you sure to confirm this memo payment has been paid?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    handleHidden() {
+      //   this.buttonClicked = "";
+      this.idItemClicked = null;
+      this.modalTitle = "";
+      this.modalCaption = "";
+    },
+    handleOk(item) {
+      this.$inertia
+        .put(route(this.__confirming, [item.id, item.idConfirmedPayment]))
+        .then(() => {
+          // this.buttonClicked = "";
+          this.idItemClicked = null;
+          this.modalTitle = "";
+          this.modalCaption = "";
+        });
+    },
   },
 };
 </script>

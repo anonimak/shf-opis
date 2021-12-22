@@ -115,7 +115,7 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
-                    <td>{{ $memo->propose_at }}</td>
+                    <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
@@ -135,6 +135,14 @@
                     <td colspan="1">
                         <div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval
                     </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Payment At</td>
+                    @if($memo->payment_at != null)
+                    <td colspan="1">{{ date('Y-m-d', strtotime($memo->payment_at)) }}</td>
+                    @else
+                    <td colspan="1">-</td>
+                    @endif
                 </tr>
                 {{-- @if ( count($memo->acknowledges) > 0)
                 <tr>

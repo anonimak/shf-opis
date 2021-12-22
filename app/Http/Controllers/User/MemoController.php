@@ -297,7 +297,8 @@ class MemoController extends Controller
 
     public function draftEdit($id)
     {
-        $memo = Memo::getMemoDetailDraftEdit($id);
+        $formType = 'memo';
+        $memo = Memo::getMemoDetailDraftEdit($id, $formType);
         $employeeInfo = User::getUsersEmployeeInfo();
         $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -349,12 +350,14 @@ class MemoController extends Controller
                 ]
             ),
             '_token' => csrf_token(),
+            'formType' => $formType,
             '__attachment'  => 'user.memo.draft.attachment',
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
-            // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
             '__preview' => 'user.memo.draft.preview',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
@@ -404,7 +407,8 @@ class MemoController extends Controller
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
-            'id_employee2'          => $typeMemo->id_overtake_memo
+            'id_employee2'          => $typeMemo->id_overtake_memo,
+            'confirmed_payment_by' => $typeMemo->id_confirmed_payment_by
         ]);
 
         M_Data_Cost_Total::create([
@@ -502,8 +506,9 @@ class MemoController extends Controller
 
     public function formPayment($id)
     {
-        $memo = Memo::getMemoDetailDraftEdit($id);
-       // $employeeInfo = User::getUsersEmployeeInfo();
+        $formType = 'payment';
+        $memo = Memo::getMemoDetailDraftEdit($id, $formType);
+        // $employeeInfo = User::getUsersEmployeeInfo();
         $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
@@ -556,11 +561,13 @@ class MemoController extends Controller
                 ]
             ),
             '_token' => csrf_token(),
+            'formType' => $formType,
             'memocost' => $memocost,
             //'__attachment'  => 'user.memo.draft.attachment',
             //'__removeAttachment'  => 'user.memo.draft.attachmentremove',
             //'__update' => 'user.memo.draft.update',
-            //'__updateApprover' => 'user.memo.draft.updateapprover',
+            '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
+            '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             //'__preview' => 'user.memo.draft.preview',
@@ -611,13 +618,13 @@ class MemoController extends Controller
             'type'  => 'info',
             'content' => "Memo Payment successful submitted with document no $doc_no"
         ]);
-         M_Data_Cost_Total::where('id_memo', $id)->update([
-             'id_memo' => $id,
-             'sub_total' => $request->input('sub_total'),
-             'pph' => $request->input('pph'),
-             'ppn' => $request->input('ppn'),
-             'grand_total' => $request->input('grand_total')
-         ]);
+        M_Data_Cost_Total::where('id_memo', $id)->update([
+            'id_memo' => $id,
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn' => $request->input('ppn'),
+            'grand_total' => $request->input('grand_total')
+        ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
@@ -797,47 +804,42 @@ class MemoController extends Controller
             Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->real_name deleted.");
     }
 
-    // public function updateAcknowledge(Request $request, $id)
-    // {
-    //     $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
-    //     $updatedacknowledges = $request->input('acknowledge');
-    //     // filter yang tidak ada pada updatedacknowledges
-    //     $filteredacknowledges = $acknowledges->filter(function ($item, $key) use ($updatedacknowledges) {
-    //         if (count($updatedacknowledges)) {
-    //             $itemacknowledge = array_column($updatedacknowledges, 'id_employee');
-    //             $key = in_array($item->id_employee, $itemacknowledge);
-    //             if (!$key) {
-    //                 return $item;
-    //             }
-    //         }
-    //         return $item;
-    //     });
+    public function updateAcknowledge(Request $request, $id, $type)
+    {
+        $acknowledges = D_Memo_Acknowledge::where('id_memo', $id)->get();
+        $updatedacknowledges = $request->input('acknowledge');
 
-    //     // delete filter yang tidak ada pada D_Memo_Acknowledge
-    //     if (count($filteredacknowledges) > 0) {
-    //         foreach ($filteredacknowledges as $itemfiltered) {
-    //             $itemfiltered->delete();
-    //         }
-    //     }
+        // update/insert pda D_Memo_Acknowledge
+        if (count($updatedacknowledges) > 0) {
+            foreach ($updatedacknowledges as $key => $value) {
+                $itemacknowledge = D_Memo_Acknowledge::where('id_memo', $id)
+                    ->where('type', $type)
+                    ->where('id_employee', $value['id_employee'])
+                    ->first();
+                $item = [
+                    'id_memo' => $id,
+                    'id_employee'   =>  $value['id_employee'],
+                    'type' => $type
+                ];
+                if ($itemacknowledge) {
+                    $itemacknowledge->update($item);
+                } else {
+                    D_Memo_Acknowledge::create($item);
+                }
+            }
+        }
 
-    //     // update/insert pda D_Memo_Acknowledge
-    //     if (count($updatedacknowledges) > 0) {
-    //         foreach ($updatedacknowledges as $key => $value) {
-    //             $itemacknowledge = D_Memo_Acknowledge::where('id_employee', $value['id_employee'])->first();
-    //             $item = [
-    //                 'id_memo' => $id,
-    //                 'id_employee'   =>  $value['id_employee']
-    //             ];
-    //             if ($itemacknowledge) {
-    //                 $itemacknowledge->update($item);
-    //             } else {
-    //                 D_Memo_Acknowledge::create($item);
-    //             }
-    //         }
-    //     }
+        return Redirect::back()->with('success', "Successfull updated acknowledge.");
+    }
 
-    //     return Redirect::back()->with('success', "Successfull updated acknowledge.");
-    // }
+    public function deleteAcknowledge(Request $request, $id, $id_employee, $type)
+    {
+        $acknowledge = D_Memo_Acknowledge::where('id_memo', $id)->where('type', $type)->where('id_employee', $id_employee)->first();
+        $acknowledge->delete();
+
+        return Redirect::back()->with('success', "Successfull delete acknowledge.");
+    }
+
 
     public function updateApprover(Request $request, $id)
     {
@@ -889,128 +891,22 @@ class MemoController extends Controller
 
     public function previewMemo(Request $request, $id)
     {
-        $memo = Memo::getMemoDetailDraftEdit($id);
-        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
-        $employeeInfo = User::getUsersEmployeeInfo();
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-        $memocost = (array) json_decode($memo->cost);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        // dd($memo);
-        $data = [
-            'memo' => $memo,
-            'employeeInfo' => $employeeInfo,
-            'employeeproposeinfo' => $employeeProposeInfo,
-            'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo,
-            'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            'dataTotalCost' => $dataTotalCost,
-            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no))))
-        ];
-        $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
-        $pdf->setPaper('A4', 'portrait');
-        // download PDF file with download method
-        // return $pdf->download('pdf_file.pdf');
-        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+        return generatePDFMemo($id);
     }
 
     public function previewPo(Request $request, $id)
     {
-        $memo = Memo::getPoDetailApprovers($id);
-        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
-        $employeeInfo = User::getUsersEmployeeInfo();
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        $dataPayments = D_Memo_Payments::where('id_memo', $id)->first();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-        $memocost = (array) json_decode($memo->cost);
-        //ddd($dataPayments->payments);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        $data = [
-            'memo' => $memo,
-            'employeeInfo' => $employeeInfo,
-            'employeeproposeinfo' => $employeeProposeInfo,
-            'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo,
-            'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            'dataPayments' => $dataPayments,
-            'dataTotalCost' => $dataTotalCost,
-            'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no))))
-        ];
-        $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
-        $pdf->setPaper('A4', 'portrait');
-        // download PDF file with download method
-        // return $pdf->download('pdf_file.pdf');
-        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+        return generatePDFPo($id);
     }
 
     public function previewPayment(Request $request, $id)
     {
-        $memo = Memo::getPaymentDetailApprovers($id);
-        $employeeInfo = User::getUsersEmployeeInfo();
-        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
-        $dataPayments = Memo::where('id', $id)->with('payments')->first();
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-
-        $memocost = (array) json_decode($memo->cost);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        $data = [
-            'memo' => $memo,
-            'employeeInfo' => $employeeInfo,
-            'employeeproposeinfo' => $employeeProposeInfo,
-            'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo,
-            'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            'dataPayments' => $dataPayments->payments,
-            'dataTotalCost' => $dataTotalCost,
-            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
-        ];
-        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
-        $pdf->setPaper('A4', 'portrait');;
-        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+        return generatePDFPayment($id);
     }
 
     public function previewPaymentTakeoverBranch(Request $request, $id)
     {
-        $memo = Memo::getPaymentDetailApprovers($id);
-        $employeeInfo = User::getUsersEmployeeInfo();
-        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
-        $dataPayments = Memo::where('id', $id)->with('payments')->first();
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-
-        $memocost = (array) json_decode($memo->cost);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        $data = [
-            'memo' => $memo,
-            'employeeInfo' => $employeeInfo,
-            'employeeproposeinfo' => $employeeProposeInfo,
-            'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo,
-            'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            'dataPayments' => $dataPayments->payments,
-            'dataTotalCost' => $dataTotalCost,
-            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
-        ];
-        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
-        $pdf->setPaper('A4', 'portrait');;
-        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+        return generatePDFTakeoverBranch($id);
     }
 
     public function webpreviewMemo(Request $request, $id)
@@ -1241,6 +1137,16 @@ class MemoController extends Controller
         //     'title' => 'Mail from ItSolutionStuff.com',
         //     'body' => 'This is for testing email using smtp'
         // ];
+
+        // kirim email ke setiap CC
+        $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', 41)->where('type', 'payment')->get();
+
+        foreach ($acknowledges as $acknowledge) {
+            dd($acknowledge->employee->email);
+            $acknowledge->employee->email &&
+                Mail::to($acknowledge->emloyee->email)->send(new \App\Mail\NotifUserProposeMail());
+            //     Mail::to($acknowledge->emloyee->email)->send(new \App\Mail\NotifUserProposeMail());
+        }
 
         // Mail::to('jonatan.teofilus@gmail.com')->send(new \App\Mail\ApprovalMemoMail($details));
     }

@@ -58,7 +58,8 @@
             "app/Helpers/translations.php",
             "app/Helpers/redirectWithoutInertia.php",
             "app/Helpers/stringConvert.php",
-            "app/Helpers/configApp.php"
+            "app/Helpers/configApp.php",
+            "app/Helpers/generatePDF.php"
         ],
         "psr-4": {
             "Tests\\": "tests/"

@@ -55,9 +55,9 @@
                     </b-tab> -->
                   </b-tabs>
                   <div class="row"></div>
-                  <!-- <div class="col-lg-3 col-xs-12 mt-3">
+                  <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
-                  </div> -->
+                  </div>
                   <div class="table-responsive">
                     <b-overlay
                       :show="isLoadMemo"
@@ -77,7 +77,7 @@
                         </thead>
                         <tbody>
                           <tr
-                            v-for="(item, index) in dataMemoTabList"
+                            v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
                           >
                             <th scope="row">
@@ -151,10 +151,10 @@
                       </table>
                     </b-overlay>
                   </div>
-                  <!-- <Pagination
+                  <Pagination
                     v-if="dataMemoTabList.links != undefined"
                     :links="dataMemoTabList.links"
-                  /> -->
+                  />
                 </div>
               </div>
             </keep-alive>
@@ -259,7 +259,9 @@ import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
+import throttle from "lodash/throttle";
 import mapValues from "lodash/mapValues";
+import Search from "@/components/Search";
 import ModalFormMemoApproval from "@/components/ModalFormMemoApproval";
 import UndrawNoData from "vue-undraw/UndrawNoData";
 
@@ -292,6 +294,9 @@ export default {
       modalTitle: "",
       modalCaption: "",
       tabIndex: 0,
+      form: {
+        search: this.filters.search,
+      },
     };
   },
   components: {
@@ -301,10 +306,13 @@ export default {
     ModalFormMemoApproval,
     UndrawNoData,
     Pagination,
-    //Search,
+    Search,
     Timeline,
     TimelineItem,
     TimelineTitle,
+  },
+  beforeMount() {
+    this.setLsTabMemo();
   },
   mounted() {},
   methods: {
@@ -378,8 +386,8 @@ export default {
     setLsTabMemo() {
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
-      if (this.$ls.get("tabIndexMemo")) {
-        this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
+      if (this.$ls.get("tabIndexApprovalPay")) {
+        this.tabIndex = this.$ls.get("tabIndexApprovalPay") - 1;
       }
 
       let param = { tab: this.tab[this.tabIndex] };
@@ -397,7 +405,7 @@ export default {
       this.isLoadMemo = true;
       //console.log(route().current());
       // this.memo = { data: [], link: [] };
-      this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
+      this.$ls.set("tabIndexApprovalPay", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
       if (this.filters.page) {
@@ -407,6 +415,25 @@ export default {
         // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
+    },
+  },
+  watch: {
+    form: {
+      handler: throttle(function () {
+        let query = this.form.search;
+        this.$inertia.replace(
+          this.route(
+            this.__index,
+            Object.keys(query).length
+              ? { search: query, tab: this.tab[this.tabIndex] }
+              : {
+                  remember: "forget",
+                  tab: this.tab[this.tabIndex],
+                }
+          )
+        );
+      }, 150),
+      deep: true,
     },
   },
 };
