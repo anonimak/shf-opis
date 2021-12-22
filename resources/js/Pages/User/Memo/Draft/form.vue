@@ -135,8 +135,8 @@
                       :deletable="true"
                       :meta="true"
                       :accept="'.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
-                      :maxSize="'2MB'"
-                      :maxFiles="4"
+                      :maxSize="'10MB'"
+                      :maxFiles="10"
                       :helpText="'Choose images, pdf, excel or word files'"
                       :errorText="{
                         type: 'Invalid file type. Only images, excel, pdf and word files allowed',

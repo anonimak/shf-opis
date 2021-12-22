@@ -785,10 +785,16 @@ class MemoController extends Controller
     public function fileUploadAttach(Request $request, $id)
     {
         foreach ($request->file('files') as $file) {
-            $filename = $file->store('public/uploads/memo/attach');
+            // $filename = $file->store('public/uploads/memo/attach');
+            $fileHash = str_replace('.' . $file->extension(), '', $file->hashName());
+            $fileName = $fileHash . '.' . $file->getClientOriginalExtension();
+
+            // $path = Storage::disk('public')->putFileAs('forms/files', $file, $fileName);
+            Storage::putFileAs('public/uploads/memo/attach', $file, $fileName);
+
             D_Memo_Attachment::create([
                 'id_memo' => $id,
-                'name' => $file->hashName(),
+                'name' => $fileName,
                 'real_name' => $file->getClientOriginalName()
             ]);
         }
