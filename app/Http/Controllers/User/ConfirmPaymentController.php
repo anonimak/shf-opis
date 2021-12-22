@@ -37,7 +37,7 @@ class ConfirmPaymentController extends Controller
         // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         //     return $employee->select('id', 'firstname', 'lastname');
         // }])->with('position')->get();
-        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab,$request->input('search'))->with('latestHistory')->paginate(10);
+        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab, $request->input('search'))->with('latestHistory')->paginate(10);
         //ddd($memo->get());
         return Inertia::render('User/Confirm_Payment', [
             'perPage' => 10,
@@ -109,33 +109,7 @@ class ConfirmPaymentController extends Controller
 
     public function previewPDF(Request $request, $id)
     {
-        $memo = Memo::getPaymentDetailApprovers($id);
-        $employeeInfo = User::getUsersEmployeeInfo();
-        $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
-        $dataPayments = Memo::where('id', $id)->with('payments')->first();
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-        $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
-
-        $memocost = (array) json_decode($memo->cost);
-        $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
-        $data = [
-            'memo' => $memo,
-            'employeeInfo' => $employeeInfo,
-            'employeeproposeinfo' => $employeeProposeInfo,
-            'positions' => $positions,
-            'dataTypeMemo' => $dataTypeMemo,
-            'dataAttachments' => $attachments,
-            'memocost' => $memocost,
-            'dataPayments' => $dataPayments->payments,
-            'dataTotalCost' => $dataTotalCost,
-            'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
-        ];
-        $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
-        $pdf->setPaper('A4', 'portrait');;
-        return $pdf->stream("dompdf_out.pdf", array("Attachment" => false));
+        return generatePDFPayment($id);
     }
 
     public function confirmingPayment($id, $idConfirmedPayment)
@@ -145,7 +119,7 @@ class ConfirmPaymentController extends Controller
         $memo = Memo::where('id', $id)->with('proposeemployee')->first();
         $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : $memo->proposeemployee;
         //ddd($proposeEmployee);
-        Memo::where('id',$id)->update([
+        Memo::where('id', $id)->update([
             'payment_at' => Carbon::now()
         ]);
         $contentHistory = [

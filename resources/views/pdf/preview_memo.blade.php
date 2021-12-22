@@ -133,16 +133,19 @@
                     <td colspan="1">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
                     <td colspan="1"><div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval</td>
                 </tr>
-                {{-- @if ( count($memo->acknowledges) > 0)
+                @if ( count($memo->acknowledges) > 0)
                 <tr>
-                    <td>Acknowledge</td>
-                    <td colspan="3">
+                    <td>Send email after memo approved to</td>
+                    <td colspan="2">
                         @foreach ($memo->acknowledges as $acknowledge)
-                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }},
+                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}
+                        @if (!$loop->last)
+                            , 
+                        @endif
                         @endforeach
                     </td>
                 </tr>
-                @endif --}}
+                @endif
             </tbody>
         </table>
         @if ( count($memo->approvers) > 0)
