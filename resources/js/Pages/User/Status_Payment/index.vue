@@ -87,6 +87,24 @@
                             </td>
                             <td>
                               {{ item.doc_no }}
+                              <b-badge
+                                v-if="
+                                  item.payment_at != null &&
+                                  item.ref_table.with_payment == true
+                                "
+                                variant="success"
+                              >
+                                Paid
+                              </b-badge>
+                              <b-badge
+                                v-if="
+                                  item.payment_at == null &&
+                                  item.ref_table.with_payment == true
+                                "
+                                variant="warning"
+                              >
+                                Unpaid
+                              </b-badge>
                             </td>
                             <td>
                               {{ item.latest_history.content }}
