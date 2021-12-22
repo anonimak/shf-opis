@@ -144,16 +144,19 @@
                     <td colspan="1">-</td>
                     @endif
                 </tr>
-                {{-- @if ( count($memo->acknowledges) > 0)
+                @if ( count($memo->acknowledges) > 0)
                 <tr>
-                    <td>Acknowledge</td>
-                    <td colspan="3">
+                    <td>Send email after memo approved to</td>
+                    <td colspan="2">
                         @foreach ($memo->acknowledges as $acknowledge)
-                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }},
+                        {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}
+                        @if (!$loop->last)
+                            , 
+                        @endif
                         @endforeach
                     </td>
                 </tr>
-                @endif --}}
+                @endif
             </tbody>
         </table>
         @if ( count($memo->approversPayment) > 0)
