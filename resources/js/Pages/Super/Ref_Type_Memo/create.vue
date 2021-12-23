@@ -36,6 +36,7 @@
                     errors.department ? errors.department[0] : ''
                   "
                   :state="errors.department ? false : null"
+                  description="Let this field blank for general memo."
                 >
                   <v-select
                     placeholder="-- Select Department --"
@@ -130,7 +131,9 @@
                   label="Confirmed Payment By:"
                   label-for="input-title"
                   :invalid-feedback="
-                    errors.id_confirmed_payment_by ? errors.id_confirmed_payment_by[0] : ''
+                    errors.id_confirmed_payment_by
+                      ? errors.id_confirmed_payment_by[0]
+                      : ''
                   "
                   :state="errors.id_confirmed_payment_by ? false : null"
                   description="Fill in this column to indicate the employee who is responsible for confirming payments."
@@ -189,7 +192,7 @@ export default {
         name: "",
         refmoduleapprover: null,
         id_overtake: null,
-        id_confirmed_payment_by:null,
+        id_confirmed_payment_by: null,
         id_branch: null,
         department: null,
         with_po: false,
@@ -200,8 +203,8 @@ export default {
   watch: {
     "form.with_payment": function (val) {
       if (!val) {
-          this.form.id_overtake = null;
-          this.form.id_confirmed_payment_by = null;
+        this.form.id_overtake = null;
+        this.form.id_confirmed_payment_by = null;
       }
     },
   },

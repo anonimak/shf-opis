@@ -417,7 +417,6 @@ export default {
         if (!this.valueChangedFromEditor) {
           this.editor.setContent(newVal);
         }
-        // console.log(`value changed: ${newVal}`);
       },
       immediate: true,
     },

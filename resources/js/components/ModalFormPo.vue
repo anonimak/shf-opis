@@ -150,17 +150,15 @@ export default {
       this.handleSubmit();
     },
     handleSubmit() {
-      //   console.log("submit");
       //   this.isSubmitbusy = true;
       //   this.isTableApproverbusy = true;
-      console.log("submit");
       if (this.form.name == null || this.form.address == null) {
         this.pageFlashes.danger = "Please fill vendor data!";
         return;
       }
-        this.isSubmitbusy = true;
-        this.isTableApproverbusy = true;
-        this.$inertia.put(route(this.proposeLink, this.indexMemo), this.form);
+      this.isSubmitbusy = true;
+      this.isTableApproverbusy = true;
+      this.$inertia.put(route(this.proposeLink, this.indexMemo), this.form);
       //   axios.put(route(this.proposeLink, this.indexMemo),this.form)
       //     .then((response)=> {
       //         this.errors = {};
@@ -168,7 +166,6 @@ export default {
       //         this.isTableApproverbusy = false;
       //         this.isSubmitbusy = false;
       //         if (Object.entries(this.errors).length === 0) {
-      //         console.log("no error");
       //         this.$nextTick(() => {
       //           this.$bvModal.hide("modal-propose-po");
       //         });
@@ -188,15 +185,12 @@ export default {
       //     });
     },
 
-    beforeSaveEditApprover() {
-      console.log("okee");
-    },
+    beforeSaveEditApprover() {},
 
     onSaveEditApprover(response) {
       Promise.all([this.getDataApproversPo()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
-        //console.log(results);
       });
     },
 

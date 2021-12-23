@@ -165,7 +165,6 @@ export default {
       this.$inertia.delete(route(this.__destroy, id));
     },
     submitPropose(id) {
-      console.log("submit");
       this.$inertia.put(route(this.__propose, id));
     },
     submitDeleteAll(idx) {
@@ -187,10 +186,7 @@ export default {
         .then((value) => {
           value && this.submitDelete(id);
         })
-        .catch((err) => {
-          //console.log(err);
-          // An error occurred
-        });
+        .catch((err) => {});
     },
     showMsgBoxPropose: function (id) {
       this.$bvModal
@@ -207,10 +203,7 @@ export default {
         .then((value) => {
           value && this.submitPropose(id);
         })
-        .catch((err) => {
-          //console.log(err);
-          // An error occurred
-        });
+        .catch((err) => {});
     },
     showMsgBoxDeleteAll: function () {
       this.$bvModal

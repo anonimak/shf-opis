@@ -119,7 +119,6 @@ export default {
       }
     },
     selecting(selectedOption) {
-      //console.log(selectedOption);
       this.addItem(selectedOption);
       this.selected = null;
     },
