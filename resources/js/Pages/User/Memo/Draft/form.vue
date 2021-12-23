@@ -581,6 +581,10 @@ export default {
       this.$refs.button.focus();
     },
     actionAcknowledgeRemoving(removeOption) {
+<<<<<<< HEAD
+=======
+      //console.log(removeOption);
+>>>>>>> 2be50f40551f33a64134920de73b0fd544557564
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(

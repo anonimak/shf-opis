@@ -151,7 +151,7 @@
                         @foreach ($memo->acknowledges as $acknowledge)
                         {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}
                         @if (!$loop->last)
-                            , 
+                            ,
                         @endif
                         @endforeach
                     </td>
@@ -320,7 +320,7 @@
                     <td>{{ $payment->name }}</td>
                     <td>{{ $payment->bank_name }}</td>
                     <td>{{ $payment->bank_account }}</td>
-                    <td>{{  number_format($payment->amount, 2) }}</td>
+                    <td>Rp {{  number_format($payment->amount, 2) }}</td>
                     <td>{{ $payment->remark }}</td>
                 </tr>
                 @endforeach

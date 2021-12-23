@@ -245,13 +245,14 @@
                       </td>
                       <td v-else>{{ item.bank_account }}</td>
                       <td v-if="isFormPaymentEdited && activeIndex == index">
-                        <input
+                        <!-- <input
                           type="text"
                           name="amount"
                           v-model="activeItemPayment.amount"
-                        />
+                        /> -->
+                        <CurrencyInput v-model="activeItemPayment.amount" />
                       </td>
-                      <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
+                      <td v-else>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
                       <td v-if="isFormPaymentEdited && activeIndex == index">
                         <input
                           type="text"
@@ -393,7 +394,10 @@
               :invalid-feedback="errors.amount ? errors.amount[0] : ''"
               :state="errors.amount ? false : null"
             >
-              <b-form-input
+              <CurrencyInput v-model="form.amount" />
+
+              <!-- <p>Price (in parent component): {{ form.amount }}</p> -->
+              <!-- <b-form-input
                 id="input-title"
                 type="number"
                 name="amount"
@@ -402,7 +406,7 @@
                 :state="errors.amount ? false : null"
                 trim
                 required
-              ></b-form-input>
+              ></b-form-input> -->
             </b-form-group>
             <b-form-group
               id="input-group-title"
@@ -454,6 +458,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import TableEditApprover from "@/components/TableEditApprover.vue";
+import CurrencyInput from "@/components/CurrencyInput.vue";
 import draggable from "vuedraggable";
 import SelectTypeApprover from "@/components/SelectTypeApprover";
 
@@ -463,6 +468,7 @@ export default {
     FlashMsg,
     Breadcrumb,
     draggable,
+    CurrencyInput,
     SelectTypeApprover,
     TableEditApprover,
   },
@@ -486,7 +492,14 @@ export default {
   ],
   data() {
     return {
-      form: {},
+      form: {
+        name: "",
+        bank_name: "",
+        bank_account: null,
+        amount: 0,
+        remark: "",
+        address: "",
+      },
       form_payment: {},
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
@@ -633,6 +646,7 @@ export default {
           this.pph = this.pph;
           this.grand_total = this.grand_total;
           this.activeItemPayment = {};
+          this.form.amount = 0;
           this.isFormPaymentEdited = false;
         });
     },
@@ -647,6 +661,7 @@ export default {
               this.dataPayments,
               (item) => item.id != id
             );
+            this.form.amount = 0;
           }
         });
     },
@@ -711,7 +726,14 @@ export default {
     },
 
     resetModalPayment() {
-      this.form = {};
+      this.form = {
+        name: "",
+        bank_name: "",
+        bank_account: null,
+        amount: 0,
+        remark: "",
+        address: "",
+      };
     },
     // handleOk(bvModalEvt) {
     //   // Prevent modal from closing
@@ -757,9 +779,17 @@ export default {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
+<<<<<<< HEAD
       });
     },
     actionAcknowledgeRemoving(removeOption) {
+=======
+        //console.log(results);
+      });
+    },
+    actionAcknowledgeRemoving(removeOption) {
+      //console.log(removeOption);
+>>>>>>> 2be50f40551f33a64134920de73b0fd544557564
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(
