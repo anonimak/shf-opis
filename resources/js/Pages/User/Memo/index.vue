@@ -321,7 +321,6 @@ export default {
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
-      // console.log("submit");
       // this.$inertia.put(route(this.__proposepo, id));
       this.idItemPOClicked = id;
       this.modalTitle = "Modal PO";
@@ -337,7 +336,6 @@ export default {
       this.$inertia.delete(route(this.__destroy, id));
     },
     submitProposePayment(id) {
-      console.log("submit");
       this.$inertia.put(route(this.__proposepayment, id));
     },
     submitDeleteAll(idx) {
@@ -381,10 +379,7 @@ export default {
         .then((value) => {
           value && this.submitProposePayment(id);
         })
-        .catch((err) => {
-          //console.log(err);
-          // An error occurred
-        });
+        .catch((err) => {});
     },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
@@ -435,8 +430,6 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      //console.log(route().current());
-      // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexMemo", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
@@ -444,7 +437,6 @@ export default {
         param.page = this.filters.page;
       }
       this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
     },

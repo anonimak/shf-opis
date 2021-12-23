@@ -57,10 +57,18 @@
                           {{ item.name }}
                         </td>
                         <td>
-                          {{ item.ref_module_approver.name }}
+                          {{
+                            item.ref_module_approver
+                              ? item.ref_module_approver.name
+                              : "-"
+                          }}
                         </td>
                         <td>
-                          {{ item.department.department_name }}
+                          {{
+                            item.department
+                              ? item.department.department_name
+                              : "-"
+                          }}
                         </td>
                         <td>
                           {{ item.branch ? item.branch.branch_name : "-" }}

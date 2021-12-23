@@ -92,7 +92,7 @@ class RefTypeMemo extends Controller
     {
         $request->validate([
             'name'                 => 'required|max:50',
-            'department'           => 'required',
+            'department'           => 'nullable',
             'refmoduleapprover'    => 'required',
             'id_overtake' => 'nullable',
             'id_branch' => 'nullable',
@@ -184,7 +184,7 @@ class RefTypeMemo extends Controller
     {
         $request->validate([
             'name'                 => 'required|max:50',
-            'department'           => 'required',
+            'department'           => 'nullable',
             'refmoduleapprover'    => 'required',
             'id_overtake'          => 'nullable',
             'id_branch'            => 'nullable',

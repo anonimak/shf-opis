@@ -75,7 +75,7 @@
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody >
+                        <tbody>
                           <tr
                             v-for="(item, index) in dataMemoTabList.data"
                             :key="item.id"
@@ -90,12 +90,12 @@
                                 1
                               }}
                             </th>
-                            <td >
+                            <td>
                               {{ item.title }}
                             </td>
-                            <td >
-                                <!-- {{ item.doc_no }} -->
-                              <inertia-link :href="route(__detail, item.id)" >
+                            <td>
+                              <!-- {{ item.doc_no }} -->
+                              <inertia-link :href="route(__detail, item.id)">
                                 {{ item.doc_no }}
                               </inertia-link>
                             </td>
@@ -104,7 +104,10 @@
                             </td> -->
                             <td>
                               <b-button-group
-                                v-if="item.type_approver == 'approver' && item.status_approver == 'submit'"
+                                v-if="
+                                  item.type_approver == 'approver' &&
+                                  item.status_approver == 'submit'
+                                "
                               >
                                 <a
                                   target="_blank"
@@ -138,7 +141,10 @@
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge' && item.status_approver == 'submit'"
+                                  v-if="
+                                    item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'
+                                  "
                                   >Next</b-button
                                 >
                               </b-button-group>
@@ -413,8 +419,6 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      //console.log(route().current());
-      // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexApprovalMemo", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
@@ -422,7 +426,6 @@ export default {
         param.page = this.filters.page;
       }
       this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
     },

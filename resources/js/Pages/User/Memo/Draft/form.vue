@@ -373,7 +373,6 @@ export default {
           this.dataFormula =
             this.hotSettings.formulas.engine.getAllSheetsValues();
           //this.dataWithFormulaValue = this.dataFormula.Sheet1;
-          //console.log(this.dataFormula);
         },
       },
       fileRecords: [],
@@ -451,16 +450,12 @@ export default {
       // Using the default uploader. You may use another uploader instead.
       var form_data = new FormData();
 
-      // console.log(this.fileRecordsForUpload[0].file);
       // this.fileRecordsForUpload.forEach((item, index) => {
-      //   console.log(item.file);
       //   form_data.append(`files[${index}]`, item.file);
       // });
       _.each(this.fileRecordsForUpload, (item, index) => {
-        //console.log(item.file);
         form_data.append(`files[${index}]`, item.file);
       });
-      // console.log(form_data);
       // this.$refs.vueFileAgent.upload(
       //   route(this.__attachment, this.dataMemo.id),
       //   this.uploadHeaders,
@@ -534,7 +529,6 @@ export default {
       //     }
       //   }
       if (!this.submitState) {
-        //console.log("data = ", this.dataFormula.Sheet1.length);
         let newData = {};
         if (this.dataFormula.Sheet1.length != 0) {
           newData = _.map(this.dataFormula.Sheet1, (value) => {
@@ -553,12 +547,9 @@ export default {
             return res;
           });
         }
-        //console.log(this.data)
-        //console.log("new = ", newData);
         let arrayCost = _.map(newData, (valueCost) => {
           let objCost = {};
           valueCost = Object.assign({}, valueCost);
-          //console.log("valueCost = ", valueCost);
           _.map(this.colHeaders, (v) => {
             objCost[v] = valueCost[v];
           });
@@ -567,7 +558,6 @@ export default {
             return objCost;
           }
         });
-        //console.log("arrayCost = ", arrayCost);
         arrayCost = _.pickBy(arrayCost, _.identity);
         if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;
@@ -591,7 +581,6 @@ export default {
       this.$refs.button.focus();
     },
     actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(

@@ -245,13 +245,21 @@
                       </td>
                       <td v-else>{{ item.bank_account }}</td>
                       <td v-if="isFormPaymentEdited && activeIndex == index">
-                        <input
+                        <!-- <input
                           type="text"
                           name="amount"
                           v-model="activeItemPayment.amount"
-                        />
+                        /> -->
+                        <CurrencyInput v-model="activeItemPayment.amount" />
                       </td>
-                      <td v-else>{{ Number(item.amount).toLocaleString() }}</td>
+                      <td v-else>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td v-if="isFormPaymentEdited && activeIndex == index">
                         <input
                           type="text"
@@ -393,7 +401,10 @@
               :invalid-feedback="errors.amount ? errors.amount[0] : ''"
               :state="errors.amount ? false : null"
             >
-              <b-form-input
+              <CurrencyInput v-model="form.amount" />
+
+              <!-- <p>Price (in parent component): {{ form.amount }}</p> -->
+              <!-- <b-form-input
                 id="input-title"
                 type="number"
                 name="amount"
@@ -402,7 +413,7 @@
                 :state="errors.amount ? false : null"
                 trim
                 required
-              ></b-form-input>
+              ></b-form-input> -->
             </b-form-group>
             <b-form-group
               id="input-group-title"
@@ -454,6 +465,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import TableEditApprover from "@/components/TableEditApprover.vue";
+import CurrencyInput from "@/components/CurrencyInput.vue";
 import draggable from "vuedraggable";
 import SelectTypeApprover from "@/components/SelectTypeApprover";
 
@@ -463,6 +475,7 @@ export default {
     FlashMsg,
     Breadcrumb,
     draggable,
+    CurrencyInput,
     SelectTypeApprover,
     TableEditApprover,
   },
@@ -486,7 +499,14 @@ export default {
   ],
   data() {
     return {
-      form: {},
+      form: {
+        name: "",
+        bank_name: "",
+        bank_account: null,
+        amount: 0,
+        remark: "",
+        address: "",
+      },
       form_payment: {},
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
@@ -633,6 +653,7 @@ export default {
           this.pph = this.pph;
           this.grand_total = this.grand_total;
           this.activeItemPayment = {};
+          this.form.amount = 0;
           this.isFormPaymentEdited = false;
         });
     },
@@ -647,6 +668,7 @@ export default {
               this.dataPayments,
               (item) => item.id != id
             );
+            this.form.amount = 0;
           }
         });
     },
@@ -664,7 +686,6 @@ export default {
         .then((response) => {
           this.errors = {};
           if (Object.entries(this.errors).length === 0) {
-            console.log("no error");
             this.$nextTick(() => {
               this.$bvModal.hide("modal-add-payment");
             });
@@ -685,31 +706,24 @@ export default {
         .catch((error) => {
           if (error.response) {
             this.errors = { ...error.response.data.errors };
-            //console.log(error.response.data);
           }
         });
     },
     getData() {
       this.isTableApproverbusy = true;
-      //this.modalTitle = "Continue Propose Payment";
       Promise.all([
         this.getDataPositions(),
         this.getDataApproversPayment(),
         this.getDataApprovers(),
         this.getDataPayments(),
       ]).then((results) => {
-        //console.log(results);
         this.isTableApproverbusy = false;
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
-        //console.log(results);
         this.dataPayments = results[3].data;
         this.fillForm();
       });
-
-      // this.getDataPositions();
-      // this.getDataApprovers();
     },
     resetModal() {
       this.dataPayments = [];
@@ -719,7 +733,14 @@ export default {
     },
 
     resetModalPayment() {
-      this.form = {};
+      this.form = {
+        name: "",
+        bank_name: "",
+        bank_account: null,
+        amount: 0,
+        remark: "",
+        address: "",
+      };
     },
     // handleOk(bvModalEvt) {
     //   // Prevent modal from closing
@@ -734,7 +755,6 @@ export default {
       this.handleSubmitPayment();
     },
     submit() {
-      console.log("submit");
       if (
         this.dataMemoType.ref_table.with_po == 1 ||
         this.dataMemoType.ref_table.with_payment == 1
@@ -760,19 +780,15 @@ export default {
       );
     },
 
-    beforeSaveEditApprover() {
-      console.log("okee");
-    },
+    beforeSaveEditApprover() {},
 
     onSaveEditApprover(response) {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
-        console.log(results);
       });
     },
     actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(

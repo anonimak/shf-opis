@@ -46,8 +46,7 @@ export default {
           title: "Memo",
           link: "#",
           icon: "fas fa-fw fa-clipboard",
-          badge:
-            this.notif.confirmed_paymentmemo,
+          badge: this.notif.confirmed_paymentmemo,
           child: [
             {
               title: "New Memo",
@@ -137,20 +136,15 @@ export default {
       );
     }
     if (isConfirmedPayment) {
-      this.itemsNav[1].child.push(
-        {
-          title: "Confirm Payment",
-          link: "user.memo.confirmpayment.*",
-          index: "user.memo.confirmpayment.index",
-          badge: this.notif.confirmed_paymentmemo,
-
-        }
-      );
+      this.itemsNav[1].child.push({
+        title: "Confirm Payment",
+        link: "user.memo.confirmpayment.*",
+        index: "user.memo.confirmpayment.index",
+        badge: this.notif.confirmed_paymentmemo,
+      });
     }
   },
   mounted() {
-    // console.log(this.itemsNav[1]);
-
     $("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       $("body").toggleClass("sidebar-toggled");
       $(".sidebar").toggleClass("toggled");
