@@ -269,9 +269,17 @@ class MemoController extends Controller
         $employeeInfo = User::getUsersEmployeeInfo();
         $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
         if (!$isHeadOffice) {
-            $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orWhere('id_branch', $employeeInfo->employee->position_now->branch->id)->orderBy('id', 'desc')->get();
+            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
+                $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+                $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+            })
+                ->orderBy('id_department', 'asc')->get();
         } else {
-            $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
+            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')
+                ->orWhere(function ($query) use ($employeeInfo) {
+                    $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+                })
+                ->orderBy('id_department', 'asc')->get();
         }
         return Inertia::render('User/Memo/create', [
             'breadcrumbItems' => array(

@@ -46,6 +46,15 @@
                       :reduce="(typememo) => typememo.id"
                       :required="!form.typememo"
                     >
+                      <template v-slot:option="option">
+                        {{ option.name }}
+                        <span
+                          v-if="!option.id_department"
+                          class="font-weight-bold font-italic"
+                        >
+                          (General Memo)</span
+                        >
+                      </template>
                     </v-select>
                   </b-form-group>
                 </b-col>
@@ -95,6 +104,11 @@ export default {
     };
   },
   methods: {
+    getOptionLabel: (option) => {
+      return option.id_department
+        ? option.name
+        : option.name + " -- General Memo";
+    },
     submit() {
       if (!this.submitState) {
         this.submitState = true;
