@@ -98,18 +98,14 @@
                               <inertia-link :href="route(__detail, item.id)">
                                 {{ item.doc_no }}
                               </inertia-link>
-                               <b-badge
-                                v-if="
-                                  item.payment_at != null
-                                "
+                              <b-badge
+                                v-if="item.payment_at != null"
                                 variant="success"
                               >
                                 Paid
                               </b-badge>
                               <b-badge
-                                v-if="
-                                  item.payment_at == null
-                                "
+                                v-if="item.payment_at == null"
                                 variant="warning"
                               >
                                 Unpaid
@@ -419,8 +415,6 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      //console.log(route().current());
-      // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexApprovalPay", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
@@ -428,7 +422,6 @@ export default {
         param.page = this.filters.page;
       }
       this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
     },

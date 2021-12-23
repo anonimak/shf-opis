@@ -150,9 +150,8 @@ export default {
     getData() {
       if (this.indexEmpHistory !== null) {
         this.modalTitle = "Edit History";
-        const employeedetail_item = this.$page.employee_detail[
-          this.indexEmpHistory
-        ];
+        const employeedetail_item =
+          this.$page.employee_detail[this.indexEmpHistory];
         if (employeedetail_item.year_finished) {
           this.checkboxdatenow = false;
         }
@@ -198,7 +197,6 @@ export default {
           )
           .then(() => {
             if (Object.entries(this.errors).length === 0) {
-              console.log("no error");
               this.$nextTick(() => {
                 this.$bvModal.hide("modal-prevent-closing");
               });
@@ -212,7 +210,6 @@ export default {
           )
           .then(() => {
             if (Object.entries(this.errors).length === 0) {
-              console.log("no error");
               this.$nextTick(() => {
                 this.$bvModal.hide("modal-prevent-closing");
               });

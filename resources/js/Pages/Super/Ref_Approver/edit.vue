@@ -123,13 +123,11 @@ export default {
       }
     },
     selecting(selectedOption) {
-    //  console.log(selectedOption);
       this.addItem(selectedOption);
       this.selected = null;
     },
     addItem: function (item) {
       let id = this.form.detail_approver.find((data) => {
-       // console.log(item.id_position, data.id_ref_position);
         return item.id_position === data.id_ref_position;
       });
       if (id !== undefined) {
@@ -142,13 +140,10 @@ export default {
         position: item.position,
       };
 
-     // console.log(new_detail_approver)
-
       this.form.detail_approver = [
         ...this.form.detail_approver,
         new_detail_approver,
       ];
-     // console.log(this.form.detail_approver)
     },
     removeAt(idx) {
       this.form.detail_approver.splice(idx, 1);

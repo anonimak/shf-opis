@@ -664,7 +664,6 @@ export default {
         .then((response) => {
           this.errors = {};
           if (Object.entries(this.errors).length === 0) {
-            console.log("no error");
             this.$nextTick(() => {
               this.$bvModal.hide("modal-add-payment");
             });
@@ -685,31 +684,24 @@ export default {
         .catch((error) => {
           if (error.response) {
             this.errors = { ...error.response.data.errors };
-            //console.log(error.response.data);
           }
         });
     },
     getData() {
       this.isTableApproverbusy = true;
-      //this.modalTitle = "Continue Propose Payment";
       Promise.all([
         this.getDataPositions(),
         this.getDataApproversPayment(),
         this.getDataApprovers(),
         this.getDataPayments(),
       ]).then((results) => {
-        //console.log(results);
         this.isTableApproverbusy = false;
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
-        //console.log(results);
         this.dataPayments = results[3].data;
         this.fillForm();
       });
-
-      // this.getDataPositions();
-      // this.getDataApprovers();
     },
     resetModal() {
       this.dataPayments = [];
@@ -734,7 +726,6 @@ export default {
       this.handleSubmitPayment();
     },
     submit() {
-      console.log("submit");
       if (
         this.dataMemoType.ref_table.with_po == 1 ||
         this.dataMemoType.ref_table.with_payment == 1
@@ -760,19 +751,15 @@ export default {
       );
     },
 
-    beforeSaveEditApprover() {
-      console.log("okee");
-    },
+    beforeSaveEditApprover() {},
 
     onSaveEditApprover(response) {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
-        console.log(results);
       });
     },
     actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(

@@ -383,7 +383,7 @@ export default {
     reset() {
       this.form = mapValues(this.form, () => null);
     },
-   setLsTabMemo() {
+    setLsTabMemo() {
       this.isLoadMemo = true;
       // this.memo = { data: [], link: [] };
       if (this.$ls.get("tabIndexApprovalPO")) {
@@ -403,8 +403,6 @@ export default {
     activeTab(tabIndex) {
       this.tabIndex = tabIndex;
       this.isLoadMemo = true;
-      //console.log(route().current());
-      // this.memo = { data: [], link: [] };
       this.$ls.set("tabIndexApprovalPO", this.tabIndex + 1, 60 * 60 * 1000);
 
       let param = { tab: this.tab[tabIndex] };
@@ -412,7 +410,6 @@ export default {
         param.page = this.filters.page;
       }
       this.$inertia.replace(route(this.__index, param)).then(() => {
-        // this.memo = { ...this.dataMemo };
         this.isLoadMemo = false;
       });
     },

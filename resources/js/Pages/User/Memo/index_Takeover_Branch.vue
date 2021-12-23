@@ -67,7 +67,7 @@
                             </td>
                             <td>
                               {{ item.doc_no }}
-                               <b-badge
+                              <b-badge
                                 v-if="
                                   item.payment_at != null &&
                                   item.ref_table.with_payment == true
@@ -248,8 +248,6 @@ export default {
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
-      // console.log("submit");
-      // this.$inertia.put(route(this.__proposepo, id));
       this.idItemPOClicked = id;
       this.modalTitle = "Modal PO";
 
@@ -258,10 +256,8 @@ export default {
         "modal-propose-po",
         "#btnShowModalPO"
       );
-      //this.$refs.modalPayment.show(item);
     },
     submitProposePayment(id) {
-      console.log("submit");
       this.$inertia.put(route(this.__proposepayment, id));
     },
     showMsgBoxProposePayment: function (id) {
@@ -279,10 +275,7 @@ export default {
         .then((value) => {
           value && this.submitProposePayment(id);
         })
-        .catch((err) => {
-          //console.log(err);
-          // An error occurred
-        });
+        .catch((err) => {});
     },
     reset() {
       this.form = mapValues(this.form, () => null);
