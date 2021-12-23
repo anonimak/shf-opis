@@ -591,7 +591,7 @@ export default {
       this.$refs.button.focus();
     },
     actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
+      //console.log(removeOption);
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(

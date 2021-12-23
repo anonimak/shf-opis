@@ -790,11 +790,11 @@ export default {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
-        console.log(results);
+        //console.log(results);
       });
     },
     actionAcknowledgeRemoving(removeOption) {
-      console.log(removeOption);
+      //console.log(removeOption);
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(
