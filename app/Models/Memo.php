@@ -131,7 +131,7 @@ class Memo extends Model
             ->where('id', $id)->first();
     }
 
-    public static function getPaymentDetailApprovers($id)
+    public static function getPaymentDetailApprovers($id, $formType = 'payment')
     {
         return Self::with(['approversPayment' => function ($approver) {
             return $approver->with(['employee' => function ($employee) {
@@ -141,9 +141,26 @@ class Memo extends Model
                     }])->with('branch');
                 }]);
             }])->orderBy('idx', 'asc');
-        }])->with(['histories' => function ($history) {
-            return $history->orderBy('id', 'DESC');
-        }])->where('id', $id)->first();
+        }])
+            ->with(['acknowledges' => function ($approver) use ($formType) {
+                return $approver->with(['position_now' => function ($position_now) {
+                    $position_now->with(['employee' => function ($employee) {
+                        return $employee->select('id', 'firstname', 'lastname');
+                    }])->with('position')->get();
+                }])
+                    ->where('type', $formType)
+                    ->orderBy('id', 'asc');
+                // return $approver->with(['employee' => function ($employee) {
+                //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                //         return $position_now->with(['position' => function ($position) {
+                //             return $position->with('department');
+                //         }])->with('branch');
+                //     }]);
+                // }])->orderBy('id', 'asc');
+            }])
+            ->with(['histories' => function ($history) {
+                return $history->orderBy('id', 'DESC');
+            }])->where('id', $id)->first();
     }
 
     public static function getPoDetailApprovers($id)
@@ -696,13 +713,13 @@ class Memo extends Model
                         $query->where('id_employee', $id_employee)->where('status', '=', $status);
                     }
                 );
-                if ($search) {
-                    $memo->where(function ($query) use ($search) {
-                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('status', 'LIKE', '%' . $search . '%');
-                    });
-                }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
             return $memo;
         } else {
             $lastApprover = DB::table('d_payment_approver')
@@ -724,13 +741,13 @@ class Memo extends Model
                 ->where('a.status_payment', '=', $status)
                 ->where('c.id_employee', $id_employee);
 
-                if ($search) {
-                    $memo->where(function ($query) use ($search) {
-                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
-                    });
-                }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
+                });
+            }
 
             return $memo;
         }
@@ -843,13 +860,13 @@ class Memo extends Model
                         $query->where('id_employee', $id_employee)->where('status', '=', $status);
                     }
                 );
-                if ($search) {
-                    $memo->where(function ($query) use ($search) {
-                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('status', 'LIKE', '%' . $search . '%');
-                    });
-                }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                });
+            }
             return $memo;
         } else {
             $lastApprover = DB::table('d_po_approver')
@@ -871,13 +888,13 @@ class Memo extends Model
                 ->where('a.status_po', '=', $status)
                 ->where('c.id_employee', $id_employee);
 
-                if ($search) {
-                    $memo->where(function ($query) use ($search) {
-                        $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                        $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
-                    });
-                }
+            if ($search) {
+                $memo->where(function ($query) use ($search) {
+                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
+                });
+            }
 
             return $memo;
         }

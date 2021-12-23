@@ -215,7 +215,7 @@
                       <center>
                         <table style="margin: 0 auto;" cellspacing="0" cellpadding="0" class="force-width-80">
                           <tr>
-                            <td style="text-align: left;">
+                            <td style="text-align: center;">
                                 Please click the "Reset Password" button below to reset your password.
                             </td>
                           </tr>
@@ -239,11 +239,11 @@
                       <table cellspacing="0" cellpadding="0" bgcolor="#363636" class="force-full-width">
                         <tr>
                           <td style="background-color:#363636; text-align:center;">
-                            <br>
-                            <br>
-                            <img width="62" height="56" img src="https://www.filepicker.io/api/file/FjkhDKXsTFyaHnXhhBCw">
+                            {{-- <br>
+                            <br> --}}
+                            {{-- <img width="62" height="56" img src="https://www.filepicker.io/api/file/FjkhDKXsTFyaHnXhhBCw">
                             <img width="68" height="56" src="https://www.filepicker.io/api/file/W6gXqm5BRL6qSvQRcI7u">
-                            <img width="61" height="56" src="https://www.filepicker.io/api/file/eV9YfQkBTiaOu9PA9gxv">
+                            <img width="61" height="56" src="https://www.filepicker.io/api/file/eV9YfQkBTiaOu9PA9gxv"> --}}
                             <br>
                             <br>
                           </td>
