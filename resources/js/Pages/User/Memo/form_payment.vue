@@ -252,7 +252,14 @@
                         /> -->
                         <CurrencyInput v-model="activeItemPayment.amount" />
                       </td>
-                      <td v-else>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
+                      <td v-else>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td v-if="isFormPaymentEdited && activeIndex == index">
                         <input
                           type="text"
@@ -779,17 +786,9 @@ export default {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
-<<<<<<< HEAD
       });
     },
     actionAcknowledgeRemoving(removeOption) {
-=======
-        //console.log(results);
-      });
-    },
-    actionAcknowledgeRemoving(removeOption) {
-      //console.log(removeOption);
->>>>>>> 2be50f40551f33a64134920de73b0fd544557564
       this.isAcknowledgebusy = true;
       this.$inertia
         .delete(
