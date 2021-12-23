@@ -267,7 +267,7 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.sub_total).toLocaleString()
+                              Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                             }}
                           </div>
                         </td>
@@ -277,7 +277,7 @@
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.pph).toLocaleString() }}
+                            {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
                           </div>
                         </td>
                       </tr>
@@ -286,7 +286,7 @@
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.ppn).toLocaleString() }}
+                            {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
                           </div>
                         </td>
                       </tr>
@@ -296,7 +296,7 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.grand_total).toLocaleString()
+                              Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                             }}
                           </div>
                         </td>
@@ -331,7 +331,7 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>{{ Number(item.amount).toLocaleString() }}</td>
+                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>
