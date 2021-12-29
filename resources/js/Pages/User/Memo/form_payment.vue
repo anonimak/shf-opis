@@ -110,7 +110,7 @@
                   dataMemoType.ref_table.with_payment == 1
                 "
               >
-                <div class="col-5">
+                <div class="col-5" v-if="memocost.length > 0">
                   <b-overlay
                     :show="isSubmitbusy"
                     opacity="0.6"
@@ -759,7 +759,7 @@ export default {
         this.dataMemoType.ref_table.with_po == 1 ||
         this.dataMemoType.ref_table.with_payment == 1
       ) {
-        if (this.grand_total == 0 || this.sub_total == 0) {
+        if ((this.grand_total == 0 || this.sub_total == 0) && this.memocost.length > 0) {
           this.pageFlashes.danger = "Please fill data completely!";
           return;
         }
