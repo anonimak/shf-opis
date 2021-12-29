@@ -13,6 +13,19 @@
           Report</a
         > -->
       </div>
+      <div v-if="dataMaintenance != null">
+        <b-alert show variant="danger" v-if="dataMaintenance.status == 'show'">
+          <h2 class="alert-heading">Maintenance</h2>
+          <p>
+           {{dataMaintenance.msg}}
+          </p>
+          <!-- <hr />
+          <p class="mb-0">
+            Whenever you need to, be sure to use margin utilities to keep things
+            nice and tidy.
+          </p> -->
+        </b-alert>
+      </div>
       <b-jumbotron bg-variant="primary" text-variant="white">
         <template #header
           >Hello {{ userinfo.name }}
@@ -237,7 +250,10 @@
                           variant="secondary"
                           >Memo Revised</b-badge
                         >
-                        <p v-if="dataMemoApproved.memo.latest_history" class="text-muted">
+                        <p
+                          v-if="dataMemoApproved.memo.latest_history"
+                          class="text-muted"
+                        >
                           <small>
                             <em>
                               {{ dataMemoApproved.memo.latest_history.title }}
@@ -250,9 +266,11 @@
                 </table>
               </div>
 
-              <inertia-link class="btn btn-secondary" :href="route(__allmemoapproval)"
-                >All Approval Memo </inertia-link
-              >
+              <inertia-link
+                class="btn btn-secondary"
+                :href="route(__allmemoapproval)"
+                >All Approval Memo
+              </inertia-link>
             </div>
           </div>
         </div>
@@ -260,7 +278,9 @@
         <div class="col-xl-4 col-lg-5">
           <div
             class="card shadow mb-4"
-            v-if="dataMemoApproved && dataMemoApproved.memo.histories.length > 0"
+            v-if="
+              dataMemoApproved && dataMemoApproved.memo.histories.length > 0
+            "
           >
             <div
               class="
@@ -281,7 +301,8 @@
               <div class="overflow-auto" style="height: 218px">
                 <timeline>
                   <timeline-item
-                    v-for="(itemHistory, index) in dataMemoApproved.memo.histories"
+                    v-for="(itemHistory, index) in dataMemoApproved.memo
+                      .histories"
                     :key="index"
                     :bg-color="timelinecolor[itemHistory.type]"
                   >
@@ -338,6 +359,16 @@ export default {
     TimelineTitle,
     FlashMsg,
   },
-  props: ["meta", "dataMemo","dataMemoApproved", "userinfo", "notif", "__create", "__allmemo","__allmemoapproval"],
+  props: [
+    "meta",
+    "dataMemo",
+    "dataMemoApproved",
+    "dataMaintenance",
+    "userinfo",
+    "notif",
+    "__create",
+    "__allmemo",
+    "__allmemoapproval",
+  ],
 };
 </script>
