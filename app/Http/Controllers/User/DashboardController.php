@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_History;
+use App\Models\Maintenance;
 use App\Models\Memo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -36,6 +37,7 @@ class DashboardController extends Controller
             ],
             'dataMemo' => $dataMemo,
             'dataMemoApproved' => $dataMemoApproved,
+            'dataMaintenances' => Maintenance::getMsgMaintenanceShow(),
             '__create'  => 'user.memo.create',
             '__allmemo'  => 'user.memo.statusmemo.index',
             '__allmemoapproval' => 'user.memo.approval.memo.index'

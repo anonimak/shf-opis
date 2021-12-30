@@ -89,7 +89,7 @@ class EmployeeController extends Controller
             'branch'         => 'required',
             'title'          => 'nullable',
             'firstname'         => 'required|max:30',
-            'lastname'          => 'required|max:30',
+            'lastname'          => 'nullable|max:30',
             'gender'            => 'required',
             'nik'               => 'required|unique:App\Models\Employee,nik|max:10',
             'address'           => 'nullable|max:180',
@@ -222,9 +222,9 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'id_branch'         => 'required',
-            'id_title'          => 'required',
+            'id_title'          => 'nullable',
             'firstname'         => 'required|max:30',
-            'lastname'          => 'required|max:30',
+            'lastname'          => 'nullable|max:30',
             'gender'            => 'required',
             'nik'               => "required|unique:App\Models\Employee,nik,$id|max:10",
             'address'           => 'nullable|max:180',
