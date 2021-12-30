@@ -45,6 +45,20 @@
                   >
                   </b-form-select>
                 </b-form-group>
+                <b-form-group
+                  id="input-group-title"
+                  label="Type"
+                  label-for="input-title"
+                  :invalid-feedback="errors.type ? errors.type[0] : ''"
+                  :state="errors.type ? false : null"
+                >
+                  <b-form-select
+                    placeholder="-- Select Type Maintenance Message --"
+                    :options="optiontypes"
+                    v-model="form.type"
+                  >
+                  </b-form-select>
+                </b-form-group>
               </b-col>
               <b-row align-h="center">
                 <b-button-group>
@@ -83,6 +97,7 @@ export default {
       form: {
         msg: "",
         status: null,
+        type: null,
       },
       options: [
         {
@@ -91,6 +106,18 @@ export default {
         },
         { value: "hide", text: "Hide" },
         { value: "show", text: "Show" },
+      ],
+      optiontypes: [
+        {
+          value: null,
+          text: "--Please select an type maintenance message--",
+        },
+        { value: "primary", text: "Primary" },
+        { value: "secondary", text: "Secondary" },
+        { value: "info", text: "Info" },
+        { value: "success", text: "Success" },
+        { value: "warning", text: "Warning" },
+        { value: "danger", text: "Danger" },
       ],
     };
   },

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMMaintenance extends Migration
+class UpdateMMaintenanceAddEnumType extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateMMaintenance extends Migration
      */
     public function up()
     {
-        Schema::create('m_maintenance', function (Blueprint $table) {
-            $table->id();
-            $table->text('msg');
-            $table->enum('status', ['hide', 'show'])->default('hide');
-            $table->timestamps();
+        Schema::table('m_maintenance', function (Blueprint $table) {
+            $table->enum('type', ['primary', 'secondary', 'info', 'success', 'warning', 'danger'])->default('primary');
         });
     }
 
@@ -28,6 +25,8 @@ class CreateMMaintenance extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_maintenance');
+        Schema::table('m_maintenance', function (Blueprint $table) {
+            $table->removeColumn('type');
+        });
     }
 }

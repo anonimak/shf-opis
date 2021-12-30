@@ -30,6 +30,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Message</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Type</th>
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
@@ -53,6 +54,14 @@
                         </td>
                         <td>
                           {{ item.status }}
+                        </td>
+                        <td>
+                          <b-badge
+                            pill
+                            :variant="item.type"
+                            class="text-capitalize"
+                            >{{ item.type }}</b-badge
+                          >
                         </td>
                         <td>
                           <b-button-group size="sm">
@@ -107,11 +116,11 @@ export default {
   metaInfo: { title: "Admin Maintenance" },
   data() {
     return {
-    //   tabIndexCfgHome: 0,
-    //   form: {
-    //     search: this.filters.search,
-    //   },
-    //   isCheched: false,
+      //   tabIndexCfgHome: 0,
+      //   form: {
+      //     search: this.filters.search,
+      //   },
+      //   isCheched: false,
     };
   },
   components: {
@@ -126,17 +135,20 @@ export default {
     },
     showMsgBoxDelete: function (id) {
       this.$bvModal
-        .msgBoxConfirm("Please confirm that you want to delete this maintenance message.", {
-          title: "Please Confirm",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "danger",
-          okTitle: "YES",
-          cancelTitle: "NO",
-          footerClass: "p-2",
-          hideHeaderClose: false,
-          centered: true,
-        })
+        .msgBoxConfirm(
+          "Please confirm that you want to delete this maintenance message.",
+          {
+            title: "Please Confirm",
+            size: "sm",
+            buttonSize: "sm",
+            okVariant: "danger",
+            okTitle: "YES",
+            cancelTitle: "NO",
+            footerClass: "p-2",
+            hideHeaderClose: false,
+            centered: true,
+          }
+        )
         .then((value) => {
           value && this.submitDelete(id);
         })

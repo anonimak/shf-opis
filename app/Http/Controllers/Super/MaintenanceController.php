@@ -82,12 +82,13 @@ class MaintenanceController extends Controller
         $request->validate([
             'msg'   => 'required',
             'status'    => 'required',
+            'type'    => 'required',
         ]);
         Maintenance::create([
             'msg'   => $request->input('msg'),
-            'status'=> $request->input('status')
+            'status' => $request->input('status'),
+            "type" => $request->input('type'),
         ]);
-
 
         return Redirect::route('super.maintenance.index')->with('success', "Successfull Create new Maintenance Message");
     }
@@ -130,9 +131,10 @@ class MaintenanceController extends Controller
                 ]
             ),
             'dataMaintenance'      => [
-                'msg'      => $maintenance->msg,
+                'msg'       => $maintenance->msg,
                 'status'    => $maintenance->status,
-                'id'            => $maintenance->id
+                'type'      => $maintenance->type,
+                'id'        => $maintenance->id
             ],
             '_token'        => csrf_token(),
             '__create'      => 'super.maintenance.create',
@@ -152,12 +154,14 @@ class MaintenanceController extends Controller
         //
         $request->validate([
             'msg'     => 'required',
-            'status'    => 'required',
+            'status'  => 'required',
+            'type'    => 'required',
         ]);
 
         Maintenance::where('id', $id)->update([
             'msg'   => $request->input('msg'),
-            'status'       => $request->input('status')
+            'status'       => $request->input('status'),
+            'type'       => $request->input('type')
         ]);
         return Redirect::route('super.maintenance.index')->with('success', "Successfull updated.");
     }

@@ -17,7 +17,7 @@ class Maintenance extends Model
     protected $table = 'm_maintenance';
 
     protected $fillable = [
-        "msg", "status"
+        "msg", "status", "type"
     ];
 
     public static function getMsgMaintenance()
@@ -27,11 +27,19 @@ class Maintenance extends Model
         return $maintenance;
     }
 
+    public static function getMsgMaintenanceShow()
+    {
+        $maintenance = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', 'show')->get();
+        return $maintenance;
+    }
+
     public static function getMsgMaintenanceFirstShow()
     {
         $maintenance = Self::select('*')
             ->orderBy('id', 'desc')
-            ->where('status','show')->first();
+            ->where('status', 'show')->first();
         return $maintenance;
     }
 }

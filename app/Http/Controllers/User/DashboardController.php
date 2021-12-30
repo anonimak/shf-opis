@@ -37,7 +37,7 @@ class DashboardController extends Controller
             ],
             'dataMemo' => $dataMemo,
             'dataMemoApproved' => $dataMemoApproved,
-            'dataMaintenance' => Maintenance::getMsgMaintenanceFirstShow(),
+            'dataMaintenances' => Maintenance::getMsgMaintenanceShow(),
             '__create'  => 'user.memo.create',
             '__allmemo'  => 'user.memo.statusmemo.index',
             '__allmemoapproval' => 'user.memo.approval.memo.index'

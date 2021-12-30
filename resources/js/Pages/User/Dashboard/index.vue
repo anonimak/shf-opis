@@ -13,17 +13,29 @@
           Report</a
         > -->
       </div>
-      <div v-if="dataMaintenance != null">
-        <b-alert show variant="danger" v-if="dataMaintenance.status == 'show'">
-          <h2 class="alert-heading">Maintenance</h2>
-          <p>
-           {{dataMaintenance.msg}}
+      <div v-if="dataMaintenances">
+        <b-alert
+          class="d-flex"
+          v-for="item in dataMaintenances"
+          :key="item.id"
+          :variant="item.type"
+          show
+          dismissible
+        >
+          <h2 class="alert-heading m-auto">
+            <i
+              v-if="item.type == 'warning'"
+              class="fas fa-exclamation-triangle"
+            ></i>
+            <i v-if="item.type == 'danger'" class="fas fa-times"></i>
+            <i v-if="item.type == 'info'" class="fas fa-info-circle"></i>
+            <i v-if="item.type == 'success'" class="far fa-check-circle"></i>
+            <i v-if="item.type == 'primary'" class="fas fa-info-circle"></i>
+            <i v-if="item.type == 'secondary'" class="fas fa-info-circle"></i>
+          </h2>
+          <p class="ml-4 my-auto">
+            {{ item.msg }}
           </p>
-          <!-- <hr />
-          <p class="mb-0">
-            Whenever you need to, be sure to use margin utilities to keep things
-            nice and tidy.
-          </p> -->
         </b-alert>
       </div>
       <b-jumbotron bg-variant="primary" text-variant="white">
@@ -363,7 +375,7 @@ export default {
     "meta",
     "dataMemo",
     "dataMemoApproved",
-    "dataMaintenance",
+    "dataMaintenances",
     "userinfo",
     "notif",
     "__create",
