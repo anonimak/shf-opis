@@ -56,6 +56,7 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/ref_title', 'Super\RefTitle');
     Route::resource('/ref_approver', 'Super\RefModuleApprover');
     Route::resource('/ref_type_memo', 'Super\RefTypeMemo');
+    Route::resource('/maintenance', 'Super\MaintenanceController');
     // Route::resource('/ref_template_memo', 'Super\RefTemplateMemo');
     Route::prefix('/ref_template_memo')->name('ref_template_memo.')->group(function () {
         Route::get('/{id_type_memo}', 'Super\RefTemplateMemo@index')->name('index');
@@ -108,6 +109,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/status-memo-takeover-branch')->name('statustakeovermemobranch.')->group(function () {
             Route::get('/', 'User\MemoController@indexTakeoverBranch')->name('index');
             Route::delete('/{id}/payment', 'User\MemoController@deletePayment')->name('deletepayment');
+            Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::put('/{id}/payment/{idpayment}/update', 'User\MemoController@updatePayment')->name('updatepayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemoTakeover')->name('webpreview');
             Route::get('/{memo}/preview-pfd', 'User\MemoController@previewMemo')->name('preview');

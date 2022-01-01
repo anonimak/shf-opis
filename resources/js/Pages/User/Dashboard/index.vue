@@ -13,6 +13,31 @@
           Report</a
         > -->
       </div>
+      <div v-if="dataMaintenances">
+        <b-alert
+          class="d-flex"
+          v-for="item in dataMaintenances"
+          :key="item.id"
+          :variant="item.type"
+          show
+          dismissible
+        >
+          <h2 class="alert-heading m-auto">
+            <i
+              v-if="item.type == 'warning'"
+              class="fas fa-exclamation-triangle"
+            ></i>
+            <i v-if="item.type == 'danger'" class="fas fa-times"></i>
+            <i v-if="item.type == 'info'" class="fas fa-info-circle"></i>
+            <i v-if="item.type == 'success'" class="far fa-check-circle"></i>
+            <i v-if="item.type == 'primary'" class="fas fa-info-circle"></i>
+            <i v-if="item.type == 'secondary'" class="fas fa-info-circle"></i>
+          </h2>
+          <p class="ml-4 my-auto">
+            {{ item.msg }}
+          </p>
+        </b-alert>
+      </div>
       <b-jumbotron bg-variant="primary" text-variant="white">
         <template #header
           >Hello {{ userinfo.name }}
@@ -237,7 +262,10 @@
                           variant="secondary"
                           >Memo Revised</b-badge
                         >
-                        <p v-if="dataMemoApproved.memo.latest_history" class="text-muted">
+                        <p
+                          v-if="dataMemoApproved.memo.latest_history"
+                          class="text-muted"
+                        >
                           <small>
                             <em>
                               {{ dataMemoApproved.memo.latest_history.title }}
@@ -250,9 +278,11 @@
                 </table>
               </div>
 
-              <inertia-link class="btn btn-secondary" :href="route(__allmemoapproval)"
-                >All Approval Memo </inertia-link
-              >
+              <inertia-link
+                class="btn btn-secondary"
+                :href="route(__allmemoapproval)"
+                >All Approval Memo
+              </inertia-link>
             </div>
           </div>
         </div>
@@ -260,7 +290,9 @@
         <div class="col-xl-4 col-lg-5">
           <div
             class="card shadow mb-4"
-            v-if="dataMemoApproved && dataMemoApproved.memo.histories.length > 0"
+            v-if="
+              dataMemoApproved && dataMemoApproved.memo.histories.length > 0
+            "
           >
             <div
               class="
@@ -281,7 +313,8 @@
               <div class="overflow-auto" style="height: 218px">
                 <timeline>
                   <timeline-item
-                    v-for="(itemHistory, index) in dataMemoApproved.memo.histories"
+                    v-for="(itemHistory, index) in dataMemoApproved.memo
+                      .histories"
                     :key="index"
                     :bg-color="timelinecolor[itemHistory.type]"
                   >
@@ -338,6 +371,16 @@ export default {
     TimelineTitle,
     FlashMsg,
   },
-  props: ["meta", "dataMemo","dataMemoApproved", "userinfo", "notif", "__create", "__allmemo","__allmemoapproval"],
+  props: [
+    "meta",
+    "dataMemo",
+    "dataMemoApproved",
+    "dataMaintenances",
+    "userinfo",
+    "notif",
+    "__create",
+    "__allmemo",
+    "__allmemoapproval",
+  ],
 };
 </script>

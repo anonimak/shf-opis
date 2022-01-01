@@ -112,6 +112,7 @@ class MemoController extends Controller
             ),
             'dataPosition' => $positions,
             '__index'   => 'user.memo.statustakeovermemobranch.index',
+            '__formpayment' => 'user.memo.statustakeovermemobranch.formpayment',
             '__proposepayment' => 'user.memo.statustakeovermemobranch.proposepayment',
             '__webpreview'   => 'user.memo.statustakeovermemobranch.webpreview',
             '__previewpdf'   => 'user.memo.statustakeovermemobranch.preview',

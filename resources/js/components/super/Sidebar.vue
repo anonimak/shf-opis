@@ -76,6 +76,13 @@ export default {
             },
           ],
         },
+        {
+          id: 3,
+          title: "Maintenance",
+          link: "super.maintenance.*",
+          index: "super.maintenance.index",
+          icon: "fas fa-fw fa-wrench",
+        },
       ],
     };
   },
