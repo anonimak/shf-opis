@@ -199,7 +199,7 @@
               </b-overlay>
             </b-row>
             <b-overlay
-              :show="isModalformbusy"
+              :show="isSubmitbusy"
               opacity="0.6"
               spinner-small
               spinner-variant="primary"
@@ -335,76 +335,82 @@
       @hidden="resetModalPayment"
       no-close-on-backdrop
     >
-      <b-form ref="form" @submit.prevent="handleSubmitPayment">
-        <b-card-body>
-          <b-col col lg="6" md="auto">
-            <b-form-group
-              id="input-group-title"
-              label="Vendor Name:"
-              label-for="input-title"
-              :invalid-feedback="errors.name ? errors.name[0] : ''"
-              :state="errors.name ? false : null"
-            >
-              <b-form-input
-                id="input-title"
-                type="text"
-                name="name"
-                v-model="form.name"
-                placeholder="Vendor Name"
+      <b-overlay
+        :show="isModalformbusy"
+        opacity="0.6"
+        spinner-small
+        spinner-variant="primary"
+      >
+        <b-form ref="form" @submit.prevent="handleSubmitPayment">
+          <b-card-body>
+            <b-col col lg="6" md="auto">
+              <b-form-group
+                id="input-group-title"
+                label="Vendor Name:"
+                label-for="input-title"
+                :invalid-feedback="errors.name ? errors.name[0] : ''"
                 :state="errors.name ? false : null"
-                trim
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-title"
-              label="Bank Name:"
-              label-for="input-title"
-              :invalid-feedback="errors.bank_name ? errors.bank_name[0] : ''"
-              :state="errors.bank_name ? false : null"
-            >
-              <b-form-input
-                id="input-title"
-                type="text"
-                name="bank_name"
-                v-model="form.bank_name"
-                placeholder="Bank Name"
+              >
+                <b-form-input
+                  id="input-title"
+                  type="text"
+                  name="name"
+                  v-model="form.name"
+                  placeholder="Vendor Name"
+                  :state="errors.name ? false : null"
+                  trim
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="input-group-title"
+                label="Bank Name:"
+                label-for="input-title"
+                :invalid-feedback="errors.bank_name ? errors.bank_name[0] : ''"
                 :state="errors.bank_name ? false : null"
-                trim
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-title"
-              label="Bank Account"
-              label-for="input-title"
-              :invalid-feedback="
-                errors.bank_account ? errors.bank_account[0] : ''
-              "
-              :state="errors.bank_account ? false : null"
-            >
-              <b-form-input
-                id="input-title"
-                type="number"
-                name="bank_account"
-                v-model="form.bank_account"
-                placeholder="Account Number"
+              >
+                <b-form-input
+                  id="input-title"
+                  type="text"
+                  name="bank_name"
+                  v-model="form.bank_name"
+                  placeholder="Bank Name"
+                  :state="errors.bank_name ? false : null"
+                  trim
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="input-group-title"
+                label="Bank Account"
+                label-for="input-title"
+                :invalid-feedback="
+                  errors.bank_account ? errors.bank_account[0] : ''
+                "
                 :state="errors.bank_account ? false : null"
-                trim
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-title"
-              label="Amount:"
-              label-for="input-title"
-              :invalid-feedback="errors.amount ? errors.amount[0] : ''"
-              :state="errors.amount ? false : null"
-            >
-              <CurrencyInput v-model="form.amount" />
+              >
+                <b-form-input
+                  id="input-title"
+                  type="text"
+                  name="bank_account"
+                  v-model="form.bank_account"
+                  placeholder="Account Number"
+                  :state="errors.bank_account ? false : null"
+                  trim
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="input-group-title"
+                label="Amount:"
+                label-for="input-title"
+                :invalid-feedback="errors.amount ? errors.amount[0] : ''"
+                :state="errors.amount ? false : null"
+              >
+                <CurrencyInput v-model="form.amount" />
 
-              <!-- <p>Price (in parent component): {{ form.amount }}</p> -->
-              <!-- <b-form-input
+                <!-- <p>Price (in parent component): {{ form.amount }}</p> -->
+                <!-- <b-form-input
                 id="input-title"
                 type="number"
                 name="amount"
@@ -414,48 +420,49 @@
                 trim
                 required
               ></b-form-input> -->
-            </b-form-group>
-            <b-form-group
-              id="input-group-title"
-              label="Remark:"
-              label-for="input-title"
-              :invalid-feedback="errors.remark ? errors.remark[0] : ''"
-              :state="errors.remark ? false : null"
-            >
-              <b-form-input
-                id="input-title"
-                type="text"
-                name="remark"
-                placeholder="Remark"
-                v-model="form.remark"
+              </b-form-group>
+              <b-form-group
+                id="input-group-title"
+                label="Remark:"
+                label-for="input-title"
+                :invalid-feedback="errors.remark ? errors.remark[0] : ''"
                 :state="errors.remark ? false : null"
-                trim
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-title"
-              label="Vendor Address"
-              label-for="textarea"
-              :invalid-feedback="errors.address ? errors.address[0] : ''"
-              :state="errors.address ? false : null"
-            >
-              <b-form-textarea
-                id="textarea"
-                type="text"
-                name="address"
-                placeholder="Vendor Address"
-                v-model="form.address"
+              >
+                <b-form-input
+                  id="input-title"
+                  type="text"
+                  name="remark"
+                  placeholder="Remark"
+                  v-model="form.remark"
+                  :state="errors.remark ? false : null"
+                  trim
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="input-group-title"
+                label="Vendor Address"
+                label-for="textarea"
+                :invalid-feedback="errors.address ? errors.address[0] : ''"
                 :state="errors.address ? false : null"
-                rows="3"
-                max-rows="6"
-                trim
-                required
-              ></b-form-textarea>
-            </b-form-group>
-          </b-col>
-        </b-card-body>
-      </b-form>
+              >
+                <b-form-textarea
+                  id="textarea"
+                  type="text"
+                  name="address"
+                  placeholder="Vendor Address"
+                  v-model="form.address"
+                  :state="errors.address ? false : null"
+                  rows="3"
+                  max-rows="6"
+                  trim
+                  required
+                ></b-form-textarea>
+              </b-form-group>
+            </b-col>
+          </b-card-body>
+        </b-form>
+      </b-overlay>
     </b-modal>
   </layout>
 </template>
@@ -678,6 +685,7 @@ export default {
       this.isFormPaymentEdited = false;
     },
     handleSubmitPayment() {
+      this.isModalformbusy = true;
       axios
         .put(
           route("user.api.payment.storepayment", this.dataMemo.id),
@@ -690,6 +698,7 @@ export default {
               this.$bvModal.hide("modal-add-payment");
             });
           }
+          this.isModalformbusy = false;
           let id = response.data.id;
           this.form.id = id;
           this.dataPayments = [...this.dataPayments, this.form];
@@ -706,6 +715,7 @@ export default {
         .catch((error) => {
           if (error.response) {
             this.errors = { ...error.response.data.errors };
+            this.isModalformbusy = false;
           }
         });
     },
@@ -759,7 +769,10 @@ export default {
         this.dataMemoType.ref_table.with_po == 1 ||
         this.dataMemoType.ref_table.with_payment == 1
       ) {
-        if ((this.grand_total == 0 || this.sub_total == 0) && this.memocost.length > 0) {
+        if (
+          (this.grand_total == 0 || this.sub_total == 0) &&
+          this.memocost.length > 0
+        ) {
           this.pageFlashes.danger = "Please fill data completely!";
           return;
         }

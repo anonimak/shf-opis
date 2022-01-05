@@ -54,7 +54,11 @@ class RefTypeMemo extends Controller
     {
         $employee = Employee::getAllWithPositionNow();
         $employee = $employee->map(function ($item) {
-            $item->label = "$item->nik | $item->firstname $item->lastname (" . $item->emp_history->position->department->department_name . ")";
+            $position = '';
+            if ($item->emp_history) {
+                $position = "( {$item->emp_history->position->department->department_name} )";
+            }
+            $item->label = "$item->nik | $item->firstname $item->lastname $position";
             return $item;
         });
         return Inertia::render('Super/Ref_Type_Memo/create', [
@@ -132,7 +136,11 @@ class RefTypeMemo extends Controller
     {
         $employee = Employee::getAllWithPositionNow();
         $employee = $employee->map(function ($item) {
-            $item->label = "$item->nik | $item->firstname $item->lastname (" . $item->emp_history->position->department->department_name . ")";
+            $position = '';
+            if ($item->emp_history) {
+                $position = "( {$item->emp_history->position->department->department_name} )";
+            }
+            $item->label = "$item->nik | $item->firstname $item->lastname $position";
             return $item;
         });
         $typememo = Ref_Type_Memo::where('id', $id)->first();
