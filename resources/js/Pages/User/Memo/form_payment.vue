@@ -715,6 +715,7 @@ export default {
         .catch((error) => {
           if (error.response) {
             this.errors = { ...error.response.data.errors };
+            this.isModalformbusy = false;
           }
         });
     },
