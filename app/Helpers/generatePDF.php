@@ -36,7 +36,7 @@ function generatePDFMemo($id, $fromroute = 'true')
         'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no))))
     ];
     $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
-    $pdf->setPaper('A4', 'portrait');
+    $pdf->setPaper('A4', $memo->orientation_paper);
     // download PDF file with download method
     // return $pdf->download('pdf_file.pdf');
     if ($fromroute) {
@@ -75,7 +75,7 @@ function generatePDFPo($id, $fromroute = 'true')
         'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no))))
     ];
     $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
-    $pdf->setPaper('A4', 'portrait');
+    $pdf->setPaper('A4', $memo->orientation_paper);
     // download PDF file with download method
     // return $pdf->download('pdf_file.pdf');
     if ($fromroute) {
@@ -113,7 +113,7 @@ function generatePDFPayment($id, $fromroute = 'true')
         'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
-    $pdf->setPaper('A4', 'portrait');
+    $pdf->setPaper('A4', $memo->orientation_paper);
 
     if ($fromroute) {
         $filename = 'Payment-' . Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
@@ -150,7 +150,7 @@ function generatePDFTakeoverBranch($id, $fromroute = 'true')
         'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
-    $pdf->setPaper('A4', 'portrait');
+    $pdf->setPaper('A4', $memo->orientation_paper);
 
     if ($fromroute) {
         $filename = 'Memo-Takeover-' . Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';

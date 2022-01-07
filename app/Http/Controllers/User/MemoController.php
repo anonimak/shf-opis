@@ -385,6 +385,7 @@ class MemoController extends Controller
         Memo::where('id', $id)->update([
             'doc_no'   => $request->input('doc_no'),
             'background'        => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
             'payment'           => $request->input('payment'),
@@ -596,7 +597,7 @@ class MemoController extends Controller
     {
 
         $memo = Memo::where('id', $id)->with('approvers')->first();
-
+        $employeeInfo = User::getUsersEmployeeInfo();
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
             $memo_approver = D_Memo_Approver::where('id_memo', $id)->get();
@@ -654,8 +655,11 @@ class MemoController extends Controller
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
         // kirim email ke tiap acknowlegde
-
-        return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
+        if ($memo->id_employee2 == $employeeInfo->id_employee) {
+            return Redirect::route('user.memo.statustakeoverpaymentbranch.index')->with('success', "Successfull submit memo payment branch.");
+        } else {
+            return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
+        }
     }
 
     // public function paymentStore(Request $request, $id) {
