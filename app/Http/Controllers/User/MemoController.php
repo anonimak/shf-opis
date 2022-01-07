@@ -385,6 +385,7 @@ class MemoController extends Controller
         Memo::where('id', $id)->update([
             'doc_no'   => $request->input('doc_no'),
             'background'        => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
             'payment'           => $request->input('payment'),
