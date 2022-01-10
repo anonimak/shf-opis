@@ -134,7 +134,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/', 'User\MemoController@indexPaymentTakeoverBranch')->name('index');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPaymentTakeoverBranch')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('preview');
-            Route::get('/{memo}/preview-memo-pfd', 'User\MemoController@previewMemo')->name('previewmemo');
+            Route::get('/{memo}/preview-memo-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('previewmemo');
         });
 
         Route::prefix('/status-po')->name('statuspo.')->group(function () {

@@ -48,6 +48,19 @@
                   </div>
                 </b-col>
                 <b-col col lg="12" class="mb-4">
+                  <h5>Orientation</h5>
+                  <b-form-group v-slot="{ ariaDescribedby }">
+                    <b-form-radio-group
+                      v-model="form.orientation_paper"
+                      :aria-describedby="ariaDescribedby"
+                      name="orientation-paper"
+                    >
+                      <b-form-radio value="portrait">Portrait</b-form-radio>
+                      <b-form-radio value="landscape">Landscape</b-form-radio>
+                    </b-form-radio-group>
+                  </b-form-group>
+                </b-col>
+                <b-col col lg="12" class="mb-4">
                   <b-row>
                     <div class="table-responsive">
                       <table-edit-approver

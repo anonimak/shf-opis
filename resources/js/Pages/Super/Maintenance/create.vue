@@ -102,7 +102,7 @@ export default {
       options: [
         {
           value: null,
-          text: "--Please select an status maintenance message--",
+          text: "--Please select a status maintenance message--",
         },
         { value: "hide", text: "Hide" },
         { value: "show", text: "Show" },
@@ -110,7 +110,7 @@ export default {
       optiontypes: [
         {
           value: null,
-          text: "--Please select an type maintenance message--",
+          text: "--Please select a type maintenance message--",
         },
         { value: "primary", text: "Primary" },
         { value: "secondary", text: "Secondary" },
