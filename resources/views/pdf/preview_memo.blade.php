@@ -113,11 +113,15 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
+                    @if ($memo->propose_at == null)
+                    <td>-</td>
+                    @else
                     <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
                     {{-- <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td> --}}
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
+                    @endif
                 </tr>
                 <tr>
                     <td colspan="2">Title</td>
@@ -140,7 +144,7 @@
                         @foreach ($memo->acknowledges as $acknowledge)
                         {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}
                         @if (!$loop->last)
-                            , 
+                            ,
                         @endif
                         @endforeach
                     </td>
