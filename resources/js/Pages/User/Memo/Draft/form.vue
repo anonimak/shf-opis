@@ -148,12 +148,12 @@
                       :deletable="true"
                       :meta="true"
                       :accept="'.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
-                      :maxSize="'10MB'"
+                      :maxSize="'25MB'"
                       :maxFiles="10"
                       :helpText="'Choose images, pdf, excel or word files'"
                       :errorText="{
                         type: 'Invalid file type. Only images, excel, pdf and word files allowed',
-                        size: 'Files should not exceed 2MB in size',
+                        size: 'Files should not exceed 25MB in size',
                       }"
                       @select="filesSelected($event)"
                       @beforedelete="onBeforeDelete($event)"
