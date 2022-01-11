@@ -51,6 +51,7 @@
                   <h5>Orientation</h5>
                   <b-form-group v-slot="{ ariaDescribedby }">
                     <b-form-radio-group
+                      @change="debouncedSave()"
                       v-model="form.orientation_paper"
                       :aria-describedby="ariaDescribedby"
                       name="orientation-paper"
@@ -177,7 +178,11 @@
                     label="Background:"
                     label-for="input-text"
                   >
-                    <Editor2 v-model="form.background" />
+                    <!-- <Editor2 v-model="background" /> -->
+                    <Editor2
+                      @input="debouncedSave()"
+                      v-model="form.background"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
@@ -188,7 +193,10 @@
                     label="Information:"
                     label-for="input-text"
                   >
-                    <Editor2 v-model="form.information" />
+                    <Editor2
+                      @input="debouncedSave()"
+                      v-model="form.information"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
@@ -199,7 +207,10 @@
                     label="Conclusion:"
                     label-for="input-text"
                   >
-                    <Editor2 v-model="form.conclusion" />
+                    <Editor2
+                      @input="debouncedSave()"
+                      v-model="form.conclusion"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
@@ -330,6 +341,7 @@ export default {
     "dataMemoType",
     "__store",
     "__updateApprover",
+    "__autoSaveItem",
     //"__addDataTotal",
     "__updateAcknowledge",
     "__deleteAcknowledge",
@@ -442,7 +454,27 @@ export default {
     //   this.fillForm();
     // },
   },
+  created: function () {
+    this.debouncedSave = _.debounce(this.autoSaveItem, 2000);
+  },
   methods: {
+    autoSaveItem: function () {
+      axios
+        .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.form.background = response.data.background;
+          this.form.information = response.data.information;
+          this.form.conclusion = response.data.conclusion;
+          this.form.orientation_paper = response.data.orientation_paper;
+
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
     getOptionLabel: (option) => {
       let firstname = option.employee ? option.employee.firstname : "";
       let lastname = option.employee ? option.employee.lastname : "";

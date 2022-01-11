@@ -364,6 +364,7 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
+            '__autoSaveItem' => 'user.memo.draft.itemAutoSave',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
@@ -400,6 +401,26 @@ class MemoController extends Controller
         //     'grand_total' => $request->input('grand_total')
         // ]);
         return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
+    }
+
+    public function itemAutoSave(Request $request, $id)
+    {
+        Memo::where('id', $id)->update([
+            'background'        => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+        ]);
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull auto save.',
+            'background' => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+        ]);
+
+        // return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
     }
 
     public function store(Request $request)
