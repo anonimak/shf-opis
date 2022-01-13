@@ -47,6 +47,11 @@ class Memo extends Model
         return $this->hasMany(D_Memo_Payments::class, 'id_memo', 'id');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(D_Invoice::class,'id_memo','id');
+    }
+
     public function proposeemployee()
     {
         return $this->belongsTo(Employee::class, 'id_employee', 'id');
