@@ -173,14 +173,38 @@
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Background:</h5>
+                    <div v-if="isTypingBg">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Background:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
                     <!-- <Editor2 v-model="background" /> -->
                     <Editor2
-                      @input="debouncedSave()"
+                      @input="typingBackground()"
                       v-model="form.background"
                     />
                   </b-form-group>
@@ -188,27 +212,72 @@
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Information:</h5>
+                    <div v-if="isTypingInfo">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small label="Floated Right"></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Information:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2
-                      @input="debouncedSave()"
-                      v-model="form.information"
-                    />
+                    <Editor2 @input="typingInfo()" v-model="form.information" />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Conclusion:</h5>
+                    <div v-if="isTypingConclusion">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small label="Floated Right"></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Conclusion:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
                     <Editor2
-                      @input="debouncedSave()"
+                      @input="typingConclusion()"
                       v-model="form.conclusion"
                     />
                   </b-form-group>
@@ -363,6 +432,9 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
+      isTypingBg: null,
+      isTypingInfo: null,
+      isTypingConclusion: null,
       //   checkPPNInclude: false,
       //   sub_total: 0,
       //   pph: 0,
@@ -458,6 +530,18 @@ export default {
     this.debouncedSave = _.debounce(this.autoSaveItem, 2000);
   },
   methods: {
+    typingBackground: function () {
+      this.isTypingBg = true;
+      this.debouncedSave();
+    },
+    typingInfo: function () {
+      this.isTypingInfo = true;
+      this.debouncedSave();
+    },
+    typingConclusion: function () {
+      this.isTypingConclusion = true;
+      this.debouncedSave();
+    },
     autoSaveItem: function () {
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
@@ -466,6 +550,9 @@ export default {
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
           this.form.orientation_paper = response.data.orientation_paper;
+          this.isTypingBg = false;
+          this.isTypingInfo = false;
+          this.isTypingConclusion = false;
 
           if (response.data.status == 200) {
             this.pageFlashes.success = response.data.message;
