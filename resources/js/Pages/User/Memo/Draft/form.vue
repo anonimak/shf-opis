@@ -204,7 +204,8 @@
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <form-invoice />
+                <!-- <div class="col-12">
                   <b-form-group
                     id="input-group-text"
                     label="Cost /Expense:"
@@ -215,7 +216,7 @@
                       :settings="hotSettings"
                     ></hot-table>
                   </b-form-group>
-                </div>
+                </div> -->
               </b-row>
               <!-- <b-row
                 v-if="
@@ -303,6 +304,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import FormInvoice from "@/components/FormInvoice";
 // import Handsontable from "handsontable";
 import { HyperFormula } from "hyperformula";
 import draggable from "vuedraggable";
@@ -345,6 +347,7 @@ export default {
     draggable,
     SelectTypeApprover,
     TableEditApprover,
+    FormInvoice,
   },
   data() {
     return {
