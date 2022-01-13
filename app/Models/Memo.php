@@ -467,6 +467,17 @@ class Memo extends Model
         return $memo;
     }
 
+    public static function getMemoTakeoverBranchNotif($id_employee)
+    {
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', '=', 'approve')
+            ->where('status_payment', '=', 'edit')
+            ->where('id_employee2', '=', $id_employee);
+
+        return $memo;
+    }
+
     public static function getAllMemoPayment($id_employee, $tab, $search = null)
     {
         if ($tab == 'paid') {
