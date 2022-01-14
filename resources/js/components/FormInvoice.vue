@@ -10,7 +10,7 @@
         </b-col>
         <b-col>
           <b-button
-            v-if="idx > 0"
+            v-if="idx >= 0"
             class="mx-auto float-right"
             variant="outline-secondary"
             size="sm"
@@ -36,7 +36,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(item, index) in invoice.item_invoice"
+                v-for="(item, index) in invoice.item_invoices"
                 :key="index"
                 @click="editMode(index, idx)"
               >
@@ -44,6 +44,7 @@
                   <b-form-textarea
                     v-if="editRow == index && editInvoice == idx"
                     v-model="item.description"
+                    @change="submitItemInvoice(index, idx, invoice.id)"
                     placeholder="Description"
                     rows="1"
                     size="sm"
@@ -56,6 +57,7 @@
                   <b-form-textarea
                     v-if="editRow == index && editInvoice == idx"
                     v-model="item.description2"
+                    @change="submitItemInvoice(index, idx, invoice.id)"
                     placeholder="Description 2"
                     rows="1"
                     size="sm"
@@ -68,6 +70,7 @@
                   <b-form-input
                     v-if="editRow == index && editInvoice == idx"
                     v-model="item.price"
+                    @change="submitItemInvoice(index, idx, invoice.id)"
                     placeholder="Price"
                     size="sm"
                   ></b-form-input>
@@ -79,6 +82,7 @@
                   <b-form-input
                     v-if="editRow == index && editInvoice == idx"
                     v-model="item.qty"
+                    @change="submitItemInvoice(index, idx, invoice.id)"
                     placeholder="Qty"
                     value="1"
                     size="sm"
@@ -89,10 +93,16 @@
                 </td>
                 <td @click="editMode(index, idx)">
                   <b-form-group v-if="editRow == index && editInvoice == idx">
-                    <b-form-radio v-model="item.type" value="barang"
+                    <b-form-radio
+                      v-model="item.type"
+                      @change="submitItemInvoice(index, idx, invoice.id)"
+                      value="barang"
                       >barang</b-form-radio
                     >
-                    <b-form-radio v-model="item.type" value="jasa"
+                    <b-form-radio
+                      v-model="item.type"
+                      @change="submitItemInvoice(index, idx, invoice.id)"
+                      value="jasa"
                       >jasa</b-form-radio
                     >
                   </b-form-group>
@@ -319,58 +329,65 @@ export default {
     return {
       editRow: null,
       editInvoice: null,
-      dataInvoices: [
-        {
-          id: 1,
-          no_invoice: "",
-          item_invoice: [
-            {
-              description: "test 1",
-              description2: "",
-              qty: 2,
-              price: 1000000,
-              type: "barang",
-            },
-            {
-              description: "test 2",
-              description2: "",
-              qty: 1,
-              price: 650000,
-              type: "barang",
-            },
-            {
-              description: "test 3",
-              description2: "",
-              qty: 1,
-              price: 350000,
-              type: "jasa",
-            },
-          ],
-          ppn: true,
-          npwp: true,
-          grossup: true,
-          pph: null,
-          others: "",
-        },
-      ],
-      selected: "a",
-      optionPPhs: [
-        { value: "a", text: "PPh 21" },
-        { value: "b", text: "PPh 23" },
-        { value: "d", text: "Pph 4(2)" },
-      ],
-      tax: [
-        null,
-        "pph21",
-        "pph23",
-        "pph4_2_kon",
-        "pph4_2_kon_klas",
-        "pph4_2_rent",
-      ],
+      dataInvoices: [],
+      //   dataInvoices: [
+      //     {
+      //       id: 1,
+      //       no_invoice: "",
+      //       item_invoices: [
+      //         {
+      //           description: "test 1",
+      //           description2: "",
+      //           qty: 2,
+      //           price: 1000000,
+      //           type: "barang",
+      //         },
+      //         {
+      //           description: "test 2",
+      //           description2: "",
+      //           qty: 1,
+      //           price: 650000,
+      //           type: "barang",
+      //         },
+      //         {
+      //           description: "test 3",
+      //           description2: "",
+      //           qty: 1,
+      //           price: 350000,
+      //           type: "jasa",
+      //         },
+      //       ],
+      //       ppn: true,
+      //       npwp: true,
+      //       grossup: true,
+      //       pph: null,
+      //       others: "",
+      //     },
+      //   ],
+      //   selected: "",
+      //   optionPPhs: [
+      //     { value: "a", text: "PPh 21" },
+      //     { value: "b", text: "PPh 23" },
+      //     { value: "d", text: "Pph 4(2)" },
+      //   ],
+      //   tax: [
+      //     null,
+      //     "pph21",
+      //     "pph23",
+      //     "pph4_2_kon",
+      //     "pph4_2_kon_klas",
+      //     "pph4_2_rent",
+      //   ],
+      url_data_invoices: "user.api.invoice.datainvoices",
+      url_add_data_invoices: "user.api.invoice.addinvoice",
+      url_save_item_invoice: "user.api.invoice.additeminvoice",
+      url_update_item_invoice: "user.api.invoice.updateiteminvoice",
     };
   },
 
-  mounted() {},
+  mounted() {
+    this.getData();
+  },
 
   methods: {
     onClickOutside(indexInvoice) {
@@ -388,36 +405,44 @@ export default {
     },
 
     addNewInvoice() {
-      this.dataInvoices = [
-        ...this.dataInvoices,
-        {
-          no_invoice: "",
-          item_invoice: [this.generateItemInvoice()],
-        },
-      ];
-      this.editMode(0, this.dataInvoices.length - 1);
+      axios
+        .post(route(this.url_add_data_invoices, this.id_memo))
+        .then((response) => {
+          //   this.dataInvoices = response.data.dataInvoices;
+          let invoice = response.data.dataInvoice;
+          invoice.item_invoices = [this.generateItemInvoice()];
+          this.dataInvoices = [...this.dataInvoices, invoice];
+          this.editMode(0, this.dataInvoices.length - 1);
+          console.log("response =", response);
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
     },
 
     deleteItemInvoice(indexInvoice, deleteindex) {
       if (
-        this.dataInvoices[indexInvoice].item_invoice.length <= 1 &&
+        this.dataInvoices[indexInvoice].item_invoices.length <= 1 &&
         indexInvoice > 0
       ) {
         this.deleteInvoice(indexInvoice);
         return;
       }
-      this.dataInvoices[indexInvoice].item_invoice = this.dataInvoices[
+      this.dataInvoices[indexInvoice].item_invoices = this.dataInvoices[
         indexInvoice
-      ].item_invoice.filter((item, index) => index != deleteindex);
+      ].item_invoices.filter((item, index) => index != deleteindex);
     },
     addItemInvoice(indexInvoice) {
-      this.dataInvoices[indexInvoice].item_invoice = [
-        ...this.dataInvoices[indexInvoice].item_invoice,
+      this.dataInvoices[indexInvoice].item_invoices = [
+        ...this.dataInvoices[indexInvoice].item_invoices,
         this.generateItemInvoice(),
       ];
-      console.log(this.dataInvoices[indexInvoice].item_invoice.length);
+      console.log(this.dataInvoices[indexInvoice].item_invoices.length);
       let lastitemIndex =
-        this.dataInvoices[indexInvoice].item_invoice.length - 1;
+        this.dataInvoices[indexInvoice].item_invoices.length - 1;
       this.editMode(lastitemIndex, indexInvoice);
     },
 
@@ -426,11 +451,53 @@ export default {
       this.editInvoice = indexInvoice;
     },
 
+    submitItemInvoice(indexItem, indexInvoice, id_invoice) {
+      let row = this.dataInvoices[indexInvoice].item_invoices[indexItem];
+      row.id_invoice = id_invoice;
+      console.log("row =", row);
+      console.log("index invoice =", id_invoice);
+      //   _.debounce(this.autoSaveItemInvoice(row), 2000);
+      this.autoSaveItemInvoice(row);
+    },
+
+    autoSaveItemInvoice: function (row) {
+      // console.log(route('user.api.invoice.additeminvoice'))
+      // return
+      if (row.id == undefined) {
+        axios
+          .post(route(this.url_save_item_invoice), row)
+          .then((response) => {
+            this.getData();
+            console.log("response =", response);
+            if (response.data.status == 200) {
+              this.pageFlashes.success = response.data.message;
+            }
+          })
+          .catch((error) => {
+            this.pageFlashes.error = error.response.data.errors;
+          });
+      } else {
+        axios
+          .post(route(this.url_update_item_invoice, row.id), row)
+          .then((response) => {
+            this.getData();
+            console.log("response =", response);
+            if (response.data.status == 200) {
+              this.pageFlashes.success = response.data.message;
+            }
+          })
+          .catch((error) => {
+            this.pageFlashes.error = error.response.data.errors;
+          });
+      }
+    },
+
     generateItemInvoice() {
       return {
-        description: "",
-        description2: "",
-        qty: 1,
+        // id_invoice: null,
+        description: " ",
+        description2: " ",
+        qty: 0,
         price: 0,
         type: "barang",
       };
@@ -438,7 +505,7 @@ export default {
 
     sumItemInvoiceBy(indexInvoice, type) {
       return _.sumBy(
-        this.dataInvoices[indexInvoice].item_invoice,
+        this.dataInvoices[indexInvoice].item_invoices,
         (item) => item.type == type && item.price * item.qty
       );
     },
@@ -547,6 +614,17 @@ export default {
         default:
           break;
       }
+    },
+
+    getData() {
+      Promise.all([this.getDataInvoices()]).then((results) => {
+        console.log(results);
+        this.dataInvoices = results[0].data;
+      });
+    },
+
+    getDataInvoices: async function () {
+      return axios.get(route(this.url_data_invoices, this.id_memo)); //TODO: add count
     },
   },
 };

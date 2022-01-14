@@ -193,6 +193,15 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/{id}/addpayment', 'User\ApiPaymentController@paymentStore')->name('storepayment');
             Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
         });
+
+        Route::prefix('/invoice')->name('invoice.')->group(function () {
+            Route::get('/{id_memo}/invoice', 'User\ApiPaymentController@getInvoicesByIdMemo')->name('datainvoices');
+            Route::post('/data-invoice', 'User\ApiPaymentController@addItemInvoice')->name('additeminvoice');
+            Route::post('{id_memo}/data-invoice', 'User\ApiPaymentController@addInvoice')->name('addinvoice');
+            Route::post('/update-data-invoice/{id_invoice}', 'User\ApiPaymentController@updateiteminvoice')->name('updateiteminvoice');
+            // Route::put('/{id}/addpayment', 'User\ApiPaymentController@paymentStore')->name('storepayment');
+            // Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
+        });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
         });

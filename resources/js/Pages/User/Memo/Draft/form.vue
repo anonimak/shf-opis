@@ -204,7 +204,9 @@
                 </div>
               </b-row>
               <b-row>
-                <form-invoice />
+                <form-invoice
+                  :id_memo="dataMemo.id"
+                />
                 <!-- <div class="col-12">
                   <b-form-group
                     id="input-group-text"
@@ -545,38 +547,39 @@ export default {
       //     }
       //   }
       if (!this.submitState) {
-        let newData = {};
-        if (this.dataFormula.Sheet1.length != 0) {
-          newData = _.map(this.dataFormula.Sheet1, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        } else {
-          newData = _.map(this.dataFormula.Sheet2, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        }
-        let arrayCost = _.map(newData, (valueCost) => {
-          let objCost = {};
-          valueCost = Object.assign({}, valueCost);
-          _.map(this.colHeaders, (v) => {
-            objCost[v] = valueCost[v];
-          });
-          objCost = _.pickBy(objCost, _.identity);
-          if (!_.isEmpty(objCost)) {
-            return objCost;
-          }
-        });
-        arrayCost = _.pickBy(arrayCost, _.identity);
-        if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+        // let newData = {};
+        // if (this.dataFormula.Sheet1.length != 0) {
+        //   newData = _.map(this.dataFormula.Sheet1, (value) => {
+        //     const res = {};
+        //     for (let idx in value) {
+        //       res[this.colHeaders[idx]] = value[idx];
+        //     }
+        //     return res;
+        //   });
+        // } else {
+        //   newData = _.map(this.dataFormula.Sheet2, (value) => {
+        //     const res = {};
+        //     for (let idx in value) {
+        //       res[this.colHeaders[idx]] = value[idx];
+        //     }
+        //     return res;
+        //   });
+        // }
+        // let arrayCost = _.map(newData, (valueCost) => {
+        //   let objCost = {};
+        //   valueCost = Object.assign({}, valueCost);
+        //   _.map(this.colHeaders, (v) => {
+        //     objCost[v] = valueCost[v];
+        //   });
+        //   objCost = _.pickBy(objCost, _.identity);
+        //   if (!_.isEmpty(objCost)) {
+        //     return objCost;
+        //   }
+        // });
+        // arrayCost = _.pickBy(arrayCost, _.identity);
+        // if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;
+        console.log(this.dataInvoices);
         // this.form.sub_total = this.sub_total;
         // this.form.pph = this.pph;
         // this.form.ppn = this.ppn;

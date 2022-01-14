@@ -77,6 +77,11 @@ class Memo extends Model
         return $this->hasOne(D_Memo_History::class, 'id_memo', 'id')->latest('id');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(D_Invoices::class,'id_memo','id');
+    }
+
     public function ref_table()
     {
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
