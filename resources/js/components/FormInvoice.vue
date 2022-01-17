@@ -5,6 +5,7 @@
         <b-col sm="4" md="2">
           <b-form-input
             v-model="invoice.no_invoice"
+            @change="updateInvoice(idx, invoice.id)"
             placeholder="No Invoice"
           ></b-form-input>
         </b-col>
@@ -14,7 +15,7 @@
             class="mx-auto float-right"
             variant="outline-secondary"
             size="sm"
-            @click="deleteInvoice(idx)"
+            @click="deleteInvoice(idx, invoice.id)"
           >
             <i class="fa fa-times" aria-hidden="true"></i> Remove Invoice
           </b-button>
@@ -130,7 +131,7 @@
                     <b-button
                       variant="outline-secondary"
                       size="sm"
-                      @click="deleteItemInvoice(idx, index)"
+                      @click="deleteItemInvoice(idx, index, item.id)"
                     >
                       <i class="fa fa-trash" aria-hidden="true"></i>
                     </b-button>
@@ -155,6 +156,7 @@
         <b-col md="6" lg="1">
           <b-form-checkbox
             v-model="invoice.npwp"
+            @change="updateInvoice(idx, invoice.id)"
             name="checkbox-npwp"
             :value="true"
             :unchecked-value="false"
@@ -163,6 +165,7 @@
           </b-form-checkbox>
           <b-form-checkbox
             v-model="invoice.grossup"
+            @change="updateInvoice(idx, invoice.id)"
             name="checkbox-grossup"
             :value="true"
             :unchecked-value="false"
@@ -382,6 +385,9 @@ export default {
       url_add_data_invoices: "user.api.invoice.addinvoice",
       url_save_item_invoice: "user.api.invoice.additeminvoice",
       url_update_item_invoice: "user.api.invoice.updateiteminvoice",
+      url_update_data_invoice: "user.api.invoice.updateinvoice",
+      url_delete_item_invoice: "user.api.invoice.deleteiteminvoice",
+      url_delete_data_invoice: "user.api.invoice.deletedatainvoice",
     };
   },
 
@@ -398,10 +404,18 @@ export default {
       console.log("clicked outside");
     },
 
-    deleteInvoice(deleteindex) {
+    deleteInvoice(deleteindex, id_invoice) {
       this.dataInvoices = this.dataInvoices.filter(
         (item, index) => index != deleteindex
       );
+      axios
+        .delete(route(this.url_delete_data_invoice, id_invoice))
+        .then((response) => {
+          this.getData();
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        });
     },
 
     addNewInvoice() {
@@ -423,7 +437,7 @@ export default {
         });
     },
 
-    deleteItemInvoice(indexInvoice, deleteindex) {
+    deleteItemInvoice(indexInvoice, deleteindex, id_item) {
       if (
         this.dataInvoices[indexInvoice].item_invoices.length <= 1 &&
         indexInvoice > 0
@@ -434,7 +448,17 @@ export default {
       this.dataInvoices[indexInvoice].item_invoices = this.dataInvoices[
         indexInvoice
       ].item_invoices.filter((item, index) => index != deleteindex);
+
+      axios
+        .delete(route(this.url_delete_item_invoice, id_item))
+        .then((response) => {
+          this.getData();
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        });
     },
+
     addItemInvoice(indexInvoice) {
       this.dataInvoices[indexInvoice].item_invoices = [
         ...this.dataInvoices[indexInvoice].item_invoices,
@@ -461,8 +485,6 @@ export default {
     },
 
     autoSaveItemInvoice: function (row) {
-      // console.log(route('user.api.invoice.additeminvoice'))
-      // return
       if (row.id == undefined) {
         axios
           .post(route(this.url_save_item_invoice), row)
@@ -492,11 +514,26 @@ export default {
       }
     },
 
+    updateInvoice: function (index, id_invoice) {
+      axios
+        .post(route(this.url_update_data_invoice, id_invoice), this.dataInvoices[index])
+        .then((response) => {
+          this.getData();
+          console.log("response =", response);
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
+
     generateItemInvoice() {
       return {
         // id_invoice: null,
-        description: " ",
-        description2: " ",
+        description: "",
+        description2: "",
         qty: 0,
         price: 0,
         type: "barang",

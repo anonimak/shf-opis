@@ -195,12 +195,13 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         });
 
         Route::prefix('/invoice')->name('invoice.')->group(function () {
-            Route::get('/{id_memo}/invoice', 'User\ApiPaymentController@getInvoicesByIdMemo')->name('datainvoices');
-            Route::post('/data-invoice', 'User\ApiPaymentController@addItemInvoice')->name('additeminvoice');
-            Route::post('{id_memo}/data-invoice', 'User\ApiPaymentController@addInvoice')->name('addinvoice');
-            Route::post('/update-data-invoice/{id_invoice}', 'User\ApiPaymentController@updateiteminvoice')->name('updateiteminvoice');
-            // Route::put('/{id}/addpayment', 'User\ApiPaymentController@paymentStore')->name('storepayment');
-            // Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
+            Route::get('/{id_memo}/invoice', 'User\ApiMemoController@getInvoicesByIdMemo')->name('datainvoices');
+            Route::post('/data-invoice', 'User\ApiMemoController@addItemInvoice')->name('additeminvoice');
+            Route::post('{id_memo}/data-invoice', 'User\ApiMemoController@addInvoice')->name('addinvoice');
+            Route::post('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
+            Route::post('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
+            Route::delete('/delete-item-invoice/{id_item}', 'User\ApiMemoController@deleteItemInvoice')->name('deleteiteminvoice');
+            Route::delete('/delete-data-invoice/{id_invoice}', 'User\ApiMemoController@deleteDataInvoice')->name('deletedatainvoice');
         });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
