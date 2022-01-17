@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\D_Memo_Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\D_Invoices;
 use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
@@ -392,6 +393,8 @@ class MemoController extends Controller
             'payment'           => $request->input('payment'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
+
+
 
         // M_Data_Cost_Total::where('id_memo', $id)->update([
         //     'id_memo' => $id,
