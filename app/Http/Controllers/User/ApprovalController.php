@@ -365,18 +365,13 @@ class ApprovalController extends Controller
                 $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'memo')->get();
                 $pdfMemo = generatePDFMemo($memo->id, false);
                 $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
-                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
-                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->toArray();
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->filter()->toArray();
+                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->filter()->toArray();
 
                 $resultMail = array_merge($mailApprovers, $mailApprovers2);
-                $filteredMail = Arr::where($resultMail, function ($value, $key) {
-                    if($value != null || Str::of($value)->trim()->isNotEmpty()) {
-                        return $value;
-                    }
-                });
 
-                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($filteredMail, $contentAcknowledge, $pdfMemo, $pdfName) {
-                    $message->to($filteredMail)
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($resultMail, $contentAcknowledge, $pdfMemo, $pdfName) {
+                    $message->to($resultMail)
                         ->subject($contentAcknowledge["subject"])
                         ->attachData($pdfMemo->output(), $pdfName);
                 });
@@ -535,18 +530,13 @@ class ApprovalController extends Controller
                 $acknowledges = D_Memo_Acknowledge::with('employee')->where('id_memo', $memo->id)->where('type', 'payment')->get();
                 $pdfMemoPayment = generatePDFPayment($memo->id, false);
                 $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
-                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
-                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->toArray();
+                $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->filter()->toArray();
+                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->filter()->toArray();
 
                 $resultMail = array_merge($mailApprovers, $mailApprovers2);
-                $filteredMail = Arr::where($resultMail, function ($value, $key) {
-                    if($value != null || Str::of($value)->trim()->isNotEmpty()) {
-                        return $value;
-                    }
-                });
 
-                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($filteredMail, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
-                    $message->to($filteredMail)
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($resultMail, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
+                    $message->to($resultMail)
                         ->subject($contentAcknowledge["subject"])
                         ->attachData($pdfMemoPayment->output(), $pdfName);
                 });
