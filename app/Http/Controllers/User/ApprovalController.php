@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 
 class ApprovalController extends Controller
@@ -320,13 +321,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "Memo $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "Memo $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "Memo $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "Memo $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "Memo $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "Memo $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "Memo $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "Memo $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 }
 
@@ -344,13 +345,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "Memo $memo->doc_no approved",
-                        'message' => "Memo $memo->doc_no has approved"
+                        'subject' => "Memo $memo->title - $memo->doc_no approved",
+                        'message' => "Memo $memo->title - $memo->doc_no has approved"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "Memo $memo->doc_no reviewed",
-                        'message' => "Memo $memo->doc_no has reviewed"
+                        'subject' => "Memo $memo->title - $memo->doc_no reviewed",
+                        'message' => "Memo $memo->title - $memo->doc_no has reviewed"
                     ];
                 }
 
@@ -365,10 +366,18 @@ class ApprovalController extends Controller
                 $pdfMemo = generatePDFMemo($memo->id, false);
                 $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
                 $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->toArray();
 
-                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemo, $pdfName) {
-                    $message->to($mailApprovers)
-                        ->subject($contentAcknowledge["title"])
+                $resultMail = array_merge($mailApprovers, $mailApprovers2);
+                $filteredMail = Arr::where($resultMail, function ($value, $key) {
+                    if($value != null || Str::of($value)->trim()->isNotEmpty()) {
+                        return $value;
+                    }
+                });
+
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($filteredMail, $contentAcknowledge, $pdfMemo, $pdfName) {
+                    $message->to($filteredMail)
+                        ->subject($contentAcknowledge["subject"])
                         ->attachData($pdfMemo->output(), $pdfName);
                 });
 
@@ -389,8 +398,8 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
-                'subject' => "Memo $memo->doc_no revised",
-                'message' => "Memo $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo $memo->title - $memo->doc_no revised",
+                'message' => "Memo $memo->title - $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -408,8 +417,8 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
-                'subject' => "Memo $memo->doc_no rejected",
-                'message' => "Memo $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo $memo->title - $memo->doc_no rejected",
+                'message' => "Memo $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -482,13 +491,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "Memo Payment $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "Memo Payment $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "Memo Payment $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "Memo Payment $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "Memo Payment $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "Memo Payment $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 }
 
@@ -506,13 +515,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "Memo Payment $memo->doc_no approved",
-                        'message' => "Memo Payment $memo->doc_no has approved"
+                        'subject' => "Memo Payment $memo->title - $memo->doc_no approved",
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "Memo Payment $memo->doc_no reviewed",
-                        'message' => "Memo Payment $memo->doc_no has reviewed"
+                        'subject' => "Memo Payment $memo->title - $memo->doc_no reviewed",
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed"
                     ];
                 }
 
@@ -527,13 +536,20 @@ class ApprovalController extends Controller
                 $pdfMemoPayment = generatePDFPayment($memo->id, false);
                 $pdfName = Str::kebab($memo->title) . '-' . Carbon::now()->timestamp . '.pdf';
                 $mailApprovers = $acknowledges->pluck('employee')->pluck('email')->toArray();
+                $mailApprovers2 = $acknowledges->pluck('employee')->pluck('email2')->toArray();
 
-                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
-                    $message->to($mailApprovers)
-                        ->subject($contentAcknowledge["title"])
-                        ->attachData($pdfMemoPayment->output(), $pdfName);
+                $resultMail = array_merge($mailApprovers, $mailApprovers2);
+                $filteredMail = Arr::where($resultMail, function ($value, $key) {
+                    if($value != null || Str::of($value)->trim()->isNotEmpty()) {
+                        return $value;
+                    }
                 });
 
+                Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($filteredMail, $contentAcknowledge, $pdfMemoPayment, $pdfName) {
+                    $message->to($filteredMail)
+                        ->subject($contentAcknowledge["subject"])
+                        ->attachData($pdfMemoPayment->output(), $pdfName);
+                });
 
                 $details2 = [
                     'subject' => "Confirm Payment Memo $memo->title",
@@ -559,8 +575,8 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
-                'subject' => "Memo Payment $memo->doc_no revised",
-                'message' => "Memo Payment $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo Payment $memo->title - $memo->doc_no revised",
+                'message' => "Memo Payment $memo->title - $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -578,8 +594,8 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
-                'subject' => "Memo Payment $memo->doc_no rejected",
-                'message' => "Memo Payment $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "Memo Payment $memo->title - $memo->doc_no rejected",
+                'message' => "Memo Payment $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -647,13 +663,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "PO $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "PO $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "PO $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
+                        'message' => "PO $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "PO $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "PO $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'subject' => "PO $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
+                        'message' => "PO $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
                     ];
                 }
 
@@ -671,13 +687,13 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
-                        'subject' => "PO $memo->doc_no approved",
-                        'message' => "PO $memo->doc_no has approved"
+                        'subject' => "PO $memo->title - $memo->doc_no approved",
+                        'message' => "PO $memo->title - $memo->doc_no has approved"
                     ];
                 } else {
                     $detailspropose = [
-                        'subject' => "PO $memo->doc_no reviewed",
-                        'message' => "PO $memo->doc_no has reviewed"
+                        'subject' => "PO $memo->title - $memo->doc_no reviewed",
+                        'message' => "PO $memo->title - $memo->doc_no has reviewed"
                     ];
                 }
                 // notif ke user propose
@@ -697,8 +713,8 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
-                'subject' => "PO $memo->doc_no rejected",
-                'message' => "PO $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'subject' => "PO $memo->title - $memo->doc_no rejected",
+                'message' => "PO $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
