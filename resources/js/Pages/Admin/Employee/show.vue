@@ -61,6 +61,11 @@
                     <td>{{ employee.email }}</td>
                   </tr>
                   <tr>
+                    <th class="fit">Email 2</th>
+
+                    <td>{{ employee.email2 }}</td>
+                  </tr>
+                  <tr>
                     <th class="fit">Mobile Phone</th>
 
                     <td>{{ employee.mobile }}</td>
