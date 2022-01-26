@@ -285,10 +285,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -450,10 +450,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -618,10 +618,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
