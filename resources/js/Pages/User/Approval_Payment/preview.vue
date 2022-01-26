@@ -137,6 +137,15 @@
                         </span>
                       </td>
                     </tr>
+                    <tr>
+                        <td>Preview PDF Memo Approval</td>
+                        <td> <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdfapproval, dataMemo.id)"
+                                  >Preview PDF Memo Approval</a
+                                ></td>
+                    </tr>
                   </tbody>
                 </table>
               </b-col>
@@ -426,6 +435,7 @@ export default {
     "memocost",
     "attachments",
     "__approving",
+    "__previewpdfapproval"
   ],
   metaInfo: { title: "Preview Approval Payment" },
   components: {

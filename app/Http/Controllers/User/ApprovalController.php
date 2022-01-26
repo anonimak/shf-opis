@@ -218,6 +218,7 @@ class ApprovalController extends Controller
             'dataMemo' => $memo,
             'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
+            '__previewpdfapproval' => 'user.memo.approval.payment.previewpdfapproval',
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,

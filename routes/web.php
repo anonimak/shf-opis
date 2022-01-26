@@ -102,7 +102,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
-            Route::get('/{memo}/preview-pfd', 'User\MemoController@previewMemo')->name('preview');
+            Route::get('/{memo}/preview-pdf', 'User\MemoController@previewMemo')->name('preview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 
@@ -156,6 +156,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::prefix('/payment')->name('payment.')->group(function () {
                 Route::get('/', 'User\ApprovalController@indexApprovalPayment')->name('index');
                 Route::get('/{memo}', 'User\ApprovalController@detailPayment')->name('detail');
+                Route::get('/{memo}/preview-pdf', 'User\MemoController@previewMemo')->name('previewpdfapproval');
                 Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
                 Route::get('/{memo}/preview', 'User\MemoController@previewPayment')->name('preview');
             });
