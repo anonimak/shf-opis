@@ -31,7 +31,7 @@
                           <b-badge
                             v-if="dataMemo.status_payment == 'submit'"
                             variant="info"
-                            >On process approving</b-badge
+                            >On process approving payment</b-badge
                           >
                           <b-badge
                             v-if="dataMemo.status_payment == 'approve'"
@@ -43,11 +43,11 @@
                             variant="danger"
                             >Memo Payment Rejected</b-badge
                           >
-                          <!-- <b-badge
+                          <b-badge
                           v-if="dataMemo.status_payment == 'revisi'"
                           variant="secondary"
-                          >Memo Revisi</b-badge
-                        > -->
+                          >Memo Payment Revised</b-badge
+                        >
                         </td>
                       </tr>
                       <tr>
@@ -69,7 +69,7 @@
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>Approval</td>
+                        <td>Payment</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
                         <td>Send email after memo payment approved to</td>
@@ -156,11 +156,11 @@
                             variant="danger"
                             >Rejected</b-badge
                           >
-                          <!-- <b-badge
+                          <b-badge
                           v-if="approver.status == 'revisi'"
                           variant="secondary"
-                          >Revisi</b-badge
-                        > -->
+                          >Revised</b-badge
+                        >
                         </td>
                         <td>
                           <p v-if="approver.msg">{{ approver.msg }}</p>

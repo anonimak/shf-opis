@@ -126,6 +126,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
+            Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPayment')->name('preview');
         });

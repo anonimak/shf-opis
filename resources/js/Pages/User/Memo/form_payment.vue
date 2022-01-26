@@ -43,6 +43,10 @@
                           <td>Doc. No</td>
                           <td>{{ dataMemo.doc_no }}</td>
                         </tr>
+                        <tr>
+                          <td>Type</td>
+                          <td>Payment</td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -95,7 +99,33 @@
                   </b-form-group>
                 </b-col>
               </b-row>
-
+              <b-row
+                v-if="dataMemo.background && dataMemo.background != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Background</h5>
+                  <div v-html="dataMemo.background"></div>
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="dataMemo.information && dataMemo.information != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Information</h5>
+                  <div v-html="dataMemo.information"></div>
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="dataMemo.conclusion && dataMemo.conclusion != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Conclusion</h5>
+                  <div v-html="dataMemo.conclusion"></div>
+                </b-col>
+              </b-row>
               <b-row v-if="memocost.length > 0" class="mb-2">
                 <b-col>
                   <h5>Cost/Expense</h5>
