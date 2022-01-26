@@ -128,7 +128,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge
@@ -247,7 +251,7 @@
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
+                  dataMemo.ref_table.with_po == true) &&
                 memocost.length > 0
               "
             >

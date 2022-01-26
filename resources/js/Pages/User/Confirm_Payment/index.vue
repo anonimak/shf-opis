@@ -53,6 +53,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
                             <th scope="col">Document No</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Status</th>
                             <th scope="col">Payment At</th>
                             <th>Action</th>
@@ -93,6 +94,12 @@
                               >
                                 Unpaid
                               </b-badge>
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
                             </td>
                             <td>
                               {{ item.latest_history.content }}

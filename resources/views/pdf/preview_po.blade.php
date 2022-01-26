@@ -266,7 +266,7 @@
                             @if ($approver->employee)
                             <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
                                 @if ($approver->type_approver == 'acknowledge')
-                                    ({{ $approver->type_approver}})
+                                    (reviewer)
                                 @endif
                             </td>
                             @endif

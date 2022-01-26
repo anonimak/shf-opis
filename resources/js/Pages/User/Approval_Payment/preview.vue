@@ -183,7 +183,11 @@
                         }}
                       </td>
                       <td>
-                        {{ approver.type_approver }}
+                        {{
+                          approver.type_approver == "acknowledge"
+                            ? "reviewer"
+                            : approver.type_approver
+                        }}
                       </td>
                       <td>
                         <b-badge
@@ -298,7 +302,7 @@
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
+                  dataMemo.ref_table.with_po == true) &&
                 memocost.length > 0
               "
             >
@@ -310,7 +314,12 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })}}
+                          {{
+                            Number(dataTotalCost.sub_total).toLocaleString(
+                              "id-ID",
+                              { maximumFractionDigits: 2 }
+                            )
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -319,7 +328,11 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                          {{
+                            Number(dataTotalCost.pph).toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -328,7 +341,11 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                          {{
+                            Number(dataTotalCost.ppn).toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -338,7 +355,10 @@
                         <div style="float: left">Rp</div>
                         <div style="float: right">
                           {{
-                            Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                            Number(dataTotalCost.grand_total).toLocaleString(
+                              "id-ID",
+                              { maximumFractionDigits: 2 }
+                            )
                           }}
                         </div>
                       </td>
@@ -372,7 +392,14 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
+                      <td>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>
