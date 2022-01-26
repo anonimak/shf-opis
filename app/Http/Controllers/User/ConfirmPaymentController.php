@@ -37,7 +37,13 @@ class ConfirmPaymentController extends Controller
         // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         //     return $employee->select('id', 'firstname', 'lastname');
         // }])->with('position')->get();
-        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab, $request->input('search'))->with('latestHistory')->paginate(10);
+        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab, $request->input('search'))->with(['proposeemployee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])->with('latestHistory')->paginate(10);
         //ddd($memo->get());
         return Inertia::render('User/Confirm_Payment', [
             'perPage' => 10,
