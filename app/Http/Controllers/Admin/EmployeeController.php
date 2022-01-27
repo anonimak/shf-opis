@@ -132,7 +132,7 @@ class EmployeeController extends Controller
             'year_finished'      => 'nullable|date'
         ]);
 
-        $new_year_finished = Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59);
+        $new_year_finished = ($request->filled('year_finished')) ? Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59) : null;
 
         Employee_History::create([
             'id_employee'       => $id,
@@ -270,7 +270,7 @@ class EmployeeController extends Controller
             'year_finished'      => 'nullable|date'
         ]);
 
-        $new_year_finished = Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59);
+        $new_year_finished = ($request->filled('year_finished')) ? Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59) : null;
 
         Employee_History::where('id', $idhistory)->update([
             'id_branch'         => $request->input('id_branch'),
