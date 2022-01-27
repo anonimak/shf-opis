@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Ref_Position;
 use App\Models\Ref_Title;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
@@ -131,12 +132,14 @@ class EmployeeController extends Controller
             'year_finished'      => 'nullable|date'
         ]);
 
+        $new_year_finished = Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59);
+
         Employee_History::create([
             'id_employee'       => $id,
             'id_branch'         => $request->input('id_branch'),
             'id_position'       => $request->input('id_position'),
             'year_started'      => $request->input('year_started'),
-            'year_finished'     => $request->input('year_finished'),
+            'year_finished'     => $new_year_finished,
         ]);
         return Redirect::route('admin.employee.show', $id)->with('success', "Successfull Create new Employee History");
     }
@@ -267,11 +270,13 @@ class EmployeeController extends Controller
             'year_finished'      => 'nullable|date'
         ]);
 
+        $new_year_finished = Carbon::parse($request->input('year_finished'))->addHours(23)->addMinutes(59)->addSeconds(59);
+
         Employee_History::where('id', $idhistory)->update([
             'id_branch'         => $request->input('id_branch'),
             'id_position'       => $request->input('id_position'),
             'year_started'      => $request->input('year_started'),
-            'year_finished'     => $request->input('year_finished')
+            'year_finished'     => $new_year_finished
         ]);
         return Redirect::route('admin.employee.show', $id)->with('success', "Successfull updated history.");
     }
