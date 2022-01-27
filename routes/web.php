@@ -198,8 +198,8 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{id_memo}/invoice', 'User\ApiMemoController@getInvoicesByIdMemo')->name('datainvoices');
             Route::post('/data-invoice', 'User\ApiMemoController@addItemInvoice')->name('additeminvoice');
             Route::post('{id_memo}/data-invoice', 'User\ApiMemoController@addInvoice')->name('addinvoice');
-            Route::post('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
-            Route::post('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
+            Route::put('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
+            Route::put('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
             Route::delete('/delete-item-invoice/{id_item}', 'User\ApiMemoController@deleteItemInvoice')->name('deleteiteminvoice');
             Route::delete('/delete-data-invoice/{id_invoice}', 'User\ApiMemoController@deleteDataInvoice')->name('deletedatainvoice');
         });

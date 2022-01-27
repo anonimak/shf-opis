@@ -4,7 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\D_Memo_Approver;
-use App\Models\D_Invoices;
+use App\Models\D_Memo_Invoices;
 use App\Models\D_Item_Invoice;
 use App\Models\Employee_History;
 use Illuminate\Http\Request;
@@ -37,7 +37,7 @@ class ApiMemoController extends Controller
 
     public function getInvoicesByIdMemo($id)
     {
-        $dataInvoices = D_Invoices::where('id_memo', $id)->with(['item_invoices' => function($item) {
+        $dataInvoices = D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
             return $item->orderBy('created_at', 'asc');
         }])->orderBy('created_at', 'asc')->get();
 
@@ -47,12 +47,12 @@ class ApiMemoController extends Controller
     public function addItemInvoice(Request $request)
     {
         $itemInvoice = D_Item_Invoice::create([
-            'id_invoice'           => $request->input('id_invoice'),
-            'description'              => $request->input('description'),
-            'description2'         => $request->input('description2'),
-            'price'      => $request->input('price'),
-            'qty'            => $request->input('qty'),
-            'type'            => $request->input('type'),
+            'id_invoice'            => $request->input('id_invoice'),
+            'description'           => $request->input('description'),
+            'description2'          => $request->input('description2'),
+            'price'                 => $request->input('price'),
+            'qty'                   => $request->input('qty'),
+            'type'                  => $request->input('type'),
         ]);
 
         return response()->json([
@@ -63,14 +63,7 @@ class ApiMemoController extends Controller
 
     public function updateItemInvoice(Request $request, $id)
     {
-        $itemInvoice = D_Item_Invoice::where('id',$id)->update([
-            'id_invoice'           => $request->input('id_invoice'),
-            'description'              => $request->input('description'),
-            'description2'         => $request->input('description2'),
-            'price'      => $request->input('price'),
-            'qty'            => $request->input('qty'),
-            'type'            => $request->input('type'),
-        ]);
+        $itemInvoice = D_Item_Invoice::where('id', $id)->update($request->all());
 
         return response()->json([
             'status' => 200,
@@ -80,9 +73,7 @@ class ApiMemoController extends Controller
 
     public function updateInvoice(Request $request, $id)
     {
-        $dataInvoice = D_Invoices::where('id',$id)->update([
-            'no_invoice'           => $request->input('no_invoice'),
-        ]);
+        $dataInvoice = D_Memo_Invoices::where('id', $id)->update($request->all());
 
         return response()->json([
             'status' => 200,
@@ -103,7 +94,7 @@ class ApiMemoController extends Controller
 
     public function deleteDataInvoice($id)
     {
-        $dataInvoice = D_Invoices::where('id', $id)->first();
+        $dataInvoice = D_Memo_Invoices::where('id', $id)->first();
         $dataInvoice->delete();
 
         $itemInvoices = D_Item_Invoice::where('id_invoice', $id)->delete();
@@ -116,17 +107,17 @@ class ApiMemoController extends Controller
 
     public function addInvoice($id)
     {
-        $dataInvoice = D_Invoices::create([
+        $dataInvoice = D_Memo_Invoices::create([
             'no_invoice' => '',
-            'id_memo'=> $id,
+            'id_memo' => $id,
             'ppn' => false,
             'npwp' => false,
-            'grossup'=> false,
-            'pph' => '',
-            'others'=>'',
+            'grossup' => false,
+            'pph' => 'none',
+            'others' => '[]',
         ]);
 
-        // $dataInvoices = D_Invoices::where('id',$id)->orderBy('created_at', 'asc')->get();
+        // $dataInvoices = D_Memo_Invoices::where('id',$id)->orderBy('created_at', 'asc')->get();
 
         return response()->json([
             'dataInvoice' => $dataInvoice,

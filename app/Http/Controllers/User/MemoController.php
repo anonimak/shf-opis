@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\D_Memo_Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
-use App\Models\D_Invoices;
+use App\Models\D_Memo_Invoices;
 use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;

@@ -14,13 +14,14 @@ class CreateDItemInvoiceTable extends Migration
     public function up()
     {
         Schema::create('d_item_invoice', function (Blueprint $table) {
+            $table->engine = 'MyISAM';
             $table->id();
             $table->unsignedBigInteger('id_invoice');
-            $table->string('description',255);
-            $table->string('description2',255);
+            $table->string('description', 255)->nullable();
+            $table->string('description2', 255)->nullable();
             $table->integer('qty');
             $table->decimal('price', 19, 2);
-            $table->enum('type', ['barang','jasa']);
+            $table->enum('type', ['barang', 'jasa']);
             $table->timestamps();
 
             //foreign

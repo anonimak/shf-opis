@@ -79,7 +79,7 @@ class Memo extends Model
 
     public function invoices()
     {
-        return $this->hasMany(D_Invoices::class,'id_memo','id');
+        return $this->hasMany(D_Memo_Invoices::class, 'id_memo', 'id');
     }
 
     public function ref_table()
@@ -1010,6 +1010,9 @@ class Memo extends Model
             });
             $memo->attachment()->each(function ($attachment) {
                 $attachment->delete(); // <-- direct deletion
+            });
+            $memo->invoices()->each(function ($invoice) {
+                $invoice->delete(); // <-- direct deletion
             });
         });
     }

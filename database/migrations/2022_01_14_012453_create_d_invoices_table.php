@@ -13,14 +13,18 @@ class CreateDInvoicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('d_invoices', function (Blueprint $table) {
+        Schema::create('d_memo_invoices', function (Blueprint $table) {
+            $table->engine = 'MyISAM';
             $table->id();
             $table->unsignedBigInteger('id_memo');
-            $table->string('no_invoice',50)->nullable()->default(null);
+            $table->string('no_invoice', 50)->nullable()->default(null);
             $table->boolean('ppn');
             $table->boolean('npwp');
             $table->boolean('grossup');
-            $table->enum('pph', [null,"pph21", "pph23", "pph4_2_kon", "pph4_2_kon_klas","pph4_2_rent"])->default(null);
+            $table->decimal('ppn_value', 19, 2)->default(0);
+            $table->decimal('grossup_value', 19, 2)->default(0);
+            $table->decimal('pph_value', 19, 2)->default(0);
+            $table->decimal('total', 19, 2)->default(0);
             $table->text('others');
             $table->timestamps();
 

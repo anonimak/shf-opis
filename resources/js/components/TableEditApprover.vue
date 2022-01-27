@@ -59,8 +59,11 @@
           </td>
           <td>
             <div v-if="isApproverEdited">
-              <strong>
-                {{ approver.type_approver }}
+              <strong v-if="approver.type_approver == 'approver'">
+                Approver
+              </strong>
+              <strong v-if="approver.type_approver == 'acknowledge'">
+                Reviewer
               </strong>
               <a
                 role="button"
