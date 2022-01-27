@@ -13,7 +13,8 @@ use Carbon\Carbon;
 
 function generatePDFMemo($id, $fromroute = 'true')
 {
-    $memo = Memo::getMemoDetailDraftEdit($id);
+    // $memo = Memo::getMemoDetailDraftEdit($id);
+    $memo = Memo::getMemoDetail($id);
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -50,7 +51,8 @@ function generatePDFMemo($id, $fromroute = 'true')
 
 function generatePDFPo($id, $fromroute = 'true')
 {
-    $memo = Memo::getPoDetailApprovers($id);
+    // $memo = Memo::getPoDetailApprovers($id);
+    $memo = Memo::getPoDetail($id);
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -88,7 +90,8 @@ function generatePDFPo($id, $fromroute = 'true')
 
 function generatePDFPayment($id, $fromroute = 'true')
 {
-    $memo = Memo::getPaymentDetailApprovers($id);
+    // $memo = Memo::getPaymentDetailApprovers($id);
+    $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
@@ -125,7 +128,8 @@ function generatePDFPayment($id, $fromroute = 'true')
 
 function generatePDFTakeoverBranch($id, $fromroute = 'true')
 {
-    $memo = Memo::getPaymentDetailApprovers($id);
+    // $memo = Memo::getPaymentDetailApprovers($id);
+    $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
