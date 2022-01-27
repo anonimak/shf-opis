@@ -40,9 +40,9 @@
 
         /** Define the footer rules **/
         footer {
-            position: absolute; 
-            bottom: 0cm; 
-            left: 0cm; 
+            position: absolute;
+            bottom: 0cm;
+            left: 0cm;
             right: 0cm;
             height: 2cm;
 
@@ -239,7 +239,8 @@
                     <tr>
                         @foreach ($memo->approversPo as $approver)
                             @if ($approver->employee)
-                            <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                            {{-- <th>{{ $approver->employee->position_now->position->position_name }}</th> --}}
+                            <th>{{ $approver->employee->emp_history->position->position_name }}</th>
                             @endif
                         @endforeach
                         <th> Confirm By</th>
@@ -266,7 +267,7 @@
                             @if ($approver->employee)
                             <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
                                 @if ($approver->type_approver == 'acknowledge')
-                                    ({{ $approver->type_approver}})
+                                    (reviewer)
                                 @endif
                             </td>
                             @endif

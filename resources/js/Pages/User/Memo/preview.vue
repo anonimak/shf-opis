@@ -134,7 +134,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge

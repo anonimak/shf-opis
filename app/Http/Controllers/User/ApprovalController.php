@@ -218,6 +218,7 @@ class ApprovalController extends Controller
             'dataMemo' => $memo,
             'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
+            '__previewpdfapproval' => 'user.memo.approval.payment.previewpdfapproval',
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
@@ -285,10 +286,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -450,10 +451,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -618,10 +619,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
