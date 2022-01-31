@@ -189,7 +189,7 @@ class ApprovalController extends Controller
     public function detailPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetailWithCurrentApprover($id, auth()->user()->id_employee);
-        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : Employee::getWithPositionNowById($memo);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();

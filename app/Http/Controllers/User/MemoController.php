@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\D_Memo_Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\D_Memo_Invoices;
 use App\Models\D_Memo_Acknowledge;
 use App\Models\D_Memo_Approver;
 use App\Models\D_Memo_Attachment;
@@ -153,7 +154,6 @@ class MemoController extends Controller
                 'revisi' => Memo::getPayment(auth()->user()->id_employee, 'revisi')->count(),
             ],
             '__index'   => 'user.memo.statuspayment.index',
-            '__editpayment'   => 'user.memo.statuspayment.formpayment',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
             '__previewpdf'   => 'user.memo.statuspayment.preview',
         ]);
@@ -315,7 +315,7 @@ class MemoController extends Controller
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
 
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
 
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
@@ -392,6 +392,8 @@ class MemoController extends Controller
             'payment'           => $request->input('payment'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
+
+
 
         // M_Data_Cost_Total::where('id_memo', $id)->update([
         //     'id_memo' => $id,
@@ -493,13 +495,13 @@ class MemoController extends Controller
             'content' => "Memo successful submitted with document no $doc_no"
         ]);
 
-        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
@@ -525,12 +527,12 @@ class MemoController extends Controller
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
 
-        // $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'payment')->get();
 
-        // $attachments = $attachments->map(function ($itemattach) {
-        //     $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
-        //     return $itemattach;
-        // });
+        $attachments = $attachments->map(function ($itemattach) {
+            $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            return $itemattach;
+        });
 
         $templateCost = Ref_Template_Cost::where('id_ref_type_memo', $memo->id_type)->get();
 
@@ -574,8 +576,8 @@ class MemoController extends Controller
             '_token' => csrf_token(),
             'formType' => $formType,
             'memocost' => $memocost,
-            //'__attachment'  => 'user.memo.draft.attachment',
-            //'__removeAttachment'  => 'user.memo.draft.attachmentremove',
+            '__attachment'  => 'user.memo.draft.attachment',
+            '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             //'__update' => 'user.memo.draft.update',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
@@ -585,7 +587,7 @@ class MemoController extends Controller
             'dataPosition' => $positions,
             'dataMemo' => $memo,
             'dataMemoType' => $memoType,
-            //'dataAttachments' => $attachments,
+            'dataAttachments' => $attachments,
             'dataTotalCost' => $dataTotalCost,
             'headerCost' => $headerCost,
             'columnCost' => $columnCost,
@@ -637,13 +639,13 @@ class MemoController extends Controller
             'grand_total' => $request->input('grand_total')
         ]);
 
-        $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
@@ -770,13 +772,13 @@ class MemoController extends Controller
             'content' => "PO successful submitted with document no $doc_no"
         ]);
 
-        $firstApprover = D_Po_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Po_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
@@ -809,19 +811,19 @@ class MemoController extends Controller
             D_Memo_Attachment::create([
                 'id_memo' => $id,
                 'name' => $fileName,
+                'type' => ($request->input('type')) ? $request->input('type') : 'memo',
                 'real_name' => $file->getClientOriginalName()
             ]);
         }
 
-        return Redirect::route('user.memo.draft.edit', $id)->with('success', "Successfull upload attachment.");
+        return Redirect::back()->with('success', "Successfull upload attachment.");
     }
 
     public function destroyAttach($id)
     {
         $attach = D_Memo_Attachment::where('id', $id)->first();
         $attach->delete();
-        return
-            Redirect::route('user.memo.draft.edit', $attach->id_memo)->with('success', "Atachment $attach->real_name deleted.");
+        return Redirect::back()->with('success', "Atachment $attach->real_name deleted.");
     }
 
     public function updateAcknowledge(Request $request, $id, $type)
@@ -934,7 +936,7 @@ class MemoController extends Controller
         $memo = Memo::getMemoDetail($id);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
@@ -974,7 +976,7 @@ class MemoController extends Controller
         $memo = Memo::getMemoDetail($id);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
@@ -1098,7 +1100,7 @@ class MemoController extends Controller
         $memo = Memo::getPoDetail($id);
         $proposeEmployee = Employee::getWithPositionNowById($memo);
         $memocost = (array) json_decode($memo->cost);
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;

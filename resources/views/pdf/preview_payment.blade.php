@@ -131,7 +131,7 @@
                 </tr>
                 <tr>
                     <td>Branch</td>
-                    <td colspan="1">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
+                    <td colspan="1">{{$employeeproposeinfo->proposeemployee->position_now->branch->branch_name}}</td>
                     <td colspan="1">
                         <div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval
                     </td>
@@ -337,12 +337,14 @@
             <thead>
                 <tr>
                     <td>file</td>
+                    <td>info</td>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($dataAttachments as $attachment)
                 <tr>
                     <td>{{ $attachment->name }}</td>
+                    <td>{{ ($attachment->type == 'payment')?'payment attachment':'' }}</td>
                 </tr>
                 @endforeach
             </tbody>

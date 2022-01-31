@@ -138,13 +138,15 @@
                       </td>
                     </tr>
                     <tr>
-                        <td>Preview PDF Memo Approval</td>
-                        <td> <a
-                                  target="_blank"
-                                  class="btn btn-success"
-                                  :href="route(__previewpdfapproval, dataMemo.id)"
-                                  >Preview PDF Memo Approval</a
-                                ></td>
+                      <td>Preview PDF Memo Approval</td>
+                      <td>
+                        <a
+                          target="_blank"
+                          class="btn btn-success"
+                          :href="route(__previewpdfapproval, dataMemo.id)"
+                          >Preview PDF Memo Approval</a
+                        >
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -413,17 +415,27 @@
                   <thead class="thead-dark">
                     <tr>
                       <th>file</th>
+                      <th>info</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(attachment, index) in attachments" :key="index">
-                      <a
-                        :href="attachment.name"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {{ attachment.real_name }}
-                      </a>
+                      <td>
+                        <a
+                          :href="attachment.name"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {{ attachment.real_name }}
+                        </a>
+                      </td>
+                      <td>
+                        {{
+                          attachment.type == "payment"
+                            ? "payment attachment"
+                            : ""
+                        }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -462,7 +474,7 @@ export default {
     "memocost",
     "attachments",
     "__approving",
-    "__previewpdfapproval"
+    "__previewpdfapproval",
   ],
   metaInfo: { title: "Preview Approval Payment" },
   components: {
