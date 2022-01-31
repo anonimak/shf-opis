@@ -31,7 +31,7 @@
                           <b-badge
                             v-if="dataMemo.status_payment == 'submit'"
                             variant="info"
-                            >On process approving</b-badge
+                            >On process approving payment</b-badge
                           >
                           <b-badge
                             v-if="dataMemo.status_payment == 'approve'"
@@ -43,11 +43,11 @@
                             variant="danger"
                             >Memo Payment Rejected</b-badge
                           >
-                          <!-- <b-badge
-                          v-if="dataMemo.status_payment == 'revisi'"
-                          variant="secondary"
-                          >Memo Revisi</b-badge
-                        > -->
+                          <b-badge
+                            v-if="dataMemo.status_payment == 'revisi'"
+                            variant="secondary"
+                            >Memo Payment Revised</b-badge
+                          >
                         </td>
                       </tr>
                       <tr>
@@ -69,7 +69,7 @@
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>Approval</td>
+                        <td>Payment</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
                         <td>Send email after memo payment approved to</td>
@@ -134,7 +134,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge
@@ -152,11 +156,11 @@
                             variant="danger"
                             >Rejected</b-badge
                           >
-                          <!-- <b-badge
-                          v-if="approver.status == 'revisi'"
-                          variant="secondary"
-                          >Revisi</b-badge
-                        > -->
+                          <b-badge
+                            v-if="approver.status == 'revisi'"
+                            variant="secondary"
+                            >Revised</b-badge
+                          >
                         </td>
                         <td>
                           <p v-if="approver.msg">{{ approver.msg }}</p>
@@ -253,7 +257,7 @@
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
+                  dataMemo.ref_table.with_po == true) &&
                 memocost.length > 0
               "
             >
@@ -267,7 +271,10 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                              Number(dataTotalCost.sub_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
                             }}
                           </div>
                         </td>
@@ -277,7 +284,12 @@
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                            {{
+                              Number(dataTotalCost.pph).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
                           </div>
                         </td>
                       </tr>
@@ -286,7 +298,12 @@
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                            {{
+                              Number(dataTotalCost.ppn).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
                           </div>
                         </td>
                       </tr>
@@ -296,7 +313,10 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                              Number(dataTotalCost.grand_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
                             }}
                           </div>
                         </td>
@@ -331,7 +351,14 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
+                      <td>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>
@@ -346,6 +373,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>file</th>
+                        <th>info</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -353,13 +381,22 @@
                         v-for="(attachment, index) in attachments"
                         :key="index"
                       >
-                        <a
-                          :href="attachment.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ attachment.real_name }}
-                        </a>
+                        <td>
+                          <a
+                            :href="attachment.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {{ attachment.real_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{
+                            attachment.type == "payment"
+                              ? "payment attachment"
+                              : ""
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>

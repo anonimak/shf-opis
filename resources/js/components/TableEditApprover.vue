@@ -59,11 +59,12 @@
           </td>
           <td>
             <div v-if="isApproverEdited">
-              <strong v-if="approver.type_approver == 'approver'">
-                Approver
-              </strong>
-              <strong v-if="approver.type_approver == 'acknowledge'">
-                Reviewer
+              <strong>
+                {{
+                  approver.type_approver == "acknowledge"
+                    ? "reviewer"
+                    : approver.type_approver
+                }}
               </strong>
               <a
                 role="button"
@@ -75,7 +76,11 @@
               </a>
             </div>
             <strong class="text-capitalize" v-else>
-              {{ approver.type_approver }}
+              {{
+                approver.type_approver == "acknowledge"
+                  ? "reviewer"
+                  : approver.type_approver
+              }}
             </strong>
             <select-type-approver
               v-if="activeSelect == index"
@@ -204,6 +209,7 @@ export default {
 
     actionApproverCanceled() {
       this.isApproverEdited = false;
+      this.activeSelect = null;
       this.dataApprovers = [...this.form.approvers];
     },
 

@@ -134,7 +134,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge
@@ -322,6 +326,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>file</th>
+                        <th>info</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -329,13 +334,22 @@
                         v-for="(attachment, index) in attachments"
                         :key="index"
                       >
-                        <a
-                          :href="attachment.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ attachment.real_name }}
-                        </a>
+                        <td>
+                          <a
+                            :href="attachment.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {{ attachment.real_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{
+                            attachment.type == "payment"
+                              ? "payment attachment"
+                              : ""
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>

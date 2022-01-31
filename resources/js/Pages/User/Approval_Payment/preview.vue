@@ -27,6 +27,11 @@
                     >Approve</b-button
                   >
                   <b-button
+                    @click="actionRevisi(dataMemo.approver_payment.id)"
+                    variant="secondary"
+                    >Revision</b-button
+                  >
+                  <b-button
                     @click="actionReject(dataMemo.approver_payment.id)"
                     variant="warning"
                     >Reject</b-button
@@ -83,6 +88,11 @@
                           variant="danger"
                           >Memo Payment Rejected</b-badge
                         >
+                        <b-badge
+                          v-if="dataMemo.status_payment == 'revisi'"
+                          variant="secondary"
+                          >Memo Payment Revised</b-badge
+                        >
                       </td>
                     </tr>
                     <tr>
@@ -104,7 +114,7 @@
                     </tr>
                     <tr>
                       <td>Type</td>
-                      <td>Approval</td>
+                      <td>Payment</td>
                     </tr>
                     <tr v-if="dataMemo.acknowledges.length > 0">
                       <td>Send email after memo payment approved to</td>
@@ -125,6 +135,17 @@
                             >,{{ " " }}
                           </span>
                         </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Preview PDF Memo Approval</td>
+                      <td>
+                        <a
+                          target="_blank"
+                          class="btn btn-success"
+                          :href="route(__previewpdfapproval, dataMemo.id)"
+                          >Preview PDF Memo Approval</a
+                        >
                       </td>
                     </tr>
                   </tbody>
@@ -164,7 +185,11 @@
                         }}
                       </td>
                       <td>
-                        {{ approver.type_approver }}
+                        {{
+                          approver.type_approver == "acknowledge"
+                            ? "reviewer"
+                            : approver.type_approver
+                        }}
                       </td>
                       <td>
                         <b-badge
@@ -181,6 +206,11 @@
                           v-if="approver.status == 'reject'"
                           variant="danger"
                           >Rejected</b-badge
+                        >
+                        <b-badge
+                          v-if="approver.status == 'revisi'"
+                          variant="secondary"
+                          >Revised</b-badge
                         >
                       </td>
                       <td>
@@ -274,7 +304,7 @@
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
+                  dataMemo.ref_table.with_po == true) &&
                 memocost.length > 0
               "
             >
@@ -286,7 +316,12 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })}}
+                          {{
+                            Number(dataTotalCost.sub_total).toLocaleString(
+                              "id-ID",
+                              { maximumFractionDigits: 2 }
+                            )
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -295,7 +330,11 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                          {{
+                            Number(dataTotalCost.pph).toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -304,7 +343,11 @@
                       <td nowrap>
                         <div style="float: left">Rp</div>
                         <div style="float: right">
-                          {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                          {{
+                            Number(dataTotalCost.ppn).toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })
+                          }}
                         </div>
                       </td>
                     </tr>
@@ -314,7 +357,10 @@
                         <div style="float: left">Rp</div>
                         <div style="float: right">
                           {{
-                            Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                            Number(dataTotalCost.grand_total).toLocaleString(
+                              "id-ID",
+                              { maximumFractionDigits: 2 }
+                            )
                           }}
                         </div>
                       </td>
@@ -348,7 +394,14 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
+                      <td>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>
@@ -362,17 +415,27 @@
                   <thead class="thead-dark">
                     <tr>
                       <th>file</th>
+                      <th>info</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(attachment, index) in attachments" :key="index">
-                      <a
-                        :href="attachment.name"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {{ attachment.real_name }}
-                      </a>
+                      <td>
+                        <a
+                          :href="attachment.name"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {{ attachment.real_name }}
+                        </a>
+                      </td>
+                      <td>
+                        {{
+                          attachment.type == "payment"
+                            ? "payment attachment"
+                            : ""
+                        }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -411,6 +474,7 @@ export default {
     "memocost",
     "attachments",
     "__approving",
+    "__previewpdfapproval",
   ],
   metaInfo: { title: "Preview Approval Payment" },
   components: {
@@ -450,6 +514,14 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Acknowledge";
       this.modalCaption = "Are you sure to next?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    actionRevisi(id) {
+      this.buttonClicked = "revisi";
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

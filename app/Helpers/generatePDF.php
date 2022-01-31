@@ -13,14 +13,15 @@ use Carbon\Carbon;
 
 function generatePDFMemo($id, $fromroute = 'true')
 {
-    $memo = Memo::getMemoDetailDraftEdit($id);
+    // $memo = Memo::getMemoDetailDraftEdit($id);
+    $memo = Memo::getMemoDetail($id);
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
     $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-    $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+    $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
     $memocost = (array) json_decode($memo->cost);
     $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
     // dd($memo);
@@ -50,7 +51,8 @@ function generatePDFMemo($id, $fromroute = 'true')
 
 function generatePDFPo($id, $fromroute = 'true')
 {
-    $memo = Memo::getPoDetailApprovers($id);
+    // $memo = Memo::getPoDetailApprovers($id);
+    $memo = Memo::getPoDetail($id);
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
@@ -88,9 +90,15 @@ function generatePDFPo($id, $fromroute = 'true')
 
 function generatePDFPayment($id, $fromroute = 'true')
 {
-    $memo = Memo::getPaymentDetailApprovers($id);
+    // $memo = Memo::getPaymentDetailApprovers($id);
+    $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
-    $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
+
+    $employeeProposeInfo = ($memo->id_employee2) ? Memo::getMemoDetailEmployeePropose($id, true) : Memo::getMemoDetailEmployeePropose($id);
+    if ($memo->id_employee2) {
+        $employeeProposeInfo->proposeemployee = $employeeProposeInfo->proposeemployee2;
+    }
+
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
@@ -125,7 +133,8 @@ function generatePDFPayment($id, $fromroute = 'true')
 
 function generatePDFTakeoverBranch($id, $fromroute = 'true')
 {
-    $memo = Memo::getPaymentDetailApprovers($id);
+    // $memo = Memo::getPaymentDetailApprovers($id);
+    $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
     $dataPayments = Memo::where('id', $id)->with('payments')->first();

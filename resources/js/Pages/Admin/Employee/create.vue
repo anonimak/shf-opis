@@ -160,6 +160,23 @@
                 </b-form-group>
                 <b-form-group
                   id="input-group-title"
+                  label="Email 2:"
+                  label-for="input-title"
+                  :invalid-feedback="errors.email2 ? errors.email2[0] : ''"
+                  :state="errors.email2 ? false : null"
+                >
+                  <b-form-input
+                    id="input-title"
+                    type="email"
+                    name="email2"
+                    v-model="form.email2"
+                    placeholder="email2"
+                    :state="errors.email2 ? false : null"
+                    trim
+                  ></b-form-input>
+                </b-form-group>
+                <b-form-group
+                  id="input-group-title"
                   label="Mobile:"
                   label-for="input-title"
                   :invalid-feedback="errors.mobile ? errors.mobile[0] : ''"

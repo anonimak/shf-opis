@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateMMemosAddOrientationPaper extends Migration
+class UpdateTableMEmployeesAddEmail2 extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class UpdateMMemosAddOrientationPaper extends Migration
      */
     public function up()
     {
-        Schema::table('m_memos', function (Blueprint $table) {
-            $table->enum('orientation_paper', ['portrait', 'landscape'])->default('portrait');
+        Schema::table('m_employees', function (Blueprint $table) {
+            //
+            $table->string('email2',50)->nullable();
         });
     }
 
@@ -25,8 +26,9 @@ class UpdateMMemosAddOrientationPaper extends Migration
      */
     public function down()
     {
-        Schema::table('m_memos', function (Blueprint $table) {
-            $table->removeColumn('orientation_paper');
+        Schema::table('m_employees', function (Blueprint $table) {
+            //
+            $table->removeColumn('email2');
         });
     }
 }

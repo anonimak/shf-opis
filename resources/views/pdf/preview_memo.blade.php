@@ -140,7 +140,7 @@
                         @foreach ($memo->acknowledges as $acknowledge)
                         {{ $acknowledge->employee->firstname." ".$acknowledge->employee->lastname }}
                         @if (!$loop->last)
-                            , 
+                            ,
                         @endif
                         @endforeach
                     </td>
@@ -156,7 +156,8 @@
                 <tr>
                     @foreach ($memo->approvers as $approver)
                         @if ($approver->employee)
-                        <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                        {{-- <th>{{ $approver->employee->position_now->position->position_name }}</th> --}}
+                        <th>{{ $approver->employee->emp_history->position->position_name }}</th>
                         @endif
                     @endforeach
                 </tr>
@@ -167,7 +168,7 @@
                         @if ($approver->employee)
                         <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
                             @if ($approver->type_approver == 'acknowledge')
-                                ({{ $approver->type_approver}})
+                                (reviewer)
                             @endif
                         </td>
                         @endif
@@ -299,12 +300,14 @@
             <thead>
                 <tr>
                     <td>file</td>
+                    <td>info</td>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($dataAttachments as $attachment)
                 <tr>
                     <td>{{ $attachment->name }}</td>
+                    <td>{{ ($attachment->type == 'payment')?'payment attachment':'' }}</td>
                 </tr>
                 @endforeach
             </tbody>

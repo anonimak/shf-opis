@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateMMemosAddOrientationPaper extends Migration
+class UpdateTableMMemosChangeStatusPayment extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class UpdateMMemosAddOrientationPaper extends Migration
     public function up()
     {
         Schema::table('m_memos', function (Blueprint $table) {
-            $table->enum('orientation_paper', ['portrait', 'landscape'])->default('portrait');
+            //
+            \DB::statement("ALTER TABLE `m_memos` CHANGE `status_payment` `status_payment` ENUM('submit', 'edit', 'approve', 'reject', 'revisi') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'edit';");
         });
     }
 
@@ -26,7 +27,8 @@ class UpdateMMemosAddOrientationPaper extends Migration
     public function down()
     {
         Schema::table('m_memos', function (Blueprint $table) {
-            $table->removeColumn('orientation_paper');
+            //
+            $table->enum('status_payment',['submit','edit','approve', 'reject'])->default('edit')->change();
         });
     }
 }

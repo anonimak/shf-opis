@@ -131,7 +131,7 @@
                 </tr>
                 <tr>
                     <td>Branch</td>
-                    <td colspan="1">{{$employeeInfo->employee->position_now->branch->branch_name}}</td>
+                    <td colspan="1">{{$employeeproposeinfo->proposeemployee->position_now->branch->branch_name}}</td>
                     <td colspan="1">
                         <div style="font-family: ZapfDingbats, sans-serif;">4</div> Approval
                     </td>
@@ -167,7 +167,8 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                    <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                    {{-- <th>{{ $approver->employee->position_now->position->position_name }}</th> --}}
+                    <th>{{ $approver->employee->emp_history->position->position_name }}</th>
                     @endif
                     @endforeach
                 </tr>
@@ -178,7 +179,7 @@
                     @if ($approver->employee)
                     <td>{{ $approver->employee->firstname." ".$approver->employee->lastname }}
                         @if ($approver->type_approver == 'acknowledge')
-                            ({{ $approver->type_approver}})
+                            (reviewer)
                         @endif
                     </td>
                     @endif
@@ -336,12 +337,14 @@
             <thead>
                 <tr>
                     <td>file</td>
+                    <td>info</td>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($dataAttachments as $attachment)
                 <tr>
                     <td>{{ $attachment->name }}</td>
+                    <td>{{ ($attachment->type == 'payment')?'payment attachment':'' }}</td>
                 </tr>
                 @endforeach
             </tbody>
