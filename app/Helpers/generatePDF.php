@@ -20,7 +20,7 @@ function generatePDFMemo($id, $fromroute = 'true')
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
     $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
-    $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
+    $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
     $memocost = (array) json_decode($memo->cost);
     $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
     // dd($memo);
@@ -90,7 +90,12 @@ function generatePDFPayment($id, $fromroute = 'true')
 {
     $memo = Memo::getPaymentDetailApprovers($id);
     $employeeInfo = User::getUsersEmployeeInfo();
-    $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
+
+    $employeeProposeInfo = ($memo->id_employee2) ? Memo::getMemoDetailEmployeePropose($id, true) : Memo::getMemoDetailEmployeePropose($id);
+    if ($memo->id_employee2) {
+        $employeeProposeInfo->proposeemployee = $employeeProposeInfo->proposeemployee2;
+    }
+
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
