@@ -495,13 +495,13 @@ class MemoController extends Controller
             'content' => "Memo successful submitted with document no $doc_no"
         ]);
 
-        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
@@ -639,13 +639,13 @@ class MemoController extends Controller
             'grand_total' => $request->input('grand_total')
         ]);
 
-        $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
@@ -772,13 +772,13 @@ class MemoController extends Controller
             'content' => "PO successful submitted with document no $doc_no"
         ]);
 
-        $firstApprover = D_Po_Approver::where('id_memo', $id)->where('status', 'submit')->orderBy('idx', 'asc')->first();
+        $firstApprover = D_Po_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx}"
+            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
