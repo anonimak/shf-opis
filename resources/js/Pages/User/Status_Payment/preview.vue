@@ -44,10 +44,10 @@
                             >Memo Payment Rejected</b-badge
                           >
                           <b-badge
-                          v-if="dataMemo.status_payment == 'revisi'"
-                          variant="secondary"
-                          >Memo Payment Revised</b-badge
-                        >
+                            v-if="dataMemo.status_payment == 'revisi'"
+                            variant="secondary"
+                            >Memo Payment Revised</b-badge
+                          >
                         </td>
                       </tr>
                       <tr>
@@ -157,10 +157,10 @@
                             >Rejected</b-badge
                           >
                           <b-badge
-                          v-if="approver.status == 'revisi'"
-                          variant="secondary"
-                          >Revised</b-badge
-                        >
+                            v-if="approver.status == 'revisi'"
+                            variant="secondary"
+                            >Revised</b-badge
+                          >
                         </td>
                         <td>
                           <p v-if="approver.msg">{{ approver.msg }}</p>
@@ -373,6 +373,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>file</th>
+                        <th>info</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -380,13 +381,22 @@
                         v-for="(attachment, index) in attachments"
                         :key="index"
                       >
-                        <a
-                          :href="attachment.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ attachment.real_name }}
-                        </a>
+                        <td>
+                          <a
+                            :href="attachment.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {{ attachment.real_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{
+                            attachment.type == "payment"
+                              ? "payment attachment"
+                              : ""
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
