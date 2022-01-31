@@ -239,13 +239,51 @@
               <tr class="text-right" v-if="invoice.grossup">
                 <td>Total Jasa Gross Up</td>
                 <td>
-                  {{ invoice.grossup_value | currency }}
+                  <div class="d-flex align-items-center justify-content-center">
+                    <vue-numeric
+                      class="form-control form-control-sm"
+                      @change="actionOnChange(idx)"
+                      currency="Rp"
+                      thousand-separator="."
+                      decimal-separator=","
+                      v-bind:precision="2"
+                      :empty-value="0"
+                      v-model="invoice.grossup_value"
+                    ></vue-numeric>
+                    <b-dropdown variant="none" size="sm" no-caret>
+                      <template #button-content>
+                        <span class="fas fa-ellipsis-v"> </span>
+                      </template>
+                      <b-dropdown-item @click="countTotal(idx, true, false)">
+                        reset
+                      </b-dropdown-item>
+                    </b-dropdown>
+                  </div>
                 </td>
               </tr>
               <tr class="text-right" v-if="invoice.ppn">
                 <td>PPN</td>
                 <td>
-                  {{ invoice.ppn_value | currency }}
+                  <div class="d-flex align-items-center justify-content-center">
+                    <vue-numeric
+                      class="form-control form-control-sm"
+                      @change="actionOnChange(idx)"
+                      currency="Rp"
+                      thousand-separator="."
+                      decimal-separator=","
+                      v-bind:precision="2"
+                      :empty-value="0"
+                      v-model="invoice.ppn_value"
+                    ></vue-numeric>
+                    <b-dropdown variant="none" size="sm" no-caret>
+                      <template #button-content>
+                        <span class="fas fa-ellipsis-v"> </span>
+                      </template>
+                      <b-dropdown-item @click="countTotal(idx, false, true)">
+                        reset
+                      </b-dropdown-item>
+                    </b-dropdown>
+                  </div>
                 </td>
               </tr>
               <tr class="text-right" v-if="invoice.pph">
@@ -264,7 +302,7 @@
                   <vue-numeric
                     v-if="invoice.pph == 'pph21'"
                     class="form-control form-control-sm"
-                    @change="actionOnChangePph21(idx)"
+                    @change="actionOnChange(idx)"
                     currency="Rp"
                     thousand-separator="."
                     decimal-separator=","
@@ -680,8 +718,8 @@ export default {
       return countPPN;
     },
 
-    actionOnChangePph21(idx) {
-      this.countTotal(idx);
+    actionOnChange(idx) {
+      this.countTotal(idx, true, true);
     },
 
     actionCheckNpwp(idx) {
@@ -772,24 +810,29 @@ export default {
       return pph;
     },
 
-    countTotal(idx) {
+    countTotal(idx, actionChangePPN = false, actionChangeGrossup = false) {
       console.log("hitung total...");
       let invoice = this.dataInvoices[idx];
-      let ppn = invoice.ppn ? this.countPPN(idx) : 0;
+      let ppn = 0;
       let sumBarang = this.sumItemInvoiceBy(idx, "barang");
       let sumJasa = this.sumItemInvoiceBy(idx, "jasa");
       let pph = 0;
       let other = 0;
       let totalJasa = 0;
 
+      if (invoice.ppn) {
+        ppn = actionChangePPN ? invoice.ppn_value : this.countPPN(idx);
+      }
+
       // check grossup
       if (invoice.grossup && !_.includes(["none", "pph21"], invoice.pph)) {
-        this.$set(
-          this.dataInvoices[idx],
-          "grossup_value",
-          this.countGrossUp(idx, invoice.pph)
-        );
-        totalJasa = invoice.grossup_value;
+        totalJasa = actionChangeGrossup
+          ? invoice.grossup_value
+          : this.$set(
+              this.dataInvoices[idx],
+              "grossup_value",
+              this.countGrossUp(idx, invoice.pph)
+            );
       } else {
         this.$set(this.dataInvoices[idx], "grossup_value", 0);
         totalJasa = sumJasa;

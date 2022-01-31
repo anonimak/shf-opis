@@ -12,6 +12,10 @@ class Memo extends Model
     protected $table = 'm_memos';
     protected $guarded = [];
 
+    protected $casts = [
+        'is_cost_invoice' => 'boolean',
+    ];
+
     public function approvers()
     {
         return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id');

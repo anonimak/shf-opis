@@ -204,21 +204,24 @@
                 </div>
               </b-row>
               <b-row>
-                <form-invoice
-                  :id_memo="dataMemo.id"
-                />
-                <!-- <div class="col-12">
+                <div class="col-12">
                   <b-form-group
                     id="input-group-text"
                     label="Cost /Expense:"
                     label-for="input-text"
+                    class="mb-4"
                   >
+                    <form-invoice
+                      v-if="form.is_cost_invoice"
+                      :id_memo="dataMemo.id"
+                    />
                     <hot-table
+                      v-else
                       ref="formCost"
                       :settings="hotSettings"
                     ></hot-table>
                   </b-form-group>
-                </div> -->
+                </div>
               </b-row>
               <!-- <b-row
                 v-if="
