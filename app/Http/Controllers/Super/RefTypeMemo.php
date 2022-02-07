@@ -108,6 +108,7 @@ class RefTypeMemo extends Controller
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
+            'type'                      => $request->input('type'),
             'id_overtake_memo'          => $request->input('id_overtake'),
             'id_branch'                 => $request->input('id_branch'),
             'id_confirmed_payment_by'   => $request->input('id_confirmed_payment_by'),
@@ -167,6 +168,7 @@ class RefTypeMemo extends Controller
                 'id'                => $typememo->id,
                 'with_po'           => $typememo->with_po,
                 'with_payment'      => $typememo->with_payment,
+                'type'              => $typememo->type,
                 'id_overtake'       => $typememo->id_overtake_memo,
                 'id_branch'         => $typememo->id_branch,
                 'id_confirmed_payment_by' => $typememo->id_confirmed_payment_by
@@ -205,6 +207,7 @@ class RefTypeMemo extends Controller
             'id_ref_module_approver'    => $request->input('refmoduleapprover'),
             'with_po'                   => $request->input('with_po'),
             'with_payment'              => $request->input('with_payment'),
+            'type'                      => $request->input('type'),
             'id_overtake_memo'          => $request->input('id_overtake'),
             'id_branch'                 => $request->input('id_branch'),
             'id_confirmed_payment_by'   => $request->input('id_confirmed_payment_by'),

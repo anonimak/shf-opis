@@ -33,6 +33,7 @@
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Title</th>
+                          <th scope="col">Type Memo</th>
                           <th scope="col">Status</th>
                           <th scope="col">Action</th>
                         </tr>
@@ -61,6 +62,8 @@
                               revised
                             </b-badge>
                           </td>
+                          <td v-if="item.ref_table.type == 'approval' && item.ref_table.with_payment == true">approval and payment</td>
+                          <td v-else>{{ item.ref_table.type }}</td>
                           <td>
                             <small v-if="item.latest_history">
                               {{ item.latest_history.content }}
