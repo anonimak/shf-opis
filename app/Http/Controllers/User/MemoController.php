@@ -154,6 +154,7 @@ class MemoController extends Controller
                 'revisi' => Memo::getPayment(auth()->user()->id_employee, 'revisi')->count(),
             ],
             '__index'   => 'user.memo.statuspayment.index',
+            '__editpayment'   => 'user.memo.statuspayment.formpayment',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
             '__previewpdf'   => 'user.memo.statuspayment.preview',
         ]);
@@ -195,6 +196,7 @@ class MemoController extends Controller
             '__webpreview'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
             '__previewpdf'   => 'user.memo.statustakeoverpaymentbranch.preview',
             '__previewmemopdf'   => 'user.memo.statustakeoverpaymentbranch.previewmemo',
+            '__editpayment'   => 'user.memo.statustakeoverpaymentbranch.formpayment',
         ]);
     }
 
