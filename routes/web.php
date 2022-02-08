@@ -91,6 +91,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::post('/{memo}/acknowledge/{type}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::delete('/{memo}/acknowledge/{id_employee}/{type}', 'User\MemoController@deleteAcknowledge')->name('deleteacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
+            Route::get('/{memo}/preview-payment', 'User\MemoController@previewPayment')->name('previewpayment');
         });
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {

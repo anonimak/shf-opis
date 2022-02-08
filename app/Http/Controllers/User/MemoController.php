@@ -243,7 +243,7 @@ class MemoController extends Controller
 
         return Inertia::render('User/Memo/Draft', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemo(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->paginate(10),
+            'dataMemo' => Memo::getMemoDraft(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -309,10 +309,15 @@ class MemoController extends Controller
 
     public function draftEdit($id)
     {
-        $formType = 'memo';
+        $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
+        if ($memoType->ref_table->type == 'payment') {
+            $formType = 'payment';
+        } else {
+            $formType = 'memo';
+        }
+
         $memo = Memo::getMemoDetailDraftEdit($id, $formType);
         $employeeInfo = User::getUsersEmployeeInfo();
-        $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
@@ -371,6 +376,7 @@ class MemoController extends Controller
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
             '__preview' => 'user.memo.draft.preview',
+            '__previewpayment' => 'user.memo.draft.previewpayment',
             'dataPosition' => $positions,
             'dataMemo' => $memo,
             'dataMemoType' => $memoType,
@@ -394,16 +400,14 @@ class MemoController extends Controller
             'payment'           => $request->input('payment'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
-
-
-
-        // M_Data_Cost_Total::where('id_memo', $id)->update([
-        //     'id_memo' => $id,
-        //     'sub_total' => $request->input('sub_total'),
-        //     'pph' => $request->input('pph'),
-        //     'ppn' => $request->input('ppn'),
-        //     'grand_total' => $request->input('grand_total')
-        // ]);
+        // form payment
+        M_Data_Cost_Total::where('id_memo', $id)->update([
+            'id_memo' => $id,
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn' => $request->input('ppn'),
+            'grand_total' => $request->input('grand_total')
+        ]);
         return Redirect::route('user.memo.draft.index')->with('success', "Successfull updated.");
     }
 
@@ -418,12 +422,19 @@ class MemoController extends Controller
         $employeeBranch = $employeeInfo->employee->position_now->branch->id;
         $typeMemo = Ref_Type_Memo::find($request->input('typememo'));
 
+        if ($typeMemo->type == 'payment') {
+            $type = true;
+        } else {
+            $type = false;
+        }
+
         $memo = Memo::create([
             'title'                 => $request->input('title'),
             'id_employee'           => $employeeInfo->employee->id,
             'id_type'               => $request->input('typememo'),
             'id_employee2'          => $typeMemo->id_overtake_memo,
-            'confirmed_payment_by' => $typeMemo->id_confirmed_payment_by
+            'confirmed_payment_by' => $typeMemo->id_confirmed_payment_by,
+            'payment'               => $type
         ]);
 
         M_Data_Cost_Total::create([
@@ -437,7 +448,12 @@ class MemoController extends Controller
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
-        D_Memo_Approver::insert($dataDetailInsert);
+
+        if ($typeMemo->type != 'payment') {
+            D_Memo_Approver::insert($dataDetailInsert);
+        } else {
+            D_Payment_Approver::insert($dataDetailInsert);
+        }
 
         // // check with_po
         // if ($typeMemo->with_po) {
@@ -460,63 +476,132 @@ class MemoController extends Controller
 
     public function propose($id)
     {
-        $memo = Memo::where('id', $id)->first();
+        $memo = Memo::where('id', $id)->with('ref_table')->first();
         $employeeInfo = User::getUsersEmployeeInfo();
-        // cek apakah ada approver
-        if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
-            return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
-        }
 
-        $check_history = D_Memo_History::where('id_memo', $id)->get();
-        if ($check_history->count() > 0) {
-            $doc_no = $memo->doc_no;
+        // form payment
+        if ($memo->ref_table->type == 'payment' || $memo->payment == true) {
+            // cek apakah ada approver
+            if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
+                return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
+            }
+
+            if(D_Memo_Payments::where('id_memo', $id)->count() <= 0) {
+                return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have data payment, please fill in the data payment");
+            }
+
+            $check_history = D_Memo_History::where('id_memo', $id)->get();
+            if ($check_history->count() > 0) {
+                $doc_no = $memo->doc_no;
+            } else {
+                $doc_no = $this->generateDocNo();
+            }
+
+            // update status payment menjadi submit
+            Memo::where('id', $id)->update([
+                'status_payment'   => 'submit',
+                'doc_no'   => $doc_no,
+                'po_no'   => $doc_no . '/' . $employeeInfo->employee
+                    ->position_now
+                    ->position->department
+                    ->alias . '/PO',
+                'propose_at' => Carbon::now()
+            ]);
+
+            D_Payment_Approver::where('id_memo', $id)->update([
+                'status'   => 'submit'
+            ]);
+
+            // insert to history where first time submit
+            D_Memo_History::create([
+                'title' => 'Memo Payment Proposed',
+                'id_memo'   => $id,
+                'type'  => 'info',
+                'content' => "Memo Payment successful submitted with document no $doc_no"
+            ]);
+
+            $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            // insert to history frist approval
+            D_Memo_History::create([
+                'title'     => "Process Approving {$firstApprover->idx}",
+                'id_memo'   => $id,
+                'type'      => 'info',
+                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+            ]);
+            $mailApprover = $firstApprover->employee->email;
+            // kirim email ke approver pertama
+            $details = [
+                'subject' => $memo->title,
+                'doc_no'  =>  $doc_no,
+                'type_approver' => $firstApprover->type_approver,
+                'url'     => route('user.memo.approval.payment.detail', $id)
+            ];
+
+            Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
+            // kirim email ke tiap acknowlegde
+            if ($memo->id_employee2 == $employeeInfo->id_employee) {
+                return Redirect::route('user.memo.statustakeoverpaymentbranch.index')->with('success', "Successfull submit memo payment branch.");
+            } else {
+                return Redirect::route('user.memo.statuspayment.index')->with('success', "Successfull submit memo payment.");
+            }
         } else {
-            $doc_no = $this->generateDocNo();
+            // form approval
+            // cek apakah ada approver
+            if (D_Memo_Approver::where('id_memo', $id)->count() <= 0) {
+                return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
+            }
+
+            $check_history = D_Memo_History::where('id_memo', $id)->get();
+            if ($check_history->count() > 0) {
+                $doc_no = $memo->doc_no;
+            } else {
+                $doc_no = $this->generateDocNo();
+            }
+
+            // update status menjadi submit
+            Memo::where('id', $id)->update([
+                'status'   => 'submit',
+                'doc_no'   => $doc_no,
+                'po_no'   => $doc_no . '/' . $employeeInfo->employee
+                    ->position_now
+                    ->position->department
+                    ->alias . '/PO',
+                'propose_at' => Carbon::now()
+            ]);
+
+            D_Memo_Approver::where('id_memo', $id)->update([
+                'status'   => 'submit'
+            ]);
+
+            // insert to history where first time submit
+            D_Memo_History::create([
+                'title' => 'Memo Proposed',
+                'id_memo'   => $id,
+                'type'  => 'info',
+                'content' => "Memo successful submitted with document no $doc_no"
+            ]);
+
+            $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            // insert to history frist approval
+            D_Memo_History::create([
+                'title'     => "Process Approving {$firstApprover->idx}",
+                'id_memo'   => $id,
+                'type'      => 'info',
+                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+            ]);
+            $mailApprover = $firstApprover->employee->email;
+            // kirim email ke approver pertama
+            $details = [
+                'subject' => $memo->title,
+                'doc_no'  =>  $doc_no,
+                'type_approver' => $firstApprover->type_approver,
+                'url'     => route('user.memo.approval.memo.detail', $id)
+            ];
+
+            Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+            // kirim email ke tiap acknowlegde
+            return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
         }
-
-        // update status menjadi submit
-        Memo::where('id', $id)->update([
-            'status'   => 'submit',
-            'doc_no'   => $doc_no,
-            'po_no'   => $doc_no . '/' . $employeeInfo->employee
-                ->position_now
-                ->position->department
-                ->alias . '/PO',
-            'propose_at' => Carbon::now()
-        ]);
-
-        D_Memo_Approver::where('id_memo', $id)->update([
-            'status'   => 'submit'
-        ]);
-
-        // insert to history where first time submit
-        D_Memo_History::create([
-            'title' => 'Memo Proposed',
-            'id_memo'   => $id,
-            'type'  => 'info',
-            'content' => "Memo successful submitted with document no $doc_no"
-        ]);
-
-        $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
-        // insert to history frist approval
-        D_Memo_History::create([
-            'title'     => "Process Approving {$firstApprover->idx}",
-            'id_memo'   => $id,
-            'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
-        ]);
-        $mailApprover = $firstApprover->employee->email;
-        // kirim email ke approver pertama
-        $details = [
-            'subject' => $memo->title,
-            'doc_no'  => $memo->doc_no,
-            'type_approver' => $firstApprover->type_approver,
-            'url'     => route('user.memo.approval.memo.detail', $id)
-        ];
-
-        Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
-        // kirim email ke tiap acknowlegde
-        return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
     }
 
     public function formPayment($id)
@@ -696,7 +781,6 @@ class MemoController extends Controller
 
     public function updatePayment(Request $request, $id, $idpayment)
     {
-        //ddd($request);
         $request->validate([
             'name'              => 'required',
             'bank_name'         => 'required',

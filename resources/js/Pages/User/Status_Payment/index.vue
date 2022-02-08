@@ -97,8 +97,9 @@
                               {{ item.doc_no }}
                               <b-badge
                                 v-if="
-                                  item.payment_at != null &&
-                                  item.ref_table.with_payment == true
+                                item.payment_at != null &&
+                                  (item.ref_table.with_payment == true ||
+                                  item.ref_table.type == 'payment')
                                 "
                                 variant="success"
                               >
@@ -106,8 +107,9 @@
                               </b-badge>
                               <b-badge
                                 v-if="
-                                  item.payment_at == null &&
-                                  item.ref_table.with_payment == true
+                                 item.payment_at == null &&
+                                  (item.ref_table.with_payment == true ||
+                                  item.ref_table.type == 'payment')
                                 "
                                 variant="warning"
                               >

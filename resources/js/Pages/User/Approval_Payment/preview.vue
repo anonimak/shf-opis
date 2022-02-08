@@ -137,7 +137,7 @@
                         </span>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="dataMemo.ref_table.type != 'payment'">
                       <td>Preview PDF Memo Approval</td>
                       <td>
                         <a
@@ -304,8 +304,9 @@
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                  dataMemo.ref_table.with_po == true) &&
-                memocost.length > 0
+                  dataMemo.ref_table.with_po == true ||
+                  dataMemo.ref_table.type == 'payment') &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>

@@ -113,7 +113,11 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
-                    <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                    @if ($memo->propose_at == null)
+                        <td>-</td>
+                    @else
+                        <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                    @endif
                     {{-- <td>{{ $employeeproposeinfo->proposeemployee->firstname." ".$employeeproposeinfo->proposeemployee->lastname }}</td> --}}
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>

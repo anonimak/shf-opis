@@ -455,6 +455,32 @@ class Memo extends Model
         $memo = Self::select('*')
             ->orderBy('id', 'desc')
             ->where('status', '=', $status)
+            ->where(function ($query) {
+                $query->where('payment', '=', false);
+                $query->orWhere('payment', '=', null);
+            })
+            ->where('id_employee', '=', $id_employee);
+        if ($status != 'approve') {
+            // $memo->whereNull('id_employee2');
+        }
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
+    public static function getMemoDraft($id_employee, $status, $search = null)
+    {
+
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', '=', $status)
+            ->where('status_payment', '=', $status)
             ->where('id_employee', '=', $id_employee);
         if ($status != 'approve') {
             // $memo->whereNull('id_employee2');
