@@ -14,7 +14,12 @@ use Carbon\Carbon;
 function generatePDFMemo($id, $fromroute = 'true')
 {
     // $memo = Memo::getMemoDetailDraftEdit($id);
-    $memo = Memo::getMemoDetail($id);
+    $dataMemo = Memo::where('id', $id)->first();
+    if ($dataMemo->propose_at == null) {
+        $memo = Memo::getPaymentDetailApprovers($id);
+    } else {
+        $memo = Memo::getPaymentDetail($id);
+    }
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {

@@ -45,6 +45,14 @@
                         }}</b-badge>
                       </template>
                     </b-tab>
+                    <b-tab>
+                      <template #title>
+                        Revised
+                        <b-badge v-if="counttab.revisi > 0" variant="primary">{{
+                          counttab.revisi
+                        }}</b-badge>
+                      </template>
+                    </b-tab>
                   </b-tabs>
                   <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
@@ -110,12 +118,12 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                              <inertia-link
+                             <inertia-link
                                 v-if="tabIndex == 3"
-                                :href="route(__senddraft, item.id)"
+                                :href="route(__editpayment, item.id)"
                                 class="btn btn-warning btn-sm my-2"
                               >
-                                send to draft
+                                Edit Payment
                               </inertia-link>
                               <inertia-link
                                 :href="route(__webpreview, item.id)"
@@ -185,7 +193,7 @@ export default {
     "__webpreview",
     "__previewpdf",
     "__previewmemopdf",
-    "__senddraft",
+    "__editpayment",
   ],
   metaInfo: { title: "Status Payment Takeover Branch" },
   data() {
