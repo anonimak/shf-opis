@@ -240,7 +240,7 @@
                   </b-form-group>
                 </div>
               </b-row>
-             <b-row v-if="formType == 'payment'">
+              <b-row v-if="formType == 'payment'">
                 <div class="col-5">
                   <b-overlay
                     :show="isSubmitBusy"
@@ -710,7 +710,7 @@ export default {
     }
   },
   watch: {
-   sub_total: function (val) {
+    sub_total: function (val) {
       if (!val) {
         val = 0;
       }
@@ -775,6 +775,9 @@ export default {
       _.each(this.fileRecordsForUpload, (item, index) => {
         form_data.append(`files[${index}]`, item.file);
       });
+      if (this.formType == "payment") {
+        form_data.append("type", "payment");
+      }
       // this.$refs.vueFileAgent.upload(
       //   route(this.__attachment, this.dataMemo.id),
       //   this.uploadHeaders,
@@ -835,7 +838,7 @@ export default {
       this.ppn = this.dataTotalCost.ppn;
       this.grand_total = this.dataTotalCost.grand_total;
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
-     
+
       this.selectedAcknowledge = _.map(
         this.form.acknowledges,
         (acknowledge) => acknowledge.position_now

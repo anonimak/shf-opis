@@ -137,7 +137,7 @@
                         </span>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="dataMemo.ref_table.type != 'payment'">
                       <td>Preview PDF Memo Approval</td>
                       <td>
                         <a

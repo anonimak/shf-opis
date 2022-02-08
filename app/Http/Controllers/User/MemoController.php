@@ -447,7 +447,7 @@ class MemoController extends Controller
         $branch = Branch::select('id')->where('is_head', true)->orWhere('id', $employeeBranch)->get();
         $detail_approver = Ref_Type_Memo::get_ref_module_approver_detail_by_id($memo, $branch);
         $dataDetailInsert = $detail_approver->ref_module_approver_detail->toArray();
-        
+
         if ($typeMemo->type != 'payment') {
             D_Memo_Approver::insert($dataDetailInsert);
         } else {
@@ -475,7 +475,7 @@ class MemoController extends Controller
 
     public function propose($id)
     {
-        $memo = Memo::where('id', $id)->first();
+        $memo = Memo::where('id', $id)->with('ref_table')->first();
         $employeeInfo = User::getUsersEmployeeInfo();
 
         // form payment
