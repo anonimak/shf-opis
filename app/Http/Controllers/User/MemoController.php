@@ -196,6 +196,7 @@ class MemoController extends Controller
             '__webpreview'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
             '__previewpdf'   => 'user.memo.statustakeoverpaymentbranch.preview',
             '__previewmemopdf'   => 'user.memo.statustakeoverpaymentbranch.previewmemo',
+            '__editpayment'   => 'user.memo.statustakeoverpaymentbranch.formpayment',
         ]);
     }
 
