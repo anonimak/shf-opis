@@ -158,12 +158,21 @@
                           v-model="sub_total"
                         ></b-form-input>
                       </b-input-group>
-                      <b-input-group prepend="Pph23 (2%)" class="mb-2 mt-2">
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
                         <b-form-input
-                          aria-label="pph23"
+                          aria-label="pph"
                           v-model="pph"
                           v-on:change="pphValueChange"
                         ></b-form-input>
+                        <b-form-checkbox
+                          v-model="manualInputPph"
+                          class="justify-content-center my-auto ml-2"
+                          :value="true"
+                          :unchecked-value="false"
+                          @change="actionChangeChenckboxManualInput"
+                        >
+                          Manual input Pph
+                        </b-form-checkbox>
                       </b-input-group>
                       <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
                         <b-form-input
@@ -254,12 +263,12 @@
                       :multiple="true"
                       :deletable="true"
                       :meta="true"
-                      :accept="'.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
+                      :accept="'.rar,.zip,.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
                       :maxSize="'25MB'"
                       :maxFiles="10"
-                      :helpText="'Choose images, pdf, excel or word files'"
+                      :helpText="'Choose images, pdf, excel, pdf, rar, or word files'"
                       :errorText="{
-                        type: 'Invalid file type. Only images, excel, pdf and word files allowed',
+                        type: 'Invalid file type. Only images, excel, pdf, rar, zip and word files allowed',
                         size: 'Files should not exceed 25MB in size',
                       }"
                       @select="filesSelected($event)"
@@ -622,6 +631,7 @@ export default {
       pph: 0,
       ppn: 0,
       grand_total: 0,
+      manualInputPph: false,
       colHeaders: this.headerCost,
       dataPositions: [],
       dataPayments: [],
@@ -657,7 +667,8 @@ export default {
         val = 0;
       }
       this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
-      this.pph = 0.02 * parseFloat(val);
+      // this.pph = 0.02 * parseFloat(val);
+      this.pphValueChange(val);
       this.grand_total =
         parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
     },
@@ -766,7 +777,9 @@ export default {
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
     pphValueChange: function (val) {
-      this.pph = 0.02 * parseFloat(val);
+      if (!this.manualInputPph) {
+        this.pph = 0.02 * parseFloat(val);
+      }
     },
     fillForm() {
       //   this.form = { ...this.dataMemo };
@@ -807,6 +820,11 @@ export default {
         .catch((err) => {
           // An error occurred
         });
+    },
+    actionChangeChenckboxManualInput() {
+      if (this.manualInputPph) {
+        this.pph = 0;
+      }
     },
 
     submitUpdate(id) {

@@ -147,12 +147,12 @@
                       :multiple="true"
                       :deletable="true"
                       :meta="true"
-                      :accept="'.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
+                      :accept="'.rar,.zip,.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
                       :maxSize="'25MB'"
                       :maxFiles="10"
-                      :helpText="'Choose images, pdf, excel or word files'"
+                      :helpText="'Choose images, pdf, excel, pdf, rar or word files'"
                       :errorText="{
-                        type: 'Invalid file type. Only images, excel, pdf and word files allowed',
+                        type: 'Invalid file type. Only images, excel, pdf, rar, zip and word files allowed',
                         size: 'Files should not exceed 25MB in size',
                       }"
                       @select="filesSelected($event)"
