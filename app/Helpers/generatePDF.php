@@ -16,9 +16,9 @@ function generatePDFMemo($id, $fromroute = 'true')
     // $memo = Memo::getMemoDetailDraftEdit($id);
     $dataMemo = Memo::where('id', $id)->first();
     if ($dataMemo->propose_at == null) {
-        $memo = Memo::getMemoDetailDraftEdit($id);
+        $memo = Memo::getPaymentDetailApprovers($id);
     } else {
-        $memo = Memo::getMemoDetail($id);
+        $memo = Memo::getPaymentDetail($id);
     }
     $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id);
     $employeeInfo = User::getUsersEmployeeInfo();
