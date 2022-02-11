@@ -343,7 +343,7 @@
             <tbody>
                 @foreach ($dataAttachments as $attachment)
                 <tr>
-                    <td>{{ $attachment->name }}</td>
+                    <td>{{ $attachment->real_name }}</td>
                     <td>{{ ($attachment->type == 'payment')?'payment attachment':'' }}</td>
                 </tr>
                 @endforeach
