@@ -479,7 +479,7 @@ class Memo extends Model
                 }])->with('branch');
             }]);
         }])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->where('status', '=', 'approve')
             ->where('id_employee2', '=', $id_employee);
 
