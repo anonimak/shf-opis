@@ -479,7 +479,7 @@ class Memo extends Model
                 }])->with('branch');
             }]);
         }])
-            ->orderBy('id', 'asc')
+            ->orderByRaw("FIELD(status_payment,'edit','submit','approve','reject','revisi')")
             ->where('status', '=', 'approve')
             ->where('id_employee2', '=', $id_employee);
 
