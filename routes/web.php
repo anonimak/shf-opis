@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,12 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
         Route::post('/{id_type_memo}', 'Super\RefTemplateMemo@storeTemplateCost')->name('store_template_cost');
         Route::put('/{id_type_memo}', 'Super\RefTemplateMemo@updateTemplateCost')->name('update_template_cost');
         Route::delete('/{template_memo}', 'Super\RefTemplateMemo@destroyTemplateCost')->name('destroy_template_cost');
+    });
+
+    // manual action
+    Route::prefix('/action')->name('action.')->group(function () {
+        // send email to after approver
+        Route::get('/email-after-approve-memo/{id_memo}', 'Super\ManualAction@sendEmailAfterApproveMemo')->name('email_after_approve_memo');
     });
 });
 
