@@ -245,7 +245,7 @@
         <br>
         <br>
         @endif
-        @if ( count($memocost) > 0)
+        @if ( count($memocost) > 0 || $dataTotalCost['sub_total'] > 0 )
         <h4>Cost/Expenses</h4>
         <hr>
         <table>
@@ -284,7 +284,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th style="width: 38%; text-align: left;">Pph23 (2%)</th>
+                    <th style="width: 38%; text-align: left;">Pph23</th>
                     <td nowrap>
                         <div style="float: left;">Rp</div>
                         <div style="float: right;">{{ number_format($dataTotalCost['pph'], 2) }}</div>

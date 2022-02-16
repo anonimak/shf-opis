@@ -281,7 +281,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <th style="width: 50%">Pph23 (2%)</th>
+                        <th style="width: 50%">Pph23</th>
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
