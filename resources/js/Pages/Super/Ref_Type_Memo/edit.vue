@@ -226,7 +226,7 @@ export default {
     },
     "form.type": function (val) {
       if (val != 'payment') {
-        this.form.id_overtake = null;
+        // this.form.id_overtake = null;
         if (this.form.with_payment != true) {
           this.form.id_confirmed_payment_by = null;
         }
