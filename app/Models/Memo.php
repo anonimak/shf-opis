@@ -505,7 +505,7 @@ class Memo extends Model
                 }])->with('branch');
             }]);
         }])
-            ->orderBy('id', 'desc')
+            ->orderByRaw("FIELD(status_payment,'edit','submit','approve','reject','revisi')")
             ->where('status', '=', 'approve')
             ->where('id_employee2', '=', $id_employee);
 
@@ -516,6 +516,17 @@ class Memo extends Model
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
         }
+        return $memo;
+    }
+
+    public static function getMemoTakeoverBranchNotif($id_employee)
+    {
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', '=', 'approve')
+            ->where('status_payment', '=', 'edit')
+            ->where('id_employee2', '=', $id_employee);
+
         return $memo;
     }
 

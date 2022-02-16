@@ -66,16 +66,16 @@ class LoginController extends Controller
         if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
             // return redirectWithoutInertia('admin.dashboard');
             $role = auth()->user()->role;
+            $route = RouteServiceProvider::HOME;
             if ($role == 2) {
-                return Redirect()->route(RouteServiceProvider::HOMESUPER);
+                $route = RouteServiceProvider::HOMESUPER;
             } elseif ($role == 1) {
-                return Redirect()->route(RouteServiceProvider::HOMEADMIN);
-            } else {
-                if (session('url.intended')) {
-                    return redirect()->intended(RouteServiceProvider::HOME);
-                }
-                return Redirect()->route(RouteServiceProvider::HOME);
+                $route = RouteServiceProvider::HOMEADMIN;
             }
+            if (session('url.intended')) {
+                return redirect()->intended($route);
+            }
+            return Redirect()->route($route);
         } else {
             return Redirect()->route('login')
                 ->with('error', 'Wrong email or password.');
