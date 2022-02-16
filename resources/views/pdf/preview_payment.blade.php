@@ -171,8 +171,11 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                    {{-- <th>{{ $approver->employee->position_now->position->position_name }}</th> --}}
-                    <th>{{ $approver->employee->emp_history->position->position_name }}</th>
+                        @if($memo->propose_at == null)
+                            <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                        @else
+                            <th>{{ $approver->employee->emp_history->position->position_name }}</th>
+                        @endif
                     @endif
                     @endforeach
                 </tr>
@@ -347,7 +350,7 @@
             <tbody>
                 @foreach ($dataAttachments as $attachment)
                 <tr>
-                    <td>{{ $attachment->name }}</td>
+                    <td>{{ $attachment->real_name }}</td>
                     <td>{{ ($attachment->type == 'payment')?'payment attachment':'' }}</td>
                 </tr>
                 @endforeach
