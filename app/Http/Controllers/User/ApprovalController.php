@@ -497,7 +497,7 @@ class ApprovalController extends Controller
                     ];
                 }
 
-                Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
+                Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             } else {
                 Memo::where('id', $approver->id_memo)->update(['status_payment' => 'approve']);
@@ -548,7 +548,7 @@ class ApprovalController extends Controller
                     'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
                 ];
                 // notif ke user propose
-                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
                 //notif ke confirmer payment
                 Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
             }
