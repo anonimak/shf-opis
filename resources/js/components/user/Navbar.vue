@@ -21,7 +21,7 @@
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
       <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-      <li class="nav-item dropdown no-arrow d-sm-none">
+      <!-- <li class="nav-item dropdown no-arrow d-sm-none">
         <a
           class="nav-link dropdown-toggle"
           href="#"
@@ -33,7 +33,6 @@
         >
           <i class="fas fa-search fa-fw"></i>
         </a>
-        <!-- Dropdown - Messages -->
         <div
           class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
           aria-labelledby="searchDropdown"
@@ -55,7 +54,7 @@
             </div>
           </form>
         </div>
-      </li>
+      </li> -->
 
       <div class="topbar-divider d-none d-sm-block"></div>
 
