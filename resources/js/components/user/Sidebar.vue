@@ -146,6 +146,13 @@ export default {
     }
   },
   mounted() {
+    // hide sidebar if mobile view
+    if (this.isMobile()) {
+      $("body").addClass("sidebar-toggled");
+      $(".sidebar").addClass("toggled");
+      $(".sidebar .collapse").collapse("hide");
+    }
+
     $("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       $("body").toggleClass("sidebar-toggled");
       $(".sidebar").toggleClass("toggled");
