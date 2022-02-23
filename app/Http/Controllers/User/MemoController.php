@@ -312,8 +312,10 @@ class MemoController extends Controller
         $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         if ($memoType->ref_table->type == 'payment') {
             $formType = 'payment';
+            $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'payment')->get();
         } else {
             $formType = 'memo';
+            $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
         }
 
         $memo = Memo::getMemoDetailDraftEdit($id, $formType);
@@ -322,7 +324,7 @@ class MemoController extends Controller
             return $employee->select('id', 'firstname', 'lastname');
         }])->with('position')->get();
 
-        $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
+        // $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
 
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);

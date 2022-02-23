@@ -143,7 +143,7 @@ class ConfirmPaymentController extends Controller
             'message' => "Memo Payment $memo->doc_no has been paid by {$confirmer->firstname} {$confirmer->lastname}"
         ];
 
-        Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+        Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
 
 
         return Redirect::route('user.memo.confirmpayment.index')->with('success', "Successfull Confirmed Payment");
