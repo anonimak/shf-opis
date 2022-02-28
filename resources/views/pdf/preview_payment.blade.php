@@ -115,7 +115,11 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
-                    <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                    @if ($memo->propose_at == null)
+                        <td>-</td>
+                    @else
+                        <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                    @endif
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
@@ -167,8 +171,11 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                    {{-- <th>{{ $approver->employee->position_now->position->position_name }}</th> --}}
-                    <th>{{ $approver->employee->emp_history->position->position_name }}</th>
+                        @if($memo->propose_at == null)
+                            <th>{{ $approver->employee->position_now->position->position_name }}</th>
+                        @else
+                            <th>{{ $approver->employee->emp_history->position->position_name }}</th>
+                        @endif
                     @endif
                     @endforeach
                 </tr>
@@ -238,7 +245,7 @@
         <br>
         <br>
         @endif
-        @if ( count($memocost) > 0)
+        @if ( count($memocost) > 0 || $dataTotalCost['sub_total'] > 0 )
         <h4>Cost/Expenses</h4>
         <hr>
         <table>
@@ -277,7 +284,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th style="width: 38%; text-align: left;">Pph23 (2%)</th>
+                    <th style="width: 38%; text-align: left;">Pph23</th>
                     <td nowrap>
                         <div style="float: left;">Rp</div>
                         <div style="float: right;">{{ number_format($dataTotalCost['pph'], 2) }}</div>

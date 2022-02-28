@@ -96,7 +96,12 @@ function generatePDFPo($id, $fromroute = 'true')
 function generatePDFPayment($id, $fromroute = 'true')
 {
     // $memo = Memo::getPaymentDetailApprovers($id);
-    $memo = Memo::getPaymentDetail($id);
+    $dataMemo = Memo::where('id', $id)->first();
+    if ($dataMemo->propose_at == null) {
+        $memo = Memo::getPaymentDetailApprovers($id);
+    } else {
+        $memo = Memo::getPaymentDetail($id);
+    }
     $employeeInfo = User::getUsersEmployeeInfo();
 
     $employeeProposeInfo = ($memo->id_employee2) ? Memo::getMemoDetailEmployeePropose($id, true) : Memo::getMemoDetailEmployeePropose($id);
