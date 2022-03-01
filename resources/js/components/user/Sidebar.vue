@@ -46,7 +46,7 @@ export default {
           title: "Memo",
           link: "#",
           icon: "fas fa-fw fa-clipboard",
-          badge: this.notif.confirmed_paymentmemo,
+          badge: this.notif.confirmed_paymentmemo || this.notif.memo_branch,
           child: [
             {
               title: "New Memo",
@@ -127,6 +127,7 @@ export default {
           title: "Status Memo Branch",
           link: "user.memo.statustakeovermemobranch.*",
           index: "user.memo.statustakeovermemobranch.index",
+          badge: this.notif.memo_branch,
         },
         {
           title: "Status Payment Branch",
@@ -145,6 +146,13 @@ export default {
     }
   },
   mounted() {
+    // hide sidebar if mobile view
+    if (this.isMobile()) {
+      $("body").addClass("sidebar-toggled");
+      $(".sidebar").addClass("toggled");
+      $(".sidebar .collapse").collapse("hide");
+    }
+
     $("#sidebarToggle, #sidebarToggleTop").on("click", function (e) {
       $("body").toggleClass("sidebar-toggled");
       $(".sidebar").toggleClass("toggled");
