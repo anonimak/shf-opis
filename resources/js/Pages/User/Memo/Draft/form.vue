@@ -265,7 +265,7 @@
                           v-model="sub_total"
                         ></b-form-input>
                       </b-input-group>
-                        <b-input-group prepend="Pph 23" class="mb-2 mt-2">
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
                         <b-form-input
                           aria-label="pph"
                           v-model="pph"
@@ -912,13 +912,6 @@ export default {
         // arrayCost = _.pickBy(arrayCost, _.identity);
         // if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
         this.submitState = true;
-<<<<<<< HEAD
-        console.log(this.dataInvoices);
-        // this.form.sub_total = this.sub_total;
-        // this.form.pph = this.pph;
-        // this.form.ppn = this.ppn;
-        // this.form.grand_total = this.grand_total;
-=======
         // payment
         this.form.sub_total = this.sub_total;
         this.form.pph = this.pph;
@@ -927,7 +920,6 @@ export default {
         this.isSubmitBusy = true;
         this.isTableApproverbusy = true;
 
->>>>>>> aa4c18e9992afb517c7a19906d92cbc4d121a25e
         this.$inertia
           .post(route(this.__update, this.dataMemo.id), this.form)
           .then(() => {
