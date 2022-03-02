@@ -207,8 +207,8 @@
               v-model="invoice.npwp"
               @change="actionCheckNpwp(idx)"
               name="checkbox-npwp"
-              :value="true"
-              :unchecked-value="false"
+              :value="false"
+              :unchecked-value="true"
             >
               non NPWP
             </b-form-checkbox>
@@ -459,7 +459,7 @@
                 no-caret
               >
                 <template #button-content>
-                  new item
+                  add tax
                   <i class="fa fa-plus" aria-hidden="true"></i>
                 </template>
                 <b-dropdown-item
