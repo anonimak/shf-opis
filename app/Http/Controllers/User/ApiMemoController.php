@@ -111,7 +111,7 @@ class ApiMemoController extends Controller
             'no_invoice' => '',
             'id_memo' => $id,
             'ppn' => false,
-            'npwp' => false,
+            'npwp' => true,
             'grossup' => false,
             'pph' => 'none',
             'others' => '[]',

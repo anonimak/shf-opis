@@ -296,7 +296,7 @@
                         <tr>
                             <td style="border: 0pt;text-align: left">Non NPWP</td>
                             <td style="border: 0pt;text-align: left">:</td>
-                            <td style="border: 0pt;text-align: left">{{ (!$invoice->npwp)? '☐' : '☑' }}</td>
+                            <td style="border: 0pt;text-align: left">{{ ($invoice->npwp)? '☐' : '☑' }}</td>
                         </tr>
                         <tr>
                             <td style="border: 0pt;text-align: left">Gross Up</td>
