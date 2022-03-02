@@ -397,6 +397,7 @@ class MemoController extends Controller
             'doc_no'   => $request->input('doc_no'),
             'background'        => $request->input('background'),
             'orientation_paper' => $request->input('orientation_paper'),
+            'is_cost_invoice'   => $request->input('is_cost_invoice'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
             'payment'           => $request->input('payment'),
@@ -488,7 +489,7 @@ class MemoController extends Controller
                 return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
             }
 
-            if(D_Memo_Payments::where('id_memo', $id)->count() <= 0) {
+            if (D_Memo_Payments::where('id_memo', $id)->count() <= 0) {
                 return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have data payment, please fill in the data payment");
             }
 

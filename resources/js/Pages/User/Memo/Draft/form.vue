@@ -234,6 +234,16 @@
                     label-for="input-text"
                     class="mb-4"
                   >
+                    <b-form-checkbox
+                      id="checkbox-1"
+                      v-model="form.is_cost_invoice"
+                      name="checkbox-1"
+                      :value="true"
+                      :unchecked-value="false"
+                      class="mb-2"
+                    >
+                      use Cost Invoice
+                    </b-form-checkbox>
                     <form-invoice
                       v-if="form.is_cost_invoice"
                       :id_memo="dataMemo.id"

@@ -1,320 +1,358 @@
 <template>
-  <b-col>
-    <b-col v-for="(invoice, idx) in dataInvoices" :key="idx" class="my-5">
-      <b-row class="my-2">
-        <b-col sm="4" md="2">
-          <b-form-input
-            v-model="invoice.no_invoice"
-            @change="updateInvoice(idx, invoice.id)"
-            placeholder="No Invoice"
-          ></b-form-input>
-        </b-col>
-        <b-col>
-          <b-button
-            v-if="idx >= 0"
-            class="mx-auto float-right"
-            variant="outline-secondary"
-            size="sm"
-            @click="deleteInvoice(idx, invoice.id)"
-          >
-            <i class="fa fa-times" aria-hidden="true"></i> Remove Invoice
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row class="mb-4">
-        <b-col>
-          <table class="table table-bordered">
-            <thead class="thead-light">
-              <tr>
-                <th scope="col" class="">Description</th>
-                <th scope="col">Description 2</th>
-                <th scope="col" class="text-right">Price</th>
-                <th scope="col">Qty</th>
-                <th scope="col">Type</th>
-                <th scope="col" class="text-right">Total</th>
-                <th scope="col">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(item, index) in invoice.item_invoices"
-                :key="index"
-                @click="editMode(index, idx)"
-              >
-                <td @click="editMode(index, idx)">
-                  <b-form-textarea
-                    v-if="editRow == index && editInvoice == idx"
-                    v-model="item.description"
-                    @change="submitItemInvoice(index, idx, 'description')"
-                    placeholder="Description"
-                    rows="1"
-                    size="sm"
-                  ></b-form-textarea>
-                  <p v-else>
-                    {{ item.description }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)">
-                  <b-form-textarea
-                    v-if="editRow == index && editInvoice == idx"
-                    v-model="item.description2"
-                    @change="submitItemInvoice(index, idx, 'description2')"
-                    placeholder="Description 2"
-                    rows="1"
-                    size="sm"
-                  ></b-form-textarea>
-                  <p v-else>
-                    {{ item.description2 }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)" class="text-right">
-                  <vue-numeric
-                    v-if="editRow == index && editInvoice == idx"
-                    @change="submitItemInvoice(index, idx, 'price')"
-                    class="form-control form-control-sm"
-                    currency="Rp"
-                    thousand-separator="."
-                    decimal-separator=","
-                    v-bind:precision="2"
-                    :empty-value="0"
-                    v-model="item.price"
-                  ></vue-numeric>
-                  <!-- <b-form-input
+  <b-row>
+    <b-col cols="12" v-if="isLoadingData">
+      <b-skeleton animation="fade" width="15%"></b-skeleton>
+      <b-skeleton animation="fade" width="100%"></b-skeleton>
+      <b-skeleton animation="fade" width="80%"></b-skeleton>
+      <b-skeleton animation="fade" width="100%"></b-skeleton>
+      <b-skeleton class="float-right" animation="fade" width="30%"></b-skeleton>
+    </b-col>
+    <b-col v-else>
+      <b-col
+        v-for="(invoice, idx) in dataInvoices"
+        :key="idx"
+        :class="isEditMode ? 'my-5' : 'mb-5'"
+      >
+        <b-row class="my-2">
+          <b-col sm="4" md="2">
+            <b-form-input
+              v-model="invoice.no_invoice"
+              @change="updateInvoice(idx, invoice.id)"
+              placeholder="No Invoice"
+              :readonly="!isEditMode"
+            ></b-form-input>
+          </b-col>
+          <b-col>
+            <b-button
+              v-if="idx >= 0 && isEditMode"
+              class="mx-auto float-right"
+              variant="outline-secondary"
+              size="sm"
+              @click="deleteInvoice(idx, invoice.id)"
+            >
+              <i class="fa fa-times" aria-hidden="true"></i> Remove Invoice
+            </b-button>
+          </b-col>
+        </b-row>
+        <b-row class="mb-4">
+          <b-col>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="">Description</th>
+                    <th scope="col">Description 2</th>
+                    <th scope="col" class="text-right">Price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Type</th>
+                    <th scope="col" class="text-right">Total</th>
+                    <th v-if="isEditMode" scope="col">#</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(item, index) in invoice.item_invoices"
+                    :key="index"
+                    @click="editMode(index, idx)"
+                  >
+                    <td @click="editMode(index, idx)">
+                      <b-form-textarea
+                        v-if="editRow == index && editInvoice == idx"
+                        v-model="item.description"
+                        @change="submitItemInvoice(index, idx, 'description')"
+                        placeholder="Description"
+                        rows="1"
+                        size="sm"
+                      ></b-form-textarea>
+                      <p v-else>
+                        {{ item.description }}
+                      </p>
+                    </td>
+                    <td @click="editMode(index, idx)">
+                      <b-form-textarea
+                        v-if="editRow == index && editInvoice == idx"
+                        v-model="item.description2"
+                        @change="submitItemInvoice(index, idx, 'description2')"
+                        placeholder="Description 2"
+                        rows="1"
+                        size="sm"
+                      ></b-form-textarea>
+                      <p v-else>
+                        {{ item.description2 }}
+                      </p>
+                    </td>
+                    <td @click="editMode(index, idx)" class="text-right">
+                      <vue-numeric
+                        v-if="editRow == index && editInvoice == idx"
+                        @change="submitItemInvoice(index, idx, 'price')"
+                        class="form-control form-control-sm"
+                        currency="Rp"
+                        thousand-separator="."
+                        decimal-separator=","
+                        v-bind:precision="2"
+                        :empty-value="0"
+                        v-model="item.price"
+                      ></vue-numeric>
+                      <!-- <b-form-input
                     v-if="editRow == index && editInvoice == idx"
                     v-model="item.price"
                     @change="submitItemInvoice(index, idx, invoice.id)"
                     placeholder="Price"
                     size="sm"
                   ></b-form-input> -->
-                  <p v-else>
-                    {{ item.price | currency }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)" style="width: 7%">
-                  <vue-numeric
-                    v-if="editRow == index && editInvoice == idx"
-                    @change="submitItemInvoice(index, idx, 'qty')"
-                    class="form-control form-control-sm"
-                    :empty-value="0"
-                    thousand-separator="."
-                    v-model="item.qty"
-                  ></vue-numeric>
-                  <p v-else>
-                    {{ item.qty }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)">
-                  <b-form-group v-if="editRow == index && editInvoice == idx">
-                    <b-form-radio
-                      v-model="item.type"
-                      @change="submitItemInvoice(index, idx, 'type')"
-                      value="barang"
-                      >barang</b-form-radio
-                    >
-                    <b-form-radio
-                      v-model="item.type"
-                      @change="submitItemInvoice(index, idx, 'type')"
-                      value="jasa"
-                      >jasa</b-form-radio
-                    >
-                  </b-form-group>
-                  <p v-else>
-                    {{ item.type }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)" class="text-right">
-                  <vue-numeric
-                    v-if="editRow == index && editInvoice == idx"
-                    class="form-control form-control-sm"
-                    currency="Rp"
-                    separator="."
-                    :empty-value="0"
-                    :value="item.qty * item.price"
-                    read-only
-                    placeholder="Total"
-                  ></vue-numeric>
-                  <p v-else>
-                    {{ (item.qty * item.price) | currency }}
-                  </p>
-                </td>
-                <td @click="editMode(index, idx)">
-                  <b-col
-                    v-if="editRow == index && editInvoice == idx"
-                    class="px-auto"
-                  >
-                    <b-button
-                      variant="outline-secondary"
-                      size="sm"
-                      @click="deleteItemInvoice(idx, index, item.id)"
-                    >
-                      <i class="fa fa-trash" aria-hidden="true"></i>
-                    </b-button>
-                  </b-col>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="7" class="p-0">
-                  <div
-                    class="col px-0 bg-secondary"
-                    style="height: 5px"
-                    :id="'btnAddInvoice' + invoice.id"
-                    @mouseover="onMouseOverTableInvoice"
-                    @mouseleave="onMouseLeaveTableInvoice"
-                  >
-                    <div
-                      v-b-tooltip.hover
-                      title="add item"
-                      class="
-                        round-box
-                        d-none
-                        align-items-center
-                        justify-content-center
-                      "
-                      @click="addItemInvoice(idx)"
-                    >
-                      <i class="fa fa-plus" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="row justify-content-center mt-0"></div>
-        </b-col>
-      </b-row>
-      <b-row align-h="end">
-        <b-col md="6" lg="1">
-          <b-form-checkbox
-            v-model="invoice.npwp"
-            @change="actionCheckNpwp(idx)"
-            name="checkbox-npwp"
-            :value="false"
-            :unchecked-value="true"
-          >
-            non NPWP
-          </b-form-checkbox>
-          <b-form-checkbox
-            v-model="invoice.grossup"
-            @change="actionCheckGrossUp(idx)"
-            name="checkbox-grossup"
-            :value="true"
-            :unchecked-value="false"
-          >
-            Gross Up
-          </b-form-checkbox>
-        </b-col>
-        <b-col md="6" lg="3">
-          <table class="table table-bordered mb-0">
-            <tbody>
-              <tr class="text-right">
-                <td>Total Barang</td>
-                <td>
-                  {{
-                    sumItemInvoiceBy(idx, "barang")
-                      ? sumItemInvoiceBy(idx, "barang")
-                      : "-" | currency
-                  }}
-                </td>
-              </tr>
-              <tr class="text-right">
-                <td>Total Jasa</td>
-                <td>
-                  {{
-                    sumItemInvoiceBy(idx, "jasa")
-                      ? sumItemInvoiceBy(idx, "jasa")
-                      : "-" | currency
-                  }}
-                </td>
-              </tr>
-              <tr class="text-right font-weight-bold bg-light">
-                <td>Sub Total</td>
-                <td>
-                  {{
-                    (sumItemInvoiceBy(idx, "barang") +
-                      sumItemInvoiceBy(idx, "jasa"))
-                      | currency
-                  }}
-                </td>
-              </tr>
-              <tr class="text-right" v-if="invoice.grossup">
-                <td>Total Jasa Gross Up</td>
-                <td>
-                  <div class="d-flex align-items-center justify-content-center">
-                    <vue-numeric
-                      class="form-control form-control-sm"
-                      @change="actionOnChange(idx)"
-                      currency="Rp"
-                      thousand-separator="."
-                      decimal-separator=","
-                      v-bind:precision="2"
-                      :empty-value="0"
-                      v-model="invoice.grossup_value"
-                    ></vue-numeric>
-                    <b-dropdown variant="none" size="sm" no-caret>
-                      <template #button-content>
-                        <span class="fas fa-ellipsis-v"> </span>
-                      </template>
-                      <b-dropdown-item @click="countTotal(idx, true, false)">
-                        reset
-                      </b-dropdown-item>
-                    </b-dropdown>
-                  </div>
-                </td>
-              </tr>
-              <tr class="text-right" v-if="invoice.ppn">
-                <td>PPN</td>
-                <td>
-                  <div class="d-flex align-items-center justify-content-center">
-                    <vue-numeric
-                      class="form-control form-control-sm"
-                      @change="actionOnChange(idx)"
-                      currency="Rp"
-                      thousand-separator="."
-                      decimal-separator=","
-                      v-bind:precision="2"
-                      :empty-value="0"
-                      v-model="invoice.ppn_value"
-                    ></vue-numeric>
-                    <b-dropdown variant="none" size="sm" no-caret>
-                      <template #button-content>
-                        <span class="fas fa-ellipsis-v"> </span>
-                      </template>
-                      <b-dropdown-item @click="countTotal(idx, false, true)">
-                        reset
-                      </b-dropdown-item>
-                    </b-dropdown>
-                  </div>
-                </td>
-              </tr>
-              <tr class="text-right" v-if="invoice.pph">
-                <td v-if="invoice.pph == 'pph21'">Pph 21</td>
-                <td v-if="invoice.pph == 'pph23'">Pph 23</td>
-                <td v-if="invoice.pph == 'pph4_2_kon'">
-                  Pph 4(2) Konstruksi(non klasifikasi)
-                </td>
-                <td v-if="invoice.pph == 'pph4_2_kon_klas'">
-                  Pph 4(2) Konstruksi (klasifikasi)
-                </td>
-                <td v-if="invoice.pph == 'pph4_2_rent'">
-                  Pph 4(2) Sewa & Utility
-                </td>
-                <td v-if="invoice.pph != 'none'">
-                  <vue-numeric
-                    v-if="invoice.pph == 'pph21'"
-                    class="form-control form-control-sm"
-                    @change="actionOnChange(idx)"
-                    currency="Rp"
-                    thousand-separator="."
-                    decimal-separator=","
-                    v-bind:precision="2"
-                    :empty-value="0"
-                    v-model="invoice.pph_value"
-                  ></vue-numeric>
-                  <span v-else>
-                    {{ invoice.pph_value | currency }}
-                  </span>
-                </td>
-                <!-- <td v-if="invoice.pph == 'pph23'">
+                      <p v-else>
+                        {{ item.price | currency }}
+                      </p>
+                    </td>
+                    <td @click="editMode(index, idx)" style="width: 7%">
+                      <vue-numeric
+                        v-if="editRow == index && editInvoice == idx"
+                        @change="submitItemInvoice(index, idx, 'qty')"
+                        class="form-control form-control-sm"
+                        :empty-value="0"
+                        thousand-separator="."
+                        v-model="item.qty"
+                      ></vue-numeric>
+                      <p v-else>
+                        {{ item.qty }}
+                      </p>
+                    </td>
+                    <td @click="editMode(index, idx)">
+                      <b-form-group
+                        v-if="editRow == index && editInvoice == idx"
+                      >
+                        <b-form-radio
+                          v-model="item.type"
+                          @change="submitItemInvoice(index, idx, 'type')"
+                          value="barang"
+                          >barang</b-form-radio
+                        >
+                        <b-form-radio
+                          v-model="item.type"
+                          @change="submitItemInvoice(index, idx, 'type')"
+                          value="jasa"
+                          >jasa</b-form-radio
+                        >
+                      </b-form-group>
+                      <p v-else>
+                        {{ item.type }}
+                      </p>
+                    </td>
+                    <td @click="editMode(index, idx)" class="text-right">
+                      <vue-numeric
+                        v-if="editRow == index && editInvoice == idx"
+                        class="form-control form-control-sm"
+                        currency="Rp"
+                        separator="."
+                        :empty-value="0"
+                        :value="item.qty * item.price"
+                        read-only
+                        placeholder="Total"
+                      ></vue-numeric>
+                      <p v-else>
+                        {{ (item.qty * item.price) | currency }}
+                      </p>
+                    </td>
+                    <td v-if="isEditMode" @click="editMode(index, idx)">
+                      <b-col
+                        v-if="editRow == index && editInvoice == idx"
+                        class="px-auto"
+                      >
+                        <b-button
+                          variant="outline-secondary"
+                          size="sm"
+                          @click="deleteItemInvoice(idx, index, item.id)"
+                        >
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </b-button>
+                      </b-col>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="7" class="p-0">
+                      <div
+                        v-if="isEditMode"
+                        class="col px-0 bg-secondary"
+                        style="height: 5px"
+                        :id="'btnAddInvoice' + invoice.id"
+                        @mouseover="onMouseOverTableInvoice"
+                        @mouseleave="onMouseLeaveTableInvoice"
+                      >
+                        <div
+                          v-b-tooltip.hover
+                          title="add item"
+                          class="
+                            round-box
+                            d-none
+                            align-items-center
+                            justify-content-center
+                          "
+                          @click="addItemInvoice(idx)"
+                        >
+                          <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-center mt-0"></div>
+          </b-col>
+        </b-row>
+        <b-row align-h="end">
+          <b-col md="6" lg="1">
+            <b-form-checkbox
+              :disabled="!isEditMode"
+              v-model="invoice.npwp"
+              @change="actionCheckNpwp(idx)"
+              name="checkbox-npwp"
+              :value="false"
+              :unchecked-value="true"
+            >
+              non NPWP
+            </b-form-checkbox>
+            <b-form-checkbox
+              :disabled="!isEditMode"
+              v-model="invoice.grossup"
+              @change="actionCheckGrossUp(idx)"
+              name="checkbox-grossup"
+              :value="true"
+              :unchecked-value="false"
+            >
+              Gross Up
+            </b-form-checkbox>
+          </b-col>
+          <b-col md="6" lg="3">
+            <div class="table-responsive">
+              <table class="table table-bordered mb-0">
+                <tbody>
+                  <tr class="text-right">
+                    <td>Total Barang</td>
+                    <td>
+                      {{
+                        sumItemInvoiceBy(idx, "barang")
+                          ? sumItemInvoiceBy(idx, "barang")
+                          : "-" | currency
+                      }}
+                    </td>
+                  </tr>
+                  <tr class="text-right">
+                    <td>Total Jasa</td>
+                    <td>
+                      {{
+                        sumItemInvoiceBy(idx, "jasa")
+                          ? sumItemInvoiceBy(idx, "jasa")
+                          : "-" | currency
+                      }}
+                    </td>
+                  </tr>
+                  <tr class="text-right font-weight-bold bg-light">
+                    <td>Sub Total</td>
+                    <td>
+                      {{
+                        (sumItemInvoiceBy(idx, "barang") +
+                          sumItemInvoiceBy(idx, "jasa"))
+                          | currency
+                      }}
+                    </td>
+                  </tr>
+                  <tr class="text-right" v-if="invoice.grossup">
+                    <td>Total Jasa Gross Up</td>
+                    <td>
+                      <div
+                        v-if="isEditMode"
+                        class="d-flex align-items-center justify-content-center"
+                      >
+                        <vue-numeric
+                          class="form-control form-control-sm"
+                          @change="actionOnChange(idx)"
+                          currency="Rp"
+                          thousand-separator="."
+                          decimal-separator=","
+                          v-bind:precision="2"
+                          :empty-value="0"
+                          v-model="invoice.grossup_value"
+                        ></vue-numeric>
+                        <b-dropdown variant="none" size="sm" no-caret>
+                          <template #button-content>
+                            <span class="fas fa-ellipsis-v"> </span>
+                          </template>
+                          <b-dropdown-item
+                            @click="countTotal(idx, true, false)"
+                          >
+                            reset
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <span v-else>
+                        {{ invoice.grossup_value | currency }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="text-right" v-if="invoice.ppn">
+                    <td>PPN</td>
+                    <td>
+                      <div
+                        v-if="isEditMode"
+                        class="d-flex align-items-center justify-content-center"
+                      >
+                        <vue-numeric
+                          class="form-control form-control-sm"
+                          @change="actionOnChange(idx)"
+                          currency="Rp"
+                          thousand-separator="."
+                          decimal-separator=","
+                          v-bind:precision="2"
+                          :empty-value="0"
+                          :aria-readonly="true"
+                          v-model="invoice.ppn_value"
+                        ></vue-numeric>
+                        <b-dropdown variant="none" size="sm" no-caret>
+                          <template #button-content>
+                            <span class="fas fa-ellipsis-v"> </span>
+                          </template>
+                          <b-dropdown-item
+                            @click="countTotal(idx, false, true)"
+                          >
+                            reset
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <span v-else>
+                        {{ invoice.ppn_value | currency }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="text-right" v-if="invoice.pph">
+                    <td v-if="invoice.pph == 'pph21'">Pph 21</td>
+                    <td v-if="invoice.pph == 'pph23'">Pph 23</td>
+                    <td v-if="invoice.pph == 'pph4_2_kon'">
+                      Pph 4(2) Konstruksi(non klasifikasi)
+                    </td>
+                    <td v-if="invoice.pph == 'pph4_2_kon_klas'">
+                      Pph 4(2) Konstruksi (klasifikasi)
+                    </td>
+                    <td v-if="invoice.pph == 'pph4_2_rent'">
+                      Pph 4(2) Sewa & Utility
+                    </td>
+                    <td v-if="invoice.pph != 'none'">
+                      <vue-numeric
+                        v-if="invoice.pph == 'pph21' && isEditMode"
+                        class="form-control form-control-sm"
+                        @change="actionOnChange(idx)"
+                        currency="Rp"
+                        thousand-separator="."
+                        decimal-separator=","
+                        v-bind:precision="2"
+                        :empty-value="0"
+                        v-model="invoice.pph_value"
+                      ></vue-numeric>
+                      <span v-else>
+                        {{ invoice.pph_value | currency }}
+                      </span>
+                    </td>
+                    <!-- <td v-if="invoice.pph == 'pph23'">
                   {{ -Math.abs(countPph23(idx)) | currency }}
                 </td>
                 <td v-if="invoice.pph == 'pph21'">{{ countPph21(idx) }}</td>
@@ -327,151 +365,170 @@
                 <td v-if="invoice.pph == 'pph4_2_rent'">
                   {{ countPph4_2_rent(idx) | currency }}
                 </td> -->
-              </tr>
-            </tbody>
-            <tbody v-if="invoice.others">
-              <tr
-                class="text-right"
-                v-for="(item, index) in invoice.others"
-                :key="index"
-              >
-                <td>
-                  <b-input
-                    type="text"
-                    size="sm"
-                    v-model="item.title"
-                    @change="countTotal(idx)"
-                    placeholder="item other"
-                  />
-                </td>
-                <td>
-                  <div class="d-flex align-items-center justify-content-center">
-                    <vue-numeric
-                      class="form-control form-control-sm"
-                      currency="Rp"
-                      thousand-separator="."
-                      decimal-separator=","
-                      v-bind:precision="2"
-                      v-model="item.value"
-                      @change="countTotal(idx)"
-                    ></vue-numeric>
-                    <b-dropdown variant="none" size="sm" no-caret>
-                      <template #button-content>
-                        <span class="fas fa-ellipsis-v"> </span>
-                      </template>
-                      <b-dropdown-item @click="removeOthers(idx, item.index)">
-                        remove
-                      </b-dropdown-item>
-                    </b-dropdown>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td colspan="2" class="p-0">
-                  <div
-                    class="col px-0 bg-secondary"
-                    style="height: 5px; cursor: pointer"
-                    :id="'btnAddInvoice' + invoice.id"
-                    @mouseover="onMouseOverTableInvoice"
-                    @mouseleave="onMouseLeaveTableInvoice"
+                  </tr>
+                </tbody>
+                <tbody v-if="invoice.others">
+                  <tr
+                    class="text-right"
+                    v-for="(item, index) in invoice.others"
+                    :key="index"
                   >
-                    <div
-                      v-b-tooltip.hover
-                      title="add others"
-                      class="
-                        round-box
-                        d-none
-                        align-items-center
-                        justify-content-center
-                      "
-                      @click="addOthers(idx)"
-                    >
-                      <i class="fa fa-plus" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr class="text-right font-weight-bold bg-dark text-white">
-                <td>Total</td>
-                <td>
-                  {{ invoice.total | currency }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="row justify-content-center my-2">
-            <b-dropdown variant="secondary" size="sm" no-caret>
-              <template #button-content>
-                new item
-                <i class="fa fa-plus" aria-hidden="true"></i>
-              </template>
-              <b-dropdown-item
-                :active="invoice.ppn"
-                @click="actioncheckItem(idx, 'ppn')"
-                >PPN</b-dropdown-item
+                    <td>
+                      <b-input
+                        v-if="isEditMode"
+                        type="text"
+                        size="sm"
+                        v-model="item.title"
+                        @change="countTotal(idx)"
+                        placeholder="item other"
+                      />
+                      <span v-else> {{ item.title }} </span>
+                    </td>
+                    <td>
+                      <div
+                        v-if="isEditMode"
+                        class="d-flex align-items-center justify-content-center"
+                      >
+                        <vue-numeric
+                          class="form-control form-control-sm"
+                          currency="Rp"
+                          thousand-separator="."
+                          decimal-separator=","
+                          v-bind:precision="2"
+                          v-model="item.value"
+                          @change="countTotal(idx)"
+                        ></vue-numeric>
+                        <b-dropdown variant="none" size="sm" no-caret>
+                          <template #button-content>
+                            <span class="fas fa-ellipsis-v"> </span>
+                          </template>
+                          <b-dropdown-item
+                            @click="removeOthers(idx, item.index)"
+                          >
+                            remove
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </div>
+                      <span v-else>
+                        {{ item.value | currency }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td colspan="2" class="p-0">
+                      <div
+                        v-if="isEditMode"
+                        class="col px-0 bg-secondary"
+                        style="height: 5px; cursor: pointer"
+                        :id="'btnAddInvoice' + invoice.id"
+                        @mouseover="onMouseOverTableInvoice"
+                        @mouseleave="onMouseLeaveTableInvoice"
+                      >
+                        <div
+                          v-b-tooltip.hover
+                          title="add others"
+                          class="
+                            round-box
+                            d-none
+                            align-items-center
+                            justify-content-center
+                          "
+                          @click="addOthers(idx)"
+                        >
+                          <i class="fa fa-plus" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="text-right font-weight-bold bg-dark text-white">
+                    <td>Total</td>
+                    <td>
+                      {{ invoice.total | currency }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-center my-2">
+              <b-dropdown
+                v-if="isEditMode"
+                variant="secondary"
+                size="sm"
+                no-caret
               >
-              <b-dropdown-item
-                :active="invoice.pph == 'pph21'"
-                @click="actioncheckItem(idx, 'pph21')"
-                >Pph 21</b-dropdown-item
-              >
-              <b-dropdown-item
-                :active="invoice.pph == 'pph23'"
-                @click="actioncheckItem(idx, 'pph23')"
-                >Pph 23</b-dropdown-item
-              >
-              <b-dropdown-item
-                disabled
-                class="bg-light text-white"
-                :active="
-                  invoice.pph == 'pph4_2_kon' ||
-                  invoice.pph == 'pph4_2_kon_klas' ||
-                  invoice.pph == 'pph4_2_rent'
-                "
-                >Pph 4(2)</b-dropdown-item
-              >
-              <b-dropdown-item
-                class="ml-2"
-                :active="invoice.pph == 'pph4_2_kon_klas'"
-                @click="actioncheckItem(idx, 'pph4_2_kon_klas')"
-                >Konstruksi (klasifikasi)</b-dropdown-item
-              >
-              <b-dropdown-item
-                class="ml-2"
-                :active="invoice.pph == 'pph4_2_kon'"
-                @click="actioncheckItem(idx, 'pph4_2_kon')"
-                >Konstruksi (nonklasifikasi)</b-dropdown-item
-              >
-              <b-dropdown-item
-                class="ml-2"
-                :active="invoice.pph == 'pph4_2_rent'"
-                @click="actioncheckItem(idx, 'pph4_2_rent')"
-                >Sewa & Utility</b-dropdown-item
-              >
-              <!-- <b-dropdown-divider></b-dropdown-divider> -->
-              <!-- <b-dropdown-item>Other</b-dropdown-item> -->
-            </b-dropdown>
-            <!-- <b-button variant="secondary" size="sm">
+                <template #button-content>
+                  new item
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </template>
+                <b-dropdown-item
+                  :active="invoice.ppn"
+                  @click="actioncheckItem(idx, 'ppn')"
+                  >PPN</b-dropdown-item
+                >
+                <b-dropdown-item
+                  :active="invoice.pph == 'pph21'"
+                  @click="actioncheckItem(idx, 'pph21')"
+                  >Pph 21</b-dropdown-item
+                >
+                <b-dropdown-item
+                  :active="invoice.pph == 'pph23'"
+                  @click="actioncheckItem(idx, 'pph23')"
+                  >Pph 23</b-dropdown-item
+                >
+                <b-dropdown-item
+                  disabled
+                  class="bg-light text-white"
+                  :active="
+                    invoice.pph == 'pph4_2_kon' ||
+                    invoice.pph == 'pph4_2_kon_klas' ||
+                    invoice.pph == 'pph4_2_rent'
+                  "
+                  >Pph 4(2)</b-dropdown-item
+                >
+                <b-dropdown-item
+                  class="ml-2"
+                  :active="invoice.pph == 'pph4_2_kon_klas'"
+                  @click="actioncheckItem(idx, 'pph4_2_kon_klas')"
+                  >Konstruksi (klasifikasi)</b-dropdown-item
+                >
+                <b-dropdown-item
+                  class="ml-2"
+                  :active="invoice.pph == 'pph4_2_kon'"
+                  @click="actioncheckItem(idx, 'pph4_2_kon')"
+                  >Konstruksi (nonklasifikasi)</b-dropdown-item
+                >
+                <b-dropdown-item
+                  class="ml-2"
+                  :active="invoice.pph == 'pph4_2_rent'"
+                  @click="actioncheckItem(idx, 'pph4_2_rent')"
+                  >Sewa & Utility</b-dropdown-item
+                >
+                <!-- <b-dropdown-divider></b-dropdown-divider> -->
+                <!-- <b-dropdown-item>Other</b-dropdown-item> -->
+              </b-dropdown>
+              <!-- <b-button variant="secondary" size="sm">
               new item
               <i class="fa fa-plus" aria-hidden="true"></i>
             </b-button> -->
-          </div>
-        </b-col>
-      </b-row>
+            </div>
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col>
+        <b-button
+          v-if="isEditMode"
+          class="mx-auto"
+          variant="outline-primary"
+          size="sm"
+          @click="addNewInvoice"
+        >
+          <i class="fa fa-plus" aria-hidden="true"></i> Add Invoice
+        </b-button>
+      </b-col>
     </b-col>
-    <b-col>
-      <b-button
-        class="mx-auto"
-        variant="outline-primary"
-        size="sm"
-        @click="addNewInvoice"
-      >
-        <i class="fa fa-plus" aria-hidden="true"></i> Add Invoice
-      </b-button>
-    </b-col>
-  </b-col>
+  </b-row>
 </template>
 <script>
 import CurrencyInput from "@/components/CurrencyInput";
@@ -480,7 +537,16 @@ export default {
     CurrencyInput,
   },
 
-  props: ["id_memo"],
+  props: {
+    id_memo: {
+      type: Number,
+      required: true,
+    },
+    isEditMode: {
+      type: Boolean,
+      default: true,
+    },
+  },
 
   data() {
     return {
@@ -494,6 +560,7 @@ export default {
       url_update_data_invoice: "user.api.invoice.updateinvoice",
       url_delete_item_invoice: "user.api.invoice.deleteiteminvoice",
       url_delete_data_invoice: "user.api.invoice.deletedatainvoice",
+      isLoadingData: true,
     };
   },
 
@@ -614,8 +681,10 @@ export default {
     },
 
     editMode(indexItem, indexInvoice) {
-      this.editRow = indexItem;
-      this.editInvoice = indexInvoice;
+      if (this.isEditMode) {
+        this.editRow = indexItem;
+        this.editInvoice = indexInvoice;
+      }
     },
 
     submitItemInvoice(indexItem, indexInvoice, keyfield) {
@@ -630,7 +699,7 @@ export default {
         axios
           .post(route(this.url_save_item_invoice), row)
           .then((response) => {
-            // this.getData();
+            this.getData();
             if (response.data.status == 200) {
               this.pageFlashes.success = response.data.message;
             }
@@ -900,6 +969,7 @@ export default {
 
     getData() {
       Promise.all([this.getDataInvoices()]).then((results) => {
+        this.isLoadingData = false;
         this.dataInvoices = results[0].data;
         // set parse string to object (others)
         this.dataInvoices = _.map(this.dataInvoices, (item) => {

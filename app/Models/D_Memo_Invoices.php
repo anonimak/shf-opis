@@ -32,6 +32,38 @@ class D_Memo_Invoices extends Model
         return $this->hasMany(D_Item_Invoice::class, 'id_invoice', 'id');
     }
 
+    public function getRawTotalAttribute()
+    {
+        $items = D_Item_Invoice::where('id_invoice', $this->attributes['id'])->get();
+        $sum = $items->sum(function ($item) {
+            return $item->total;
+        });
+        return $sum;
+    }
+
+    public function getTotalBarangAttribute()
+    {
+        $items = D_Item_Invoice::where('id_invoice', $this->attributes['id'])->where('type', 'barang')->get();
+        $sum = $items->sum(function ($item) {
+            return $item->total;
+        });
+        return $sum;
+    }
+
+    public function getTotalJasaAttribute()
+    {
+        $items = D_Item_Invoice::where('id_invoice', $this->attributes['id'])->where('type', 'jasa')->get();
+        $sum = $items->sum(function ($item) {
+            return $item->total;
+        });
+        return $sum;
+    }
+
+    public function getObjOthersAttribute()
+    {
+        return json_decode($this->others);
+    }
+
     public static function boot()
     {
         parent::boot();

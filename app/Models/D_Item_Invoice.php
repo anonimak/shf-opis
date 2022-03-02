@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class D_Item_Invoice extends Model
@@ -18,5 +19,10 @@ class D_Item_Invoice extends Model
     public function invoice()
     {
         return $this->belongsTo(D_Memo_Invoices::class, 'id_invoice', 'id');
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->qty * $this->price;
     }
 }
