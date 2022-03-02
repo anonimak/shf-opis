@@ -207,8 +207,8 @@
               v-model="invoice.npwp"
               @change="actionCheckNpwp(idx)"
               name="checkbox-npwp"
-              :value="false"
-              :unchecked-value="true"
+              :value="true"
+              :unchecked-value="false"
             >
               non NPWP
             </b-form-checkbox>
@@ -894,14 +894,18 @@ export default {
       }
 
       // check grossup
-      if (invoice.grossup && !_.includes(["none", "pph21"], invoice.pph)) {
-        totalJasa = actionChangeGrossup
-          ? invoice.grossup_value
-          : this.$set(
-              this.dataInvoices[idx],
-              "grossup_value",
-              this.countGrossUp(idx, invoice.pph)
-            );
+      if (invoice.grossup && invoice.pph != "none") {
+        if (invoice.pph != "pph21") {
+          totalJasa = actionChangeGrossup
+            ? invoice.grossup_value
+            : this.$set(
+                this.dataInvoices[idx],
+                "grossup_value",
+                this.countGrossUp(idx, invoice.pph)
+              );
+        } else {
+          totalJasa = actionChangeGrossup ? invoice.grossup_value : sumJasa;
+        }
       } else {
         this.$set(this.dataInvoices[idx], "grossup_value", 0);
         totalJasa = sumJasa;
@@ -944,6 +948,7 @@ export default {
           this.dataInvoices[idx].pph =
             this.dataInvoices[idx].pph == "pph21" ? "none" : "pph21";
           this.dataInvoices[idx].pph_value = 0;
+          this.$set(this.dataInvoices[idx], "grossup_value", 0);
           break;
         case "pph4_2_kon":
           this.dataInvoices[idx].pph =
