@@ -122,7 +122,6 @@
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
                     <td>Seo Jisu</td> --}}
-                    @endif
                 </tr>
                 <tr>
                     <td colspan="2">Title</td>
