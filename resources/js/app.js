@@ -46,8 +46,8 @@ Vue.use(InertiaApp);
 Vue.use(Storage);
 
 // fileagent
-import VueFileAgent from 'vue-file-agent';
-import 'vue-file-agent/dist/vue-file-agent.css';
+import VueFileAgent from "vue-file-agent";
+import "vue-file-agent/dist/vue-file-agent.css";
 
 Vue.use(VueFileAgent);
 
@@ -59,6 +59,22 @@ import "handsontable/dist/handsontable.full.css";
 // component v-select
 Vue.component("v-select", vSelect);
 import "vue-select/dist/vue-select.css";
+
+//  component vueNumeric
+import VueNumeric from "vue-numeric";
+Vue.use(VueNumeric);
+
+// component VueCurrencyFilter
+import VueCurrencyFilter from "vue-currency-filter";
+Vue.use(VueCurrencyFilter, {
+    symbol: "Rp",
+    thousandsSeparator: ".",
+    fractionCount: 2,
+    fractionSeparator: ",",
+    symbolPosition: "front",
+    symbolSpacing: true,
+    avoidEmptyDecimals: 0
+});
 
 Vue.mixin(require("./base"));
 

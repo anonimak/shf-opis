@@ -12,6 +12,10 @@ class Memo extends Model
     protected $table = 'm_memos';
     protected $guarded = [];
 
+    protected $casts = [
+        'is_cost_invoice' => 'boolean',
+    ];
+
     public function approvers()
     {
         return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id');
@@ -79,7 +83,7 @@ class Memo extends Model
 
     public function invoices()
     {
-        return $this->hasMany(D_Invoices::class,'id_memo','id');
+        return $this->hasMany(D_Memo_Invoices::class, 'id_memo', 'id');
     }
 
     public function ref_table()
@@ -192,14 +196,15 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -232,14 +237,19 @@ class Memo extends Model
                     return $emp_history->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->where(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->where('year_finished', '>', $memo->propose_at);
+                    // })
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -272,14 +282,19 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->where(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->where('year_finished', '>', $memo->propose_at);
+                    // })
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -312,14 +327,19 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->where(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->where('year_finished', '>', $memo->propose_at);
+                    // })
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -354,14 +374,19 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->where(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->where('year_finished', '>', $memo->propose_at);
+                    // })
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -396,14 +421,19 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
-                                ->where('year_finished', '>', $memo->propose_at);
-                        })
-                        ->orWhere(function ($query) use ($memo) {
-                            $query->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_at)
+                        ->where(function ($sub) use ($memo) {
+                            $sub->where('year_finished', '>', $memo->propose_at)
                                 ->orWhere('year_finished', null);
                         });
+                    // ->where(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->where('year_finished', '>', $memo->propose_at);
+                    // })
+                    // ->orWhere(function ($query) use ($memo) {
+                    //     $query->where('year_started', '<', $memo->propose_at)
+                    //         ->orWhere('year_finished', null);
+                    // });
                 }]);
             }])->orderBy('idx', 'asc');
         }])
@@ -434,6 +464,32 @@ class Memo extends Model
         $memo = Self::select('*')
             ->orderBy('id', 'desc')
             ->where('status', '=', $status)
+            ->where(function ($query) {
+                $query->where('payment', '=', false);
+                $query->orWhere('payment', '=', null);
+            })
+            ->where('id_employee', '=', $id_employee);
+        if ($status != 'approve') {
+            // $memo->whereNull('id_employee2');
+        }
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+            });
+        }
+        return $memo;
+    }
+
+    public static function getMemoDraft($id_employee, $status, $search = null)
+    {
+
+        $memo = Self::select('*')
+            ->orderBy('id', 'desc')
+            ->where('status', '=', $status)
+            ->where('status_payment', '=', $status)
             ->where('id_employee', '=', $id_employee);
         if ($status != 'approve') {
             // $memo->whereNull('id_employee2');
@@ -458,7 +514,7 @@ class Memo extends Model
                 }])->with('branch');
             }]);
         }])
-            ->orderBy('id', 'desc')
+            ->orderByRaw("FIELD(status_payment,'edit','submit','approve','reject','revisi')")
             ->where('status', '=', 'approve')
             ->where('id_employee2', '=', $id_employee);
 
@@ -1021,6 +1077,9 @@ class Memo extends Model
             });
             $memo->attachment()->each(function ($attachment) {
                 $attachment->delete(); // <-- direct deletion
+            });
+            $memo->invoices()->each(function ($invoice) {
+                $invoice->delete(); // <-- direct deletion
             });
         });
     }

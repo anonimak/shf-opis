@@ -158,7 +158,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge
@@ -276,8 +280,10 @@
             <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true
+                (dataMemo.ref_table.with_payment == true ||
+                  dataMemo.ref_table.with_po == true ||
+                  dataMemo.ref_table.type == 'payment') &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
@@ -296,7 +302,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <th style="width: 50%">Pph23 (2%)</th>
+                        <th style="width: 50%">Pph23</th>
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
@@ -369,6 +375,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>file</th>
+                        <th>info</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -376,13 +383,22 @@
                         v-for="(attachment, index) in attachments"
                         :key="index"
                       >
-                        <a
-                          :href="attachment.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ attachment.real_name }}
-                        </a>
+                        <td>
+                          <a
+                            :href="attachment.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {{ attachment.real_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{
+                            attachment.type == "payment"
+                              ? "payment attachment"
+                              : ""
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>

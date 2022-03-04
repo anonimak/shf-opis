@@ -7,9 +7,7 @@
       class="mb-3"
     >
       <b-form-select-option value="approver">Approver</b-form-select-option>
-      <b-form-select-option value="acknowledge"
-        >Acknowledge</b-form-select-option
-      >
+      <b-form-select-option value="acknowledge">Reviewer</b-form-select-option>
     </b-form-select>
   </div>
 </template>

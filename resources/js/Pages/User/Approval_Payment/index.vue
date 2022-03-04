@@ -45,14 +45,14 @@
                         }}</b-badge>
                       </template>
                     </b-tab>
-                    <!-- <b-tab>
+                    <b-tab>
                       <template #title>
                         Revised
                         <b-badge v-if="counttab.revisi > 0" variant="primary">{{
                           counttab.revisi
                         }}</b-badge>
                       </template>
-                    </b-tab> -->
+                    </b-tab>
                   </b-tabs>
                   <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
@@ -132,11 +132,11 @@
                                   variant="info"
                                   >Approve</b-button
                                 >
-                                <!-- <b-button
+                                <b-button
                                   @click="actionRevisi(item.id_approver)"
                                   variant="secondary"
                                   >Revision</b-button
-                                > -->
+                                >
                                 <b-button
                                   @click="actionReject(item.id_approver)"
                                   variant="warning"
@@ -341,6 +341,14 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Acknowledge";
       this.modalCaption = "Are you sure to next?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    actionRevisi(id) {
+      this.buttonClicked = "revisi";
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

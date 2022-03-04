@@ -103,6 +103,21 @@
                   with Payment
                 </b-form-checkbox>
                 <b-form-group
+                  class="mt-2"
+                  id="input-group-title"
+                  label="Type Memo"
+                  label-for="input-title"
+                  :invalid-feedback="errors.type ? errors.type[0] : ''"
+                  :state="errors.type ? false : null"
+                >
+                  <b-form-select
+                    placeholder="-- Select Type Memo --"
+                    :options="options"
+                    v-model="form.type"
+                  >
+                  </b-form-select>
+                </b-form-group>
+                <b-form-group
                   v-if="form.with_payment"
                   class="mt-2"
                   id="input-group-title"
@@ -125,7 +140,7 @@
                   </v-select>
                 </b-form-group>
                 <b-form-group
-                  v-if="form.with_payment"
+                  v-if="form.with_payment || form.type == 'payment'"
                   class="mt-2"
                   id="input-group-title"
                   label="Confirmed Payment By:"
@@ -190,13 +205,31 @@ export default {
     return {
       submitState: false,
       form: {},
+      options: [
+        {
+          value: null,
+          text: "--Please select a type memo--",
+        },
+        { value: "approval", text: "Approval" },
+        { value: "payment", text: "Payment" },
+      ],
     };
   },
   watch: {
     "form.with_payment": function (val) {
       if (!val) {
         this.form.id_overtake = null;
-        this.form.id_confirmed_payment_by = null;
+        if (this.form.type != "payment") {
+          this.form.id_confirmed_payment_by = null;
+        }
+      }
+    },
+    "form.type": function (val) {
+      if (val != 'payment') {
+        // this.form.id_overtake = null;
+        if (this.form.with_payment != true) {
+          this.form.id_confirmed_payment_by = null;
+        }
       }
     },
   },

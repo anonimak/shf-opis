@@ -7,35 +7,46 @@
         <div class="row">
           <div class="col">
             <div class="p-5">
-              <div class="text-center">
+              <div>
                 <div class="col" v-if="dataMemo">
-                  <h3 class="text-primary mb-4">
+                  <h3 class="text-primary mb-4 text-center">
                     <strong>Memo Payment Verified </strong>
                     <i class="fa fa-check"></i>
                   </h3>
-                  <div class="col">Document No : {{ dataMemo.doc_no }}</div>
-                  <div class="col">
-                    Status :
-                    <span
-                      v-if="dataMemo.status_payment == 'submit'"
-                      class="badge badge-info"
-                      >On process approving</span
-                    >
-                    <span
-                      v-if="dataMemo.status_payment == 'approve'"
-                      class="badge badge-success"
-                      >Memo Approved</span
-                    >
-                    <span
-                      v-if="dataMemo.status_payment == 'reject'"
-                      class="badge badge-danger"
-                      >Memo Rejected</span
-                    >
-                    <span
-                      v-if="dataMemo.status_payment == 'revisi'"
-                      class="badge badge-secondary"
-                      >Memo Revised</span
-                    >
+                  <hr />
+                  <div class="row">
+                    <div class="col">Title Memo</div>
+                    <div class="col">: {{ dataMemo.title }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col">Document No</div>
+                    <div class="col">: {{ dataMemo.doc_no }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col">Status</div>
+                    <div class="col">
+                      :
+                      <span
+                        v-if="dataMemo.status_payment == 'submit'"
+                        class="badge badge-info"
+                        >On process approving</span
+                      >
+                      <span
+                        v-if="dataMemo.status_payment == 'approve'"
+                        class="badge badge-success"
+                        >Memo Approved</span
+                      >
+                      <span
+                        v-if="dataMemo.status_payment == 'reject'"
+                        class="badge badge-danger"
+                        >Memo Rejected</span
+                      >
+                      <span
+                        v-if="dataMemo.status_payment == 'revisi'"
+                        class="badge badge-secondary"
+                        >Memo Revised</span
+                      >
+                    </div>
                   </div>
                 </div>
                 <div class="col" v-else>

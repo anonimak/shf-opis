@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateMMemosAddOrientationPaper extends Migration
+class UpdateDInvoiceTableAddEnumPph extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class UpdateMMemosAddOrientationPaper extends Migration
      */
     public function up()
     {
-        Schema::table('m_memos', function (Blueprint $table) {
-            $table->enum('orientation_paper', ['portrait', 'landscape'])->default('portrait');
+        Schema::table('d_memo_invoices', function (Blueprint $table) {
+            $table->enum('pph', ['none', "pph21", "pph23", "pph4_2_kon", "pph4_2_kon_klas", "pph4_2_rent"])->default('none');
         });
     }
 
@@ -25,8 +25,8 @@ class UpdateMMemosAddOrientationPaper extends Migration
      */
     public function down()
     {
-        Schema::table('m_memos', function (Blueprint $table) {
-            $table->removeColumn('orientation_paper');
+        Schema::table('d_memo_invoices', function (Blueprint $table) {
+            $table->removeColumn('pph');
         });
     }
 }

@@ -43,6 +43,10 @@
                           <td>Doc. No</td>
                           <td>{{ dataMemo.doc_no }}</td>
                         </tr>
+                        <tr>
+                          <td>Type</td>
+                          <td>Payment</td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -95,13 +99,48 @@
                   </b-form-group>
                 </b-col>
               </b-row>
-
-              <b-row v-if="memocost.length > 0" class="mb-2">
+              <b-row
+                v-if="dataMemo.background && dataMemo.background != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Background</h5>
+                  <div class="data-memo" v-html="dataMemo.background"></div>
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="dataMemo.information && dataMemo.information != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Information</h5>
+                  <div class="data-memo" v-html="dataMemo.information"></div>
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="dataMemo.conclusion && dataMemo.conclusion != '<p></p>'"
+                class="mb-2"
+              >
+                <b-col>
+                  <h5>Conclusion</h5>
+                  <div class="data-memo" v-html="dataMemo.conclusion"></div>
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="memocost.length > 0 && !dataMemo.is_cost_invoice"
+                class="mb-2"
+              >
                 <b-col>
                   <h5>Cost/Expense</h5>
                   <div class="table-responsive">
                     <b-table bordered :items="memocost"></b-table>
                   </div>
+                </b-col>
+              </b-row>
+              <b-row v-else>
+                <b-col>
+                  <h5>Cost/Expense</h5>
+                  <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
                 </b-col>
               </b-row>
               <b-row
@@ -128,12 +167,21 @@
                           v-model="sub_total"
                         ></b-form-input>
                       </b-input-group>
-                      <b-input-group prepend="Pph23 (2%)" class="mb-2 mt-2">
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
                         <b-form-input
-                          aria-label="pph23"
+                          aria-label="pph"
                           v-model="pph"
                           v-on:change="pphValueChange"
                         ></b-form-input>
+                        <b-form-checkbox
+                          v-model="manualInputPph"
+                          class="justify-content-center my-auto ml-2"
+                          :value="true"
+                          :unchecked-value="false"
+                          @change="actionChangeChenckboxManualInput"
+                        >
+                          Manual input Pph
+                        </b-form-checkbox>
                       </b-input-group>
                       <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
                         <b-form-input
@@ -179,6 +227,74 @@
                   >
                 </b-button-group>
               </b-row> -->
+              <b-row>
+                <b-col col lg="12" class="mb-4">
+                  <h5>Attachment:</h5>
+                  <b-form-group id="input-group-text" label-for="input-text">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>File</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(attachment, index) in dataAttachments"
+                            :key="index"
+                          >
+                            <td>
+                              <a
+                                :href="attachment.name"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {{ attachment.real_name }}
+                              </a>
+                            </td>
+                            <td>
+                              <b-button
+                                size="sm"
+                                variant="danger"
+                                @click="removeAttachment(attachment.id)"
+                                >remove</b-button
+                              >
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <VueFileAgent
+                      class="mb-2"
+                      ref="vueFileAgent"
+                      :theme="'list'"
+                      :multiple="true"
+                      :deletable="true"
+                      :meta="true"
+                      :accept="'.rar,.zip,.png,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf'"
+                      :maxSize="'25MB'"
+                      :maxFiles="10"
+                      :helpText="'Choose images, pdf, excel, pdf, rar, or word files'"
+                      :errorText="{
+                        type: 'Invalid file type. Only images, excel, pdf, rar, zip and word files allowed',
+                        size: 'Files should not exceed 25MB in size',
+                      }"
+                      @select="filesSelected($event)"
+                      @beforedelete="onBeforeDelete($event)"
+                      @delete="fileDeleted($event)"
+                      v-model="fileRecords"
+                    ></VueFileAgent>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      :disabled="!fileRecordsForUpload.length"
+                      @click.prevent="uploadFiles"
+                    >
+                      Upload {{ fileRecordsForUpload.length }} files
+                    </button>
+                  </b-form-group>
+                </b-col>
+              </b-row>
             </b-card-body>
             <b-row class="ml-2">
               <b-overlay
@@ -471,6 +587,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import FormInvoice from "@/components/FormInvoice";
 import TableEditApprover from "@/components/TableEditApprover.vue";
 import CurrencyInput from "@/components/CurrencyInput.vue";
 import draggable from "vuedraggable";
@@ -485,6 +602,7 @@ export default {
     CurrencyInput,
     SelectTypeApprover,
     TableEditApprover,
+    FormInvoice,
   },
   props: [
     "_token",
@@ -500,6 +618,8 @@ export default {
     "dataAttachments",
     "headerCost",
     "columnCost",
+    "__attachment",
+    "__removeAttachment",
     "__updateAcknowledge",
     "__deleteAcknowledge",
     "dataMemoType",
@@ -522,6 +642,7 @@ export default {
       pph: 0,
       ppn: 0,
       grand_total: 0,
+      manualInputPph: false,
       colHeaders: this.headerCost,
       dataPositions: [],
       dataPayments: [],
@@ -539,10 +660,20 @@ export default {
       activeItemPayment: {},
       activeIndex: null,
       errors: {},
+      fileRecords: [],
+      uploadUrl: "#",
+      uploadHeaders: {
+        "X-Test-Header": "vue-file-agent",
+        "X-CSRF-TOKEN": this._token,
+      },
+      fileRecordsForUpload: [], // maintain an upload queue
     };
   },
   mounted() {
     this.getData();
+    // table
+    $(".data-memo table").wrap('<div class="table-responsive"></div>');
+    $(".data-memo table").addClass("table").addClass("table-bordered");
   },
   watch: {
     sub_total: function (val) {
@@ -550,7 +681,8 @@ export default {
         val = 0;
       }
       this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
-      this.pph = 0.02 * parseFloat(val);
+      // this.pph = 0.02 * parseFloat(val);
+      this.pphValueChange(val);
       this.grand_total =
         parseFloat(val) + parseFloat(this.ppn) - parseFloat(this.pph);
     },
@@ -582,6 +714,69 @@ export default {
     // fillForm() {},
   },
   methods: {
+    uploadFiles: function () {
+      // Using the default uploader. You may use another uploader instead.
+      var form_data = new FormData();
+
+      // this.fileRecordsForUpload.forEach((item, index) => {
+      //   form_data.append(`files[${index}]`, item.file);
+      // });
+      _.each(this.fileRecordsForUpload, (item, index) => {
+        form_data.append(`files[${index}]`, item.file);
+      });
+      form_data.append("type", "payment");
+      // this.$refs.vueFileAgent.upload(
+      //   route(this.__attachment, this.dataMemo.id),
+      //   this.uploadHeaders,
+      //   this.fileRecordsForUpload
+      // );
+      this.$inertia.post(
+        route(this.__attachment, this.dataMemo.id),
+        form_data,
+        {
+          forceFormData: true,
+        }
+      );
+    },
+    deleteUploadedFile: function (fileRecord) {
+      // Using the default uploader. You may use another uploader instead.
+      this.$refs.vueFileAgent.deleteUpload(
+        this.uploadUrl,
+        this.uploadHeaders,
+        fileRecord
+      );
+    },
+    filesSelected: function (fileRecordsNewlySelected) {
+      var validFileRecords = fileRecordsNewlySelected.filter(
+        (fileRecord) => !fileRecord.error
+      );
+      this.fileRecordsForUpload =
+        this.fileRecordsForUpload.concat(validFileRecords);
+    },
+    onBeforeDelete: function (fileRecord) {
+      var i = this.fileRecordsForUpload.indexOf(fileRecord);
+      if (i !== -1) {
+        // queued file, not yet uploaded. Just remove from the arrays
+        this.fileRecordsForUpload.splice(i, 1);
+        var k = this.fileRecords.indexOf(fileRecord);
+        if (k !== -1) this.fileRecords.splice(k, 1);
+      } else {
+        if (confirm("Are you sure you want to delete?")) {
+          this.$refs.vueFileAgent.deleteFileRecord(fileRecord); // will trigger 'delete' event
+        }
+      }
+    },
+    fileDeleted: function (fileRecord) {
+      var i = this.fileRecordsForUpload.indexOf(fileRecord);
+      if (i !== -1) {
+        this.fileRecordsForUpload.splice(i, 1);
+      } else {
+        this.deleteUploadedFile(fileRecord);
+      }
+    },
+    removeAttachment(id) {
+      this.$inertia.delete(route(this.__removeAttachment, id)).then(() => {});
+    },
     getOptionLabel: (option) => {
       let firstname = option.employee ? option.employee.firstname : "";
       let lastname = option.employee ? option.employee.lastname : "";
@@ -596,7 +791,9 @@ export default {
       this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
     },
     pphValueChange: function (val) {
-      this.pph = 0.02 * parseFloat(val);
+      if (!this.manualInputPph) {
+        this.pph = 0.02 * parseFloat(val);
+      }
     },
     fillForm() {
       //   this.form = { ...this.dataMemo };
@@ -637,6 +834,11 @@ export default {
         .catch((err) => {
           // An error occurred
         });
+    },
+    actionChangeChenckboxManualInput() {
+      if (this.manualInputPph) {
+        this.pph = 0;
+      }
     },
 
     submitUpdate(id) {

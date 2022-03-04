@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +65,12 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
         Route::put('/{id_type_memo}', 'Super\RefTemplateMemo@updateTemplateCost')->name('update_template_cost');
         Route::delete('/{template_memo}', 'Super\RefTemplateMemo@destroyTemplateCost')->name('destroy_template_cost');
     });
+
+    // manual action
+    Route::prefix('/action')->name('action.')->group(function () {
+        // send email to after approver
+        Route::get('/email-after-approve-memo/{id_memo}', 'Super\ManualAction@sendEmailAfterApproveMemo')->name('email_after_approve_memo');
+    });
 });
 
 /*
@@ -92,6 +99,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::post('/{memo}/acknowledge/{type}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::delete('/{memo}/acknowledge/{id_employee}/{type}', 'User\MemoController@deleteAcknowledge')->name('deleteacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
+            Route::get('/{memo}/preview-payment', 'User\MemoController@previewPayment')->name('previewpayment');
         });
 
         Route::prefix('/status-memo')->name('statusmemo.')->group(function () {
@@ -103,7 +111,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::put('/{memo}/proposepayment', 'User\MemoController@proposePayment')->name('proposepayment');
             Route::put('/{memo}/proposepo', 'User\MemoController@proposePo')->name('proposepo');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewMemo')->name('webpreview');
-            Route::get('/{memo}/preview-pfd', 'User\MemoController@previewMemo')->name('preview');
+            Route::get('/{memo}/preview-pdf', 'User\MemoController@previewMemo')->name('preview');
             Route::get('/{memo}/senddraft', 'User\MemoController@senddraft')->name('senddraft');
         });
 
@@ -127,12 +135,14 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
 
         Route::prefix('/status-payment')->name('statuspayment.')->group(function () {
             Route::get('/', 'User\MemoController@indexPayment')->name('index');
+            Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPayment')->name('preview');
         });
 
         Route::prefix('/status-payment-takeover-branch')->name('statustakeoverpaymentbranch.')->group(function () {
             Route::get('/', 'User\MemoController@indexPaymentTakeoverBranch')->name('index');
+            Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPaymentTakeoverBranch')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('preview');
             Route::get('/{memo}/preview-memo-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('previewmemo');
@@ -156,6 +166,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::prefix('/payment')->name('payment.')->group(function () {
                 Route::get('/', 'User\ApprovalController@indexApprovalPayment')->name('index');
                 Route::get('/{memo}', 'User\ApprovalController@detailPayment')->name('detail');
+                Route::get('/{memo}/preview-pdf', 'User\MemoController@previewMemo')->name('previewpdfapproval');
                 Route::put('/{memo}', 'User\ApprovalController@approvingPayment')->name('approving');
                 Route::get('/{memo}/preview', 'User\MemoController@previewPayment')->name('preview');
             });
@@ -199,8 +210,8 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{id_memo}/invoice', 'User\ApiMemoController@getInvoicesByIdMemo')->name('datainvoices');
             Route::post('/data-invoice', 'User\ApiMemoController@addItemInvoice')->name('additeminvoice');
             Route::post('{id_memo}/data-invoice', 'User\ApiMemoController@addInvoice')->name('addinvoice');
-            Route::post('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
-            Route::post('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
+            Route::put('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
+            Route::put('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
             Route::delete('/delete-item-invoice/{id_item}', 'User\ApiMemoController@deleteItemInvoice')->name('deleteiteminvoice');
             Route::delete('/delete-data-invoice/{id_invoice}', 'User\ApiMemoController@deleteDataInvoice')->name('deletedatainvoice');
         });

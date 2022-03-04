@@ -31,7 +31,7 @@
                           <b-badge
                             v-if="dataMemo.status_payment == 'submit'"
                             variant="info"
-                            >On process approving</b-badge
+                            >On process approving payment</b-badge
                           >
                           <b-badge
                             v-if="dataMemo.status_payment == 'approve'"
@@ -43,11 +43,11 @@
                             variant="danger"
                             >Memo Payment Rejected</b-badge
                           >
-                          <!-- <b-badge
-                          v-if="dataMemo.status_payment == 'revisi'"
-                          variant="secondary"
-                          >Memo Revisi</b-badge
-                        > -->
+                          <b-badge
+                            v-if="dataMemo.status_payment == 'revisi'"
+                            variant="secondary"
+                            >Memo Payment Revised</b-badge
+                          >
                         </td>
                       </tr>
                       <tr>
@@ -69,7 +69,7 @@
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>Approval</td>
+                        <td>Payment</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
                         <td>Send email after memo payment approved to</td>
@@ -134,7 +134,11 @@
                           }}
                         </td>
                         <td>
-                          {{ approver.type_approver }}
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
                         </td>
                         <td>
                           <b-badge
@@ -152,11 +156,11 @@
                             variant="danger"
                             >Rejected</b-badge
                           >
-                          <!-- <b-badge
-                          v-if="approver.status == 'revisi'"
-                          variant="secondary"
-                          >Revisi</b-badge
-                        > -->
+                          <b-badge
+                            v-if="approver.status == 'revisi'"
+                            variant="secondary"
+                            >Revised</b-badge
+                          >
                         </td>
                         <td>
                           <p v-if="approver.msg">{{ approver.msg }}</p>
@@ -222,7 +226,7 @@
             >
               <b-col>
                 <h5>Background</h5>
-                <div v-html="dataMemo.background"></div>
+                <div class="data-memo" v-html="dataMemo.background"></div>
               </b-col>
             </b-row>
             <b-row
@@ -231,7 +235,10 @@
             >
               <b-col>
                 <h5>Information</h5>
-                <div v-html="dataMemo.information"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.information"
+                ></div> </b-col
             ></b-row>
             <b-row
               v-if="dataMemo.conclusion && dataMemo.conclusion != '<p></p>'"
@@ -239,22 +246,32 @@
             >
               <b-col>
                 <h5>Conclusion</h5>
-                <div v-html="dataMemo.conclusion"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.conclusion"
+                ></div> </b-col
             ></b-row>
-            <b-row v-if="memocost.length > 0" class="mb-2">
-              <b-col>
+            <b-row v-if="!dataMemo.is_cost_invoice" class="mb-2">
+              <b-col v-if="memocost.length > 0">
                 <h5>Cost/Expense</h5>
                 <div class="table-responsive">
                   <b-table bordered :items="memocost"></b-table>
                 </div>
               </b-col>
             </b-row>
+            <b-row v-else>
+              <b-col>
+                <h5>Cost/Expense</h5>
+                <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
+              </b-col>
+            </b-row>
             <b-row
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
-                memocost.length > 0
+                  dataMemo.ref_table.with_po == true ||
+                  dataMemo.ref_table.type == 'payment') &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
@@ -267,17 +284,25 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                              Number(dataTotalCost.sub_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
                             }}
                           </div>
                         </td>
                       </tr>
                       <tr>
-                        <th style="width: 50%">Pph23 (2%)</th>
+                        <th style="width: 50%">Pph23</th>
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                            {{
+                              Number(dataTotalCost.pph).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
                           </div>
                         </td>
                       </tr>
@@ -286,7 +311,12 @@
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
-                            {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
+                            {{
+                              Number(dataTotalCost.ppn).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
                           </div>
                         </td>
                       </tr>
@@ -296,7 +326,10 @@
                           <div style="float: left">Rp</div>
                           <div style="float: right">
                             {{
-                              Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                              Number(dataTotalCost.grand_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
                             }}
                           </div>
                         </td>
@@ -331,7 +364,14 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.bank_name }}</td>
                       <td>{{ item.bank_account }}</td>
-                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
+                      <td>
+                        Rp.
+                        {{
+                          Number(item.amount).toLocaleString("id-ID", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                      </td>
                       <td>{{ item.remark }}</td>
                     </tr>
                   </tbody>
@@ -346,6 +386,7 @@
                     <thead class="thead-dark">
                       <tr>
                         <th>file</th>
+                        <th>info</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -353,13 +394,22 @@
                         v-for="(attachment, index) in attachments"
                         :key="index"
                       >
-                        <a
-                          :href="attachment.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {{ attachment.real_name }}
-                        </a>
+                        <td>
+                          <a
+                            :href="attachment.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {{ attachment.real_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{
+                            attachment.type == "payment"
+                              ? "payment attachment"
+                              : ""
+                          }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -376,6 +426,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import FormInvoice from "@/components/FormInvoice";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
 export default {
@@ -398,6 +449,7 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
+    FormInvoice,
   },
   data() {
     return {
@@ -408,6 +460,11 @@ export default {
         warning: "#f6c23e",
       },
     };
+  },
+  mounted() {
+    // table
+    $(".data-memo table").wrap('<div class="table-responsive"></div>');
+    $(".data-memo table").addClass("table").addClass("table-bordered");
   },
 };
 </script>

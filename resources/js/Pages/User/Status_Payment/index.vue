@@ -45,6 +45,14 @@
                         }}</b-badge>
                       </template>
                     </b-tab>
+                     <b-tab>
+                      <template #title>
+                        Revised
+                        <b-badge v-if="counttab.revisi > 0" variant="primary">{{
+                          counttab.revisi
+                        }}</b-badge>
+                      </template>
+                    </b-tab>
                   </b-tabs>
                   <div class="row"></div>
                   <div class="col-lg-3 col-xs-12 mt-3">
@@ -89,8 +97,9 @@
                               {{ item.doc_no }}
                               <b-badge
                                 v-if="
-                                  item.payment_at != null &&
-                                  item.ref_table.with_payment == true
+                                item.payment_at != null &&
+                                  (item.ref_table.with_payment == true ||
+                                  item.ref_table.type == 'payment')
                                 "
                                 variant="success"
                               >
@@ -98,8 +107,9 @@
                               </b-badge>
                               <b-badge
                                 v-if="
-                                  item.payment_at == null &&
-                                  item.ref_table.with_payment == true
+                                 item.payment_at == null &&
+                                  (item.ref_table.with_payment == true ||
+                                  item.ref_table.type == 'payment')
                                 "
                                 variant="warning"
                               >
@@ -112,10 +122,10 @@
                             <td>
                               <inertia-link
                                 v-if="tabIndex == 3"
-                                :href="route(__senddraft, item.id)"
+                                :href="route(__editpayment, item.id)"
                                 class="btn btn-warning btn-sm my-2"
                               >
-                                send to draft
+                                Edit Payment
                               </inertia-link>
                               <inertia-link
                                 :href="route(__webpreview, item.id)"
@@ -178,7 +188,7 @@ export default {
     "__indexpayment",
     "__webpreview",
     "__previewpdf",
-    "__senddraft",
+    "__editpayment",
   ],
   metaInfo: { title: "Status Payment" },
   data() {

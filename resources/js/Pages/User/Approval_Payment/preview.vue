@@ -27,6 +27,11 @@
                     >Approve</b-button
                   >
                   <b-button
+                    @click="actionRevisi(dataMemo.approver_payment.id)"
+                    variant="secondary"
+                    >Revision</b-button
+                  >
+                  <b-button
                     @click="actionReject(dataMemo.approver_payment.id)"
                     variant="warning"
                     >Reject</b-button
@@ -83,6 +88,11 @@
                           variant="danger"
                           >Memo Payment Rejected</b-badge
                         >
+                        <b-badge
+                          v-if="dataMemo.status_payment == 'revisi'"
+                          variant="secondary"
+                          >Memo Payment Revised</b-badge
+                        >
                       </td>
                     </tr>
                     <tr>
@@ -104,7 +114,7 @@
                     </tr>
                     <tr>
                       <td>Type</td>
-                      <td>Approval</td>
+                      <td>Payment</td>
                     </tr>
                     <tr v-if="dataMemo.acknowledges.length > 0">
                       <td>Send email after memo payment approved to</td>
@@ -127,69 +137,91 @@
                         </span>
                       </td>
                     </tr>
+                    <tr v-if="dataMemo.ref_table.type != 'payment'">
+                      <td>Preview PDF Memo Approval</td>
+                      <td>
+                        <a
+                          target="_blank"
+                          class="btn btn-success"
+                          :href="route(__previewpdfapproval, dataMemo.id)"
+                          >Preview PDF Memo Approval</a
+                        >
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </b-col>
               <b-col col lg="12" md="auto">
                 <h5>Approver</h5>
-                <table class="table table-bordered mb-2">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>Level</th>
-                      <th>Approver Name</th>
-                      <th>Position</th>
-                      <th>Approver Type</th>
-                      <th>Status</th>
-                      <th>Message</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(approver, index) in dataMemo.approvers_payment"
-                      :key="index"
-                    >
-                      <td>
-                        {{ index + 1 }}
-                      </td>
-                      <td>
-                        {{
-                          approver.employee.firstname +
-                          " " +
-                          approver.employee.lastname
-                        }}
-                      </td>
-                      <td>
-                        {{
-                          approver.employee.emp_history.position.position_name
-                        }}
-                      </td>
-                      <td>
-                        {{ approver.type_approver }}
-                      </td>
-                      <td>
-                        <b-badge
-                          v-if="approver.status == 'submit'"
-                          variant="info"
-                          >On Submit</b-badge
-                        >
-                        <b-badge
-                          v-if="approver.status == 'approve'"
-                          variant="success"
-                          >Approved</b-badge
-                        >
-                        <b-badge
-                          v-if="approver.status == 'reject'"
-                          variant="danger"
-                          >Rejected</b-badge
-                        >
-                      </td>
-                      <td>
-                        <p v-if="approver.msg">{{ approver.msg }}</p>
-                        <span v-else>-</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-bordered mb-2">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>Level</th>
+                        <th>Approver Name</th>
+                        <th>Position</th>
+                        <th>Approver Type</th>
+                        <th>Status</th>
+                        <th>Message</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(approver, index) in dataMemo.approvers_payment"
+                        :key="index"
+                      >
+                        <td>
+                          {{ index + 1 }}
+                        </td>
+                        <td>
+                          {{
+                            approver.employee.firstname +
+                            " " +
+                            approver.employee.lastname
+                          }}
+                        </td>
+                        <td>
+                          {{
+                            approver.employee.emp_history.position.position_name
+                          }}
+                        </td>
+                        <td>
+                          {{
+                            approver.type_approver == "acknowledge"
+                              ? "reviewer"
+                              : approver.type_approver
+                          }}
+                        </td>
+                        <td>
+                          <b-badge
+                            v-if="approver.status == 'submit'"
+                            variant="info"
+                            >On Submit</b-badge
+                          >
+                          <b-badge
+                            v-if="approver.status == 'approve'"
+                            variant="success"
+                            >Approved</b-badge
+                          >
+                          <b-badge
+                            v-if="approver.status == 'reject'"
+                            variant="danger"
+                            >Rejected</b-badge
+                          >
+                          <b-badge
+                            v-if="approver.status == 'revisi'"
+                            variant="secondary"
+                            >Revised</b-badge
+                          >
+                        </td>
+                        <td>
+                          <p v-if="approver.msg">{{ approver.msg }}</p>
+                          <span v-else>-</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
                 <div
                   class="card mb-4"
                   v-if="dataMemo && dataMemo.histories.length > 0"
@@ -246,7 +278,7 @@
             >
               <b-col>
                 <h5>Background</h5>
-                <div v-html="dataMemo.background"></div>
+                <div class="data-memo" v-html="dataMemo.background"></div>
               </b-col>
             </b-row>
             <b-row
@@ -255,7 +287,10 @@
             >
               <b-col>
                 <h5>Information</h5>
-                <div v-html="dataMemo.information"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.information"
+                ></div> </b-col
             ></b-row>
             <b-row
               v-if="dataMemo.conclusion && dataMemo.conclusion != '<p></p>'"
@@ -263,64 +298,101 @@
             >
               <b-col>
                 <h5>Conclusion</h5>
-                <div v-html="dataMemo.conclusion"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.conclusion"
+                ></div> </b-col
             ></b-row>
-            <b-row v-if="memocost.length > 0" class="mb-2">
+            <b-row v-if="!dataMemo.is_cost_invoice" class="mb-2">
+              <b-col v-if="memocost.length > 0">
+                <h5>Cost/Expense</h5>
+                <div class="table-responsive">
+                  <b-table bordered :items="memocost"></b-table>
+                </div>
+              </b-col>
+            </b-row>
+            <b-row v-else>
               <b-col>
                 <h5>Cost/Expense</h5>
-                <b-table bordered :items="memocost"></b-table> </b-col
-            ></b-row>
+                <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
+              </b-col>
+            </b-row>
             <b-row
               class="mb-2"
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true) &&
-                memocost.length > 0
+                  dataMemo.ref_table.with_po == true ||
+                  dataMemo.ref_table.type == 'payment') &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
-                <table class="table table-stripped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th style="width: 50%">Sub Total</th>
-                      <td nowrap>
-                        <div style="float: left">Rp</div>
-                        <div style="float: right">
-                          {{ Number(dataTotalCost.sub_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })}}
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">Pph23 (2%)</th>
-                      <td nowrap>
-                        <div style="float: left">Rp</div>
-                        <div style="float: right">
-                          {{ Number(dataTotalCost.pph).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">PPN (10%)</th>
-                      <td nowrap>
-                        <div style="float: left">Rp</div>
-                        <div style="float: right">
-                          {{ Number(dataTotalCost.ppn).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th style="width: 50%">Grand Total</th>
-                      <td nowrap>
-                        <div style="float: left">Rp</div>
-                        <div style="float: right">
-                          {{
-                            Number(dataTotalCost.grand_total).toLocaleString('id-ID', { maximumFractionDigits: 2 })
-                          }}
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-stripped table-bordered">
+                    <tbody>
+                      <tr>
+                        <th style="width: 50%">Sub Total</th>
+                        <td nowrap>
+                          <div style="float: left">Rp</div>
+                          <div style="float: right">
+                            {{
+                              Number(dataTotalCost.sub_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style="width: 50%">Pph23 (2%)</th>
+                        <td nowrap>
+                          <div style="float: left">Rp</div>
+                          <div style="float: right">
+                            {{
+                              Number(dataTotalCost.pph).toLocaleString(
+                                "id-ID",
+                                {
+                                  maximumFractionDigits: 2,
+                                }
+                              )
+                            }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style="width: 50%">PPN (10%)</th>
+                        <td nowrap>
+                          <div style="float: left">Rp</div>
+                          <div style="float: right">
+                            {{
+                              Number(dataTotalCost.ppn).toLocaleString(
+                                "id-ID",
+                                {
+                                  maximumFractionDigits: 2,
+                                }
+                              )
+                            }}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style="width: 50%">Grand Total</th>
+                        <td nowrap>
+                          <div style="float: left">Rp</div>
+                          <div style="float: right">
+                            {{
+                              Number(dataTotalCost.grand_total).toLocaleString(
+                                "id-ID",
+                                { maximumFractionDigits: 2 }
+                              )
+                            }}
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </b-col>
             </b-row>
             <b-row
@@ -329,30 +401,39 @@
             >
               <b-col>
                 <h5>Payment</h5>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Vendor Name</th>
-                      <th scope="col">Bank Name</th>
-                      <th scope="col">Bank Account</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Remark</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, index) in dataPayments" :key="item.id">
-                      <th scope="row">
-                        {{ index + 1 }}
-                      </th>
-                      <td>{{ item.name }}</td>
-                      <td>{{ item.bank_name }}</td>
-                      <td>{{ item.bank_account }}</td>
-                      <td>Rp. {{ Number(item.amount).toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}</td>
-                      <td>{{ item.remark }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Vendor Name</th>
+                        <th scope="col">Bank Name</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Remark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in dataPayments" :key="item.id">
+                        <th scope="row">
+                          {{ index + 1 }}
+                        </th>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.bank_name }}</td>
+                        <td>{{ item.bank_account }}</td>
+                        <td>
+                          Rp.
+                          {{
+                            Number(item.amount).toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })
+                          }}
+                        </td>
+                        <td>{{ item.remark }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </b-col>
             </b-row>
             <b-row v-if="attachments.length > 0" class="mb-2">
@@ -362,17 +443,27 @@
                   <thead class="thead-dark">
                     <tr>
                       <th>file</th>
+                      <th>info</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(attachment, index) in attachments" :key="index">
-                      <a
-                        :href="attachment.name"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {{ attachment.real_name }}
-                      </a>
+                      <td>
+                        <a
+                          :href="attachment.name"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {{ attachment.real_name }}
+                        </a>
+                      </td>
+                      <td>
+                        {{
+                          attachment.type == "payment"
+                            ? "payment attachment"
+                            : ""
+                        }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -395,6 +486,7 @@
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
+import FormInvoice from "@/components/FormInvoice";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 import ModalFormMemoApproval from "@/components/ModalFormMemoApproval";
@@ -411,6 +503,7 @@ export default {
     "memocost",
     "attachments",
     "__approving",
+    "__previewpdfapproval",
   ],
   metaInfo: { title: "Preview Approval Payment" },
   components: {
@@ -421,6 +514,7 @@ export default {
     TimelineItem,
     TimelineTitle,
     ModalFormMemoApproval,
+    FormInvoice,
   },
   data() {
     return {
@@ -450,6 +544,14 @@ export default {
       this.idItemClicked = id;
       this.modalTitle = "Modal Acknowledge";
       this.modalCaption = "Are you sure to next?";
+
+      this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
+    },
+    actionRevisi(id) {
+      this.buttonClicked = "revisi";
+      this.idItemClicked = id;
+      this.modalTitle = "Modal Revision";
+      this.modalCaption = "Are you sure to revision?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
@@ -504,6 +606,11 @@ export default {
     reset() {
       this.form = mapValues(this.form, () => null);
     },
+  },
+  mounted() {
+    // table
+    $(".data-memo table").wrap('<div class="table-responsive"></div>');
+    $(".data-memo table").addClass("table").addClass("table-bordered");
   },
 };
 </script>

@@ -172,7 +172,7 @@
                   <tr>
                     <td style="font-size:40px; font-weight: 600; color: #ffffff; text-align:center;" class="mobile-spacing">
                     <div class="mobile-br">&nbsp;</div>
-                      Payment Approval
+                      PO Approval
                     <br/>
                     </td>
                   </tr>

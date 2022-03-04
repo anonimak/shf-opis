@@ -189,7 +189,7 @@ class ApprovalController extends Controller
     public function detailPayment(Request $request, $id)
     {
         $memo = Memo::getPaymentDetailWithCurrentApprover($id, auth()->user()->id_employee);
-        $proposeEmployee = Employee::getWithPositionNowById($memo);
+        $proposeEmployee = ($memo->id_employee2) ? Employee::getWithPositionNowById($memo, true) : Employee::getWithPositionNowById($memo);
         $dataPayments = Memo::where('id', $id)->with('payments')->first();
         $memocost = (array) json_decode($memo->cost);
         $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
@@ -218,6 +218,7 @@ class ApprovalController extends Controller
             'dataMemo' => $memo,
             'dataTotalCost' => $dataTotalCost,
             'dataPayments' => $dataPayments->payments,
+            '__previewpdfapproval' => 'user.memo.approval.payment.previewpdfapproval',
             'proposeEmployee' => $proposeEmployee,
             'memocost' => $memocost,
             'attachments' => $attachments,
@@ -285,10 +286,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -450,10 +451,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
@@ -496,8 +497,8 @@ class ApprovalController extends Controller
                     ];
                 }
 
-                Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
-                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
+                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
             } else {
                 Memo::where('id', $approver->id_memo)->update(['status_payment' => 'approve']);
                 // insert to history when all approved by approver
@@ -547,7 +548,7 @@ class ApprovalController extends Controller
                     'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
                 ];
                 // notif ke user propose
-                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
                 //notif ke confirmer payment
                 Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
             }
@@ -569,7 +570,7 @@ class ApprovalController extends Controller
                 'message' => "Memo Payment $memo->title - $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
-            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
         }
 
         if ($status_approver == 'reject') {
@@ -588,7 +589,7 @@ class ApprovalController extends Controller
                 'message' => "Memo Payment $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
-            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
         }
 
         return Redirect::route('user.memo.approval.payment.index')->with('success', "Successfull " . $request->input('variant'));
@@ -618,10 +619,10 @@ class ApprovalController extends Controller
                 ];
             } else {
                 $contentHistory = [
-                    'title'     => "Reviewed by Acknowledge {$approver->idx}",
+                    'title'     => "Reviewed by Reviewer {$approver->idx}",
                     'id_memo'   => $memo->id,
                     'type'      => 'success',
-                    'content'   => "Reviewed by Acknowledge {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
+                    'content'   => "Reviewed by Reviewer {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}) $message"
                 ];
             }
             // insert to history when approved
