@@ -3,6 +3,7 @@
     :title="title"
     :class="{ active: isActive ? isActive() : null }"
     @click="action"
+    @mousedown="onMouseDown"
     variant="light"
     :disabled="isDisabled"
   >
@@ -35,6 +36,12 @@ export default {
     isDisabled: {
       type: Function,
       default: null,
+    },
+  },
+  methods: {
+    onMouseDown: function (e) {
+      e.preventDefault();
+      this.$emit("onMouseDown", true);
     },
   },
 };

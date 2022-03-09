@@ -3,12 +3,18 @@
     <b-button-group size="sm">
       <template v-for="(item, index) in items">
         <div class="divider" v-if="item.type === 'divider'" :key="index" />
-        <menu-item v-else :key="index" v-bind="item" />
+        <menu-item
+          v-else
+          :key="index"
+          v-bind="item"
+          @onMouseDown="onMouseDown"
+        />
       </template>
       <div class="divider" />
       <b-button
         title="Remove Table"
         @click="editor.chain().focus().deleteTable().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().deleteTable()"
         variant="light"
       >
@@ -17,6 +23,7 @@
       <b-button
         title="Insert column before"
         @click="editor.chain().focus().addColumnBefore().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().addColumnBefore()"
         variant="light"
       >
@@ -25,6 +32,7 @@
       <b-button
         title="Insert column after"
         @click="editor.chain().focus().addColumnAfter().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().addColumnAfter()"
         variant="light"
       >
@@ -33,6 +41,7 @@
       <b-button
         title="Remove column"
         @click="editor.chain().focus().deleteColumn().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().deleteColumn()"
         variant="light"
       >
@@ -41,6 +50,7 @@
       <b-button
         title="Insert row top"
         @click="editor.chain().focus().addRowBefore().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().addRowBefore()"
         variant="light"
       >
@@ -49,6 +59,7 @@
       <b-button
         title="Insert row bottom"
         @click="editor.chain().focus().addRowAfter().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().addRowAfter()"
         variant="light"
       >
@@ -57,6 +68,7 @@
       <b-button
         title="Remove row"
         @click="editor.chain().focus().deleteRow().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().deleteRow()"
         variant="light"
       >
@@ -65,6 +77,7 @@
       <b-button
         title="Toggle header cell"
         @click="editor.chain().focus().toggleHeaderCell().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().toggleHeaderCell()"
         variant="light"
       >
@@ -73,6 +86,7 @@
       <b-button
         title="Merge cells"
         @click="editor.chain().focus().mergeCells().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().mergeCells()"
         variant="light"
       >
@@ -81,6 +95,7 @@
       <b-button
         title="Split cell"
         @click="editor.chain().focus().splitCell().run()"
+        @mousedown="onMouseDown"
         :disabled="!editor.can().splitCell()"
         variant="light"
       >
@@ -246,6 +261,14 @@ export default {
         },
       ],
     };
+  },
+
+  methods: {
+    onMouseDown: function (e) {
+      e.preventDefault();
+      console.log("mouse down");
+      this.$emit("onButtonMouseDown", true);
+    },
   },
 };
 </script>
