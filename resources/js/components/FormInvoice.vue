@@ -36,7 +36,7 @@
         </b-row>
         <b-row class="mb-4">
           <b-col>
-            <div class="table-responsive">
+            <div class="table-responsive mb-0">
               <table class="table table-bordered">
                 <thead class="thead-light">
                   <tr>
@@ -169,33 +169,34 @@
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="7" class="p-0">
-                      <div
-                        v-if="isEditMode"
-                        class="col px-0 bg-secondary"
-                        style="height: 5px"
-                        :id="'btnAddInvoice' + invoice.id"
-                        @mouseover="onMouseOverTableInvoice"
-                        @mouseleave="onMouseLeaveTableInvoice"
-                      >
-                        <div
-                          v-b-tooltip.hover
-                          title="add item"
-                          class="
-                            round-box
-                            d-none
-                            align-items-center
-                            justify-content-center
-                          "
-                          @click="addItemInvoice(idx)"
-                        >
-                          <i class="fa fa-plus" aria-hidden="true"></i>
-                        </div>
-                      </div>
-                    </td>
+                    <td colspan="7" class="p-0"></td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <div
+              v-if="isEditMode"
+              class="col px-0"
+              :class="isMobile() ? 'bg-primary' : 'bg-secondary'"
+              style="height: 5px"
+              :id="'btnAddInvoice' + invoice.id"
+              @mouseover="onMouseOverTableInvoice"
+              @mouseleave="onMouseLeaveTableInvoice"
+            >
+              <div
+                v-b-tooltip.hover
+                title="add item"
+                class="
+                  round-box
+                  align-items-center
+                  justify-content-center
+                  d-none
+                "
+                :class="{ 'd-flex': isMobile() }"
+                @click="addItemInvoice(idx)"
+              >
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </div>
             </div>
             <div class="row justify-content-center mt-0"></div>
           </b-col>
@@ -420,7 +421,8 @@
                     <td colspan="2" class="p-0">
                       <div
                         v-if="isEditMode"
-                        class="col px-0 bg-secondary"
+                        class="col px-0"
+                        :class="isMobile() ? 'bg-primary' : 'bg-secondary'"
                         style="height: 5px; cursor: pointer"
                         :id="'btnAddInvoice' + invoice.id"
                         @mouseover="onMouseOverTableInvoice"
@@ -431,10 +433,11 @@
                           title="add others"
                           class="
                             round-box
-                            d-none
                             align-items-center
                             justify-content-center
+                            d-none
                           "
+                          :class="{ 'd-flex': isMobile() }"
                           @click="addOthers(idx)"
                         >
                           <i class="fa fa-plus" aria-hidden="true"></i>
@@ -570,6 +573,7 @@ export default {
 
   methods: {
     onMouseOverTableInvoice(event) {
+      if (this.isMobile()) return;
       let button = $(event.target).find("div.round-box");
       button.removeClass("d-none").addClass("d-flex");
       $(event.target).removeClass("bg-secondary");
@@ -577,6 +581,7 @@ export default {
     },
 
     onMouseLeaveTableInvoice(event) {
+      if (this.isMobile()) return;
       let button = $(event.target).find("div.round-box");
       button.addClass("d-none").removeClass("d-flex");
       $(event.target).removeClass("bg-primary");
@@ -1005,5 +1010,6 @@ export default {
   height: 30px;
   background-color: #009688;
   color: white;
+  z-index: 99999;
 }
 </style>
