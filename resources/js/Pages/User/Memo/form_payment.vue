@@ -140,7 +140,7 @@
               <b-row v-else>
                 <b-col>
                   <h5>Cost/Expense</h5>
-                  <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
+                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
                 </b-col>
               </b-row>
               <b-row

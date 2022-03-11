@@ -11,7 +11,7 @@
       <b-col
         v-for="(invoice, idx) in dataInvoices"
         :key="idx"
-        :class="isEditMode ? 'my-5' : 'mb-5'"
+        :class="isEditMode && !editOnlyTax ? 'my-5' : 'mb-5'"
       >
         <b-row class="my-2">
           <b-col sm="4" md="2">
@@ -19,12 +19,15 @@
               v-model="invoice.no_invoice"
               @change="updateInvoice(idx, invoice.id)"
               placeholder="No Invoice"
-              :readonly="!isEditMode"
+              v-if="isEditMode && !editOnlyTax"
             ></b-form-input>
+            <h6 v-else>
+              No Invoice : {{ invoice.no_invoice ? invoice.no_invoice : "-" }}
+            </h6>
           </b-col>
           <b-col>
             <b-button
-              v-if="idx >= 0 && isEditMode"
+              v-if="idx >= 0 && isEditMode && !editOnlyTax"
               class="mx-auto float-right"
               variant="outline-secondary"
               size="sm"
@@ -46,7 +49,7 @@
                     <th scope="col">Qty</th>
                     <th scope="col">Type</th>
                     <th scope="col" class="text-right">Total</th>
-                    <th v-if="isEditMode" scope="col">#</th>
+                    <th v-if="isEditMode && !editOnlyTax" scope="col">#</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -54,6 +57,8 @@
                     v-for="(item, index) in invoice.item_invoices"
                     :key="index"
                     @click="editMode(index, idx)"
+                    v-click-outside="onClickOutside"
+                    style="cursor: pointer"
                   >
                     <td @click="editMode(index, idx)">
                       <b-form-textarea
@@ -153,7 +158,10 @@
                         {{ (item.qty * item.price) | currency }}
                       </p>
                     </td>
-                    <td v-if="isEditMode" @click="editMode(index, idx)">
+                    <td
+                      v-if="isEditMode && !editOnlyTax"
+                      @click="editMode(index, idx)"
+                    >
                       <b-col
                         v-if="editRow == index && editInvoice == idx"
                         class="px-auto"
@@ -175,7 +183,7 @@
               </table>
             </div>
             <div
-              v-if="isEditMode"
+              v-if="isEditMode && !editOnlyTax"
               class="col px-0"
               :class="isMobile() ? 'bg-primary' : 'bg-secondary'"
               style="height: 5px"
@@ -262,7 +270,7 @@
                     <td>Total Jasa Gross Up</td>
                     <td>
                       <div
-                        v-if="isEditMode"
+                        v-if="isEditMode || editOnlyTax"
                         class="d-flex align-items-center justify-content-center"
                       >
                         <vue-numeric
@@ -295,7 +303,7 @@
                     <td>PPN</td>
                     <td>
                       <div
-                        v-if="isEditMode"
+                        v-if="isEditMode || editOnlyTax"
                         class="d-flex align-items-center justify-content-center"
                       >
                         <vue-numeric
@@ -339,7 +347,9 @@
                     </td>
                     <td v-if="invoice.pph != 'none'">
                       <vue-numeric
-                        v-if="invoice.pph == 'pph21' && isEditMode"
+                        v-if="
+                          invoice.pph == 'pph21' && (isEditMode || editOnlyTax)
+                        "
                         class="form-control form-control-sm"
                         @change="actionOnChange(idx)"
                         currency="Rp"
@@ -376,7 +386,7 @@
                   >
                     <td>
                       <b-input
-                        v-if="isEditMode"
+                        v-if="isEditMode || editOnlyTax"
                         type="text"
                         size="sm"
                         v-model="item.title"
@@ -387,7 +397,7 @@
                     </td>
                     <td>
                       <div
-                        v-if="isEditMode"
+                        v-if="isEditMode || editOnlyTax"
                         class="d-flex align-items-center justify-content-center"
                       >
                         <vue-numeric
@@ -420,7 +430,7 @@
                   <tr>
                     <td colspan="2" class="p-0">
                       <div
-                        v-if="isEditMode"
+                        v-if="isEditMode || editOnlyTax"
                         class="col px-0"
                         :class="isMobile() ? 'bg-primary' : 'bg-secondary'"
                         style="height: 5px; cursor: pointer"
@@ -456,7 +466,7 @@
             </div>
             <div class="row justify-content-center my-2">
               <b-dropdown
-                v-if="isEditMode"
+                v-if="isEditMode || editOnlyTax"
                 variant="secondary"
                 size="sm"
                 no-caret
@@ -521,7 +531,7 @@
       </b-col>
       <b-col>
         <b-button
-          v-if="isEditMode"
+          v-if="isEditMode && !editOnlyTax"
           class="mx-auto"
           variant="outline-primary"
           size="sm"
@@ -549,6 +559,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    editOnlyTax: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -572,6 +586,9 @@ export default {
   },
 
   methods: {
+    onClickOutside() {
+      this.editMode(null, null);
+    },
     onMouseOverTableInvoice(event) {
       if (this.isMobile()) return;
       let button = $(event.target).find("div.round-box");
@@ -686,7 +703,7 @@ export default {
     },
 
     editMode(indexItem, indexInvoice) {
-      if (this.isEditMode) {
+      if (this.isEditMode && !this.editOnlyTax) {
         this.editRow = indexItem;
         this.editInvoice = indexInvoice;
       }
@@ -828,7 +845,7 @@ export default {
       grossup = Math.round(
         (this.sumItemInvoiceBy(idx, "jasa") * 100) / percent
       );
-      console.log("grossup", grossup);
+      // console.log("grossup", grossup);
       return grossup;
     },
 
@@ -885,7 +902,7 @@ export default {
     },
 
     countTotal(idx, actionChangePPN = false, actionChangeGrossup = false) {
-      console.log("hitung total...");
+      // console.log("hitung total...");
       let invoice = this.dataInvoices[idx];
       let ppn = 0;
       let sumBarang = this.sumItemInvoiceBy(idx, "barang");

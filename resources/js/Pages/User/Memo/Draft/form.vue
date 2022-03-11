@@ -74,19 +74,15 @@
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-                    <div class="table-responsive" v-if="formType == 'payment'">
+                    <div class="table-responsive">
                       <table-edit-approver
                         :dataPosition="dataPosition"
                         :dataApprovers="dataApprovers"
-                        :__updateApprover="updateApproverPayment"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
-                    <div class="table-responsive" v-else>
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="__updateApprover"
+                        :__updateApprover="
+                          formType == 'payment'
+                            ? updateApproverPayment
+                            : __updateApprover
+                        "
                         :id_memo="dataMemo.id"
                       />
                     </div>
