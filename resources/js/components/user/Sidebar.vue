@@ -9,7 +9,7 @@
       class="sidebar-brand d-flex align-items-center"
       :href="route('user.dashboard')"
     >
-      <div class="sidebar-brand-text mx-3">User WebSHF</div>
+      <div class="sidebar-brand-text mx-3">User E-Memo</div>
     </inertia-link>
     <!-- Divider -->
     <hr class="sidebar-divider my-0" />
