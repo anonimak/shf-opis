@@ -864,7 +864,7 @@ export default {
       let totalJasa = invoice.grossup
         ? invoice.grossup_value
         : this.sumItemInvoiceBy(idx, "jasa");
-      let tarif = 3;
+      let tarif = 2.65;
       let pph = Math.round((totalJasa * tarif) / 100);
 
       this.$set(this.dataInvoices[idx], "pph_value", pph);
