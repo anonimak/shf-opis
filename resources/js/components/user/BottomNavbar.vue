@@ -1,5 +1,6 @@
 <template>
   <nav
+    id="bottom-navbar"
     class="
       navbar
       border-top
@@ -231,6 +232,23 @@ export default {
     this.isOvertakeMemo = isovertakeMemo;
     this.isConfirmedPayment = isConfirmedPayment;
   },
+  mounted() {
+    this.actionHideShowNav();
+  },
+  methods: {
+    actionHideShowNav() {
+      var prevScrollpos = window.pageYOffset;
+      window.onscroll = function () {
+        var currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+          $("#bottom-navbar").slideDown(100);
+        } else {
+          $("#bottom-navbar").slideUp(100);
+        }
+        prevScrollpos = currentScrollPos;
+      };
+    },
+  },
 };
 </script>
 
@@ -250,7 +268,7 @@ nav {
     li.nav-item {
       a:hover,
       a:hover.nav-link {
-        color: $teal;
+        // color: $teal;
         span.title {
           display: block !important;
         }
@@ -268,22 +286,25 @@ nav {
       }
       a.nav-link.active {
         color: $teal;
-        transform: translateY(-14%);
+        transform: translateY(-10%);
         transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
         font-size: 26px;
-        span.title {
+        > span.title {
+          display: block !important;
+        }
+        span.notif-badge {
           display: block !important;
         }
       }
 
       .dropdown {
         display: block;
-        .dropdown-item span.notif-badge {
+        .dropdown-item > span.notif-badge {
           display: inline-block !important;
           font-size: 60%;
         }
 
-        .dropdown-item.active span.notif-badge {
+        .dropdown-item.active > span.notif-badge {
           background-color: $white;
           color: #009688;
         }
