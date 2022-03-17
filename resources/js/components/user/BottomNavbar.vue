@@ -9,7 +9,7 @@
       bottom-navbar
     "
   >
-    <ul class="navbar-nav nav-justified w-100">
+    <ul class="navbar-nav nav-justified mx-auto w-100">
       <li class="nav-item">
         <inertia-link
           :href="route('user.dashboard')"
@@ -188,7 +188,7 @@
               :href="route('user.memo.approval.payment.index')"
               >Payment
               <b-badge
-                v-if="notif.approval_payment"
+                v-if="notif.approval_memo_payment"
                 pill
                 variant="primary"
                 class="notif-badge"
@@ -201,7 +201,7 @@
               :href="route('user.memo.approval.po.index')"
               >PO
               <b-badge
-                v-if="notif.approval_po"
+                v-if="notif.approval_memo_po"
                 pill
                 variant="primary"
                 class="notif-badge"
@@ -245,7 +245,7 @@ $black: #000 !default;
 
 nav {
   border-radius: 20px 20px 0 0;
-  padding: 0.7rem 0.5rem 0 0;
+  padding: 0.9rem 0.5rem 0 0.5rem;
   ul.navbar-nav {
     li.nav-item {
       a:hover,
@@ -256,7 +256,7 @@ nav {
         }
       }
       a.nav-link {
-        padding: 0.5rem 0.5rem;
+        padding: 0 !important;
         font-size: 24px;
         display: inline-grid;
         color: #3a3b45;
