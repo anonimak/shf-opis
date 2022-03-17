@@ -22,7 +22,7 @@
           show
           dismissible
         >
-          <h2 class="alert-heading m-auto">
+          <h2 class="alert-heading my-auto">
             <i
               v-if="item.type == 'warning'"
               class="fas fa-exclamation-triangle"
@@ -33,7 +33,7 @@
             <i v-if="item.type == 'primary'" class="fas fa-info-circle"></i>
             <i v-if="item.type == 'secondary'" class="fas fa-info-circle"></i>
           </h2>
-          <p class="ml-4 my-auto">
+          <p class="mx-4 my-auto">
             {{ item.msg }}
           </p>
         </b-alert>
