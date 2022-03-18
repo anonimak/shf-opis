@@ -19,7 +19,9 @@
             active: isRoute('user.dashboard') || isRoute('user.setting.*'),
           }"
         >
-          <i class="bx bx-home-alt"></i>
+          <span class="icon-notif">
+            <i class="bx bx-home-alt"></i>
+          </span>
           <span class="title small d-block">Home</span>
         </inertia-link>
       </li>
@@ -29,7 +31,9 @@
           class="nav-link"
           :class="{ active: isRoute('user.memo.draft.*') }"
         >
-          <i class="bx bx-box"></i>
+          <span class="icon-notif">
+            <i class="bx bx-box"></i>
+          </span>
           <span class="title small d-block">Draft</span>
         </inertia-link>
       </li>
@@ -39,7 +43,9 @@
           class="nav-link"
           :class="{ active: isRoute('user.memo.create') }"
         >
-          <i class="bx bx-plus-circle"></i>
+          <span class="icon-notif">
+            <i class="bx bx-plus-circle"></i>
+          </span>
           <span class="title small d-block">Create</span>
         </inertia-link>
       </li>
@@ -60,14 +66,16 @@
                 isRoute('user.memo.confirmpayment.*'),
             }"
           >
-            <i class="bx bx-info-square"></i>
-            <b-badge
-              v-if="notif.memo_branch || notif.confirmed_paymentmemo"
-              pill
-              variant="primary"
-              class="notif-badge"
-              >!</b-badge
-            >
+            <span class="icon-notif">
+              <i class="bx bx-info-square"></i>
+              <b-badge
+                v-if="notif.memo_branch || notif.confirmed_paymentmemo"
+                pill
+                variant="primary"
+                class="notif-badge"
+                >!</b-badge
+              >
+            </span>
             <span class="title small d-block">Status</span>
           </a>
           <div
@@ -152,18 +160,20 @@
                 isRoute('user.memo.approval.po.*'),
             }"
           >
-            <i class="bx bx-list-check"></i>
-            <b-badge
-              v-if="
-                notif.approval_memo ||
-                notif.approval_memo_payment ||
-                notif.approval_memo_po
-              "
-              pill
-              variant="primary"
-              class="notif-badge"
-              >!</b-badge
-            >
+            <span class="icon-notif">
+              <i class="bx bx-list-check"></i>
+              <b-badge
+                v-if="
+                  notif.approval_memo ||
+                  notif.approval_memo_payment ||
+                  notif.approval_memo_po
+                "
+                pill
+                variant="primary"
+                class="notif-badge"
+                >!</b-badge
+              >
+            </span>
             <span class="title small d-block">Approval</span>
           </a>
           <div
@@ -270,9 +280,9 @@ nav {
     li.nav-item {
       a:hover,
       a:hover.nav-link {
-        // color: $teal;
+        color: $darkteal;
         span.title {
-          display: block !important;
+          // display: block !important;
         }
       }
       a.nav-link {
@@ -299,6 +309,13 @@ nav {
         }
       }
 
+      .icon-notif {
+        height: 28px;
+        position: relative !important;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
       .dropdown {
         display: block;
         .dropdown-item > span.notif-badge {
@@ -311,12 +328,13 @@ nav {
           color: #009688;
         }
 
-        .nav-icon span.notif-badge {
+        .icon-notif > span.notif-badge,
+        a.nav-link.active > .icon-notif > span.notif-badge {
           position: absolute;
-          top: 2px;
-          right: 18px;
+          top: -3px;
+          right: -4px;
           display: block;
-          font-size: 40%;
+          font-size: 35%;
         }
       }
     }
