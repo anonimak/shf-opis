@@ -222,6 +222,7 @@ export default {
     return {
       isOvertakeMemo: false,
       isConfirmedPayment: false,
+      prevScrollpos: 0,
     };
   },
   beforeMount() {
@@ -233,19 +234,20 @@ export default {
     this.isConfirmedPayment = isConfirmedPayment;
   },
   mounted() {
+    this.prevScrollpos = 0;
     this.actionHideShowNav();
   },
   methods: {
     actionHideShowNav() {
-      var prevScrollpos = window.pageYOffset;
+      this.prevScrollpos = window.pageYOffset;
       window.onscroll = function () {
-        var currentScrollPos = window.pageYOffset;
-        if (prevScrollpos > currentScrollPos) {
+        let currentScrollPos = window.pageYOffset;
+        if (this.prevScrollpos > currentScrollPos) {
           $("#bottom-navbar").slideDown(100);
         } else {
           $("#bottom-navbar").slideUp(100);
         }
-        prevScrollpos = currentScrollPos;
+        this.prevScrollpos = currentScrollPos;
       };
     },
   },
