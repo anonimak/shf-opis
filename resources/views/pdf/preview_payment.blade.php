@@ -204,7 +204,7 @@
                     </td>
                     @else
                     <td>
-                        <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div>
+                        {{-- <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div> --}}
                         
                         {{-- <div style="font-family: ZapfDingbats, sans-serif;">4</div> --}}
                     </td>
