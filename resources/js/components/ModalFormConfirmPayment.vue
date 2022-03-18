@@ -8,7 +8,7 @@
     @ok="handleOk"
   >
     <form ref="form" @submit.stop.prevent="handleSubmit">
-      <p>{{ caption }}</p>
+      <p v-html="caption"></p>
       <b-form-group label-for="name-input">
         <!-- <b-form-textarea
           v-if="useMessage"

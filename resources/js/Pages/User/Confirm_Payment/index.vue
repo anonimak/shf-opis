@@ -134,12 +134,7 @@
                                 >
                                 <b-button
                                   v-if="item.payment_at == null"
-                                  @click="
-                                    actionConfirm(
-                                      item.id,
-                                      item.confirmed_payment_by
-                                    )
-                                  "
+                                  @click="actionConfirm(item)"
                                   variant="info"
                                 >
                                   Confirm Payment
@@ -251,13 +246,14 @@ export default {
       );
       return false;
     },
-    actionConfirm(id, idConfirmedPay) {
+    actionConfirm(item) {
       //   this.buttonClicked = "approve";
-      this.idItemClicked = id;
-      this.idConfirmedPayment = idConfirmedPay;
+      this.idItemClicked = item.id;
+      this.idConfirmedPayment = item.confirmed_payment_by;
       this.modalTitle = "Modal Confirming Payment";
-      this.modalCaption =
-        "Are you sure to confirm this memo payment has been paid?";
+      this.modalCaption = `<b>Title : ${item.title}</b> <br>`;
+      this.modalCaption += `<b>Document No : ${item.doc_no}</b><br><br>`;
+      this.modalCaption += `Are you sure to confirm this memo payment has been paid?`;
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
