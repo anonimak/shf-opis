@@ -200,11 +200,13 @@
                     <td>-</td>
                     @elseif ($approver->status == 'reject')
                     <td>
-                        <div style="font-family: ZapfDingbats, sans-serif;">8</div>
+                        <div style="font-family: DejaVu Sans;font-size:14px;">&#9746;</div>
                     </td>
                     @else
                     <td>
-                        <div style="font-family: ZapfDingbats, sans-serif;">4</div>
+                        <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div>
+                        
+                        {{-- <div style="font-family: ZapfDingbats, sans-serif;">4</div> --}}
                     </td>
                     @endif
                     @endif
