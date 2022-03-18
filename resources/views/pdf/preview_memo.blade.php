@@ -259,7 +259,8 @@
 
             </tbody>
         </table>
-        {{-- <table style="width: 30%; position: relative; left: 511px;">
+        @if($dataTotalCost['sub_total'] > 0)
+        <table style="width: 30%; position: relative; left: 511px;">
                 <tbody>
                     <tr>
                         <th style="width: 38%; text-align: left;">Sub Total</th>
@@ -290,7 +291,8 @@
                         </td>
                     </tr>
                 </tbody>
-        </table> --}}
+        </table>
+        @endif
         <br>
         @endif
         @if ( $memo->payment != "<p></p>" && $memo->payment != '')

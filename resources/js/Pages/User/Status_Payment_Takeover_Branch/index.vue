@@ -95,7 +95,7 @@
                             </td>
                             <td>
                               {{ item.doc_no }}
-                               <b-badge
+                              <b-badge
                                 v-if="
                                   item.payment_at != null &&
                                   item.ref_table.with_payment == true
@@ -118,7 +118,7 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                             <inertia-link
+                              <inertia-link
                                 v-if="tabIndex == 3"
                                 :href="route(__editpayment, item.id)"
                                 class="btn btn-warning btn-sm my-2"
@@ -131,17 +131,30 @@
                               >
                                 preview
                               </inertia-link>
+                              <!-- <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="item.status_payment == 'approve'"
+                                >Preview PDF</a
+                              > -->
                               <a
                                 target="_blank"
-                                class="btn btn-primary btn-sm"
-                                :href="route(__previewmemopdf, item.id)"
-                                >Preview Memo PDF</a
+                                class="btn btn-success btn-sm"
+                                v-on:click="openPDF(item.id, 1200, 650)"
+                                v-if="
+                                  item.status_payment == 'approve' &&
+                                  isMobile() == false
+                                "
+                                >Preview PDF</a
                               >
                               <a
                                 target="_blank"
                                 class="btn btn-success btn-sm"
                                 :href="route(__previewpdf, item.id)"
-                                v-if="item.status_payment == 'approve'"
+                                v-if="
+                                  item.status_payment == 'approve' && isMobile() == true
+                                "
                                 >Preview PDF</a
                               >
                             </td>
@@ -221,6 +234,23 @@ export default {
     this.setLsTabMemo();
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },

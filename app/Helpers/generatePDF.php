@@ -140,7 +140,11 @@ function generatePDFTakeoverBranch($id, $fromroute = 'true')
     // $memo = Memo::getPaymentDetailApprovers($id);
     $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
-    $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
+    // $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
+    $employeeProposeInfo = ($memo->id_employee2) ? Memo::getMemoDetailEmployeePropose($id, true) : Memo::getMemoDetailEmployeePropose($id);
+    if ($memo->id_employee2) {
+        $employeeProposeInfo->proposeemployee = $employeeProposeInfo->proposeemployee2;
+    }
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');

@@ -140,10 +140,24 @@
                     <tr v-if="dataMemo.ref_table.type != 'payment'">
                       <td>Preview PDF Memo Approval</td>
                       <td>
+                        <!-- <a
+                          target="_blank"
+                          class="btn btn-success"
+                          :href="route(__previewpdfapproval, dataMemo.id)"
+                          >Preview PDF Memo Approval</a
+                        > -->
+                        <a
+                          target="_blank"
+                          class="btn btn-success"
+                          v-on:click="openPDF(dataMemo.id, 1200, 650)"
+                          v-if="isMobile() == false"
+                          >Preview PDF Memo Approval</a
+                        >
                         <a
                           target="_blank"
                           class="btn btn-success"
                           :href="route(__previewpdfapproval, dataMemo.id)"
+                          v-if="isMobile() == true"
                           >Preview PDF Memo Approval</a
                         >
                       </td>
@@ -516,6 +530,23 @@ export default {
     };
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdfapproval, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     actionApprove(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;

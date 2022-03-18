@@ -240,7 +240,7 @@
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row v-if="formType == 'payment'">
+              <b-row v-if="formType == 'payment' || dataMemoType.ref_table.with_po == true">
                 <div class="col-5">
                   <b-overlay
                     :show="isSubmitBusy"

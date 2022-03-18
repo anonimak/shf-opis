@@ -45,7 +45,7 @@
                         }}</b-badge>
                       </template>
                     </b-tab>
-                     <b-tab>
+                    <b-tab>
                       <template #title>
                         Revised
                         <b-badge v-if="counttab.revisi > 0" variant="primary">{{
@@ -97,9 +97,9 @@
                               {{ item.doc_no }}
                               <b-badge
                                 v-if="
-                                item.payment_at != null &&
+                                  item.payment_at != null &&
                                   (item.ref_table.with_payment == true ||
-                                  item.ref_table.type == 'payment')
+                                    item.ref_table.type == 'payment')
                                 "
                                 variant="success"
                               >
@@ -107,9 +107,9 @@
                               </b-badge>
                               <b-badge
                                 v-if="
-                                 item.payment_at == null &&
+                                  item.payment_at == null &&
                                   (item.ref_table.with_payment == true ||
-                                  item.ref_table.type == 'payment')
+                                    item.ref_table.type == 'payment')
                                 "
                                 variant="warning"
                               >
@@ -133,11 +133,31 @@
                               >
                                 preview
                               </inertia-link>
-                              <a
+                              <!-- <a
                                 target="_blank"
                                 class="btn btn-success btn-sm"
                                 :href="route(__previewpdf, item.id)"
                                 v-if="item.status_payment == 'approve'"
+                                >Preview PDF</a
+                              > -->
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                v-on:click="openPDF(item.id, 1200, 650)"
+                                v-if="
+                                  item.status_payment == 'approve' &&
+                                  isMobile() == false
+                                "
+                                >Preview PDF</a
+                              >
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="
+                                  item.status_payment == 'approve' &&
+                                  isMobile() == true
+                                "
                                 >Preview PDF</a
                               >
                             </td>
@@ -216,6 +236,23 @@ export default {
     this.setLsTabMemo();
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },

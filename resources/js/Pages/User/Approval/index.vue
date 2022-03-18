@@ -109,10 +109,26 @@
                                   item.status_approver == 'submit'
                                 "
                               >
+                                <!-- <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdf, item.id)"
+                                  >Preview PDF</a
+                                > -->
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  v-on:click="
+                                    openPDF(item.id, 1200, 650)
+                                  "
+                                  v-if="isMobile() == false"
+                                  >Preview PDF</a
+                                >
                                 <a
                                   target="_blank"
                                   class="btn btn-success"
                                   :href="route(__previewpdf, item.id)"
+                                  v-if="isMobile() == true"
                                   >Preview PDF</a
                                 >
                                 <b-button
@@ -132,10 +148,26 @@
                                 >
                               </b-button-group>
                               <b-button-group v-else>
+                                <!-- <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdf, item.id)"
+                                  >Preview PDF</a
+                                > -->
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  v-on:click="
+                                    openPDF(item.id, 1200, 650)
+                                  "
+                                  v-if="isMobile() == false"
+                                  >Preview PDF</a
+                                >
                                 <a
                                   target="_blank"
                                   class="btn btn-success"
                                   :href="route(__previewpdf, item.id)"
+                                  v-if="isMobile() == true"
                                   >Preview PDF</a
                                 >
                                 <b-button
@@ -324,6 +356,23 @@ export default {
   },
   mounted() {},
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     actionApprove(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;

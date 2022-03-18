@@ -253,15 +253,14 @@
                 </div>
               </b-col>
             </b-row>
-            <!-- <b-row
+            <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true
+                dataMemo.ref_table.with_po == true && dataTotalCost.sub_total > 0
               "
             >
               <b-col>
-                <div class="table-responsive" v-if="dataTotalCost.length > 0">
+                <div class="table-responsive">
                   <table class="table table-stripped table-bordered">
                     <tbody>
                       <tr>
@@ -308,7 +307,7 @@
                   </table>
                 </div>
               </b-col>
-            </b-row> -->
+            </b-row>
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"

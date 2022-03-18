@@ -93,7 +93,7 @@
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>Approval</td>
+                        <td>Payment</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
                         <td>Send email after memo approved to</td>

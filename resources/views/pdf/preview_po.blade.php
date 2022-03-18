@@ -196,6 +196,7 @@
 
             </tbody>
         </table>
+        @if($dataTotalCost['sub_total'] > 0)
         <table style="width: 30%; position: relative; left: 511px;">
             <tbody>
                 <tr>
@@ -228,6 +229,7 @@
                 </tr>
             </tbody>
         </table>
+        @endif
         <br>
         @endif
         @if ( count($memo->approvers) > 0)
