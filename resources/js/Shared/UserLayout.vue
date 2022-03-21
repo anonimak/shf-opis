@@ -35,3 +35,8 @@ export default {
   },
 };
 </script>
+<style>
+body.modal-open {
+  overflow: scroll !important;
+}
+</style>
