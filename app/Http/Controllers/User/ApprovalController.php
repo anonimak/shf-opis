@@ -377,6 +377,15 @@ class ApprovalController extends Controller
                         ->attachData($pdfMemo->output(), $pdfName);
                 });
 
+                // // notif ke all approver
+                // $allApprovers = D_Memo_Approver::where('id_memo', $approver->id_memo)->with('employee')->get();
+                // $mailApprovers = $allApprovers->pluck('employee')->pluck('email')->filter()->toArray();
+                // Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemo, $pdfName) {
+                //     $message->to($mailApprovers)
+                //         ->subject($contentAcknowledge["subject"])
+                //         ->attachData($pdfMemo->output(), $pdfName);
+                // });
+                // 
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }
