@@ -95,6 +95,8 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::post('/{memo}/attachment', 'User\MemoController@fileUploadAttach')->name('attachment');
             Route::delete('/{memo}/attachment', 'User\MemoController@destroyAttach')->name('attachmentremove');
             Route::post('/{memo}/approver', 'User\MemoController@updateApprover')->name('updateapprover');
+            Route::post('/{memo}/auto-save', 'User\MemoController@itemAutoSave')->name('itemAutoSave');
+            Route::post('/{memo}/auto-save-cost', 'User\MemoController@itemAutoSaveCost')->name('itemAutoSaveCost');
             Route::post('/{memo}/acknowledge/{type}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::delete('/{memo}/acknowledge/{id_employee}/{type}', 'User\MemoController@deleteAcknowledge')->name('deleteacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
