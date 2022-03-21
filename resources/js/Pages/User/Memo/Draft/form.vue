@@ -74,22 +74,18 @@
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-                    <div class="table-responsive" v-if="formType == 'payment'">
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="updateApproverPayment"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
-                    <div class="table-responsive" v-else>
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="__updateApprover"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
+                    <!-- <div class="table-responsive" v-if="formType == 'payment'"> -->
+                    <table-edit-approver
+                      :dataPosition="dataPosition"
+                      :dataApprovers="dataApprovers"
+                      :__updateApprover="
+                        formType == 'payment'
+                          ? updateApproverPayment
+                          : __updateApprover
+                      "
+                      :id_memo="dataMemo.id"
+                    />
+                    <!-- </div> -->
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -240,7 +236,12 @@
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row v-if="formType == 'payment' || dataMemoType.ref_table.with_po == true">
+              <b-row
+                v-if="
+                  formType == 'payment' ||
+                  dataMemoType.ref_table.with_po == true
+                "
+              >
                 <div class="col-5">
                   <b-overlay
                     :show="isSubmitBusy"
@@ -259,7 +260,7 @@
                           v-model="sub_total"
                         ></b-form-input>
                       </b-input-group>
-                        <b-input-group prepend="Pph 23" class="mb-2 mt-2">
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
                         <b-form-input
                           aria-label="pph"
                           v-model="pph"
