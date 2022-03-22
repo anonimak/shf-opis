@@ -93,7 +93,7 @@ function generatePDFPayment($id, $fromroute = 'true')
 {
     // $memo = Memo::getPaymentDetailApprovers($id);
     $dataMemo = Memo::where('id', $id)->first();
-    if ($dataMemo->propose_at == null) {
+    if ($dataMemo->propose_payment_at == null) {
         $memo = Memo::getPaymentDetailApprovers($id);
     } else {
         $memo = Memo::getPaymentDetail($id);

@@ -507,7 +507,7 @@ class MemoController extends Controller
                     ->position_now
                     ->position->department
                     ->alias . '/PO',
-                'propose_at' => Carbon::now()
+                'propose_payment_at' => Carbon::now()
             ]);
 
             D_Payment_Approver::where('id_memo', $id)->update([
@@ -707,6 +707,7 @@ class MemoController extends Controller
         // update status menjadi submit
         Memo::where('id', $id)->update([
             'status_payment'   => 'submit',
+            'propose_payment_at' => Carbon::now()
         ]);
 
         D_Payment_Approver::where('id_memo', $id)->update([
