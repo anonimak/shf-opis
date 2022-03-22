@@ -15,7 +15,10 @@ class ApiMemoController extends Controller
     {
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
 
         return response()->json($positions);
     }

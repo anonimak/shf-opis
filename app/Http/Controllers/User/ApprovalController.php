@@ -75,7 +75,10 @@ class ApprovalController extends Controller
         }
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
@@ -116,7 +119,10 @@ class ApprovalController extends Controller
         }
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [

@@ -39,6 +39,8 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
         Route::put('/{id}/history/{idhistory}/update', '\App\Http\Controllers\Admin\EmployeeController@empUpdate')->name('update');
         Route::delete('/{id}/history/{idhistory}', '\App\Http\Controllers\Admin\EmployeeController@empDestroy')->name('destroy');
     });
+    // terminate employee
+    Route::put('/{id}/terminate', '\App\Http\Controllers\Admin\EmployeeController@terminateEmployee')->prefix('/employee')->name('employee.terminate');
     // Route importexcel
     Route::post('/employee/importexcel', '\App\Http\Controllers\Admin\EmployeeController@importexcel')->name('employee.importexcel');
 });

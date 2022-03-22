@@ -41,8 +41,10 @@ class MemoController extends Controller
 
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo', [
@@ -88,8 +90,10 @@ class MemoController extends Controller
     {
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo/index_Takeover_Branch', [
@@ -322,7 +326,10 @@ class MemoController extends Controller
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
 
         // $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
 
@@ -488,7 +495,7 @@ class MemoController extends Controller
                 return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have approver.");
             }
 
-            if(D_Memo_Payments::where('id_memo', $id)->count() <= 0) {
+            if (D_Memo_Payments::where('id_memo', $id)->count() <= 0) {
                 return Redirect::route('user.memo.draft.index')->with('error', "Memo $memo->doc_no does not have data payment, please fill in the data payment");
             }
 
@@ -614,7 +621,10 @@ class MemoController extends Controller
         $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
 
         $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'payment')->get();
 

@@ -213,6 +213,7 @@ class EmployeeController extends Controller
             'dataEmployee' => $employee,
             '_token' => csrf_token(),
             '__update'  => 'admin.employee.update',
+            '__terminate'  => 'admin.employee.terminate',
         ]);
     }
 
@@ -313,5 +314,36 @@ class EmployeeController extends Controller
 
         // alihkan halaman kembali
         return Redirect::route('admin.employee.index')->with('success', "Successfull Import Excel Employee");
+    }
+
+    // on terminate
+    public function terminateEmployee(Request $request, $id)
+    {
+        // validasi
+        $this->validate($request, [
+            'terminated_at' => 'required'
+        ]);
+        // ubah tanggal terminate employee
+        $employee = Employee::find($id);
+        $employee->terminated_at = $request->input('terminated_at');
+        $employee->save();
+
+        // ubah posisi employee jadi terminate
+        $new_year_finished = ($request->filled('terminated_at')) ? Carbon::parse($request->input('terminated_at'))->subDay()->addHours(23)->addMinutes(59)->addSeconds(59) : null;
+
+        Employee_History::where('year_started', '<', Carbon::now())->where('year_finished', '>', Carbon::now())->orWhere('year_finished', null)->update([
+            'year_finished'     => $new_year_finished
+        ]);
+
+        $nullBranch = Branch::where('branch_name', 'NULL')->first();
+        $nullPosition = Ref_Position::where('position_name', 'TERMINATE')->first();
+        Employee_History::create([
+            'id_employee'       => $id,
+            'id_branch'         => $nullBranch->id,
+            'id_position'       => $nullPosition->id,
+            'year_started'      => $request->input('terminated_at'),
+            'year_finished'     => null,
+        ]);
+        return Redirect::route('admin.employee.show', $id)->with('success', "Successfull Terminated.");
     }
 }

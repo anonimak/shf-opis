@@ -52,7 +52,10 @@ class RefModuleApprover extends Controller
     {
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
 
         return Inertia::render('Super/Ref_Approver/create', [
             'breadcrumbItems' => array(
@@ -123,8 +126,10 @@ class RefModuleApprover extends Controller
     {
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->values()->all();
 
         $refapprover = Ref_Approver::where('id', $id)->with(['detailApprover' => function ($query) {
             return $query->select('id_ref_module_approver', 'id_ref_position')->with(['position' => function ($q) {

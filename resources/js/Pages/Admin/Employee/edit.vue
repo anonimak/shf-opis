@@ -7,6 +7,7 @@
       type="button"
       variant="outline-danger"
       class="float-right mr-2"
+      @click="$bvModal.show('modal-terminate')"
       >Terminate</b-button
     >
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -273,12 +274,19 @@
         </b-card>
       </div>
     </div>
+    <modal-form-terminate
+      title="Modal Terminate"
+      caption="Are you sure to terminate?"
+      :idItemClicked="form.id"
+      @handleOk="actionSubmitTerminate"
+    />
   </layout>
 </template>
 <script>
 import Layout from "@/Shared/AdminLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import ModalFormTerminate from "@/components/ModalFormTerminate";
 
 export default {
   props: [
@@ -291,11 +299,13 @@ export default {
     "dataEmployee",
     "errors",
     "__update",
+    "__terminate",
   ],
   components: {
     Layout,
     FlashMsg,
     Breadcrumb,
+    ModalFormTerminate,
   },
   data: () => {
     return {
@@ -327,6 +337,12 @@ export default {
           .put(this.route(this.__update, this.form.id), this.form)
           .then(() => (this.submitState = false));
       }
+    },
+    actionSubmitTerminate(data) {
+      this.submitState = true;
+      this.$inertia
+        .put(this.route(this.__terminate, this.form.id), data)
+        .then(() => (this.submitState = false));
     },
   },
 };
