@@ -115,10 +115,10 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
-                    @if ($memo->propose_at == null)
+                    @if ($memo->propose_payment_at == null)
                         <td>-</td>
                     @else
-                        <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                        <td>{{ date('Y-m-d', strtotime($memo->propose_payment_at)) }}</td>
                     @endif
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
@@ -171,7 +171,7 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                        @if($memo->propose_at == null)
+                        @if($memo->propose_payment_at == null)
                             <th>{{ $approver->employee->position_now->position->position_name }}</th>
                         @else
                             <th>{{ $approver->employee->emp_history->position->position_name }}</th>
@@ -205,7 +205,6 @@
                     @else
                     <td>
                         <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div>
-                        
                         {{-- <div style="font-family: ZapfDingbats, sans-serif;">4</div> --}}
                     </td>
                     @endif

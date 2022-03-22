@@ -228,9 +228,9 @@ class Memo extends Model
                     return $emp_history->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_payment_at)
                         ->where(function ($sub) use ($memo) {
-                            $sub->where('year_finished', '>', $memo->propose_at)
+                            $sub->where('year_finished', '>', $memo->propose_payment_at)
                                 ->orWhere('year_finished', null);
                         });
                     // ->where(function ($query) use ($memo) {
@@ -365,9 +365,9 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_payment_at)
                         ->where(function ($sub) use ($memo) {
-                            $sub->where('year_finished', '>', $memo->propose_at)
+                            $sub->where('year_finished', '>', $memo->propose_payment_at)
                                 ->orWhere('year_finished', null);
                         });
                     // ->where(function ($query) use ($memo) {
