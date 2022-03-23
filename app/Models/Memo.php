@@ -228,9 +228,9 @@ class Memo extends Model
                     return $emp_history->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_payment_at)
                         ->where(function ($sub) use ($memo) {
-                            $sub->where('year_finished', '>', $memo->propose_at)
+                            $sub->where('year_finished', '>', $memo->propose_payment_at)
                                 ->orWhere('year_finished', null);
                         });
                     // ->where(function ($query) use ($memo) {
@@ -365,9 +365,9 @@ class Memo extends Model
                     return $position_now->with(['position' => function ($position) {
                         return $position->with('department');
                     }])->with('branch')
-                        ->where('year_started', '<', $memo->propose_at)
+                        ->where('year_started', '<', $memo->propose_payment_at)
                         ->where(function ($sub) use ($memo) {
-                            $sub->where('year_finished', '>', $memo->propose_at)
+                            $sub->where('year_finished', '>', $memo->propose_payment_at)
                                 ->orWhere('year_finished', null);
                         });
                     // ->where(function ($query) use ($memo) {
@@ -452,7 +452,13 @@ class Memo extends Model
 
     public static function getMemo($id_employee, $status, $search = null)
     {
-        $memo = Self::select('*')
+        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])
             ->orderBy('id', 'desc')
             ->where('status', '=', $status)
             ->where(function ($query) {
@@ -566,7 +572,13 @@ class Memo extends Model
 
     public static function getPayment($id_employee, $status, $search = null)
     {
-        $memo = Self::select('*')
+        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])
             ->orderBy('id', 'desc')
             ->where('status_payment', '=', $status)
             ->where('id_employee', '=', $id_employee)
@@ -584,7 +596,13 @@ class Memo extends Model
 
     public static function getPaymentTakeoverBranch($id_employee2, $status, $search = null)
     {
-        $memo = Self::select('*')
+        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])
             ->orderBy('id', 'desc')
             ->where('status_payment', '=', $status)
             ->where('id_employee2', '=', $id_employee2);
@@ -601,7 +619,13 @@ class Memo extends Model
 
     public static function getPo($id_employee, $status, $search = null)
     {
-        $memo = Self::select('*')
+        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+                return $position_now->with(['position' => function ($position) {
+                    return $position->with('department');
+                }])->with('branch');
+            }]);
+        }])
             ->orderBy('id', 'desc')
             ->where('status_po', '=', $status)
             ->where('id_employee', '=', $id_employee)
@@ -620,22 +644,48 @@ class Memo extends Model
     public static function getMemoWithLastApprover($id_employee, $status, $search = null)
     {
         if ($status == 'approve') {
-            $memo = Self::select('*')
-                ->orderBy('id', 'desc')
-                ->with(['approver' => function ($approver) use ($id_employee, $status) {
-                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
-                }])
-                ->whereHas(
-                    'approvers',
-                    function (Builder $query) use ($id_employee, $status) {
-                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
-                    }
-                );
+            // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+            //         return $position_now->with(['position' => function ($position) {
+            //             return $position->with('department');
+            //         }])->with('branch');
+            //     }]);
+            // }])
+            //     ->orderBy('id', 'desc')
+            //     ->with(['approver' => function ($approver) use ($id_employee, $status) {
+            //         return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+            //     }])
+            //     ->whereHas(
+            //         'approvers',
+            //         function (Builder $query) use ($id_employee, $status) {
+            //             $query->where('id_employee', $id_employee)->where('status', '=', $status);
+            //         }
+            //     );
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+            $memo =  DB::table(DB::raw('m_memos a'))
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
+                ->join(DB::raw('d_memo_approvers as c'), 'a.id', '=', 'c.id_memo')
+                ->where('c.status', '=', $status)
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
+
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
             return $memo;
@@ -645,8 +695,13 @@ class Memo extends Model
                 ->where('status', $status)
                 ->groupBy('id_memo');
 
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
                 //     return $approver->orderBy('idx', "ASC")->first();
@@ -654,10 +709,20 @@ class Memo extends Model
                 ->joinSub($lastApprover, 'b', function ($join) {
                     $join->on('a.id', '=', 'b.id_memo');
                 })
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
                 ->join(DB::raw('d_memo_approvers as c'), 'a.id', '=', 'c.id_memo')
                 ->whereColumn('b.min_idx', '=', 'c.idx')
                 ->where('a.status', '=', $status)
-                ->where('c.id_employee', $id_employee);
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
+
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
@@ -765,22 +830,48 @@ class Memo extends Model
     public static function getMemoPaymentWithLastApprover($id_employee, $status, $search = null)
     {
         if ($status == 'approve') {
-            $memo = Self::select('*')
-                ->orderBy('id', 'desc')
-                ->with(['approverPayment' => function ($approver) use ($id_employee, $status) {
-                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
-                }])
-                ->whereHas(
-                    'approversPayment',
-                    function (Builder $query) use ($id_employee, $status) {
-                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
-                    }
-                );
+            // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+            //         return $position_now->with(['position' => function ($position) {
+            //             return $position->with('department');
+            //         }])->with('branch');
+            //     }]);
+            // }])
+            //     ->orderBy('id', 'desc')
+            //     ->with(['approverPayment' => function ($approver) use ($id_employee, $status) {
+            //         return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+            //     }])
+            //     ->whereHas(
+            //         'approversPayment',
+            //         function (Builder $query) use ($id_employee, $status) {
+            //             $query->where('id_employee', $id_employee)->where('status', '=', $status);
+            //         }
+            //     );
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+            $memo =  DB::table(DB::raw('m_memos a'))
+            ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name,d.year_started, d.year_finished')
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_payment_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_payment_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
+                ->join(DB::raw('d_payment_approver as c'), 'a.id', '=', 'c.id_memo')
+                ->where('c.status', '=', $status)
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
+
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
             return $memo;
@@ -790,8 +881,14 @@ class Memo extends Model
                 ->where('status', $status)
                 ->groupBy('id_memo');
 
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name,
+                d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
                 //     return $approver->orderBy('idx', "ASC")->first();
@@ -799,10 +896,19 @@ class Memo extends Model
                 ->joinSub($lastApprover, 'b', function ($join) {
                     $join->on('a.id', '=', 'b.id_memo');
                 })
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_payment_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_payment_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
                 ->join(DB::raw('d_payment_approver as c'), 'a.id', '=', 'c.id_memo')
                 ->whereColumn('b.min_idx', '=', 'c.idx')
                 ->where('a.status_payment', '=', $status)
-                ->where('c.id_employee', $id_employee);
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
@@ -912,22 +1018,49 @@ class Memo extends Model
     public static function getMemoPoWithLastApprover($id_employee, $status, $search = null)
     {
         if ($status == 'approve') {
-            $memo = Self::select('*')
-                ->orderBy('id', 'desc')
-                ->with(['approverPo' => function ($approver) use ($id_employee, $status) {
-                    return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
-                }])
-                ->whereHas(
-                    'approversPo',
-                    function (Builder $query) use ($id_employee, $status) {
-                        $query->where('id_employee', $id_employee)->where('status', '=', $status);
-                    }
-                );
+            // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+            //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+            //         return $position_now->with(['position' => function ($position) {
+            //             return $position->with('department');
+            //         }])->with('branch');
+            //     }]);
+            // }])
+            //     ->orderBy('id', 'desc')
+            //     ->with(['approverPo' => function ($approver) use ($id_employee, $status) {
+            //         return $approver->orderBy('idx', 'asc')->where('id_employee', $id_employee)->where('status', $status);
+            //     }])
+            //     ->whereHas(
+            //         'approversPo',
+            //         function (Builder $query) use ($id_employee, $status) {
+            //             $query->where('id_employee', $id_employee)->where('status', '=', $status);
+            //         }
+            //     );
+
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+            $memo =  DB::table(DB::raw('m_memos a'))
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
+                ->join(DB::raw('d_po_approver as c'), 'a.id', '=', 'c.id_memo')
+                ->where('c.status', '=', $status)
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
+
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
             return $memo;
@@ -937,8 +1070,13 @@ class Memo extends Model
                 ->where('status', $status)
                 ->groupBy('id_memo');
 
+            $proposeEmployee = DB::table(DB::raw('m_employees a'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+                ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
                 //     return $approver->orderBy('idx', "ASC")->first();
@@ -946,10 +1084,19 @@ class Memo extends Model
                 ->joinSub($lastApprover, 'b', function ($join) {
                     $join->on('a.id', '=', 'b.id_memo');
                 })
+                ->joinSub($proposeEmployee, 'd', function ($join) {
+                    $join->on('a.id_employee', '=', 'd.id')
+                        ->whereRaw('d.year_started < a.propose_at')
+                        ->where(function ($sub) {
+                            $sub->whereRaw('d.year_finished > a.propose_at')
+                                ->orWhere('d.year_finished', null);
+                        });
+                })
                 ->join(DB::raw('d_po_approver as c'), 'a.id', '=', 'c.id_memo')
                 ->whereColumn('b.min_idx', '=', 'c.idx')
                 ->where('a.status_po', '=', $status)
-                ->where('c.id_employee', $id_employee);
+                ->where('c.id_employee', $id_employee)
+                ->orderBy('a.id', 'desc');
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {

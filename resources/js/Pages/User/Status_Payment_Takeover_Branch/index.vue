@@ -70,6 +70,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
                             <th>Action</th>
@@ -92,6 +94,19 @@
                             </th>
                             <td>
                               {{ item.title }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
                             </td>
                             <td>
                               {{ item.doc_no }}

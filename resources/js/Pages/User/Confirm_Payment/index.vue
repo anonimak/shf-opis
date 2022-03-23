@@ -53,6 +53,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
                             <th scope="col">Document No</th>
+                            <th scope="col">From</th>
                             <th scope="col">Branch</th>
                             <th scope="col">Status</th>
                             <th scope="col">Payment At</th>
@@ -94,6 +95,13 @@
                               >
                                 Unpaid
                               </b-badge>
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
                             </td>
                             <td>
                               {{
