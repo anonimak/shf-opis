@@ -18,7 +18,7 @@ class ApiMemoController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
 
         return response()->json($positions);
     }

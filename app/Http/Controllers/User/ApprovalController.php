@@ -78,7 +78,7 @@ class ApprovalController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
@@ -122,7 +122,7 @@ class ApprovalController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [
@@ -391,7 +391,7 @@ class ApprovalController extends Controller
                 //         ->subject($contentAcknowledge["subject"])
                 //         ->attachData($pdfMemo->output(), $pdfName);
                 // });
-                // 
+                //
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }

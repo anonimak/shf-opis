@@ -44,7 +44,7 @@ class MemoController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo', [
@@ -93,7 +93,7 @@ class MemoController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo/index_Takeover_Branch', [
@@ -329,7 +329,7 @@ class MemoController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
 
         // $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
 
@@ -624,7 +624,7 @@ class MemoController extends Controller
         }])->with(['position' => function ($p) {
             return $p->where('position_name', '<>', 'TERMINATE');
         }])->get();
-        $positions = $positions->unique('id_employee')->values()->all();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
 
         $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'payment')->get();
 
