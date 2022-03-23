@@ -67,7 +67,16 @@
               }}
             </td>
             <td>
-              <strong>
+              <strong
+                v-if="
+                  approver.employee.position_now.position.position_name ==
+                  'TERMINATE'
+                "
+                class="text-danger"
+              >
+                User has been terminated
+              </strong>
+              <strong v-else>
                 {{ approver.employee.position_now.position.position_name }}
               </strong>
             </td>

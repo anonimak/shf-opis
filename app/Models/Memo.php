@@ -22,6 +22,15 @@ class Memo extends Model
         return $this->hasOne(D_Memo_Approver::class, 'id_memo', 'id');
     }
 
+    public function check_terminate_approver()
+    {
+        return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id')->with(['employee_history' => function ($history) {
+            $history->withCount(['position' => function ($position) {
+                $position->where('position_name', 'TERMINATE');
+            }]);
+        }]);
+    }
+
     public function approversPayment()
     {
         return $this->hasMany(D_Payment_Approver::class, 'id_memo', 'id');

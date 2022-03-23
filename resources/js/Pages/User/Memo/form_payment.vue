@@ -425,6 +425,7 @@
                     type="submit"
                     variant="primary"
                     class="btn-lg mt-3 mb-3"
+                    :disabled="isTerminateApprover"
                     >Propose Payment</b-button
                   >
                 </b-button-group>
@@ -625,6 +626,7 @@ export default {
       },
       form_payment: {},
       isAcknowledgebusy: false,
+      isTerminateApprover: false,
       selectedAcknowledge: null,
       checkPPNInclude: false,
       sub_total: 0,
@@ -919,6 +921,12 @@ export default {
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
+        this.isTerminateApprover = this.dataApprovers.some(
+          (approver) =>
+            approver.employee.position_now.position.position_name == "TERMINATE"
+        )
+          ? true
+          : false;
         this.dataPayments = results[3].data;
         this.fillForm();
       });
@@ -987,6 +995,12 @@ export default {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
+        this.isTerminateApprover = this.dataApprovers.some(
+          (approver) =>
+            approver.employee.position_now.position.position_name == "TERMINATE"
+        )
+          ? true
+          : false;
       });
     },
     actionAcknowledgeRemoving(removeOption) {

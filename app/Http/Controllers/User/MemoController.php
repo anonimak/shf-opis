@@ -247,7 +247,7 @@ class MemoController extends Controller
 
         return Inertia::render('User/Memo/Draft', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemoDraft(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'dataMemo' => Memo::getMemoDraft(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->with('ref_table')->with('check_terminate_approver')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [

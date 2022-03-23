@@ -331,9 +331,19 @@ class EmployeeController extends Controller
         // ubah posisi employee jadi terminate
         $new_year_finished = ($request->filled('terminated_at')) ? Carbon::parse($request->input('terminated_at'))->subDay()->addHours(23)->addMinutes(59)->addSeconds(59) : null;
 
-        Employee_History::where('year_started', '<', Carbon::now())->where('year_finished', '>', Carbon::now())->orWhere('year_finished', null)->update([
-            'year_finished'     => $new_year_finished
-        ]);
+        $test = Employee_History::where(function ($query) use ($id) {
+            $query->where('id_employee', $id)
+                ->where('year_started', '<', Carbon::now())
+                ->where('year_finished', '>', Carbon::now());
+        })
+            ->orWhere(function ($query) use ($id) {
+                $query->where('id_employee', $id)
+                    ->where('year_started', '<', Carbon::now())
+                    ->where('year_finished', null);
+            })
+            ->update([
+                'year_finished'     => $new_year_finished
+            ]);
 
         $nullBranch = Branch::where('branch_name', 'NULL')->first();
         $nullPosition = Ref_Position::where('position_name', 'TERMINATE')->first();
