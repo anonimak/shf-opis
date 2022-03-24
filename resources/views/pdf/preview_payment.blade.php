@@ -198,7 +198,7 @@
                     @if($approver->status == 'submit' || $approver->status == 'edit')
                     {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
                     <td>-</td>
-                    @elseif ($approver->status == 'reject')
+                    @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
                     <td>
                         <div style="font-family: DejaVu Sans;font-size:14px;">&#9746;</div>
                     </td>
@@ -214,7 +214,7 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if($approver->employee)
-                        @if($approver->status == 'approve' || $approver->status == 'reject')
+                        @if($approver->status == 'approve' || $approver->status == 'reject' || $approver->status == 'revisi')
                             <td> {{ $approver->msg }} </td>
                         @else
                             <td> - </td>

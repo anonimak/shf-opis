@@ -70,6 +70,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <!-- <th scope="col">Status</th> -->
                             <th>Action</th>
@@ -92,6 +94,12 @@
                             </th>
                             <td>
                               {{ item.title }}
+                            </td>
+                            <td>
+                              {{ item.firstname + " " + item.lastname }}
+                            </td>
+                            <td>
+                              {{ item.branch_name }}
                             </td>
                             <td>
                               <!-- {{ item.doc_no }} -->
@@ -118,7 +126,8 @@
                               <b-button-group
                                 v-if="
                                   item.type_approver == 'approver' &&
-                                  item.status_payment == 'submit'
+                                  item.status_payment == 'submit' &&
+                                  item.status_approver == 'submit'
                                 "
                               >
                                 <!-- <a
@@ -181,8 +190,20 @@
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge'"
+                                  v-if="
+                                    item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'
+                                  "
                                   >Next</b-button
+                                >
+                                 <b-button
+                                  @click="actionRevisi(item.id_approver)"
+                                  variant="secondary"
+                                  v-if="
+                                    item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'
+                                  "
+                                  >Revision</b-button
                                 >
                               </b-button-group>
                             </td>

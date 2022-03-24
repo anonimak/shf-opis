@@ -54,6 +54,11 @@
                     variant="info"
                     >Next</b-button
                   >
+                  <b-button
+                    @click="actionRevisi(dataMemo.approver.id)"
+                    variant="secondary"
+                    >Revision</b-button
+                  >
                 </b-button-group>
               </b-col>
               <b-col col lg="12" md="auto">

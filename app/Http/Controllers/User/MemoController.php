@@ -381,6 +381,8 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
+            '__autoSaveItem' => 'user.memo.draft.itemAutoSave',
+            '__autoSaveItemCost' => 'user.memo.draft.itemAutoSaveCost',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
@@ -394,6 +396,47 @@ class MemoController extends Controller
             'headerCost' => $headerCost,
             'columnCost' => $columnCost,
             // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
+        ]);
+    }
+
+    public function itemAutoSave(Request $request, $id)
+    {
+        Memo::where('id', $id)->update([
+            'background'        => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+            'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull auto save.',
+            'background' => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+            'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
+        ]);
+    }
+
+    public function itemAutoSaveCost(Request $request, $id)
+    {
+        M_Data_Cost_Total::where('id_memo', $id)->update([
+            // 'id_memo' => $id,
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn' => $request->input('ppn'),
+            'grand_total' => $request->input('grand_total')
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull auto save.',
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn'       => $request->input('ppn'),
+            'grand_total'        => $request->input('grand_total'),
         ]);
     }
 
@@ -411,7 +454,7 @@ class MemoController extends Controller
         ]);
         // form payment
         M_Data_Cost_Total::where('id_memo', $id)->update([
-            'id_memo' => $id,
+            // 'id_memo' => $id,
             'sub_total' => $request->input('sub_total'),
             'pph' => $request->input('pph'),
             'ppn' => $request->input('ppn'),
@@ -530,12 +573,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -591,12 +639,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -680,6 +733,7 @@ class MemoController extends Controller
             //'__update' => 'user.memo.draft.update',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
+            '__autoSaveItemCost' => 'user.memo.draft.itemAutoSaveCost',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             //'__preview' => 'user.memo.draft.preview',
@@ -740,12 +794,17 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+        if($firstApprover->type_approver == 'acknowledge') {
+            $type_approver = 'reviewer';
+        } else {
+            $type_approver = $firstApprover->type_approver;
+        }
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+            'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama

@@ -63,6 +63,7 @@
                   <h5>Orientation</h5>
                   <b-form-group v-slot="{ ariaDescribedby }">
                     <b-form-radio-group
+                      @change="debouncedSave()"
                       v-model="form.orientation_paper"
                       :aria-describedby="ariaDescribedby"
                       name="orientation-paper"
@@ -191,43 +192,148 @@
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Background:</h5>
+                    <div v-if="isTypingBg">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Background:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.background" />
+                    <!-- <Editor2 v-model="form.background" /> -->
+                    <Editor2
+                      @input="typingBackground()"
+                      v-model="form.background"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Information:</h5>
+                    <div v-if="isTypingInfo">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small label="Floated Right"></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Information:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.information" />
+                    <!-- <Editor2 v-model="form.information" /> -->
+                    <Editor2 @input="typingInfo()" v-model="form.information" />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Conclusion:</h5>
+                    <div v-if="isTypingConclusion">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small label="Floated Right"></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Conclusion:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.conclusion" />
+                    <!-- <Editor2 v-model="form.conclusion" /> -->
+                    <Editor2
+                      @input="typingConclusion()"
+                      v-model="form.conclusion"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
                 <div class="col-12">
+                  <div style="display: flex">
+                    <h5 class="mr-2">Cost /Expense:</h5>
+                    <div v-if="isTypingCost">
+                      <b-button
+                        variant="info"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <b-spinner small label="Floated Right"></b-spinner>
+                        Saving...
+                      </b-button>
+                    </div>
+                    <div v-else>
+                      <b-button
+                        variant="primary"
+                        style="padding: 3px 8px"
+                        disabled
+                      >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Saved
+                      </b-button>
+                    </div>
+                  </div>
                   <b-form-group
                     id="input-group-text"
-                    label="Cost /Expense:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
                     <hot-table
                       ref="formCost"
@@ -258,6 +364,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
+                          @change="debouncedSaveCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
@@ -442,7 +549,7 @@
                 </b-col>
               </b-overlay>
 
-              <b-row align-h="center">
+              <!-- <b-row align-h="center">
                 <b-overlay
                   :show="submitState"
                   opacity="0.6"
@@ -455,7 +562,7 @@
                     >
                   </b-button-group>
                 </b-overlay>
-              </b-row>
+              </b-row> -->
             </b-card-body>
           </b-form>
         </b-card>
@@ -620,6 +727,8 @@ export default {
     "dataMemoType",
     "__store",
     "__updateApprover",
+    "__autoSaveItem",
+    "__autoSaveItemCost",
     //"__addDataTotal",
     "__updateAcknowledge",
     "__deleteAcknowledge",
@@ -643,6 +752,10 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
+      isTypingBg: null,
+      isTypingInfo: null,
+      isTypingConclusion: null,
+      isTypingCost: null,
       form: {},
       //payment
       checkPPNInclude: false,
@@ -699,6 +812,7 @@ export default {
           this.dataFormula =
             this.hotSettings.formulas.engine.getAllSheetsValues();
           //this.dataWithFormulaValue = this.dataFormula.Sheet1;
+          this.typingCost();
         },
       },
       fileRecords: [],
@@ -749,6 +863,8 @@ export default {
         parseFloat(this.sub_total) +
         parseFloat(this.ppn) -
         parseFloat(this.pph);
+
+      this.debouncedSaveCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
@@ -758,7 +874,98 @@ export default {
       this.fillForm();
     },
   },
+  created: function () {
+    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
+  },
   methods: {
+    typingBackground: function () {
+      this.isTypingBg = true;
+      this.debouncedSave();
+    },
+    typingInfo: function () {
+      this.isTypingInfo = true;
+      this.debouncedSave();
+    },
+    typingConclusion: function () {
+      this.isTypingConclusion = true;
+      this.debouncedSave();
+    },
+    typingCost: function () {
+      this.isTypingCost = true;
+      this.debouncedSave();
+    },
+    autoSaveItem: function () {
+      let newData = {};
+      if (this.dataFormula.Sheet1.length != 0) {
+        newData = _.map(this.dataFormula.Sheet1, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      } else {
+        newData = _.map(this.dataFormula.Sheet2, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      }
+      let arrayCost = _.map(newData, (valueCost) => {
+        let objCost = {};
+        valueCost = Object.assign({}, valueCost);
+        _.map(this.colHeaders, (v) => {
+          objCost[v] = valueCost[v];
+        });
+        objCost = _.pickBy(objCost, _.identity);
+        if (!_.isEmpty(objCost)) {
+          return objCost;
+        }
+      });
+      arrayCost = _.pickBy(arrayCost, _.identity);
+      if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+      axios
+        .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.form.background = response.data.background;
+          this.form.information = response.data.information;
+          this.form.conclusion = response.data.conclusion;
+          this.form.orientation_paper = response.data.orientation_paper;
+          this.isTypingBg = false;
+          this.isTypingInfo = false;
+          this.isTypingConclusion = false;
+          this.isTypingCost = false;
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
+    autoSaveItemCost: function () {
+      this.form.sub_total = this.sub_total;
+      this.form.pph = this.pph;
+      this.form.ppn = this.ppn;
+      this.form.grand_total = this.grand_total;
+      axios
+        .post(route(this.__autoSaveItemCost, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.sub_total = response.data.sub_total;
+          this.pph = response.data.pph;
+          this.ppn = response.data.ppn;
+          this.grand_total = response.data.grand_total;
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
     getOptionLabel: (option) => {
       let firstname = option.employee ? option.employee.firstname : "";
       let lastname = option.employee ? option.employee.lastname : "";
@@ -778,6 +985,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
+      this.debouncedSaveCost();
     },
 
     uploadFiles: function () {
@@ -859,70 +1067,70 @@ export default {
         (acknowledge) => acknowledge.position_now
       );
     },
-    submit() {
-      // payment
-      if (this.formType == "payment") {
-        if (this.grand_total == 0 || this.sub_total == 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-        if (this.dataPayments.length <= 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-      }
+    // submit() {
+    //   // payment
+    //   if (this.formType == "payment") {
+    //     if (this.grand_total == 0 || this.sub_total == 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //     if (this.dataPayments.length <= 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //   }
 
-      if (!this.submitState) {
-        let newData = {};
-        if (this.dataFormula.Sheet1.length != 0) {
-          newData = _.map(this.dataFormula.Sheet1, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        } else {
-          newData = _.map(this.dataFormula.Sheet2, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        }
-        let arrayCost = _.map(newData, (valueCost) => {
-          let objCost = {};
-          valueCost = Object.assign({}, valueCost);
-          _.map(this.colHeaders, (v) => {
-            objCost[v] = valueCost[v];
-          });
-          objCost = _.pickBy(objCost, _.identity);
-          if (!_.isEmpty(objCost)) {
-            return objCost;
-          }
-        });
-        arrayCost = _.pickBy(arrayCost, _.identity);
-        if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
-        this.submitState = true;
-        // payment
-        this.form.sub_total = this.sub_total;
-        this.form.pph = this.pph;
-        this.form.ppn = this.ppn;
-        this.form.grand_total = this.grand_total;
-        this.isSubmitBusy = true;
-        this.isTableApproverbusy = true;
+    //   if (!this.submitState) {
+    //     // let newData = {};
+    //     // if (this.dataFormula.Sheet1.length != 0) {
+    //     //   newData = _.map(this.dataFormula.Sheet1, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // } else {
+    //     //   newData = _.map(this.dataFormula.Sheet2, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // }
+    //     // let arrayCost = _.map(newData, (valueCost) => {
+    //     //   let objCost = {};
+    //     //   valueCost = Object.assign({}, valueCost);
+    //     //   _.map(this.colHeaders, (v) => {
+    //     //     objCost[v] = valueCost[v];
+    //     //   });
+    //     //   objCost = _.pickBy(objCost, _.identity);
+    //     //   if (!_.isEmpty(objCost)) {
+    //     //     return objCost;
+    //     //   }
+    //     // });
+    //     // arrayCost = _.pickBy(arrayCost, _.identity);
+    //     // if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+    //     this.submitState = true;
+    //     // payment
+    //     this.form.sub_total = this.sub_total;
+    //     this.form.pph = this.pph;
+    //     this.form.ppn = this.ppn;
+    //     this.form.grand_total = this.grand_total;
+    //     this.isSubmitBusy = true;
+    //     this.isTableApproverbusy = true;
 
-        this.$inertia
-          .post(route(this.__update, this.dataMemo.id), this.form)
-          .then(() => {
-            this.submitState = false;
-            this.isSubmitBusy = true;
-            this.isTableApproverbusy = true;
-            this.$refs.upload.remove();
-          });
-      }
-    },
+    //     this.$inertia
+    //       .post(route(this.__update, this.dataMemo.id), this.form)
+    //       .then(() => {
+    //         this.submitState = false;
+    //         this.isSubmitBusy = true;
+    //         this.isTableApproverbusy = true;
+    //         this.$refs.upload.remove();
+    //       });
+    //   }
+    // },
     removeAttachment(id) {
       this.$inertia.delete(route(this.__removeAttachment, id)).then(() => {});
     },
