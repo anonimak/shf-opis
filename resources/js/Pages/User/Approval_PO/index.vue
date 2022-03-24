@@ -114,7 +114,8 @@
                               <b-button-group
                                 v-if="
                                   item.type_approver == 'approver' &&
-                                  item.status_po == 'submit'
+                                  item.status_po == 'submit' &&
+                                  item.status_approver == 'submit'
                                 "
                               >
                                 <!-- <a
@@ -177,7 +178,8 @@
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge'"
+                                  v-if="item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'"
                                   >Next</b-button
                                 >
                               </b-button-group>

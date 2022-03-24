@@ -187,6 +187,15 @@
                                   "
                                   >Next</b-button
                                 >
+                                <b-button
+                                  @click="actionRevisi(item.id_approver)"
+                                  variant="secondary"
+                                  v-if="
+                                    item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'
+                                  "
+                                  >Revision</b-button
+                                >
                               </b-button-group>
                             </td>
                           </tr>

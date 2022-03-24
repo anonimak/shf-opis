@@ -566,12 +566,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -627,12 +632,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -773,12 +783,17 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+        if($firstApprover->type_approver == 'acknowledge') {
+            $type_approver = 'reviewer';
+        } else {
+            $type_approver = $firstApprover->type_approver;
+        }
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+            'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama
