@@ -476,6 +476,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -498,6 +501,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -521,6 +527,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -551,6 +560,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('status', 'LIKE', '%' . $search . '%');
                 });
@@ -565,6 +577,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('status', 'LIKE', '%' . $search . '%');
                 });
@@ -584,6 +599,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -601,6 +619,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -619,6 +640,9 @@ class Memo extends Model
         if ($search) {
             $memo->where(function ($query) use ($search) {
                 $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
             });
@@ -643,6 +667,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('status', 'LIKE', '%' . $search . '%');
                 });
@@ -670,6 +697,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
@@ -788,6 +818,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('status', 'LIKE', '%' . $search . '%');
                 });
@@ -816,6 +849,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
@@ -935,6 +971,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('status', 'LIKE', '%' . $search . '%');
                 });
@@ -963,6 +1002,9 @@ class Memo extends Model
             if ($search) {
                 $memo->where(function ($query) use ($search) {
                     $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                     $query->orWhere('title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
