@@ -52,10 +52,10 @@
         <draggable
           tag="tbody"
           handle=".handle"
-          :list="dataApprovers"
+          :list="approvers"
           @change="actionApproverSave()"
         >
-          <tr v-for="(approver, index) in dataApprovers" :key="index">
+          <tr v-for="(approver, index) in approvers" :key="index">
             <td>
               <i
                 v-if="isApproverEdited"
@@ -155,11 +155,17 @@ export default {
   data() {
     return {
       selected: null,
+      approvers: [],
       isApproverbusy: false,
       isApproverEdited: true,
       activeSelect: null,
       form: {},
     };
+  },
+  watch: {
+    dataApprovers: function (val) {
+      this.approvers = val;
+    },
   },
   methods: {
     getOptionLabel(option) {
@@ -174,12 +180,12 @@ export default {
     },
 
     actionApproverRemoveAt(index) {
-      this.dataApprovers.splice(index, 1);
+      this.approvers.splice(index, 1);
       this.actionApproverSave();
     },
 
     actionApproverAddItem: function (item) {
-      let id = this.dataApprovers.find((data) => {
+      let id = this.approvers.find((data) => {
         return item.id === data.employee.position_now.id;
       });
       if (id !== undefined) {
@@ -203,7 +209,7 @@ export default {
         status: "edit",
       };
 
-      this.dataApprovers = [...this.dataApprovers, new_detail_approver];
+      this.approvers = [...this.approvers, new_detail_approver];
       this.actionApproverSave();
     },
 
@@ -212,7 +218,7 @@ export default {
       this.$emit("beforeSave");
       axios
         .post(route(this.__updateApprover, this.id_memo), {
-          approver: this.dataApprovers,
+          approver: this.approvers,
         })
         .then((response) => {
           this.isApproverbusy = false;
@@ -228,11 +234,11 @@ export default {
     actionApproverCanceled() {
       this.isApproverEdited = true;
       this.activeSelect = null;
-      this.dataApprovers = [...this.form.approvers];
+      this.approvers = [...this.form.approvers];
     },
 
     changeApproverSelected(approver) {
-      this.dataApprovers = _.map(this.dataApprovers, (item) => {
+      this.approvers = _.map(this.approvers, (item) => {
         if (item.id_employee === approver.id_employee) {
           item = approver;
         }
