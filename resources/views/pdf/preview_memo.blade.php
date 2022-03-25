@@ -260,7 +260,6 @@
 
             </tbody>
         </table>
-<<<<<<< HEAD
         @endif
         @else
         <h4>Cost/Expenses</h4>
@@ -396,10 +395,6 @@
             </table>
             @endforeach
         {{-- <table style="width: 30%; position: relative; left: 511px;">
-=======
-        @if($dataTotalCost['sub_total'] > 0)
-        <table style="width: 30%; position: relative; left: 511px;">
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
                 <tbody>
                     <tr>
                         <th style="width: 38%; text-align: left;">Sub Total</th>

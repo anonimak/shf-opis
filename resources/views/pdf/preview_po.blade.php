@@ -231,7 +231,6 @@
             </tbody>
         </table>
         @endif
-<<<<<<< HEAD
         @else
         <h4>Cost/Expenses</h4>
         <hr>
@@ -365,8 +364,6 @@
 
             </table>
             @endforeach
-=======
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
         <br>
         @endif
         @if ( count($memo->approvers) > 0)

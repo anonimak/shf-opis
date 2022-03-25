@@ -75,20 +75,6 @@
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-<<<<<<< HEAD
-                    <div class="table-responsive">
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="
-                          formType == 'payment'
-                            ? updateApproverPayment
-                            : __updateApprover
-                        "
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
-=======
                     <!-- <div class="table-responsive" v-if="formType == 'payment'"> -->
                     <table-edit-approver
                       :dataPosition="dataPosition"
@@ -101,7 +87,6 @@
                       :id_memo="dataMemo.id"
                     />
                     <!-- </div> -->
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -348,11 +333,7 @@
                     id="input-group-text"
                     label=""
                     label-for="input-text"
-<<<<<<< HEAD
-                    class="mb-4"
-=======
                     class="mt-2"
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
                   >
                     <b-form-checkbox
                       id="checkbox-1"

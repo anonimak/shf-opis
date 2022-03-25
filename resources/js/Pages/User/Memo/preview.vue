@@ -259,7 +259,6 @@
                 </div>
               </b-col>
             </b-row>
-<<<<<<< HEAD
             <b-row v-else>
               <b-col>
                 <h5>Cost/Expense</h5>
@@ -267,9 +266,6 @@
               </b-col>
             </b-row>
             <!-- <b-row
-=======
-            <b-row
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
               class="mb-2"
               v-if="
                 dataMemo.ref_table.with_po == true && dataTotalCost.sub_total > 0

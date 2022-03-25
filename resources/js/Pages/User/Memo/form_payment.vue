@@ -126,12 +126,6 @@
                   <div class="data-memo" v-html="dataMemo.conclusion"></div>
                 </b-col>
               </b-row>
-<<<<<<< HEAD
-              <b-row
-                v-if="memocost.length > 0 && !dataMemo.is_cost_invoice"
-                class="mb-2"
-              >
-=======
               <b-row>
                 <b-col col lg="12" class="mb-4">
                   <h5>Attachment:</h5>
@@ -201,7 +195,6 @@
                 </b-col>
               </b-row>
               <b-row v-if="memocost.length > 0" class="mb-2">
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
                 <b-col>
                   <h5>Cost/Expense</h5>
                   <div class="table-responsive">

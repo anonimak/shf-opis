@@ -10,7 +10,6 @@
           ><i class="fas fa-download fa-sm text-white-50"></i> Generate
           Report</a
         > -->
-<<<<<<< HEAD
     </div>
     <div v-if="dataMaintenances">
       <b-alert
@@ -34,58 +33,6 @@
         </h2>
         <p class="ml-4 my-auto">
           {{ item.msg }}
-=======
-      </div>
-      <div v-if="dataMaintenances">
-        <b-alert
-          class="d-flex"
-          v-for="item in dataMaintenances"
-          :key="item.id"
-          :variant="item.type"
-          show
-          dismissible
-        >
-          <h2 class="alert-heading my-auto">
-            <i
-              v-if="item.type == 'warning'"
-              class="fas fa-exclamation-triangle"
-            ></i>
-            <i v-if="item.type == 'danger'" class="fas fa-times"></i>
-            <i v-if="item.type == 'info'" class="fas fa-info-circle"></i>
-            <i v-if="item.type == 'success'" class="far fa-check-circle"></i>
-            <i v-if="item.type == 'primary'" class="fas fa-info-circle"></i>
-            <i v-if="item.type == 'secondary'" class="fas fa-info-circle"></i>
-          </h2>
-          <p class="mx-4 my-auto">
-            {{ item.msg }}
-          </p>
-        </b-alert>
-      </div>
-      <b-jumbotron bg-variant="primary" text-variant="white">
-        <template #header
-          >Hello {{ userinfo.name }}
-          <b-img
-            right
-            fluid
-            src="../images/test(300x300).png"
-            alt="Right image"
-          ></b-img>
-        </template>
-
-        <template #lead>
-          Welcome to Sinarmas Hana Finance Memo Apps. Click button below to
-          create new memo.</template
-        >
-
-        <hr class="my-4" />
-
-        <p>
-          <inertia-link
-            class="btn btn-lg btn-outline-light"
-            :href="route(__create)"
-            >Create Memo</inertia-link
-          >
->>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
         </p>
       </b-alert>
     </div>
