@@ -394,7 +394,8 @@
 
             </table>
             @endforeach
-        {{-- <table style="width: 30%; position: relative; left: 511px;">
+            @if($dataTotalCost['sub_total']> 0)
+        <table style="width: 30%; position: relative; left: 511px;">
                 <tbody>
                     <tr>
                         <th style="width: 38%; text-align: left;">Sub Total</th>
