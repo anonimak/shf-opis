@@ -77,7 +77,10 @@
                               {{ item.latest_history.content }}
                             </small>
                             <p
-                              v-else-if="item.check_terminate_approver"
+                              v-else-if="
+                                Object.keys(item.check_terminate_approver)
+                                  .length !== 0
+                              "
                               class="text-danger"
                             >
                               Submit disabled because some approver has been
@@ -89,7 +92,10 @@
                             <b-button-group size="sm">
                               <b-button
                                 :disabled="
-                                  item.check_terminate_approver ? true : false
+                                  Object.keys(item.check_terminate_approver)
+                                    .length !== 0
+                                    ? true
+                                    : false
                                 "
                                 v-b-tooltip.hover
                                 title="Submit"
