@@ -63,7 +63,7 @@
                   <h5>Orientation</h5>
                   <b-form-group v-slot="{ ariaDescribedby }">
                     <b-form-radio-group
-                      @change="debouncedSave()"
+                      @change="autoSaveItem()"
                       v-model="form.orientation_paper"
                       :aria-describedby="ariaDescribedby"
                       name="orientation-paper"
@@ -191,30 +191,23 @@
                 </b-col>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Background:</h5>
-                    <div v-if="isTypingBg">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Background</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'background' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
@@ -223,37 +216,30 @@
                   >
                     <!-- <Editor2 v-model="form.background" /> -->
                     <Editor2
-                      @input="typingBackground()"
+                      @input="typing('background')"
                       v-model="form.background"
                     />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Information:</h5>
-                    <div v-if="isTypingInfo">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small label="Floated Right"></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Information</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'information' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
@@ -261,35 +247,31 @@
                     class="mt-2"
                   >
                     <!-- <Editor2 v-model="form.information" /> -->
-                    <Editor2 @input="typingInfo()" v-model="form.information" />
+                    <Editor2
+                      @input="typing('information')"
+                      v-model="form.information"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Conclusion:</h5>
-                    <div v-if="isTypingConclusion">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small label="Floated Right"></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Conclusion</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'conclusion' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
@@ -298,37 +280,30 @@
                   >
                     <!-- <Editor2 v-model="form.conclusion" /> -->
                     <Editor2
-                      @input="typingConclusion()"
+                      @input="typing('conclusion')"
                       v-model="form.conclusion"
                     />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Cost /Expense:</h5>
-                    <div v-if="isTypingCost">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small label="Floated Right"></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Cost/Expense</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'cost' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
@@ -379,7 +354,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
-                          @change="debouncedSaveCost()"
+                          @change="autoSaveItemCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
@@ -769,10 +744,8 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
-      isTypingBg: null,
-      isTypingInfo: null,
-      isTypingConclusion: null,
-      isTypingCost: null,
+      fieldSaving: "",
+      isSaving: false,
       form: {},
       //payment
       checkPPNInclude: false,
@@ -828,8 +801,8 @@ export default {
           //this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
           this.dataFormula =
             this.hotSettings.formulas.engine.getAllSheetsValues();
+          this.typing("cost");
           //this.dataWithFormulaValue = this.dataFormula.Sheet1;
-          this.typingCost();
         },
       },
       fileRecords: [],
@@ -881,38 +854,26 @@ export default {
         parseFloat(this.ppn) -
         parseFloat(this.pph);
 
-      this.debouncedSaveCost();
+      this.autoSaveItemCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
     },
-
     dataMemo: function (val) {
       this.fillForm();
     },
   },
-  created: function () {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
-    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
+  created() {
+    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
   },
   methods: {
-    typingBackground: function () {
-      this.isTypingBg = true;
-      this.debouncedSave();
-    },
-    typingInfo: function () {
-      this.isTypingInfo = true;
-      this.debouncedSave();
-    },
-    typingConclusion: function () {
-      this.isTypingConclusion = true;
-      this.debouncedSave();
-    },
-    typingCost: function () {
-      this.isTypingCost = true;
+    typing: function (field) {
+      this.fieldSaving = field;
       this.debouncedSave();
     },
     autoSaveItem: function () {
+      this.isSaving = true;
       let newData = {};
       if (this.dataFormula.Sheet1.length != 0) {
         newData = _.map(this.dataFormula.Sheet1, (value) => {
@@ -951,12 +912,10 @@ export default {
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
           this.form.orientation_paper = response.data.orientation_paper;
-          this.isTypingBg = false;
-          this.isTypingInfo = false;
-          this.isTypingConclusion = false;
-          this.isTypingCost = false;
+          this.fieldSaving = "";
+          this.isSaving = false;
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
           }
         })
         .catch((error) => {
@@ -964,6 +923,7 @@ export default {
         });
     },
     autoSaveItemCost: function () {
+      this.isSaving = true;
       this.form.sub_total = this.sub_total;
       this.form.pph = this.pph;
       this.form.ppn = this.ppn;
@@ -975,8 +935,9 @@ export default {
           this.pph = response.data.pph;
           this.ppn = response.data.ppn;
           this.grand_total = response.data.grand_total;
+          this.isSaving = false;
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
           }
         })
         .catch((error) => {
@@ -1002,7 +963,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
-      this.debouncedSaveCost();
+      this.autoSaveItemCost();
     },
 
     uploadFiles: function () {
