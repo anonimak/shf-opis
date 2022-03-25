@@ -311,10 +311,11 @@
                 <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
               </b-col>
             </b-row>
-            <!-- <b-row
+            <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_po == true && dataTotalCost.sub_total > 0
+                dataMemo.ref_table.with_po == true &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
