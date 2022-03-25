@@ -1,6 +1,6 @@
 <template>
   <b-modal
-    id="modal-prevent-closing"
+    id="modal-terminate"
     ref="modal"
     :title="title"
     @show="resetModal"
@@ -8,38 +8,37 @@
     @ok="handleOk"
   >
     <form ref="form" @submit.stop.prevent="handleSubmit">
-      <p v-html="caption"></p>
+      <p>{{ caption }}</p>
       <b-form-group label-for="name-input">
-        <!-- <b-form-textarea
-          v-if="useMessage"
-          id="textarea"
-          v-model="message"
-          placeholder="Enter message..."
-          rows="3"
-          max-rows="6"
+        <label for="terminate-datepicker">Choose a date</label>
+        <b-form-datepicker
+          id="terminate-datepicker"
+          :date-format-options="{
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+          }"
+          locale="id"
+          v-model="terminate_date"
           class="mb-2"
-        ></b-form-textarea>
-        <b-form-checkbox
-          id="checkbox-1"
-          v-model="useMessage"
-          name="checkbox-1"
-          :value="true"
-          @change="onChangeCheckMessage"
-          :unchecked-value="false"
-        >
-          With message
-        </b-form-checkbox> -->
+        ></b-form-datepicker>
       </b-form-group>
     </form>
+    <template #modal-footer="{ ok, hide }">
+      <b-button size="sm" variant="secondary" @click="hide('forget')">
+        Cancel
+      </b-button>
+      <b-button size="sm" variant="danger" @click="ok()"> TERMINATE </b-button>
+    </template>
   </b-modal>
 </template>
 <script>
 export default {
-  props: ["title", "caption", "idConfirmedPayment", "idItemClicked"],
+  props: ["title", "caption", "idItemClicked"],
   data() {
     return {
       useMessage: false,
-      message: "",
+      terminate_date: "",
     };
   },
   methods: {
@@ -48,11 +47,8 @@ export default {
       this.resetModal();
     },
     resetModal() {
-      this.message = "";
+      this.terminate_date = "";
       this.useMessage = false;
-    },
-    onChangeCheckMessage(checked) {
-      if (!checked) this.message = "";
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -63,7 +59,7 @@ export default {
     handleSubmit() {
       this.$emit("handleOk", {
         id: this.idItemClicked,
-        idConfirmedPayment: this.idConfirmedPayment,
+        terminated_at: this.terminate_date,
       });
       // Hide the modal manually
       this.$nextTick(() => {

@@ -75,7 +75,10 @@ class ApprovalController extends Controller
         }
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_Payment', [
@@ -116,7 +119,10 @@ class ApprovalController extends Controller
         }
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
         return Inertia::render('User/Approval_PO', [
@@ -301,7 +307,7 @@ class ApprovalController extends Controller
                 // insert to history next approval
                 $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
                 $title_history .=  $nextApprover->idx;
-                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by reviewer ";
                 $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
 
                 D_Memo_History::create([
@@ -377,6 +383,15 @@ class ApprovalController extends Controller
                         ->attachData($pdfMemo->output(), $pdfName);
                 });
 
+                // // notif ke all approver
+                // $allApprovers = D_Memo_Approver::where('id_memo', $approver->id_memo)->with('employee')->get();
+                // $mailApprovers = $allApprovers->pluck('employee')->pluck('email')->filter()->toArray();
+                // Mail::send('emails.notifUserAcknowledgeMail', $contentAcknowledge, function ($message) use ($mailApprovers, $contentAcknowledge, $pdfMemo, $pdfName) {
+                //     $message->to($mailApprovers)
+                //         ->subject($contentAcknowledge["subject"])
+                //         ->attachData($pdfMemo->output(), $pdfName);
+                // });
+                //
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             }
@@ -386,16 +401,22 @@ class ApprovalController extends Controller
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
             // insert to history when revisi by approver
+            if($approver->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $approver->type_approver;
+            }
+
             D_Memo_History::create([
                 'title'     => "Memo Revised",
                 'id_memo'   => $memo->id,
                 'type'      => 'warning',
-                'content'   => "Memo {$memo->doc_no} has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'content'   => "Memo {$memo->doc_no} has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
                 'subject' => "Memo $memo->title - $memo->doc_no revised",
-                'message' => "Memo $memo->title - $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
@@ -466,7 +487,7 @@ class ApprovalController extends Controller
                 // insert to history next approval
                 $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
                 $title_history .=  $nextApprover->idx;
-                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by reviewer ";
                 $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
 
                 D_Memo_History::create([
@@ -558,16 +579,21 @@ class ApprovalController extends Controller
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status_payment' => 'revisi']);
             // insert to history when revisi by approver
+            if($approver->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $approver->type_approver;
+            }
             D_Memo_History::create([
                 'title'     => "Memo Payment Revised",
                 'id_memo'   => $memo->id,
                 'type'      => 'warning',
-                'content'   => "Memo Payment {$memo->doc_no} has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'content'   => "Memo Payment {$memo->doc_no} has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ]);
 
             $detailspropose = [
                 'subject' => "Memo Payment $memo->title - $memo->doc_no revised",
-                'message' => "Memo Payment $memo->title - $memo->doc_no has revised by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo Payment $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
@@ -634,7 +660,7 @@ class ApprovalController extends Controller
                 // insert to history next approval
                 $title_history = ($nextApprover->type_approver == 'approver') ? "Process Approving " : "Process Reviewing ";
                 $title_history .=  $nextApprover->idx;
-                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by acknowledge ";
+                $content_history = ($nextApprover->type_approver == 'approver') ? "On process approving by approver " : "On process reviewing by reviewer ";
                 $content_history .= "{$nextApprover->idx} ({$nextApprover->employee->firstname} {$nextApprover->employee->lastname})";
 
                 D_Memo_History::create([

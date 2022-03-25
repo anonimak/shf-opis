@@ -70,6 +70,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <!-- <th scope="col">Status</th> -->
                             <th>Action</th>
@@ -94,6 +96,12 @@
                               {{ item.title }}
                             </td>
                             <td>
+                              {{ item.firstname + " " + item.lastname }}
+                            </td>
+                            <td>
+                              {{ item.branch_name }}
+                            </td>
+                            <td>
                               <!-- {{ item.doc_no }} -->
                               <inertia-link :href="route(__detail, item.id)">
                                 {{ item.doc_no }}
@@ -106,13 +114,28 @@
                               <b-button-group
                                 v-if="
                                   item.type_approver == 'approver' &&
-                                  item.status_po == 'submit'
+                                  item.status_po == 'submit' &&
+                                  item.status_approver == 'submit'
                                 "
                               >
+                                <!-- <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdf, item.id)"
+                                  >Preview PDF</a
+                                > -->
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  v-on:click="openPDF(item.id, 1200, 650)"
+                                  v-if="isMobile() == false"
+                                  >Preview PDF</a
+                                >
                                 <a
                                   target="_blank"
                                   class="btn btn-success"
                                   :href="route(__previewpdf, item.id)"
+                                  v-if="isMobile() == true"
                                   >Preview PDF</a
                                 >
                                 <b-button
@@ -132,16 +155,31 @@
                                 >
                               </b-button-group>
                               <b-button-group v-else>
+                                <!-- <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdf, item.id)"
+                                  >Preview PDF</a
+                                > -->
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  v-on:click="openPDF(item.id, 1200, 650)"
+                                  v-if="isMobile() == false"
+                                  >Preview PDF</a
+                                >
                                 <a
                                   target="_blank"
                                   class="btn btn-success"
                                   :href="route(__previewpdf, item.id)"
+                                  v-if="isMobile() == true"
                                   >Preview PDF</a
                                 >
                                 <b-button
                                   @click="actionNext(item.id_approver)"
                                   variant="info"
-                                  v-if="item.type_approver == 'acknowledge'"
+                                  v-if="item.type_approver == 'acknowledge' &&
+                                    item.status_approver == 'submit'"
                                   >Next</b-button
                                 >
                               </b-button-group>
@@ -316,6 +354,23 @@ export default {
   },
   mounted() {},
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     actionApprove(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;

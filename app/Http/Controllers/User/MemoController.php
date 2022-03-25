@@ -41,8 +41,10 @@ class MemoController extends Controller
 
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo', [
@@ -88,8 +90,10 @@ class MemoController extends Controller
     {
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
-
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //ddd($positions);
 
         return Inertia::render('User/Memo/index_Takeover_Branch', [
@@ -243,7 +247,7 @@ class MemoController extends Controller
 
         return Inertia::render('User/Memo/Draft', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemoDraft(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'dataMemo' => Memo::getMemoDraft(auth()->user()->id_employee, "edit", $request->input('search'))->with('latestHistory')->with('ref_table')->with('check_terminate_approver')->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -322,7 +326,10 @@ class MemoController extends Controller
         $employeeInfo = User::getUsersEmployeeInfo();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
 
         // $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
 
@@ -374,6 +381,8 @@ class MemoController extends Controller
             '__removeAttachment'  => 'user.memo.draft.attachmentremove',
             '__update' => 'user.memo.draft.update',
             '__updateApprover' => 'user.memo.draft.updateapprover',
+            '__autoSaveItem' => 'user.memo.draft.itemAutoSave',
+            '__autoSaveItemCost' => 'user.memo.draft.itemAutoSaveCost',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
@@ -387,6 +396,47 @@ class MemoController extends Controller
             'headerCost' => $headerCost,
             'columnCost' => $columnCost,
             // 'dataTypeMemo'  => Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get(),
+        ]);
+    }
+
+    public function itemAutoSave(Request $request, $id)
+    {
+        Memo::where('id', $id)->update([
+            'background'        => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+            'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull auto save.',
+            'background' => $request->input('background'),
+            'orientation_paper' => $request->input('orientation_paper'),
+            'information'       => $request->input('information'),
+            'conclusion'        => $request->input('conclusion'),
+            'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
+        ]);
+    }
+
+    public function itemAutoSaveCost(Request $request, $id)
+    {
+        M_Data_Cost_Total::where('id_memo', $id)->update([
+            // 'id_memo' => $id,
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn' => $request->input('ppn'),
+            'grand_total' => $request->input('grand_total')
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfull auto save.',
+            'sub_total' => $request->input('sub_total'),
+            'pph' => $request->input('pph'),
+            'ppn'       => $request->input('ppn'),
+            'grand_total'        => $request->input('grand_total'),
         ]);
     }
 
@@ -405,7 +455,7 @@ class MemoController extends Controller
         ]);
         // form payment
         M_Data_Cost_Total::where('id_memo', $id)->update([
-            'id_memo' => $id,
+            // 'id_memo' => $id,
             'sub_total' => $request->input('sub_total'),
             'pph' => $request->input('pph'),
             'ppn' => $request->input('ppn'),
@@ -508,7 +558,7 @@ class MemoController extends Controller
                     ->position_now
                     ->position->department
                     ->alias . '/PO',
-                'propose_at' => Carbon::now()
+                'propose_payment_at' => Carbon::now()
             ]);
 
             D_Payment_Approver::where('id_memo', $id)->update([
@@ -524,12 +574,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -585,12 +640,17 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+            if($firstApprover->type_approver == 'acknowledge') {
+                $type_approver = 'reviewer';
+            } else {
+                $type_approver = $firstApprover->type_approver;
+            }
             // insert to history frist approval
             D_Memo_History::create([
                 'title'     => "Process Approving {$firstApprover->idx}",
                 'id_memo'   => $id,
                 'type'      => 'info',
-                'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+                'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
             ]);
             $mailApprover = $firstApprover->employee->email;
             // kirim email ke approver pertama
@@ -615,7 +675,10 @@ class MemoController extends Controller
         $memoType = Memo::select('*')->where('id', '=', $id)->with('ref_table')->first();
         $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
             return $employee->select('id', 'firstname', 'lastname');
-        }])->with('position')->get();
+        }])->with(['position' => function ($p) {
+            return $p->where('position_name', '<>', 'TERMINATE');
+        }])->get();
+        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
 
         $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'payment')->get();
 
@@ -671,6 +734,7 @@ class MemoController extends Controller
             //'__update' => 'user.memo.draft.update',
             '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             '__deleteAcknowledge' => 'user.memo.draft.deleteacknowledge',
+            '__autoSaveItemCost' => 'user.memo.draft.itemAutoSaveCost',
             //'__addDataTotal' => 'user.api.memo.adddatatotalcost',
             // '__updateAcknowledge' => 'user.memo.draft.updateacknowledge',
             //'__preview' => 'user.memo.draft.preview',
@@ -708,6 +772,7 @@ class MemoController extends Controller
         // update status menjadi submit
         Memo::where('id', $id)->update([
             'status_payment'   => 'submit',
+            'propose_payment_at' => Carbon::now()
         ]);
 
         D_Payment_Approver::where('id_memo', $id)->update([
@@ -730,12 +795,17 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
+        if($firstApprover->type_approver == 'acknowledge') {
+            $type_approver = 'reviewer';
+        } else {
+            $type_approver = $firstApprover->type_approver;
+        }
         // insert to history frist approval
         D_Memo_History::create([
             'title'     => "Process Approving {$firstApprover->idx}",
             'id_memo'   => $id,
             'type'      => 'info',
-            'content'   => "On process approving by approver {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
+            'content'   => "On process approving by {$type_approver} {$firstApprover->idx} ({$firstApprover->employee->firstname} {$firstApprover->employee->lastname})"
         ]);
         $mailApprover = $firstApprover->employee->email;
         // kirim email ke approver pertama

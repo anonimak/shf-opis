@@ -126,107 +126,12 @@
                   <div class="data-memo" v-html="dataMemo.conclusion"></div>
                 </b-col>
               </b-row>
+<<<<<<< HEAD
               <b-row
                 v-if="memocost.length > 0 && !dataMemo.is_cost_invoice"
                 class="mb-2"
               >
-                <b-col>
-                  <h5>Cost/Expense</h5>
-                  <div class="table-responsive">
-                    <b-table bordered :items="memocost"></b-table>
-                  </div>
-                </b-col>
-              </b-row>
-              <b-row v-else>
-                <b-col>
-                  <h5>Cost/Expense</h5>
-                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
-                </b-col>
-              </b-row>
-              <b-row
-                v-if="
-                  dataMemoType.ref_table.with_po == 1 ||
-                  dataMemoType.ref_table.with_payment == 1
-                "
-              >
-                <div class="col-5" v-if="memocost.length > 0">
-                  <b-overlay
-                    :show="isSubmitbusy"
-                    opacity="0.6"
-                    spinner-small
-                    spinner-variant="primary"
-                  >
-                    <b-form-group
-                      id="input-group-text"
-                      label=""
-                      label-for="input-text"
-                    >
-                      <b-input-group prepend="Sub Total" class="mb-2 mt-5">
-                        <b-form-input
-                          aria-label="sub_total"
-                          v-model="sub_total"
-                        ></b-form-input>
-                      </b-input-group>
-                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
-                        <b-form-input
-                          aria-label="pph"
-                          v-model="pph"
-                          v-on:change="pphValueChange"
-                        ></b-form-input>
-                        <b-form-checkbox
-                          v-model="manualInputPph"
-                          class="justify-content-center my-auto ml-2"
-                          :value="true"
-                          :unchecked-value="false"
-                          @change="actionChangeChenckboxManualInput"
-                        >
-                          Manual input Pph
-                        </b-form-checkbox>
-                      </b-input-group>
-                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
-                        <b-form-input
-                          disabled
-                          aria-label="ppn"
-                          v-model="ppn"
-                        ></b-form-input>
-                      </b-input-group>
-                      <b-form-checkbox
-                        id="checkbox-1"
-                        v-model="checkPPNInclude"
-                        name="checkbox-1"
-                        :value="true"
-                        :unchecked-value="false"
-                      >
-                        PPN included with sub total
-                      </b-form-checkbox>
-                      <b-input-group prepend="Grand Total" class="mb-2 mt-2">
-                        <b-form-input
-                          aria-label="grand_total"
-                          v-model="grand_total"
-                          disabled
-                        ></b-form-input>
-                      </b-input-group>
-                      <b-button
-                        size="sm"
-                        text="Button"
-                        variant="danger"
-                        @click="reset()"
-                        >Reset</b-button
-                      >
-                    </b-form-group>
-                  </b-overlay>
-                </div>
-              </b-row>
-              <b-row>
-                <div class="col-12"></div>
-              </b-row>
-              <!-- <b-row align-h="center">
-                <b-button-group>
-                  <b-button type="submit" variant="primary" class="btn-lg"
-                    >Save Memo</b-button
-                  >
-                </b-button-group>
-              </b-row> -->
+=======
               <b-row>
                 <b-col col lg="12" class="mb-4">
                   <h5>Attachment:</h5>
@@ -294,6 +199,99 @@
                     </button>
                   </b-form-group>
                 </b-col>
+              </b-row>
+              <b-row v-if="memocost.length > 0" class="mb-2">
+>>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206
+                <b-col>
+                  <h5>Cost/Expense</h5>
+                  <div class="table-responsive">
+                    <b-table bordered :items="memocost"></b-table>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row v-else>
+                <b-col>
+                  <h5>Cost/Expense</h5>
+                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
+                </b-col>
+              </b-row>
+              <b-row
+                v-if="
+                  dataMemoType.ref_table.with_po == 1 ||
+                  dataMemoType.ref_table.with_payment == 1
+                "
+              >
+                <div class="col-5" v-if="memocost.length > 0">
+                  <b-overlay
+                    :show="isSubmitbusy"
+                    opacity="0.6"
+                    spinner-small
+                    spinner-variant="primary"
+                  >
+                    <b-form-group
+                      id="input-group-text"
+                      label=""
+                      label-for="input-text"
+                    >
+                      <b-input-group prepend="Sub Total" class="mb-2 mt-5">
+                        <b-form-input
+                          aria-label="sub_total"
+                          v-model="sub_total"
+                          @change="debouncedSaveCost()"
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
+                        <b-form-input
+                          aria-label="pph"
+                          v-model="pph"
+                          v-on:change="pphValueChange"
+                        ></b-form-input>
+                        <b-form-checkbox
+                          v-model="manualInputPph"
+                          class="justify-content-center my-auto ml-2"
+                          :value="true"
+                          :unchecked-value="false"
+                          @change="actionChangeChenckboxManualInput"
+                        >
+                          Manual input Pph
+                        </b-form-checkbox>
+                      </b-input-group>
+                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
+                        <b-form-input
+                          disabled
+                          aria-label="ppn"
+                          v-model="ppn"
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-form-checkbox
+                        id="checkbox-1"
+                        v-model="checkPPNInclude"
+                        name="checkbox-1"
+                        :value="true"
+                        :unchecked-value="false"
+                      >
+                        PPN included with sub total
+                      </b-form-checkbox>
+                      <b-input-group prepend="Grand Total" class="mb-2 mt-2">
+                        <b-form-input
+                          aria-label="grand_total"
+                          v-model="grand_total"
+                          disabled
+                        ></b-form-input>
+                      </b-input-group>
+                      <b-button
+                        size="sm"
+                        text="Button"
+                        variant="danger"
+                        @click="reset()"
+                        >Reset</b-button
+                      >
+                    </b-form-group>
+                  </b-overlay>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-12"></div>
               </b-row>
             </b-card-body>
             <b-row class="ml-2">
@@ -434,6 +432,7 @@
                     type="submit"
                     variant="primary"
                     class="btn-lg mt-3 mb-3"
+                    :disabled="isTerminateApprover"
                     >Propose Payment</b-button
                   >
                 </b-button-group>
@@ -622,6 +621,7 @@ export default {
     "__removeAttachment",
     "__updateAcknowledge",
     "__deleteAcknowledge",
+    "__autoSaveItemCost",
     "dataMemoType",
   ],
   data() {
@@ -636,6 +636,7 @@ export default {
       },
       form_payment: {},
       isAcknowledgebusy: false,
+      isTerminateApprover: false,
       selectedAcknowledge: null,
       checkPPNInclude: false,
       sub_total: 0,
@@ -704,6 +705,8 @@ export default {
         parseFloat(this.sub_total) +
         parseFloat(this.ppn) -
         parseFloat(this.pph);
+
+      this.debouncedSaveCost();
     },
     // dataMemo: function (val) {
     //   this.fillForm();
@@ -713,7 +716,30 @@ export default {
     },
     // fillForm() {},
   },
+  created: function () {
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1000);
+  },
   methods: {
+      autoSaveItemCost: function () {
+      this.form.sub_total = this.sub_total;
+      this.form.pph = this.pph;
+      this.form.ppn = this.ppn;
+      this.form.grand_total = this.grand_total;
+      axios
+        .post(route(this.__autoSaveItemCost, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.sub_total = response.data.sub_total;
+          this.pph = response.data.pph;
+          this.ppn = response.data.ppn;
+          this.grand_total = response.data.grand_total;
+          if (response.data.status == 200) {
+            this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
     uploadFiles: function () {
       // Using the default uploader. You may use another uploader instead.
       var form_data = new FormData();
@@ -794,6 +820,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
+      this.debouncedSaveCost();
     },
     fillForm() {
       //   this.form = { ...this.dataMemo };
@@ -933,6 +960,12 @@ export default {
         this.dataPositions = results[0].data;
         this.dataApprovers =
           results[1].data.length > 0 ? results[1].data : results[2].data;
+        this.isTerminateApprover = this.dataApprovers.some(
+          (approver) =>
+            approver.employee.position_now.position.position_name == "TERMINATE"
+        )
+          ? true
+          : false;
         this.dataPayments = results[3].data;
         this.fillForm();
       });
@@ -1001,6 +1034,12 @@ export default {
       Promise.all([this.getDataApproversPayment()]).then((results) => {
         this.isTableApproverbusy = false;
         this.dataApprovers = results[0].data;
+        this.isTerminateApprover = this.dataApprovers.some(
+          (approver) =>
+            approver.employee.position_now.position.position_name == "TERMINATE"
+        )
+          ? true
+          : false;
       });
     },
     actionAcknowledgeRemoving(removeOption) {

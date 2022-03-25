@@ -62,17 +62,34 @@
                               revised
                             </b-badge>
                           </td>
-                          <td v-if="item.ref_table.type == 'approval' && item.ref_table.with_payment == true">approval and payment</td>
+                          <td
+                            v-if="
+                              item.ref_table.type == 'approval' &&
+                              item.ref_table.with_payment == true
+                            "
+                          >
+                            approval and payment
+                          </td>
                           <td v-else>{{ item.ref_table.type }}</td>
                           <td>
                             <small v-if="item.latest_history">
                               {{ item.latest_history.content }}
                             </small>
+                            <p
+                              v-else-if="item.check_terminate_approver"
+                              class="text-danger"
+                            >
+                              Submit disabled because some approver has been
+                              terminated
+                            </p>
                             <span v-else>-</span>
                           </td>
                           <td>
                             <b-button-group size="sm">
                               <b-button
+                                :disabled="
+                                  item.check_terminate_approver ? true : false
+                                "
                                 v-b-tooltip.hover
                                 title="Submit"
                                 href="#"
@@ -150,6 +167,7 @@ export default {
   data() {
     return {
       tabIndex: 0,
+      isApproverTerminated: true,
       form: {
         search: this.filters.search,
       },
@@ -162,6 +180,21 @@ export default {
     Breadcrumb,
     Pagination,
     Search,
+  },
+  mounted() {
+    if (this.dataMemo.data.length > 0) {
+      this.dataMemo.data = _.map(this.dataMemo.data, (memo) => {
+        if (memo.check_terminate_approver.length > 0) {
+          memo.check_terminate_approver = _.pick(
+            _.find(memo.check_terminate_approver, (approver) => {
+              return approver.employee_history.position_count > 0;
+            }),
+            "employee_history.position_count"
+          );
+        }
+        return memo;
+      });
+    }
   },
   methods: {
     submitDelete(id) {

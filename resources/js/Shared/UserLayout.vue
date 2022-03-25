@@ -44,5 +44,13 @@ export default {
   },
 };
 </script>
+<<<<<<< HEAD
 <style scoped>
 </style>
+=======
+<style>
+body.modal-open {
+  overflow: scroll !important;
+}
+</style>
+>>>>>>> c94259ecd89549f826a0420c30be3e0fa688e206

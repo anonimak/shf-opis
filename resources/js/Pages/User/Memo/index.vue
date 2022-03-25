@@ -70,6 +70,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
                             <th>Action</th>
@@ -92,6 +94,19 @@
                             </th>
                             <td>
                               {{ item.title }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
                             </td>
                             <td>
                               {{ item.doc_no }}
@@ -131,11 +146,31 @@
                               >
                                 preview
                               </inertia-link>
-                              <a
+                              <!-- <a
                                 target="_blank"
                                 class="btn btn-success btn-sm"
                                 :href="route(__previewpdf, item.id)"
                                 v-if="item.status == 'approve'"
+                                >Preview PDF</a
+                              > -->
+                              <!-- open in new window -->
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                v-on:click="openPDF(item.id, 1200, 650)"
+                                v-if="
+                                  item.status == 'approve' &&
+                                  isMobile() == false
+                                "
+                                >Preview PDF</a
+                              >
+                              <a
+                                target="_blank"
+                                class="btn btn-success btn-sm"
+                                :href="route(__previewpdf, item.id)"
+                                v-if="
+                                  item.status == 'approve' && isMobile() == true
+                                "
                                 >Preview PDF</a
                               >
                               <b-button
@@ -314,6 +349,23 @@ export default {
     this.setLsTabMemo();
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";

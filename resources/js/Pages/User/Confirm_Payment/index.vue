@@ -53,6 +53,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
                             <th scope="col">Document No</th>
+                            <th scope="col">From</th>
                             <th scope="col">Branch</th>
                             <th scope="col">Status</th>
                             <th scope="col">Payment At</th>
@@ -97,6 +98,13 @@
                             </td>
                             <td>
                               {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
+                            </td>
+                            <td>
+                              {{
                                 item.proposeemployee.position_now.branch
                                   .branch_name
                               }}
@@ -112,20 +120,29 @@
                             <td v-else>-</td>
                             <td>
                               <b-button-group>
-                                <a
+                                <!-- <a
                                   target="_blank"
                                   class="btn btn-success"
                                   :href="route(__previewpdf, item.id)"
                                   >Preview PDF</a
+                                > -->
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  v-on:click="openPDF(item.id, 1200, 650)"
+                                  v-if="isMobile() == false"
+                                  >Preview PDF</a
+                                >
+                                <a
+                                  target="_blank"
+                                  class="btn btn-success"
+                                  :href="route(__previewpdf, item.id)"
+                                  v-if="isMobile() == true"
+                                  >Preview PDF</a
                                 >
                                 <b-button
                                   v-if="item.payment_at == null"
-                                  @click="
-                                    actionConfirm(
-                                      item.id,
-                                      item.confirmed_payment_by
-                                    )
-                                  "
+                                  @click="actionConfirm(item)"
                                   variant="info"
                                 >
                                   Confirm Payment
@@ -220,13 +237,31 @@ export default {
   },
   mounted() {},
   methods: {
-    actionConfirm(id, idConfirmedPay) {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
+    actionConfirm(item) {
       //   this.buttonClicked = "approve";
-      this.idItemClicked = id;
-      this.idConfirmedPayment = idConfirmedPay;
+      this.idItemClicked = item.id;
+      this.idConfirmedPayment = item.confirmed_payment_by;
       this.modalTitle = "Modal Confirming Payment";
-      this.modalCaption =
-        "Are you sure to confirm this memo payment has been paid?";
+      this.modalCaption = `<b>Title : ${item.title}</b> <br>`;
+      this.modalCaption += `<b>Document No : ${item.doc_no}</b><br><br>`;
+      this.modalCaption += `Are you sure to confirm this memo payment has been paid?`;
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },

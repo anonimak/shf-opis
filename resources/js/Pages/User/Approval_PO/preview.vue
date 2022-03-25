@@ -110,7 +110,7 @@
                     </tr>
                     <tr>
                       <td>Doc. No</td>
-                      <td>{{ dataMemo.doc_no }}</td>
+                      <td>{{ dataMemo.po_no }}</td>
                     </tr>
                     <tr>
                       <td>Type</td>
@@ -308,7 +308,7 @@
               v-if="
                 (dataMemo.ref_table.with_payment == true ||
                   dataMemo.ref_table.with_po == true) &&
-                memocost.length > 0
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
@@ -327,7 +327,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <th style="width: 50%">Pph23 (2%)</th>
+                        <th style="width: 50%">Pph23</th>
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
