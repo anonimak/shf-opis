@@ -26,6 +26,7 @@
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
+                  <card-memo />
                   <!-- table news -->
                   <div class="table-responsive">
                     <table class="table mt-4">
@@ -139,6 +140,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
+import CardMemo from "@/components/CardMemo";
 import Search from "@/components/Search";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
@@ -180,6 +182,7 @@ export default {
     Breadcrumb,
     Pagination,
     Search,
+    CardMemo,
   },
   mounted() {
     if (this.dataMemo.data.length > 0) {
