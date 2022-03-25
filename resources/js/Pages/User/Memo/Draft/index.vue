@@ -26,7 +26,7 @@
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
-                  <card-memo />
+                  <!-- <card-memo /> -->
                   <!-- table news -->
                   <div class="table-responsive">
                     <table class="table mt-4">
