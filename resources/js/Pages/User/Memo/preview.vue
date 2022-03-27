@@ -226,7 +226,7 @@
             >
               <b-col>
                 <h5>Background</h5>
-                <div v-html="dataMemo.background"></div>
+                <div class="data-memo" v-html="dataMemo.background"></div>
               </b-col>
             </b-row>
             <b-row
@@ -235,7 +235,10 @@
             >
               <b-col>
                 <h5>Information</h5>
-                <div v-html="dataMemo.information"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.information"
+                ></div> </b-col
             ></b-row>
             <b-row
               v-if="dataMemo.conclusion && dataMemo.conclusion != '<p></p>'"
@@ -243,25 +246,34 @@
             >
               <b-col>
                 <h5>Conclusion</h5>
-                <div v-html="dataMemo.conclusion"></div> </b-col
+                <div
+                  class="data-memo"
+                  v-html="dataMemo.conclusion"
+                ></div> </b-col
             ></b-row>
-            <b-row v-if="memocost.length > 0" class="mb-2">
-              <b-col>
+            <b-row v-if="!dataMemo.is_cost_invoice" class="mb-2">
+              <b-col v-if="memocost.length > 0">
                 <h5>Cost/Expense</h5>
                 <div class="table-responsive">
                   <b-table bordered :items="memocost"></b-table>
                 </div>
               </b-col>
             </b-row>
-            <!-- <b-row
+            <b-row v-else>
+              <b-col>
+                <h5>Cost/Expense</h5>
+                <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
+              </b-col>
+            </b-row>
+            <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true
+                dataMemo.ref_table.with_po == true &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
-                <div class="table-responsive" v-if="dataTotalCost.length > 0">
+                <div class="table-responsive">
                   <table class="table table-stripped table-bordered">
                     <tbody>
                       <tr>
@@ -308,7 +320,7 @@
                   </table>
                 </div>
               </b-col>
-            </b-row> -->
+            </b-row>
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"
@@ -365,6 +377,7 @@
 <script>
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
+import FormInvoice from "@/components/FormInvoice";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 
@@ -387,6 +400,7 @@ export default {
     Timeline,
     TimelineItem,
     TimelineTitle,
+    FormInvoice,
   },
   data() {
     return {
@@ -397,6 +411,11 @@ export default {
         warning: "#f6c23e",
       },
     };
+  },
+  mounted() {
+    // table
+    $(".data-memo table").wrap('<div class="table-responsive"></div>');
+    $(".data-memo table").addClass("table").addClass("table-bordered");
   },
 };
 </script>

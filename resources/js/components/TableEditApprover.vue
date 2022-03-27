@@ -1,5 +1,11 @@
 <template>
-  <b-col>
+  <b-overlay
+    :show="isApproverbusy"
+    opacity="0.6"
+    spinner-small
+    spinner-variant="primary"
+    class="col"
+  >
     <b-row>
       <b-col>
         <h5>List Approver</h5>
@@ -32,84 +38,95 @@
         @option:selected="actionApproverSelecting"
       ></v-select>
     </b-form-group>
-    <table class="table table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>Approver Name</th>
-          <th>Position</th>
-          <th>Approver Type</th>
-          <th>Level</th>
-          <th v-if="isApproverEdited">#</th>
-        </tr>
-      </thead>
-      <draggable tag="tbody" handle=".handle" :list="dataApprovers">
-        <tr v-for="(approver, index) in dataApprovers" :key="index">
-          <td>
-            <i
-              v-if="isApproverEdited"
-              class="fas fa-bars handle"
-              style="cursor: pointer"
-            ></i>
-            {{ approver.employee.firstname + " " + approver.employee.lastname }}
-          </td>
-          <td>
-            <strong>
-              {{ approver.employee.position_now.position.position_name }}
-            </strong>
-          </td>
-          <td>
-            <div v-if="isApproverEdited">
-              <strong>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Approver Name</th>
+            <th>Position</th>
+            <th>Approver Type</th>
+            <th>Level</th>
+            <th v-if="isApproverEdited">#</th>
+          </tr>
+        </thead>
+        <draggable
+          tag="tbody"
+          handle=".handle"
+          :list="approvers"
+          @change="actionApproverSave()"
+        >
+          <tr v-for="(approver, index) in approvers" :key="index">
+            <td>
+              <i
+                v-if="isApproverEdited"
+                class="fas fa-bars handle"
+                style="cursor: pointer"
+              ></i>
+              {{
+                approver.employee.firstname + " " + approver.employee.lastname
+              }}
+            </td>
+            <td>
+              <strong
+                v-if="
+                  approver.employee.position_now.position.position_name ==
+                  'TERMINATE'
+                "
+                class="text-danger"
+              >
+                User has been terminated
+              </strong>
+              <strong v-else>
+                {{ approver.employee.position_now.position.position_name }}
+              </strong>
+            </td>
+            <td>
+              <div v-if="isApproverEdited">
+                <strong>
+                  {{
+                    approver.type_approver == "acknowledge"
+                      ? "reviewer"
+                      : approver.type_approver
+                  }}
+                </strong>
+                <a
+                  role="button"
+                  v-b-tooltip.hover
+                  @click="showSelectTypeApprover(index)"
+                  title="Edit Approver Type"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
+              </div>
+              <strong class="text-capitalize" v-else>
                 {{
                   approver.type_approver == "acknowledge"
                     ? "reviewer"
                     : approver.type_approver
                 }}
               </strong>
-              <a
-                role="button"
-                v-b-tooltip.hover
-                @click="showSelectTypeApprover(index)"
-                title="Edit Approver Type"
-              >
-                <i class="fas fa-edit"></i>
-              </a>
-            </div>
-            <strong class="text-capitalize" v-else>
-              {{
-                approver.type_approver == "acknowledge"
-                  ? "reviewer"
-                  : approver.type_approver
-              }}
-            </strong>
-            <select-type-approver
-              v-if="activeSelect == index"
-              :approver="approver"
-              @changeSelected="changeApproverSelected"
-            />
-          </td>
-          <td>
-            {{ index + 1 }}
-          </td>
-          <td v-if="isApproverEdited">
-            <b-button
-              variant="secondary"
-              size="sm"
-              @click="actionApproverRemoveAt(index)"
-              ><i class="fa fa-times"></i
-            ></b-button>
-          </td>
-        </tr>
-      </draggable>
-    </table>
-    <b-overlay
-      :show="isApproverbusy"
-      opacity="0.6"
-      spinner-small
-      spinner-variant="primary"
-      class="d-inline-block"
-    >
-      <b-button
+              <select-type-approver
+                v-if="activeSelect == index"
+                :approver="approver"
+                @changeSelected="changeApproverSelected"
+              />
+            </td>
+            <td>
+              {{ index + 1 }}
+            </td>
+            <td v-if="isApproverEdited">
+              <b-button
+                variant="secondary"
+                size="sm"
+                @click="actionApproverRemoveAt(index)"
+                ><i class="fa fa-times"></i
+              ></b-button>
+            </td>
+          </tr>
+        </draggable>
+      </table>
+    </div>
+    <!-- <b-button
         v-if="isApproverEdited"
         :disabled="$_.isEqual(form.approvers, dataApprovers)"
         variant="primary"
@@ -117,7 +134,6 @@
         @click="actionApproverSave"
         >save</b-button
       >
-    </b-overlay>
     <b-button
       v-if="isApproverEdited"
       :disabled="isApproverbusy"
@@ -125,8 +141,8 @@
       size="sm"
       @click="actionApproverCanceled"
       >cancel</b-button
-    >
-  </b-col>
+    > -->
+  </b-overlay>
 </template>
 <script>
 import draggable from "vuedraggable";
@@ -139,11 +155,17 @@ export default {
   data() {
     return {
       selected: null,
+      approvers: [],
       isApproverbusy: false,
-      isApproverEdited: false,
+      isApproverEdited: true,
       activeSelect: null,
       form: {},
     };
+  },
+  watch: {
+    dataApprovers: function (val) {
+      this.approvers = val;
+    },
   },
   methods: {
     getOptionLabel(option) {
@@ -158,11 +180,12 @@ export default {
     },
 
     actionApproverRemoveAt(index) {
-      this.dataApprovers.splice(index, 1);
+      this.approvers.splice(index, 1);
+      this.actionApproverSave();
     },
 
     actionApproverAddItem: function (item) {
-      let id = this.dataApprovers.find((data) => {
+      let id = this.approvers.find((data) => {
         return item.id === data.employee.position_now.id;
       });
       if (id !== undefined) {
@@ -186,7 +209,8 @@ export default {
         status: "edit",
       };
 
-      this.dataApprovers = [...this.dataApprovers, new_detail_approver];
+      this.approvers = [...this.approvers, new_detail_approver];
+      this.actionApproverSave();
     },
 
     actionApproverSave() {
@@ -194,11 +218,11 @@ export default {
       this.$emit("beforeSave");
       axios
         .post(route(this.__updateApprover, this.id_memo), {
-          approver: this.dataApprovers,
+          approver: this.approvers,
         })
         .then((response) => {
           this.isApproverbusy = false;
-          this.isApproverEdited = false;
+          this.isApproverEdited = true;
 
           if (response.data.status == 200) {
             this.pageFlashes.success = response.data.message;
@@ -208,19 +232,20 @@ export default {
     },
 
     actionApproverCanceled() {
-      this.isApproverEdited = false;
+      this.isApproverEdited = true;
       this.activeSelect = null;
-      this.dataApprovers = [...this.form.approvers];
+      this.approvers = [...this.form.approvers];
     },
 
     changeApproverSelected(approver) {
-      this.dataApprovers = _.map(this.dataApprovers, (item) => {
+      this.approvers = _.map(this.approvers, (item) => {
         if (item.id_employee === approver.id_employee) {
           item = approver;
         }
         return item;
       });
       this.activeSelect = null;
+      this.actionApproverSave();
     },
     showSelectTypeApprover(index) {
       this.activeSelect = index;

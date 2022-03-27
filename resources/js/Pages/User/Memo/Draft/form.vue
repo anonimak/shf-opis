@@ -63,6 +63,7 @@
                   <h5>Orientation</h5>
                   <b-form-group v-slot="{ ariaDescribedby }">
                     <b-form-radio-group
+                      @change="autoSaveItem()"
                       v-model="form.orientation_paper"
                       :aria-describedby="ariaDescribedby"
                       name="orientation-paper"
@@ -74,22 +75,18 @@
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-                    <div class="table-responsive" v-if="formType == 'payment'">
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="updateApproverPayment"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
-                    <div class="table-responsive" v-else>
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="__updateApprover"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
+                    <!-- <div class="table-responsive" v-if="formType == 'payment'"> -->
+                    <table-edit-approver
+                      :dataPosition="dataPosition"
+                      :dataApprovers="dataApprovers"
+                      :__updateApprover="
+                        formType == 'payment'
+                          ? updateApproverPayment
+                          : __updateApprover
+                      "
+                      :id_memo="dataMemo.id"
+                    />
+                    <!-- </div> -->
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -194,53 +191,153 @@
                 </b-col>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Background</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'background' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
-                    label="Background:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.background" />
+                    <!-- <Editor2 v-model="form.background" /> -->
+                    <Editor2
+                      @input="typing('background')"
+                      v-model="form.background"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Information</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'information' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
-                    label="Information:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.information" />
+                    <!-- <Editor2 v-model="form.information" /> -->
+                    <Editor2
+                      @input="typing('information')"
+                      v-model="form.information"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Conclusion</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'conclusion' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
-                    label="Conclusion:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
-                    <Editor2 v-model="form.conclusion" />
+                    <!-- <Editor2 v-model="form.conclusion" /> -->
+                    <Editor2
+                      @input="typing('conclusion')"
+                      v-model="form.conclusion"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Cost/Expense</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'cost' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
-                    label="Cost /Expense:"
+                    label=""
                     label-for="input-text"
+                    class="mt-2"
                   >
+                    <b-form-checkbox
+                      id="checkbox-1"
+                      v-model="form.is_cost_invoice"
+                      name="checkbox-1"
+                      :value="true"
+                      :unchecked-value="false"
+                      class="mb-2"
+                    >
+                      use Cost Invoice
+                    </b-form-checkbox>
+                    <form-invoice
+                      v-if="form.is_cost_invoice"
+                      :id_memo="dataMemo.id"
+                    />
                     <hot-table
+                      v-else
                       ref="formCost"
                       :settings="hotSettings"
                     ></hot-table>
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row v-if="formType == 'payment'">
+              <b-row
+                v-if="
+                  formType == 'payment' ||
+                  dataMemoType.ref_table.with_po == true
+                "
+              >
                 <div class="col-5">
                   <b-overlay
                     :show="isSubmitBusy"
@@ -257,9 +354,10 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
+                          @change="autoSaveItemCost()"
                         ></b-form-input>
                       </b-input-group>
-                        <b-input-group prepend="Pph 23" class="mb-2 mt-2">
+                      <b-input-group prepend="Pph 23" class="mb-2 mt-2">
                         <b-form-input
                           aria-label="pph"
                           v-model="pph"
@@ -441,7 +539,7 @@
                 </b-col>
               </b-overlay>
 
-              <b-row align-h="center">
+              <!-- <b-row align-h="center">
                 <b-overlay
                   :show="submitState"
                   opacity="0.6"
@@ -454,7 +552,7 @@
                     >
                   </b-button-group>
                 </b-overlay>
-              </b-row>
+              </b-row> -->
             </b-card-body>
           </b-form>
         </b-card>
@@ -591,6 +689,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import FormInvoice from "@/components/FormInvoice";
 // import Handsontable from "handsontable";
 import { HyperFormula } from "hyperformula";
 import draggable from "vuedraggable";
@@ -619,6 +718,8 @@ export default {
     "dataMemoType",
     "__store",
     "__updateApprover",
+    "__autoSaveItem",
+    "__autoSaveItemCost",
     //"__addDataTotal",
     "__updateAcknowledge",
     "__deleteAcknowledge",
@@ -636,12 +737,15 @@ export default {
     CurrencyInput,
     SelectTypeApprover,
     TableEditApprover,
+    FormInvoice,
   },
   data() {
     return {
       submitState: false,
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
+      fieldSaving: "",
+      isSaving: false,
       form: {},
       //payment
       checkPPNInclude: false,
@@ -697,6 +801,7 @@ export default {
           //this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
           this.dataFormula =
             this.hotSettings.formulas.engine.getAllSheetsValues();
+          this.typing("cost");
           //this.dataWithFormulaValue = this.dataFormula.Sheet1;
         },
       },
@@ -748,16 +853,97 @@ export default {
         parseFloat(this.sub_total) +
         parseFloat(this.ppn) -
         parseFloat(this.pph);
+
+      this.autoSaveItemCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
     },
-
     dataMemo: function (val) {
       this.fillForm();
     },
   },
+  created() {
+    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
+  },
   methods: {
+    typing: function (field) {
+      this.fieldSaving = field;
+      this.debouncedSave();
+    },
+    autoSaveItem: function () {
+      this.isSaving = true;
+      let newData = {};
+      if (this.dataFormula.Sheet1.length != 0) {
+        newData = _.map(this.dataFormula.Sheet1, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      } else {
+        newData = _.map(this.dataFormula.Sheet2, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      }
+      let arrayCost = _.map(newData, (valueCost) => {
+        let objCost = {};
+        valueCost = Object.assign({}, valueCost);
+        _.map(this.colHeaders, (v) => {
+          objCost[v] = valueCost[v];
+        });
+        objCost = _.pickBy(objCost, _.identity);
+        if (!_.isEmpty(objCost)) {
+          return objCost;
+        }
+      });
+      arrayCost = _.pickBy(arrayCost, _.identity);
+      if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+      axios
+        .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.form.background = response.data.background;
+          this.form.information = response.data.information;
+          this.form.conclusion = response.data.conclusion;
+          this.form.orientation_paper = response.data.orientation_paper;
+          this.fieldSaving = "";
+          this.isSaving = false;
+          if (response.data.status == 200) {
+            // this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
+    autoSaveItemCost: function () {
+      this.isSaving = true;
+      this.form.sub_total = this.sub_total;
+      this.form.pph = this.pph;
+      this.form.ppn = this.ppn;
+      this.form.grand_total = this.grand_total;
+      axios
+        .post(route(this.__autoSaveItemCost, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.sub_total = response.data.sub_total;
+          this.pph = response.data.pph;
+          this.ppn = response.data.ppn;
+          this.grand_total = response.data.grand_total;
+          this.isSaving = false;
+          if (response.data.status == 200) {
+            // this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
     getOptionLabel: (option) => {
       let firstname = option.employee ? option.employee.firstname : "";
       let lastname = option.employee ? option.employee.lastname : "";
@@ -777,6 +963,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
+      this.autoSaveItemCost();
     },
 
     uploadFiles: function () {
@@ -858,70 +1045,70 @@ export default {
         (acknowledge) => acknowledge.position_now
       );
     },
-    submit() {
-      // payment
-      if (this.formType == "payment") {
-        if (this.grand_total == 0 || this.sub_total == 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-        if (this.dataPayments.length <= 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-      }
+    // submit() {
+    //   // payment
+    //   if (this.formType == "payment") {
+    //     if (this.grand_total == 0 || this.sub_total == 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //     if (this.dataPayments.length <= 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //   }
 
-      if (!this.submitState) {
-        let newData = {};
-        if (this.dataFormula.Sheet1.length != 0) {
-          newData = _.map(this.dataFormula.Sheet1, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        } else {
-          newData = _.map(this.dataFormula.Sheet2, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        }
-        let arrayCost = _.map(newData, (valueCost) => {
-          let objCost = {};
-          valueCost = Object.assign({}, valueCost);
-          _.map(this.colHeaders, (v) => {
-            objCost[v] = valueCost[v];
-          });
-          objCost = _.pickBy(objCost, _.identity);
-          if (!_.isEmpty(objCost)) {
-            return objCost;
-          }
-        });
-        arrayCost = _.pickBy(arrayCost, _.identity);
-        if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
-        this.submitState = true;
-        // payment
-        this.form.sub_total = this.sub_total;
-        this.form.pph = this.pph;
-        this.form.ppn = this.ppn;
-        this.form.grand_total = this.grand_total;
-        this.isSubmitBusy = true;
-        this.isTableApproverbusy = true;
+    //   if (!this.submitState) {
+    //     // let newData = {};
+    //     // if (this.dataFormula.Sheet1.length != 0) {
+    //     //   newData = _.map(this.dataFormula.Sheet1, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // } else {
+    //     //   newData = _.map(this.dataFormula.Sheet2, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // }
+    //     // let arrayCost = _.map(newData, (valueCost) => {
+    //     //   let objCost = {};
+    //     //   valueCost = Object.assign({}, valueCost);
+    //     //   _.map(this.colHeaders, (v) => {
+    //     //     objCost[v] = valueCost[v];
+    //     //   });
+    //     //   objCost = _.pickBy(objCost, _.identity);
+    //     //   if (!_.isEmpty(objCost)) {
+    //     //     return objCost;
+    //     //   }
+    //     // });
+    //     // arrayCost = _.pickBy(arrayCost, _.identity);
+    //     // if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+    //     this.submitState = true;
+    //     // payment
+    //     this.form.sub_total = this.sub_total;
+    //     this.form.pph = this.pph;
+    //     this.form.ppn = this.ppn;
+    //     this.form.grand_total = this.grand_total;
+    //     this.isSubmitBusy = true;
+    //     this.isTableApproverbusy = true;
 
-        this.$inertia
-          .post(route(this.__update, this.dataMemo.id), this.form)
-          .then(() => {
-            this.submitState = false;
-            this.isSubmitBusy = true;
-            this.isTableApproverbusy = true;
-            this.$refs.upload.remove();
-          });
-      }
-    },
+    //     this.$inertia
+    //       .post(route(this.__update, this.dataMemo.id), this.form)
+    //       .then(() => {
+    //         this.submitState = false;
+    //         this.isSubmitBusy = true;
+    //         this.isTableApproverbusy = true;
+    //         this.$refs.upload.remove();
+    //       });
+    //   }
+    // },
     removeAttachment(id) {
       this.$inertia.delete(route(this.__removeAttachment, id)).then(() => {});
     },

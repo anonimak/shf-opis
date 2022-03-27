@@ -78,7 +78,8 @@ class ApiPaymentController extends Controller
         return response()->json($dataPayment);
     }
 
-    public function paymentStore(Request $request, $id) {
+    public function paymentStore(Request $request, $id)
+    {
 
         $request->validate([
             'name'              => 'required',
@@ -104,5 +105,5 @@ class ApiPaymentController extends Controller
             'status' => 200,
             'message' => 'Successfull add data vendor',
         ]);
-   }
+    }
 }

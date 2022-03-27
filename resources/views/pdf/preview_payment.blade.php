@@ -115,10 +115,10 @@
                 <tr>
                     {{-- <td>Silvia Usman</td> --}}
                     <td>Propose Date</td>
-                    @if ($memo->propose_at == null)
+                    @if ($memo->propose_payment_at == null)
                         <td>-</td>
                     @else
-                        <td>{{ date('Y-m-d', strtotime($memo->propose_at)) }}</td>
+                        <td>{{ date('Y-m-d', strtotime($memo->propose_payment_at)) }}</td>
                     @endif
                     {{-- <td>Andreas Kristian</td>
                     <td>Agustinus Budi Antoro</td>
@@ -171,7 +171,7 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if ($approver->employee)
-                        @if($memo->propose_at == null)
+                        @if($memo->propose_payment_at == null)
                             <th>{{ $approver->employee->position_now->position->position_name }}</th>
                         @else
                             <th>{{ $approver->employee->emp_history->position->position_name }}</th>
@@ -198,13 +198,14 @@
                     @if($approver->status == 'submit' || $approver->status == 'edit')
                     {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
                     <td>-</td>
-                    @elseif ($approver->status == 'reject')
+                    @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
                     <td>
-                        <div style="font-family: ZapfDingbats, sans-serif;">8</div>
+                        <div style="font-family: DejaVu Sans;font-size:14px;">&#9746;</div>
                     </td>
                     @else
                     <td>
-                        <div style="font-family: ZapfDingbats, sans-serif;">4</div>
+                        <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div>
+                        {{-- <div style="font-family: ZapfDingbats, sans-serif;">4</div> --}}
                     </td>
                     @endif
                     @endif
@@ -213,7 +214,7 @@
                 <tr>
                     @foreach ($memo->approversPayment as $approver)
                     @if($approver->employee)
-                        @if($approver->status == 'approve' || $approver->status == 'reject')
+                        @if($approver->status == 'approve' || $approver->status == 'reject' || $approver->status == 'revisi')
                             <td> {{ $approver->msg }} </td>
                         @else
                             <td> - </td>
@@ -245,6 +246,7 @@
         <br>
         <br>
         @endif
+        @if (!$memo->is_cost_invoice)
         @if ( count($memocost) > 0 || $dataTotalCost['sub_total'] > 0 )
         <h4>Cost/Expenses</h4>
         <hr>
@@ -307,6 +309,140 @@
                 </tr>
             </tbody>
     </table>
+        @endif
+        @else
+        <h4>Cost/Expenses</h4>
+        <hr>
+            @foreach ($dataCostInvoice as $invoice)
+            <h5>No Invoice : {{$invoice->no_invoice}}</h5>
+            <table>
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="">Description</th>
+                    <th scope="col">Description 2</th>
+                    <th scope="col" class="text-right">Price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Type</th>
+                    <th scope="col" class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    @foreach ($invoice->item_invoices as $item)
+                    <tr>
+                        <td>{{$item->description}}</td>
+                        <td>{{$item->description2}}</td>
+                        <td style="text-align: right">Rp {{number_format($item->price, 2, ',', '.')}}</td>
+                        <td>{{$item->qty}}</td>
+                        <td>{{$item->type}}</td>
+                        <td style="text-align: right">Rp {{number_format($item->total, 2, ',', '.')}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div style="font-family: DejaVu Sans;">
+                <table style="width: 15%;border: 0pt">
+                    <tbody>
+                        <tr>
+                            <td style="border: 0pt;text-align: left">Non NPWP</td>
+                            <td style="border: 0pt;text-align: left">:</td>
+                            <td style="border: 0pt;text-align: left">{{ ($invoice->npwp)? '☐' : '☑' }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 0pt;text-align: left">Gross Up</td>
+                            <td style="border: 0pt;text-align: left">:</td>
+                            <td style="border: 0pt;text-align: left">{{ (!$invoice->grossup)? '☐' : '☑' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table style="width: 40%;">
+                <tbody>
+                    <tr>
+                        <td style="text-align: left">
+                            Total Barang
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($invoice->total_barang, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left">
+                            Total Jasa
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($invoice->total_jasa, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Sub Total
+                        </th>
+                        <th style="text-align: right">
+                            Rp {{number_format($invoice->raw_total, 2, ',', '.')}}
+                        </th>
+                    </tr>
+                    @if ($invoice->grossup)
+                    <tr>
+                        <td style="text-align: left">
+                            Total Jasa Gross Up
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($invoice->grossup_value, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    @endif
+                    @if ($invoice->ppn)
+                    <tr>
+                        <td style="text-align: left">
+                            PPN
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($invoice->ppn_value, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    @endif
+                    @if ($invoice->pph <> 'none')
+                    <tr>
+                        <td style="text-align: left">
+                            @if ($invoice->pph == "pph21")
+                            PPh 21
+                            @elseif ($invoice->pph == "pph23")
+                            PPh 23
+                            @elseif ($invoice->pph == "pph4_2_kon")
+                            Pph 4(2) Konstruksi(non klasifikasi)
+                            @elseif ($invoice->pph == "pph4_2_kon_klas")
+                            Pph 4(2) Konstruksi(klasifikasi)
+                            @elseif ($invoice->pph == "pph4_2_rent")
+                            Pph 4(2) Sewa & Utility
+                            @else
+                            None
+                            @endif
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($invoice->pph_value, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    @endif
+                    @if($invoice->others)
+                    @foreach ($invoice->obj_others as $item)
+                    <tr>
+                        <td style="text-align: left">
+                            {{ $item->title }}
+                        </td>
+                        <td style="text-align: right">
+                            Rp {{number_format($item->value, 2, ',', '.')}}
+                        </td>
+                    </tr>
+                    @endforeach
+                    @endif
+                    <tr>
+                        <th>Total</th>
+                        <th style="text-align: right">Rp {{number_format($invoice->total, 2, ',', '.')}}</th>
+                    </tr>
+                </tbody>
+
+            </table>
+            @endforeach
         <br>
         @endif
         @if ( $dataPayments != "<p></p>" && $dataPayments != '')

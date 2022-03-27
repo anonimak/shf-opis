@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\D_Memo_Attachment;
+use App\Models\D_Memo_Invoices;
 use App\Models\D_Memo_Payments;
 use App\Models\Employee_History;
 use App\Models\M_Data_Cost_Total;
@@ -25,7 +26,6 @@ function generatePDFMemo($id, $fromroute = 'true')
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
-    $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
     $attachments = D_Memo_Attachment::where('id_memo', $id)->where('type', 'memo')->get();
     $memocost = (array) json_decode($memo->cost);
     $dataTotalCost = M_Data_Cost_Total::where('id_memo', $id)->first();
@@ -35,11 +35,13 @@ function generatePDFMemo($id, $fromroute = 'true')
         'employeeInfo' => $employeeInfo,
         'employeeproposeinfo' => $employeeProposeInfo,
         'positions' => $positions,
-        'dataTypeMemo' => $dataTypeMemo,
         'dataAttachments' => $attachments,
         'memocost' => $memocost,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -64,7 +66,6 @@ function generatePDFPo($id, $fromroute = 'true')
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
     $dataPayments = D_Memo_Payments::where('id_memo', $id)->first();
-    $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
     $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
     $memocost = (array) json_decode($memo->cost);
     //ddd($dataPayments->payments);
@@ -74,12 +75,14 @@ function generatePDFPo($id, $fromroute = 'true')
         'employeeInfo' => $employeeInfo,
         'employeeproposeinfo' => $employeeProposeInfo,
         'positions' => $positions,
-        'dataTypeMemo' => $dataTypeMemo,
         'dataAttachments' => $attachments,
         'memocost' => $memocost,
         'dataPayments' => $dataPayments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -97,7 +100,7 @@ function generatePDFPayment($id, $fromroute = 'true')
 {
     // $memo = Memo::getPaymentDetailApprovers($id);
     $dataMemo = Memo::where('id', $id)->first();
-    if ($dataMemo->propose_at == null) {
+    if ($dataMemo->propose_payment_at == null) {
         $memo = Memo::getPaymentDetailApprovers($id);
     } else {
         $memo = Memo::getPaymentDetail($id);
@@ -113,7 +116,6 @@ function generatePDFPayment($id, $fromroute = 'true')
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
-    $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
     $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
     $memocost = (array) json_decode($memo->cost);
@@ -123,12 +125,14 @@ function generatePDFPayment($id, $fromroute = 'true')
         'employeeInfo' => $employeeInfo,
         'employeeproposeinfo' => $employeeProposeInfo,
         'positions' => $positions,
-        'dataTypeMemo' => $dataTypeMemo,
         'dataAttachments' => $attachments,
         'memocost' => $memocost,
         'dataPayments' => $dataPayments->payments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -146,12 +150,15 @@ function generatePDFTakeoverBranch($id, $fromroute = 'true')
     // $memo = Memo::getPaymentDetailApprovers($id);
     $memo = Memo::getPaymentDetail($id);
     $employeeInfo = User::getUsersEmployeeInfo();
-    $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
+    // $employeeProposeInfo = Memo::getMemoDetailEmployeePropose($id, $isTakeoverBranch = true);
+    $employeeProposeInfo = ($memo->id_employee2) ? Memo::getMemoDetailEmployeePropose($id, true) : Memo::getMemoDetailEmployeePropose($id);
+    if ($memo->id_employee2) {
+        $employeeProposeInfo->proposeemployee = $employeeProposeInfo->proposeemployee2;
+    }
     $dataPayments = Memo::where('id', $id)->with('payments')->first();
     $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
         return $employee->select('id', 'firstname', 'lastname');
     }])->with('position')->get();
-    $dataTypeMemo = Ref_Type_Memo::where('id_department', $employeeInfo->employee->position_now->position->id_department)->orderBy('id', 'desc')->get();
     $attachments = D_Memo_Attachment::where('id_memo', $id)->get();
 
     $memocost = (array) json_decode($memo->cost);
@@ -161,12 +168,14 @@ function generatePDFTakeoverBranch($id, $fromroute = 'true')
         'employeeInfo' => $employeeInfo,
         'employeeproposeinfo' => $employeeProposeInfo,
         'positions' => $positions,
-        'dataTypeMemo' => $dataTypeMemo,
         'dataAttachments' => $attachments,
         'memocost' => $memocost,
         'dataPayments' => $dataPayments->payments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);
