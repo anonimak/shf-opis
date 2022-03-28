@@ -313,6 +313,7 @@
                     <b-form-checkbox
                       id="checkbox-1"
                       v-model="form.is_cost_invoice"
+                      @change="autoSaveItem()"
                       name="checkbox-1"
                       :value="true"
                       :unchecked-value="false"
@@ -912,6 +913,7 @@ export default {
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
           this.form.orientation_paper = response.data.orientation_paper;
+          this.form.is_cost_invoice = response.data.is_cost_invoice;
           this.fieldSaving = "";
           this.isSaving = false;
           if (response.data.status == 200) {
