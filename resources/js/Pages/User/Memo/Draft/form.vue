@@ -63,7 +63,7 @@
                   <h5>Orientation</h5>
                   <b-form-group v-slot="{ ariaDescribedby }">
                     <b-form-radio-group
-                      @change="debouncedSave()"
+                      @change="autoSaveItem()"
                       v-model="form.orientation_paper"
                       :aria-describedby="ariaDescribedby"
                       name="orientation-paper"
@@ -75,22 +75,18 @@
                 </b-col>
                 <b-col col lg="12" class="mb-4">
                   <b-row>
-                    <div class="table-responsive" v-if="formType == 'payment'">
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="updateApproverPayment"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
-                    <div class="table-responsive" v-else>
-                      <table-edit-approver
-                        :dataPosition="dataPosition"
-                        :dataApprovers="dataApprovers"
-                        :__updateApprover="__updateApprover"
-                        :id_memo="dataMemo.id"
-                      />
-                    </div>
+                    <!-- <div class="table-responsive" v-if="formType == 'payment'"> -->
+                    <table-edit-approver
+                      :dataPosition="dataPosition"
+                      :dataApprovers="dataApprovers"
+                      :__updateApprover="
+                        formType == 'payment'
+                          ? updateApproverPayment
+                          : __updateApprover
+                      "
+                      :id_memo="dataMemo.id"
+                    />
+                    <!-- </div> -->
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -195,128 +191,129 @@
                 </b-col>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Background:</h5>
-                    <div v-if="isTypingBg">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Background</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'background' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
                     label-for="input-text"
                     class="mt-2"
                   >
-                    <!-- <Editor2 v-model="background" /> -->
+                    <!-- <Editor2 v-model="form.background" /> -->
                     <Editor2
-                      @input="typingBackground()"
+                      @input="typing('background')"
                       v-model="form.background"
                     />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Information:</h5>
-                    <div v-if="isTypingInfo">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small label="Floated Right"></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Information</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'information' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
                     label-for="input-text"
                     class="mt-2"
                   >
-                    <Editor2 @input="typingInfo()" v-model="form.information" />
+                    <!-- <Editor2 v-model="form.information" /> -->
+                    <Editor2
+                      @input="typing('information')"
+                      v-model="form.information"
+                    />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
-                  <div style="display: flex">
-                    <h5 class="mr-2">Conclusion:</h5>
-                    <div v-if="isTypingConclusion">
-                      <b-button
-                        variant="info"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <b-spinner small label="Floated Right"></b-spinner>
-                        Saving...
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        variant="primary"
-                        style="padding: 3px 8px"
-                        disabled
-                      >
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Saved
-                      </b-button>
-                    </div>
-                  </div>
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Conclusion</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'conclusion' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
                     label=""
                     label-for="input-text"
                     class="mt-2"
                   >
+                    <!-- <Editor2 v-model="form.conclusion" /> -->
                     <Editor2
-                      @input="typingConclusion()"
+                      @input="typing('conclusion')"
                       v-model="form.conclusion"
                     />
                   </b-form-group>
                 </div>
               </b-row>
               <b-row>
-                <div class="col-12">
+                <div class="col-12 mb-4">
+                  <b-row>
+                    <b-col>
+                      <h5 class="mb-0">Cost/Expense</h5>
+                    </b-col>
+                    <b-col class="d-flex justify-content-end">
+                      <div>
+                        <b-badge
+                          v-if="fieldSaving == 'cost' && isSaving"
+                          variant="info"
+                        >
+                          <b-spinner small label="Floated Right"></b-spinner>
+                          Saving
+                        </b-badge>
+                      </div>
+                    </b-col>
+                  </b-row>
                   <b-form-group
                     id="input-group-text"
-                    label="Cost /Expense:"
+                    label=""
                     label-for="input-text"
-                    class="mb-4"
+                    class="mt-2"
                   >
                     <b-form-checkbox
                       id="checkbox-1"
                       v-model="form.is_cost_invoice"
+                      @change="autoSaveItem()"
                       name="checkbox-1"
                       :value="true"
                       :unchecked-value="false"
@@ -336,7 +333,12 @@
                   </b-form-group>
                 </div>
               </b-row>
-              <b-row v-if="formType == 'payment'">
+              <b-row
+                v-if="
+                  formType == 'payment' ||
+                  dataMemoType.ref_table.with_po == true
+                "
+              >
                 <div class="col-5">
                   <b-overlay
                     :show="isSubmitBusy"
@@ -353,6 +355,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
+                          @change="autoSaveItemCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
@@ -537,7 +540,7 @@
                 </b-col>
               </b-overlay>
 
-              <b-row align-h="center">
+              <!-- <b-row align-h="center">
                 <b-overlay
                   :show="submitState"
                   opacity="0.6"
@@ -550,7 +553,7 @@
                     >
                   </b-button-group>
                 </b-overlay>
-              </b-row>
+              </b-row> -->
             </b-card-body>
           </b-form>
         </b-card>
@@ -717,6 +720,7 @@ export default {
     "__store",
     "__updateApprover",
     "__autoSaveItem",
+    "__autoSaveItemCost",
     //"__addDataTotal",
     "__updateAcknowledge",
     "__deleteAcknowledge",
@@ -741,9 +745,8 @@ export default {
       submitState: false,
       isAcknowledgebusy: false,
       selectedAcknowledge: null,
-      isTypingBg: null,
-      isTypingInfo: null,
-      isTypingConclusion: null,
+      fieldSaving: "",
+      isSaving: false,
       form: {},
       //payment
       checkPPNInclude: false,
@@ -799,6 +802,7 @@ export default {
           //this.dataCost = this.$refs.formCost.hotInstance.getSourceData();
           this.dataFormula =
             this.hotSettings.formulas.engine.getAllSheetsValues();
+          this.typing("cost");
           //this.dataWithFormulaValue = this.dataFormula.Sheet1;
         },
       },
@@ -850,32 +854,58 @@ export default {
         parseFloat(this.sub_total) +
         parseFloat(this.ppn) -
         parseFloat(this.pph);
+
+      this.autoSaveItemCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
     },
-
     dataMemo: function (val) {
       this.fillForm();
     },
   },
-  created: function () {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 2000);
+  created() {
+    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
   },
   methods: {
-    typingBackground: function () {
-      this.isTypingBg = true;
-      this.debouncedSave();
-    },
-    typingInfo: function () {
-      this.isTypingInfo = true;
-      this.debouncedSave();
-    },
-    typingConclusion: function () {
-      this.isTypingConclusion = true;
+    typing: function (field) {
+      this.fieldSaving = field;
       this.debouncedSave();
     },
     autoSaveItem: function () {
+      this.isSaving = true;
+      let newData = {};
+      if (this.dataFormula.Sheet1.length != 0) {
+        newData = _.map(this.dataFormula.Sheet1, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      } else {
+        newData = _.map(this.dataFormula.Sheet2, (value) => {
+          const res = {};
+          for (let idx in value) {
+            res[this.colHeaders[idx]] = value[idx];
+          }
+          return res;
+        });
+      }
+      let arrayCost = _.map(newData, (valueCost) => {
+        let objCost = {};
+        valueCost = Object.assign({}, valueCost);
+        _.map(this.colHeaders, (v) => {
+          objCost[v] = valueCost[v];
+        });
+        objCost = _.pickBy(objCost, _.identity);
+        if (!_.isEmpty(objCost)) {
+          return objCost;
+        }
+      });
+      arrayCost = _.pickBy(arrayCost, _.identity);
+      if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
         .then((response) => {
@@ -883,12 +913,33 @@ export default {
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
           this.form.orientation_paper = response.data.orientation_paper;
-          this.isTypingBg = false;
-          this.isTypingInfo = false;
-          this.isTypingConclusion = false;
-
+          this.form.is_cost_invoice = response.data.is_cost_invoice;
+          this.fieldSaving = "";
+          this.isSaving = false;
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
+          }
+        })
+        .catch((error) => {
+          this.pageFlashes.error = error.response.data.errors;
+        });
+    },
+    autoSaveItemCost: function () {
+      this.isSaving = true;
+      this.form.sub_total = this.sub_total;
+      this.form.pph = this.pph;
+      this.form.ppn = this.ppn;
+      this.form.grand_total = this.grand_total;
+      axios
+        .post(route(this.__autoSaveItemCost, this.dataMemo.id), this.form)
+        .then((response) => {
+          this.sub_total = response.data.sub_total;
+          this.pph = response.data.pph;
+          this.ppn = response.data.ppn;
+          this.grand_total = response.data.grand_total;
+          this.isSaving = false;
+          if (response.data.status == 200) {
+            // this.pageFlashes.success = response.data.message;
           }
         })
         .catch((error) => {
@@ -914,6 +965,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
+      this.autoSaveItemCost();
     },
 
     uploadFiles: function () {
@@ -995,70 +1047,70 @@ export default {
         (acknowledge) => acknowledge.position_now
       );
     },
-    submit() {
-      // payment
-      if (this.formType == "payment") {
-        if (this.grand_total == 0 || this.sub_total == 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-        if (this.dataPayments.length <= 0) {
-          this.pageFlashes.danger = "Please fill data completely!";
-          return;
-        }
-      }
+    // submit() {
+    //   // payment
+    //   if (this.formType == "payment") {
+    //     if (this.grand_total == 0 || this.sub_total == 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //     if (this.dataPayments.length <= 0) {
+    //       this.pageFlashes.danger = "Please fill data completely!";
+    //       return;
+    //     }
+    //   }
 
-      if (!this.submitState) {
-        let newData = {};
-        if (this.dataFormula.Sheet1.length != 0) {
-          newData = _.map(this.dataFormula.Sheet1, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        } else {
-          newData = _.map(this.dataFormula.Sheet2, (value) => {
-            const res = {};
-            for (let idx in value) {
-              res[this.colHeaders[idx]] = value[idx];
-            }
-            return res;
-          });
-        }
-        let arrayCost = _.map(newData, (valueCost) => {
-          let objCost = {};
-          valueCost = Object.assign({}, valueCost);
-          _.map(this.colHeaders, (v) => {
-            objCost[v] = valueCost[v];
-          });
-          objCost = _.pickBy(objCost, _.identity);
-          if (!_.isEmpty(objCost)) {
-            return objCost;
-          }
-        });
-        arrayCost = _.pickBy(arrayCost, _.identity);
-        if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
-        this.submitState = true;
-        // payment
-        this.form.sub_total = this.sub_total;
-        this.form.pph = this.pph;
-        this.form.ppn = this.ppn;
-        this.form.grand_total = this.grand_total;
-        this.isSubmitBusy = true;
-        this.isTableApproverbusy = true;
+    //   if (!this.submitState) {
+    //     // let newData = {};
+    //     // if (this.dataFormula.Sheet1.length != 0) {
+    //     //   newData = _.map(this.dataFormula.Sheet1, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // } else {
+    //     //   newData = _.map(this.dataFormula.Sheet2, (value) => {
+    //     //     const res = {};
+    //     //     for (let idx in value) {
+    //     //       res[this.colHeaders[idx]] = value[idx];
+    //     //     }
+    //     //     return res;
+    //     //   });
+    //     // }
+    //     // let arrayCost = _.map(newData, (valueCost) => {
+    //     //   let objCost = {};
+    //     //   valueCost = Object.assign({}, valueCost);
+    //     //   _.map(this.colHeaders, (v) => {
+    //     //     objCost[v] = valueCost[v];
+    //     //   });
+    //     //   objCost = _.pickBy(objCost, _.identity);
+    //     //   if (!_.isEmpty(objCost)) {
+    //     //     return objCost;
+    //     //   }
+    //     // });
+    //     // arrayCost = _.pickBy(arrayCost, _.identity);
+    //     // if (!_.isEmpty(arrayCost)) this.form.cost = JSON.stringify(arrayCost);
+    //     this.submitState = true;
+    //     // payment
+    //     this.form.sub_total = this.sub_total;
+    //     this.form.pph = this.pph;
+    //     this.form.ppn = this.ppn;
+    //     this.form.grand_total = this.grand_total;
+    //     this.isSubmitBusy = true;
+    //     this.isTableApproverbusy = true;
 
-        this.$inertia
-          .post(route(this.__update, this.dataMemo.id), this.form)
-          .then(() => {
-            this.submitState = false;
-            this.isSubmitBusy = true;
-            this.isTableApproverbusy = true;
-            this.$refs.upload.remove();
-          });
-      }
-    },
+    //     this.$inertia
+    //       .post(route(this.__update, this.dataMemo.id), this.form)
+    //       .then(() => {
+    //         this.submitState = false;
+    //         this.isSubmitBusy = true;
+    //         this.isTableApproverbusy = true;
+    //         this.$refs.upload.remove();
+    //       });
+    //   }
+    // },
     removeAttachment(id) {
       this.$inertia.delete(route(this.__removeAttachment, id)).then(() => {});
     },

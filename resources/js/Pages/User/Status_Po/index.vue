@@ -62,6 +62,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
                             <th>Action</th>
@@ -86,32 +88,75 @@
                               {{ item.title }}
                             </td>
                             <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
+                            </td>
+                            <td>
                               {{ item.po_no }}
                             </td>
                             <td>
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                              <inertia-link
-                                v-if="tabIndex == 3"
-                                :href="route(__senddraft, item.id)"
-                                class="btn btn-warning btn-sm my-2"
-                              >
-                                send to draft
-                              </inertia-link>
-                              <inertia-link
-                                :href="route(__webpreview, item.id)"
-                                class="btn btn-secondary btn-sm"
-                              >
-                                preview
-                              </inertia-link>
-                              <a
-                                target="_blank"
-                                class="btn btn-success btn-sm"
-                                :href="route(__previewpdf, item.id)"
-                                v-if="item.status_po == 'approve'"
-                                >Preview PDF</a
-                              >
+                              <div class="dropdown">
+                                <button
+                                  class="btn btn-link"
+                                  type="button"
+                                  id="dropdownMenuButton"
+                                  data-toggle="dropdown"
+                                  aria-haspopup="true"
+                                  aria-expanded="false"
+                                >
+                                  <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div
+                                  class="dropdown-menu"
+                                  aria-labelledby="dropdownMenuButton"
+                                >
+                                  <inertia-link
+                                    v-if="tabIndex == 3"
+                                    :href="route(__senddraft, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    send to draft
+                                  </inertia-link>
+                                  <inertia-link
+                                    :href="route(__webpreview, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    Preview
+                                  </inertia-link>
+                                  <a
+                                    target="_blank"
+                                    class="dropdown-item"
+                                    v-on:click="openPDF(item.id, 1200, 650)"
+                                    v-if="
+                                      item.status_po == 'approve' &&
+                                      isMobile() == false
+                                    "
+                                    >Preview PDF</a
+                                  >
+                                  <a
+                                    target="_blank"
+                                    class="dropdown-item"
+                                    :href="route(__previewpdf, item.id)"
+                                    v-if="
+                                      item.status_po == 'approve' &&
+                                      isMobile() == true
+                                    "
+                                    >Preview PDF</a
+                                  >
+                                </div>
+                              </div>
                             </td>
                           </tr>
                         </tbody>
@@ -188,6 +233,23 @@ export default {
     this.setLsTabMemo();
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
     },

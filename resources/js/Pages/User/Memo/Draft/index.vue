@@ -26,6 +26,7 @@
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
+                  <!-- <card-memo /> -->
                   <!-- table news -->
                   <div class="table-responsive">
                     <table class="table mt-4">
@@ -62,17 +63,40 @@
                               revised
                             </b-badge>
                           </td>
-                          <td v-if="item.ref_table.type == 'approval' && item.ref_table.with_payment == true">approval and payment</td>
+                          <td
+                            v-if="
+                              item.ref_table.type == 'approval' &&
+                              item.ref_table.with_payment == true
+                            "
+                          >
+                            approval and payment
+                          </td>
                           <td v-else>{{ item.ref_table.type }}</td>
                           <td>
                             <small v-if="item.latest_history">
                               {{ item.latest_history.content }}
                             </small>
+                            <p
+                              v-else-if="
+                                Object.keys(item.check_terminate_approver)
+                                  .length !== 0
+                              "
+                              class="text-danger"
+                            >
+                              Submit disabled because some approver has been
+                              terminated
+                            </p>
                             <span v-else>-</span>
                           </td>
                           <td>
                             <b-button-group size="sm">
                               <b-button
+                                :disabled="
+                                  Object.keys(item.check_terminate_approver)
+                                    .length !== 0
+                                    ? true
+                                    : false
+                                "
                                 v-b-tooltip.hover
                                 title="Submit"
                                 href="#"
@@ -122,6 +146,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
+import CardMemo from "@/components/CardMemo";
 import Search from "@/components/Search";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
@@ -150,6 +175,7 @@ export default {
   data() {
     return {
       tabIndex: 0,
+      isApproverTerminated: true,
       form: {
         search: this.filters.search,
       },
@@ -162,6 +188,22 @@ export default {
     Breadcrumb,
     Pagination,
     Search,
+    CardMemo,
+  },
+  mounted() {
+    if (this.dataMemo.data.length > 0) {
+      this.dataMemo.data = _.map(this.dataMemo.data, (memo) => {
+        if (memo.check_terminate_approver.length > 0) {
+          memo.check_terminate_approver = _.pick(
+            _.find(memo.check_terminate_approver, (approver) => {
+              return approver.employee_history.position_count > 0;
+            }),
+            "employee_history.position_count"
+          );
+        }
+        return memo;
+      });
+    }
   },
   methods: {
     submitDelete(id) {

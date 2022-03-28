@@ -78,8 +78,17 @@ Vue.use(VueCurrencyFilter, {
 
 Vue.mixin(require("./base"));
 
+// lodash
 import _ from "lodash";
 Object.defineProperty(Vue.prototype, "$_", { value: _ });
+// vue click outside
+import vClickOutside from "v-click-outside";
+Vue.use(vClickOutside);
+
+// MOBILE SUPPORT
+// vueBottomNavigation
+import VueBottomNavigation from "bottom-navigation-vue";
+Vue.use(VueBottomNavigation);
 
 const app = document.getElementById("app");
 

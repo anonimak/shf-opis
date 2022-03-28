@@ -70,6 +70,8 @@
                           <tr>
                             <th scope="col">#</th>
                             <th scope="col">Title</th>
+                            <th scope="col">From</th>
+                            <th scope="col">Branch</th>
                             <th scope="col">Document No</th>
                             <th scope="col">Status</th>
                             <th>Action</th>
@@ -92,6 +94,19 @@
                             </th>
                             <td>
                               {{ item.title }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.firstname +
+                                " " +
+                                item.proposeemployee.lastname
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.proposeemployee.position_now.branch
+                                  .branch_name
+                              }}
                             </td>
                             <td>
                               {{ item.doc_no }}
@@ -118,101 +133,103 @@
                               {{ item.latest_history.content }}
                             </td>
                             <td>
-                              <inertia-link
-                                v-if="tabIndex == 3"
-                                :href="route(__senddraft, item.id)"
-                                class="btn btn-warning btn-sm my-2"
-                              >
-                                send to draft
-                              </inertia-link>
-                              <inertia-link
-                                :href="route(__webpreview, item.id)"
-                                class="btn btn-secondary btn-sm"
-                              >
-                                preview
-                              </inertia-link>
-                              <a
-                                target="_blank"
-                                class="btn btn-success btn-sm"
-                                :href="route(__previewpdf, item.id)"
-                                v-if="item.status == 'approve'"
-                                >Preview PDF</a
-                              >
-                              <b-button
-                                v-b-tooltip.hover
-                                title="Continue PO"
-                                href="#"
-                                variant="primary"
-                                class="btn btn-primary btn-sm"
-                                @click="showModalProposePo(item.id)"
-                                v-if="
-                                  item.ref_table.with_po == 1 &&
-                                  item.status == 'approve' &&
-                                  item.status_po == 'edit'
-                                "
-                              >
-                                Continue PO
-                              </b-button>
-                              <inertia-link
-                                v-if="
-                                  item.ref_table.with_po == 1 &&
-                                  item.status == 'approve' &&
-                                  item.status_po != 'edit'
-                                "
-                                :href="route(__webpreviewpo, item.id)"
-                                v-b-tooltip.hover
-                                title="Info PO"
-                                class="btn btn-info btn-sm"
-                              >
-                                Info PO
-                              </inertia-link>
-                              <!-- <b-button
-                                v-b-tooltip.hover
-                                title="Continue Payment"
-                                href="#"
-                                variant="primary"
-                                class="btn btn-primary btn-sm"
-                                @click="showModal(item.id)"
-                                v-if="
-                                  item.ref_table.with_payment == 1 &&
-                                  item.status == 'approve' &&
-                                  item.status_payment == 'edit' &&
-                                  !item.id_employee2
-                                "
-                                :disabled="item.status_payment != 'edit'"
-                              >
-                                Continue Payment
-                              </b-button> -->
-                              <inertia-link
-                                v-b-tooltip.hover
-                                title="Continue Payment"
-                                :href="route(__formpayment, item.id)"
-                                variant="primary"
-                                class="btn btn-primary btn-sm"
-                                v-if="
-                                  item.ref_table.with_payment == 1 &&
-                                  item.status == 'approve' &&
-                                  item.status_payment == 'edit' &&
-                                  !item.id_employee2
-                                "
-                                :disabled="item.status_payment != 'edit'"
-                              >
-                                Continue Payment
-                              </inertia-link>
-                              <inertia-link
-                                v-if="
-                                  item.ref_table.with_payment == 1 &&
-                                  item.status == 'approve' &&
-                                  item.status_payment != 'edit' &&
-                                  !item.id_employee2
-                                "
-                                :href="route(__webpreviewpayment, item.id)"
-                                v-b-tooltip.hover
-                                title="Info Payment"
-                                class="btn btn-info btn-sm"
-                              >
-                                Info Payment
-                              </inertia-link>
+                              <div class="dropdown">
+                                <button
+                                  class="btn btn-link"
+                                  type="button"
+                                  id="dropdownMenuButton"
+                                  data-toggle="dropdown"
+                                  aria-haspopup="true"
+                                  aria-expanded="false"
+                                >
+                                  <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div
+                                  class="dropdown-menu"
+                                  aria-labelledby="dropdownMenuButton"
+                                >
+                                  <inertia-link
+                                    v-if="tabIndex == 3"
+                                    class="dropdown-item"
+                                    :href="route(__senddraft, item.id)"
+                                    >send to draft</inertia-link
+                                  >
+                                  <inertia-link
+                                    :href="route(__webpreview, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    Preview
+                                  </inertia-link>
+                                  <a
+                                    target="_blank"
+                                    class="dropdown-item"
+                                    style="cursor: pointer"
+                                    v-on:click="openPDF(item.id, 1200, 650)"
+                                    v-if="
+                                      item.status == 'approve' && !isMobile()
+                                    "
+                                    >Preview PDF</a
+                                  >
+                                  <a
+                                    target="_blank"
+                                    class="dropdown-item"
+                                    :href="route(__previewpdf, item.id)"
+                                    v-if="
+                                      item.status == 'approve' && isMobile()
+                                    "
+                                    >Preview PDF</a
+                                  >
+                                  <a
+                                    href="#"
+                                    variant="primary"
+                                    class="dropdown-item"
+                                    @click="showModalProposePo(item.id)"
+                                    v-if="
+                                      item.ref_table.with_po == 1 &&
+                                      item.status == 'approve' &&
+                                      item.status_po == 'edit'
+                                    "
+                                  >
+                                    Continue PO
+                                  </a>
+                                  <inertia-link
+                                    v-if="
+                                      item.ref_table.with_po == 1 &&
+                                      item.status == 'approve' &&
+                                      item.status_po != 'edit'
+                                    "
+                                    :href="route(__webpreviewpo, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    Info PO
+                                  </inertia-link>
+                                  <inertia-link
+                                    :href="route(__formpayment, item.id)"
+                                    class="dropdown-item"
+                                    v-if="
+                                      item.ref_table.with_payment == 1 &&
+                                      item.status == 'approve' &&
+                                      item.status_payment == 'edit' &&
+                                      !item.id_employee2
+                                    "
+                                    :disabled="item.status_payment != 'edit'"
+                                  >
+                                    Continue Payment
+                                  </inertia-link>
+                                  <inertia-link
+                                    v-if="
+                                      item.ref_table.with_payment == 1 &&
+                                      item.status == 'approve' &&
+                                      item.status_payment != 'edit' &&
+                                      !item.id_employee2
+                                    "
+                                    :href="route(__webpreviewpayment, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    Info Payment
+                                  </inertia-link>
+                                </div>
+                              </div>
                             </td>
                           </tr>
                         </tbody>
@@ -314,6 +331,23 @@ export default {
     this.setLsTabMemo();
   },
   methods: {
+    openPDF(id, popupWidth, popupHeight) {
+      let left = (screen.width - popupWidth) / 2;
+      let top = (screen.height - popupHeight) / 4;
+      javascript: window.open(
+        route(this.__previewpdf, id),
+        "_blank",
+        "resizeable=yes, width=" +
+          popupWidth +
+          ", height=" +
+          popupHeight +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+      return false;
+    },
     showModal(id) {
       this.idItemClicked = id;
       this.modalTitle = "Modal Payment";

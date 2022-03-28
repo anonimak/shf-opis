@@ -39,6 +39,8 @@ Route::middleware('auth', 'is_admin')->prefix('admin')->name('admin.')->group(fu
         Route::put('/{id}/history/{idhistory}/update', '\App\Http\Controllers\Admin\EmployeeController@empUpdate')->name('update');
         Route::delete('/{id}/history/{idhistory}', '\App\Http\Controllers\Admin\EmployeeController@empDestroy')->name('destroy');
     });
+    // terminate employee
+    Route::put('/{id}/terminate', '\App\Http\Controllers\Admin\EmployeeController@terminateEmployee')->prefix('/employee')->name('employee.terminate');
     // Route importexcel
     Route::post('/employee/importexcel', '\App\Http\Controllers\Admin\EmployeeController@importexcel')->name('employee.importexcel');
 });
@@ -58,6 +60,7 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/ref_approver', 'Super\RefModuleApprover');
     Route::resource('/ref_type_memo', 'Super\RefTypeMemo');
     Route::resource('/maintenance', 'Super\MaintenanceController');
+    Route::resource('/memo_management', 'Super\MemoManagement');
     // Route::resource('/ref_template_memo', 'Super\RefTemplateMemo');
     Route::prefix('/ref_template_memo')->name('ref_template_memo.')->group(function () {
         Route::get('/{id_type_memo}', 'Super\RefTemplateMemo@index')->name('index');
@@ -70,6 +73,15 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::prefix('/action')->name('action.')->group(function () {
         // send email to after approver
         Route::get('/email-after-approve-memo/{id_memo}', 'Super\ManualAction@sendEmailAfterApproveMemo')->name('email_after_approve_memo');
+    });
+
+    Route::prefix('/api')->name('api.')->group(function () {
+        Route::prefix('/employee')->name('employee.')->group(function () {
+            Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+        Route::prefix('/memo')->name('memo.')->group(function () {
+            Route::get('{id}/ref-type-memo', 'User\ApiMemoController@getTypeMemoByIdMemo')->name('type_memo');
+        });
     });
 });
 
@@ -96,6 +108,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::delete('/{memo}/attachment', 'User\MemoController@destroyAttach')->name('attachmentremove');
             Route::post('/{memo}/approver', 'User\MemoController@updateApprover')->name('updateapprover');
             Route::post('/{memo}/auto-save', 'User\MemoController@itemAutoSave')->name('itemAutoSave');
+            Route::post('/{memo}/auto-save-cost', 'User\MemoController@itemAutoSaveCost')->name('itemAutoSaveCost');
             Route::post('/{memo}/acknowledge/{type}', 'User\MemoController@updateAcknowledge')->name('updateacknowledge');
             Route::delete('/{memo}/acknowledge/{id_employee}/{type}', 'User\MemoController@deleteAcknowledge')->name('deleteacknowledge');
             Route::get('/{memo}/preview', 'User\MemoController@previewMemo')->name('preview');
@@ -145,7 +158,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPaymentTakeoverBranch')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('preview');
-            Route::get('/{memo}/preview-memo-pdf', 'User\MemoController@previewPaymentTakeoverBranch')->name('previewmemo');
+            // Route::get('/{memo}/preview-memo-pdf', 'User\MemoController@previewMemo')->name('previewmemo');
         });
 
         Route::prefix('/status-po')->name('statuspo.')->group(function () {

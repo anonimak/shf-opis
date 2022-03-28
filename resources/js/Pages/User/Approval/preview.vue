@@ -54,6 +54,11 @@
                     variant="info"
                     >Next</b-button
                   >
+                  <b-button
+                    @click="actionRevisi(dataMemo.approver.id)"
+                    variant="secondary"
+                    >Revision</b-button
+                  >
                 </b-button-group>
               </b-col>
               <b-col col lg="12" md="auto">
@@ -306,11 +311,11 @@
                 <form-invoice :id_memo="dataMemo.id" :isEditMode="false" />
               </b-col>
             </b-row>
-            <!-- <b-row
+            <b-row
               class="mb-2"
               v-if="
-                dataMemo.ref_table.with_payment == true ||
-                dataMemo.ref_table.with_po == true
+                dataMemo.ref_table.with_po == true &&
+                dataTotalCost.sub_total > 0
               "
             >
               <b-col>
@@ -357,7 +362,7 @@
                   </tbody>
                 </table>
               </b-col>
-            </b-row> -->
+            </b-row>
             <b-row
               v-if="dataMemo.payment && dataMemo.payment != '<p></p>'"
               class="mb-2"

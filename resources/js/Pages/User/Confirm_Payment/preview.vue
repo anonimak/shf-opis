@@ -24,12 +24,7 @@
                   class="float-right"
                   v-if="userinfo.id_employee == dataMemo.confirmed_payment_by"
                 >
-                  <b-button
-                    @click="
-                      actionConfirm(dataMemo.id, dataMemo.confirmed_payment_by)
-                    "
-                    variant="info"
-                  >
+                  <b-button @click="actionConfirm(dataMemo)" variant="info">
                     Confirm Payment
                   </b-button>
                 </b-button-group>
@@ -93,7 +88,7 @@
                       </tr>
                       <tr>
                         <td>Type</td>
-                        <td>Approval</td>
+                        <td>Payment</td>
                       </tr>
                       <tr v-if="dataMemo.acknowledges.length > 0">
                         <td>Send email after memo approved to</td>
@@ -468,13 +463,14 @@ export default {
     };
   },
   methods: {
-    actionConfirm(id, idConfirmedPay) {
+    actionConfirm(item) {
       //   this.buttonClicked = "approve";
-      this.idItemClicked = id;
-      this.idConfirmedPayment = idConfirmedPay;
+      this.idItemClicked = item.id;
+      this.idConfirmedPayment = item.confirmed_payment_by;
       this.modalTitle = "Modal Confirming Payment";
-      this.modalCaption =
-        "Are you sure to confirm this memo payment has been paid?";
+      this.modalCaption = `<b>Title : ${item.title}</b> <br>`;
+      this.modalCaption += `<b>Document No : ${item.doc_no}</b><br><br>`;
+      this.modalCaption += `Are you sure to confirm this memo payment has been paid?`;
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
     },
