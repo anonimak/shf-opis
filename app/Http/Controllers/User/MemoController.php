@@ -406,6 +406,7 @@ class MemoController extends Controller
             'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
+            'is_cost_invoice'        => $request->input('is_cost_invoice'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
 
@@ -416,6 +417,7 @@ class MemoController extends Controller
             'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
+            'is_cost_invoice'        => $request->input('is_cost_invoice'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
     }

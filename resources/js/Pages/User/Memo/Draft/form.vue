@@ -313,6 +313,7 @@
                     <b-form-checkbox
                       id="checkbox-1"
                       v-model="form.is_cost_invoice"
+                      @change="autoSaveItem()"
                       name="checkbox-1"
                       :value="true"
                       :unchecked-value="false"
@@ -354,7 +355,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
-                          @change="autoSaveItemCost()"
+                          @change="debouncedSaveCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
@@ -854,7 +855,7 @@ export default {
         parseFloat(this.ppn) -
         parseFloat(this.pph);
 
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
@@ -864,8 +865,8 @@ export default {
     },
   },
   created() {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
-    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
+    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
   },
   methods: {
     typing: function (field) {
@@ -912,6 +913,7 @@ export default {
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
           this.form.orientation_paper = response.data.orientation_paper;
+          this.form.is_cost_invoice = response.data.is_cost_invoice;
           this.fieldSaving = "";
           this.isSaving = false;
           if (response.data.status == 200) {
@@ -963,7 +965,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
     },
 
     uploadFiles: function () {
