@@ -865,8 +865,8 @@ export default {
     },
   },
   created() {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
-    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
+    this.debouncedSave = _.debounce(this.autoSaveItem, 3000);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 3000);
   },
   methods: {
     typing: function (field) {
