@@ -855,7 +855,7 @@ export default {
         parseFloat(this.ppn) -
         parseFloat(this.pph);
 
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
     },
     dataTotalCost: function (val) {
       this.fillForm();
@@ -865,8 +865,8 @@ export default {
     },
   },
   created() {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
-    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
+    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
   },
   methods: {
     typing: function (field) {
@@ -965,7 +965,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
     },
 
     uploadFiles: function () {
