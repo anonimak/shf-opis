@@ -60,6 +60,7 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/ref_approver', 'Super\RefModuleApprover');
     Route::resource('/ref_type_memo', 'Super\RefTypeMemo');
     Route::resource('/maintenance', 'Super\MaintenanceController');
+    Route::resource('/memo_management', 'Super\MemoManagement');
     // Route::resource('/ref_template_memo', 'Super\RefTemplateMemo');
     Route::prefix('/ref_template_memo')->name('ref_template_memo.')->group(function () {
         Route::get('/{id_type_memo}', 'Super\RefTemplateMemo@index')->name('index');
@@ -72,6 +73,15 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::prefix('/action')->name('action.')->group(function () {
         // send email to after approver
         Route::get('/email-after-approve-memo/{id_memo}', 'Super\ManualAction@sendEmailAfterApproveMemo')->name('email_after_approve_memo');
+    });
+
+    Route::prefix('/api')->name('api.')->group(function () {
+        Route::prefix('/employee')->name('employee.')->group(function () {
+            Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+        Route::prefix('/memo')->name('memo.')->group(function () {
+            Route::get('{id}/ref-type-memo', 'User\ApiMemoController@getTypeMemoByIdMemo')->name('type_memo');
+        });
     });
 });
 
@@ -207,6 +217,16 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{id_memo}/data', 'User\ApiPaymentController@getPaymentsByIdMemo')->name('datapayments');
             Route::put('/{id}/addpayment', 'User\ApiPaymentController@paymentStore')->name('storepayment');
             Route::post('/{id_memo}/approvers-payment', 'User\ApiPaymentController@updateApprover')->name('updateapprover');
+        });
+
+        Route::prefix('/invoice')->name('invoice.')->group(function () {
+            Route::get('/{id_memo}/invoice', 'User\ApiMemoController@getInvoicesByIdMemo')->name('datainvoices');
+            Route::post('/data-invoice', 'User\ApiMemoController@addItemInvoice')->name('additeminvoice');
+            Route::post('{id_memo}/data-invoice', 'User\ApiMemoController@addInvoice')->name('addinvoice');
+            Route::put('/update-item-invoice/{id_invoice}', 'User\ApiMemoController@updateItemInvoice')->name('updateiteminvoice');
+            Route::put('/update-data-invoice/{id_invoice}', 'User\ApiMemoController@updateInvoice')->name('updateinvoice');
+            Route::delete('/delete-item-invoice/{id_item}', 'User\ApiMemoController@deleteItemInvoice')->name('deleteiteminvoice');
+            Route::delete('/delete-data-invoice/{id_invoice}', 'User\ApiMemoController@deleteDataInvoice')->name('deletedatainvoice');
         });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');

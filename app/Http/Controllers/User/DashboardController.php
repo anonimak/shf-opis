@@ -19,7 +19,7 @@ class DashboardController extends Controller
             return $history->orderBy('id', 'DESC');
         }])->first();
 
-        $dataMemoApproved = D_Memo_Approver::where('status', '!=', 'submit')
+        $dataMemoApproved = D_Memo_Approver::where('status', '!=', 'submit')->where('status','!=', 'edit')
             ->orderBy('updated_at', 'DESC')
             ->where('id_employee', auth()->user()->id_employee)
             ->with(['memo' => function ($memo) {

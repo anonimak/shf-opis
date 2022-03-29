@@ -26,6 +26,7 @@
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
+                  <!-- <card-memo /> -->
                   <!-- table news -->
                   <div class="table-responsive">
                     <table class="table mt-4">
@@ -76,7 +77,10 @@
                               {{ item.latest_history.content }}
                             </small>
                             <p
-                              v-else-if="item.check_terminate_approver"
+                              v-else-if="
+                                Object.keys(item.check_terminate_approver)
+                                  .length !== 0
+                              "
                               class="text-danger"
                             >
                               Submit disabled because some approver has been
@@ -88,7 +92,10 @@
                             <b-button-group size="sm">
                               <b-button
                                 :disabled="
-                                  item.check_terminate_approver ? true : false
+                                  Object.keys(item.check_terminate_approver)
+                                    .length !== 0
+                                    ? true
+                                    : false
                                 "
                                 v-b-tooltip.hover
                                 title="Submit"
@@ -139,6 +146,7 @@ import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
 import Pagination from "@/components/Pagination";
+import CardMemo from "@/components/CardMemo";
 import Search from "@/components/Search";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
@@ -180,6 +188,7 @@ export default {
     Breadcrumb,
     Pagination,
     Search,
+    CardMemo,
   },
   mounted() {
     if (this.dataMemo.data.length > 0) {

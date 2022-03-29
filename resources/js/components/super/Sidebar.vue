@@ -50,6 +50,13 @@ export default {
         },
         {
           id: 2,
+          title: "Memo Management",
+          link: "super.memo_management.*",
+          index: "super.memo_management.index",
+          icon: "fas fa-fw fa-file",
+        },
+        {
+          id: 3,
           title: "Reference",
           link: "#",
           icon: "fas fa-fw fa-folder",
@@ -77,7 +84,7 @@ export default {
           ],
         },
         {
-          id: 3,
+          id: 4,
           title: "Maintenance",
           link: "super.maintenance.*",
           index: "super.maintenance.index",

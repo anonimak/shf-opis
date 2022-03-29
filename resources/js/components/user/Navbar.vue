@@ -9,15 +9,20 @@
       static-top
       shadow
     "
+    :class="isMobile() ? 'fixed-top' : 'static-top'"
   >
     <!-- Sidebar Toggle (Topbar) -->
     <button
+      v-if="!isMobile()"
       id="sidebarToggleTop"
       class="btn btn-link d-md-none rounded-circle mr-3"
     >
       <i class="fa fa-bars"></i>
     </button>
 
+    <inertia-link v-if="isMobile()" :href="'#'">
+      <img src="/images/brand.png" alt="" height="24px" />
+    </inertia-link>
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
       <!-- Nav Item - Search Dropdown (Visible Only XS) -->

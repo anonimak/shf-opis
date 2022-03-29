@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\D_Memo_Attachment;
+use App\Models\D_Memo_Invoices;
 use App\Models\D_Memo_Payments;
 use App\Models\Employee_History;
 use App\Models\M_Data_Cost_Total;
@@ -37,7 +38,10 @@ function generatePDFMemo($id, $fromroute = 'true')
         'dataAttachments' => $attachments,
         'memocost' => $memocost,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_memo', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -75,7 +79,10 @@ function generatePDFPo($id, $fromroute = 'true')
         'memocost' => $memocost,
         'dataPayments' => $dataPayments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(60)->errorCorrection('H')->generate(url('check-po', base64_encode($memo->po_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_po', $data)->setOptions(['defaultFont' => 'open-sans', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -122,7 +129,10 @@ function generatePDFPayment($id, $fromroute = 'true')
         'memocost' => $memocost,
         'dataPayments' => $dataPayments->payments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);
@@ -162,7 +172,10 @@ function generatePDFTakeoverBranch($id, $fromroute = 'true')
         'memocost' => $memocost,
         'dataPayments' => $dataPayments->payments,
         'dataTotalCost' => $dataTotalCost,
-        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no))))
+        'qrcode' => base64_encode(\QrCode::format('svg')->size(100)->errorCorrection('H')->generate(url('check-memo-payment', base64_encode($memo->doc_no)))),
+        'dataCostInvoice' => ($memo->is_cost_invoice) ? D_Memo_Invoices::where('id_memo', $id)->with(['item_invoices' => function ($item) {
+            return $item->orderBy('created_at', 'asc');
+        }])->orderBy('created_at', 'asc')->get() : null
     ];
     $pdf = PDF::loadView('pdf/preview_payment', $data)->setOptions(['defaultFont' => 'open-sans']);
     $pdf->setPaper('A4', $memo->orientation_paper);

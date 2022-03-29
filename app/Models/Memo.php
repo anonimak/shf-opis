@@ -12,6 +12,10 @@ class Memo extends Model
     protected $table = 'm_memos';
     protected $guarded = [];
 
+    protected $casts = [
+        'is_cost_invoice' => 'boolean',
+    ];
+
     public function approvers()
     {
         return $this->hasMany(D_Memo_Approver::class, 'id_memo', 'id');
@@ -86,9 +90,33 @@ class Memo extends Model
         return $this->hasOne(D_Memo_History::class, 'id_memo', 'id')->latest('id');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(D_Memo_Invoices::class, 'id_memo', 'id');
+    }
+
     public function ref_table()
     {
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
+    }
+
+    public static function getAllMemo( $search = null)
+    {
+        $memo = Self::select('*')
+            ->where('doc_no','<>', null)
+            ->orderBy('id', 'desc');
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+        });
+    }
+        return $memo;
     }
 
     public static function getMemoDetailDraftEdit($id, $formType = 'memo')
@@ -1266,6 +1294,9 @@ class Memo extends Model
             });
             $memo->attachment()->each(function ($attachment) {
                 $attachment->delete(); // <-- direct deletion
+            });
+            $memo->invoices()->each(function ($invoice) {
+                $invoice->delete(); // <-- direct deletion
             });
         });
     }

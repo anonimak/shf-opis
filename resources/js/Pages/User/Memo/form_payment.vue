@@ -105,7 +105,7 @@
               >
                 <b-col>
                   <h5>Background</h5>
-                  <div v-html="dataMemo.background"></div>
+                  <div class="data-memo" v-html="dataMemo.background"></div>
                 </b-col>
               </b-row>
               <b-row
@@ -114,7 +114,7 @@
               >
                 <b-col>
                   <h5>Information</h5>
-                  <div v-html="dataMemo.information"></div>
+                  <div class="data-memo" v-html="dataMemo.information"></div>
                 </b-col>
               </b-row>
               <b-row
@@ -123,7 +123,7 @@
               >
                 <b-col>
                   <h5>Conclusion</h5>
-                  <div v-html="dataMemo.conclusion"></div>
+                  <div class="data-memo" v-html="dataMemo.conclusion"></div>
                 </b-col>
               </b-row>
               <b-row>
@@ -200,6 +200,12 @@
                   <div class="table-responsive">
                     <b-table bordered :items="memocost"></b-table>
                   </div>
+                </b-col>
+              </b-row>
+              <b-row v-else>
+                <b-col>
+                  <h5>Cost/Expense</h5>
+                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
                 </b-col>
               </b-row>
               <b-row
@@ -573,6 +579,7 @@
 import Layout from "@/Shared/UserLayout"; //import layouts
 import FlashMsg from "@/components/Alert";
 import Breadcrumb from "@/components/Breadcrumb";
+import FormInvoice from "@/components/FormInvoice";
 import TableEditApprover from "@/components/TableEditApprover.vue";
 import CurrencyInput from "@/components/CurrencyInput.vue";
 import draggable from "vuedraggable";
@@ -587,6 +594,7 @@ export default {
     CurrencyInput,
     SelectTypeApprover,
     TableEditApprover,
+    FormInvoice,
   },
   props: [
     "_token",
@@ -657,6 +665,9 @@ export default {
   },
   mounted() {
     this.getData();
+    // table
+    $(".data-memo table").wrap('<div class="table-responsive"></div>');
+    $(".data-memo table").addClass("table").addClass("table-bordered");
   },
   watch: {
     sub_total: function (val) {
