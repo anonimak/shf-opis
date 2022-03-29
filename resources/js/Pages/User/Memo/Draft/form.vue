@@ -355,7 +355,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
-                          @change="autoSaveItemCost()"
+                          @change="debouncedSaveCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
