@@ -144,21 +144,21 @@
                 >
               </div>
             </a>
-            <inertia-link
+            <!-- <inertia-link
               class="dropdown-item text-center small text-gray-500"
               href="#"
               >Show All Notifications</inertia-link
-            >
+            > -->
           </div>
           <div v-else>
             <span class="dropdown-item text-gray-500 font-italic"
               >No notification found.</span
             >
-            <inertia-link
+            <!-- <inertia-link
               class="dropdown-item text-center small text-gray-500"
               href="#"
               >Show All Notifications</inertia-link
-            >
+            > -->
           </div>
         </div>
       </li>
