@@ -1,6 +1,6 @@
 <template>
   <nav aria-label="Page navigation example" v-if="showPagination">
-    <ul class="pagination">
+    <ul class="pagination flex-wrap">
       <li class="page-item" v-for="(link, key) in links" :key="key" v-bind:class="isActive(link)">
         <inertia-link class="page-link" :href="link.url" v-if="link.url">{{ link.label }}</inertia-link>
         <a class="page-link" href="#" v-else @click.prevent="handleNoLink">{{ link.label }}</a>
