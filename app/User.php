@@ -54,7 +54,7 @@ class User extends Authenticatable
         }])->where('id', auth()->id())->first();
     }
 
-    public static function getUsers( $search = null)
+    public static function getUsers($search = null)
     {
         $user = Self::select('*')
             ->orderBy('id', 'desc');
@@ -67,8 +67,13 @@ class User extends Authenticatable
             $user->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', '%' . $search . '%');
                 $query->orWhere('email', 'LIKE', '%' . $search . '%');
-        });
-    }
+            });
+        }
         return $user;
+    }
+
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'App.User.' . $this->id;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,16 +23,21 @@ class Employee extends Model
         return $this->belongsTo(Branch::class, 'id_branch', 'id')->select('id', 'branch_name');
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id_employee', 'id');
+    }
+
     public function position_now()
     {
         return $this->hasOne(Employee_History::class, 'id_employee', 'id')->select('id', 'id_employee', 'id_branch', 'id_position', 'year_started', 'year_finished')
             ->where(function ($query) {
                 $query->where('year_started', '<', Carbon::now())
-                      ->where('year_finished', '>', Carbon::now());
+                    ->where('year_finished', '>', Carbon::now());
             })
             ->orWhere(function ($query) {
                 $query->where('year_started', '<', Carbon::now())
-                      ->where('year_finished', null);
+                    ->where('year_finished', null);
             });
     }
 
