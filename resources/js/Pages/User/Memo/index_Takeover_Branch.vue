@@ -5,197 +5,208 @@
       <h1 class="h3 mb-0 text-gray-800">Status Memo Branch</h1>
     </div>
     <breadcrumb :items="breadcrumbItems" />
-    <div class="row">
-      <div class="col-12">
-        <div>
-          <b-card>
-            <keep-alive>
-              <div class="row">
-                <div class="col-12">
-                  <div class="col-lg-3 col-xs-12 mt-3">
-                    <search v-model="form.search" @reset="reset" />
-                  </div>
-                  <div class="table-responsive">
-                    <b-overlay
-                      :show="isLoadMemo"
-                      opacity="0.6"
-                      spinner-small
-                      spinner-variant="primary"
-                    >
-                      <table class="table mt-4">
-                        <thead>
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">From</th>
-                            <th scope="col">Branch</th>
-                            <th scope="col">Document No</th>
-                            <th scope="col">Status</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody v-if="dataMemo.data != undefined">
-                          <tr
-                            v-for="(item, index) in dataMemo.data"
-                            :key="item.id"
+    <b-container class="bv-example-row" style="max-width: 1700px; padding: 0">
+      <b-row>
+        <FormFilter
+          :dataBranch="dataBranch"
+          v-model="form.selectedBranch"
+          @change="changeChecked"
+        />
+        <b-col :md="isMobile() ? 'auto' : null" class="mb-2">
+          <div class="row">
+            <div class="col-12">
+              <div>
+                <b-card>
+                  <keep-alive>
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="col-lg-3 col-xs-12 mt-3">
+                          <search v-model="form.search" @reset="reset" />
+                        </div>
+                        <div class="table-responsive">
+                          <b-overlay
+                            :show="isLoadMemo"
+                            opacity="0.6"
+                            spinner-small
+                            spinner-variant="primary"
                           >
-                            <th scope="row">
-                              {{
-                                (filters.page !== undefined
-                                  ? filters.page - 1
-                                  : 1 - 1) *
-                                  perPage +
-                                index +
-                                1
-                              }}
-                            </th>
-                            <td>
-                              {{ item.title }}
-                            </td>
-                            <td>
-                              {{
-                                item.proposeemployee.firstname +
-                                " " +
-                                item.proposeemployee.lastname
-                              }}
-                            </td>
-                            <td>
-                              {{
-                                item.proposeemployee.position_now.branch
-                                  .branch_name
-                              }}
-                            </td>
-                            <td>
-                              {{ item.doc_no }}
-                              <b-badge
-                                v-if="
-                                  item.payment_at != null &&
-                                  item.ref_table.with_payment == true
-                                "
-                                variant="success"
-                              >
-                                Paid
-                              </b-badge>
-                              <b-badge
-                                v-if="
-                                  item.payment_at == null &&
-                                  item.ref_table.with_payment == true
-                                "
-                                variant="warning"
-                              >
-                                Unpaid
-                              </b-badge>
-                            </td>
-                            <td>
-                              {{ item.latest_history.content }}
-                            </td>
-                            <td>
-                              <div class="dropdown">
-                                <button
-                                  class="btn btn-link"
-                                  type="button"
-                                  id="dropdownMenuButton"
-                                  data-toggle="dropdown"
-                                  aria-haspopup="true"
-                                  aria-expanded="false"
+                            <table class="table mt-4">
+                              <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Title</th>
+                                  <th scope="col">From</th>
+                                  <th scope="col">Branch</th>
+                                  <th scope="col">Document No</th>
+                                  <th scope="col">Status</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody v-if="dataMemo.data != undefined">
+                                <tr
+                                  v-for="(item, index) in dataMemo.data"
+                                  :key="item.id"
                                 >
-                                  <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <div
-                                  class="dropdown-menu"
-                                  aria-labelledby="dropdownMenuButton"
-                                >
-                                  <inertia-link
-                                    :href="route(__webpreview, item.id)"
-                                    class="dropdown-item"
-                                  >
-                                    Preview
-                                  </inertia-link>
-                                  <a
-                                    target="_blank"
-                                    class="dropdown-item"
-                                    v-on:click="openPDF(item.id, 1200, 650)"
-                                    v-if="
-                                      item.status == 'approve' &&
-                                      isMobile() == false
-                                    "
-                                    >Preview PDF</a
-                                  >
-                                  <a
-                                    target="_blank"
-                                    class="dropdown-item"
-                                    :href="route(__previewpdf, item.id)"
-                                    v-if="
-                                      item.status == 'approve' &&
-                                      isMobile() == true
-                                    "
-                                    >Preview PDF</a
-                                  >
-                                  <b-button
-                                    href="#"
-                                    class="dropdown-item"
-                                    @click="showModalProposePo(item.id)"
-                                    v-if="
-                                      item.ref_table.with_po == 1 &&
-                                      item.status == 'approve' &&
-                                      item.status_po == 'edit'
-                                    "
-                                  >
-                                    Continue PO
-                                  </b-button>
-                                  <inertia-link
-                                    v-if="
-                                      item.ref_table.with_po == 1 &&
-                                      item.status == 'approve' &&
-                                      item.status_po != 'edit'
-                                    "
-                                    :href="route(__webpreviewpo, item.id)"
-                                    class="dropdown-item"
-                                  >
-                                    Info PO
-                                  </inertia-link>
-                                  <inertia-link
-                                    :href="route(__formpayment, item.id)"
-                                    class="dropdown-item"
-                                    v-if="
-                                      item.ref_table.with_payment == true &&
-                                      item.status == 'approve' &&
-                                      item.status_payment == 'edit'
-                                    "
-                                    :disabled="item.status_payment != 'edit'"
-                                  >
-                                    Continue Payment
-                                  </inertia-link>
-                                  <inertia-link
-                                    v-if="
-                                      item.ref_table.with_payment == 1 &&
-                                      item.status == 'approve' &&
-                                      item.status_payment != 'edit'
-                                    "
-                                    :href="route(__webpreviewpayment, item.id)"
-                                    class="dropdown-item"
-                                  >
-                                    Info Payment
-                                  </inertia-link>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </b-overlay>
-                  </div>
-                  <Pagination
-                    v-if="dataMemo.links != undefined"
-                    :links="dataMemo.links"
-                  />
-                </div>
+                                  <th scope="row">
+                                    {{
+                                      (filters.page !== undefined
+                                        ? filters.page - 1
+                                        : 1 - 1) *
+                                        perPage +
+                                      index +
+                                      1
+                                    }}
+                                  </th>
+                                  <td>
+                                    {{ item.title }}
+                                  </td>
+                                  <td>
+                                    {{ item.firstname + " " + item.lastname }}
+                                  </td>
+                                  <td>
+                                    {{ item.branch_name }}
+                                  </td>
+                                  <td>
+                                    {{ item.doc_no }}
+                                    <b-badge
+                                      v-if="
+                                        item.payment_at != null &&
+                                        item.with_payment == true
+                                      "
+                                      variant="success"
+                                    >
+                                      Paid
+                                    </b-badge>
+                                    <b-badge
+                                      v-if="
+                                        item.payment_at == null &&
+                                        item.with_payment == true
+                                      "
+                                      variant="warning"
+                                    >
+                                      Unpaid
+                                    </b-badge>
+                                  </td>
+                                  <td>
+                                    {{ item.content }}
+                                  </td>
+                                  <td>
+                                    <div class="dropdown">
+                                      <button
+                                        class="btn btn-link"
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                      >
+                                        <i class="fas fa-ellipsis-v"></i>
+                                      </button>
+                                      <div
+                                        class="dropdown-menu"
+                                        aria-labelledby="dropdownMenuButton"
+                                      >
+                                        <inertia-link
+                                          :href="route(__webpreview, item.id)"
+                                          class="dropdown-item"
+                                        >
+                                          Preview
+                                        </inertia-link>
+                                        <a
+                                          target="_blank"
+                                          class="dropdown-item"
+                                          v-on:click="
+                                            openPDF(item.id, 1200, 650)
+                                          "
+                                          v-if="
+                                            item.status == 'approve' &&
+                                            !isMobile()
+                                          "
+                                          >Preview PDF</a
+                                        >
+                                        <a
+                                          target="_blank"
+                                          class="dropdown-item"
+                                          :href="route(__previewpdf, item.id)"
+                                          v-if="
+                                            item.status == 'approve' &&
+                                            isMobile()
+                                          "
+                                          >Preview PDF</a
+                                        >
+                                        <b-button
+                                          href="#"
+                                          class="dropdown-item"
+                                          @click="showModalProposePo(item.id)"
+                                          v-if="
+                                            item.with_po == 1 &&
+                                            item.status == 'approve' &&
+                                            item.status_po == 'edit'
+                                          "
+                                        >
+                                          Continue PO
+                                        </b-button>
+                                        <inertia-link
+                                          v-if="
+                                            item.with_po == 1 &&
+                                            item.status == 'approve' &&
+                                            item.status_po != 'edit'
+                                          "
+                                          :href="route(__webpreviewpo, item.id)"
+                                          class="dropdown-item"
+                                        >
+                                          Info PO
+                                        </inertia-link>
+                                        <inertia-link
+                                          :href="route(__formpayment, item.id)"
+                                          class="dropdown-item"
+                                          v-if="
+                                            item.with_payment == true &&
+                                            item.status == 'approve' &&
+                                            item.status_payment == 'edit'
+                                          "
+                                          :disabled="
+                                            item.status_payment != 'edit'
+                                          "
+                                        >
+                                          Continue Payment
+                                        </inertia-link>
+                                        <inertia-link
+                                          v-if="
+                                            item.with_payment == 1 &&
+                                            item.status == 'approve' &&
+                                            item.status_payment != 'edit'
+                                          "
+                                          :href="
+                                            route(__webpreviewpayment, item.id)
+                                          "
+                                          class="dropdown-item"
+                                        >
+                                          Info Payment
+                                        </inertia-link>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </b-overlay>
+                        </div>
+                        <Pagination
+                          v-if="dataMemo.links != undefined"
+                          :links="dataMemo.links"
+                        />
+                      </div>
+                    </div>
+                  </keep-alive>
+                </b-card>
               </div>
-            </keep-alive>
-          </b-card>
-        </div>
-      </div>
-    </div>
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
+
     <ModalFormPayment
       :title="modalTitle"
       :indexMemo="idItemClicked"
@@ -215,6 +226,7 @@ import Search from "@/components/Search";
 import throttle from "lodash/throttle";
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
+import FormFilter from "@/components/FormFilter";
 import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 export default {
   props: [
@@ -222,6 +234,7 @@ export default {
     "flash",
     "breadcrumbItems",
     "dataMemo",
+    "dataBranch",
     "userinfo",
     "notif",
     "errors",
@@ -240,6 +253,7 @@ export default {
       tabIndex: 0,
       form: {
         search: this.filters.search,
+        selectedBranch: this.filters.checkedBranch,
       },
       isLoadMemo: false,
       isCheched: false,
@@ -259,8 +273,12 @@ export default {
     TimelineTitle,
     ModalFormPayment,
     ModalFormPo,
+    FormFilter,
   },
   methods: {
+    changeChecked(branch) {
+      this.form.selectedBranch = branch;
+    },
     openPDF(id, popupWidth, popupHeight) {
       let left = (screen.width - popupWidth) / 2;
       let top = (screen.height - popupHeight) / 4;
@@ -321,11 +339,17 @@ export default {
   watch: {
     form: {
       handler: throttle(function () {
-        let query = pickBy(this.form);
+        let query = this.form.search;
+        let branch = this.form.selectedBranch;
+        if (!this.form.selectedBranch) {
+          branch = "";
+        }
         this.$inertia.replace(
           this.route(
             this.__index,
-            Object.keys(query).length ? query : { remember: "forget" }
+            query
+              ? { search: query, checkedBranch: branch }
+              : { checkedBranch: branch, remember: "forget" }
           )
         );
       }, 150),

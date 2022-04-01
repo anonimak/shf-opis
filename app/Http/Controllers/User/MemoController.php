@@ -39,14 +39,6 @@ class MemoController extends Controller
             $tab = $request->input('tab');
         }
 
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with(['position' => function ($p) {
-            return $p->where('position_name', '<>', 'TERMINATE');
-        }])->get();
-        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
-        //ddd($positions);
-
         return Inertia::render('User/Memo', [
             'perPage' => 10,
             'dataMemo' => Memo::getMemo(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
@@ -73,7 +65,6 @@ class MemoController extends Controller
                 'reject' => Memo::getMemo(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemo(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            'dataPosition' => $positions,
             '__index'   => 'user.memo.statusmemo.index',
             '__webpreview'   => 'user.memo.statusmemo.webpreview',
             '__webpreviewpo'   => 'user.memo.statuspo.webpreview',
@@ -88,17 +79,11 @@ class MemoController extends Controller
 
     public function indexTakeoverBranch(Request $request)
     {
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with(['position' => function ($p) {
-            return $p->where('position_name', '<>', 'TERMINATE');
-        }])->get();
-        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
-        //ddd($positions);
+        $dataBranch = Branch::where('branch_name', '<>', 'NULL')->get();
 
         return Inertia::render('User/Memo/index_Takeover_Branch', [
             'perPage' => 10,
-            'dataMemo' => Memo::getMemoTakeoverBranch(auth()->user()->id_employee, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'dataMemo' => Memo::getMemoTakeoverBranch(auth()->user()->id_employee, $request->input('search'), $request->input('checkedBranch'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -115,7 +100,7 @@ class MemoController extends Controller
                     'active'  => true
                 ]
             ),
-            'dataPosition' => $positions,
+            'dataBranch' => $dataBranch,
             '__index'   => 'user.memo.statustakeovermemobranch.index',
             '__formpayment' => 'user.memo.statustakeovermemobranch.formpayment',
             '__proposepayment' => 'user.memo.statustakeovermemobranch.proposepayment',
@@ -170,9 +155,11 @@ class MemoController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
+
+        $dataBranch = Branch::where('branch_name','<>','NULL')->get();
         return Inertia::render('User/Status_Payment_Takeover_Branch', [
             'perPage' => 10,
-            'dataMemo' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee,  $tab, $request->input('search'))->with('latestHistory')->with('ref_table')->paginate(10),
+            'dataMemo' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee,  $tab, $request->input('search'), $request->input('checkedBranch'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -196,6 +183,7 @@ class MemoController extends Controller
                 'reject' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getPaymentTakeoverBranch(auth()->user()->id_employee, 'revisi')->count(),
             ],
+            'dataBranch' => $dataBranch,
             '__index'   => 'user.memo.statustakeoverpaymentbranch.index',
             '__webpreview'   => 'user.memo.statustakeoverpaymentbranch.webpreview',
             '__previewpdf'   => 'user.memo.statustakeoverpaymentbranch.preview',

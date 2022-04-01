@@ -14,6 +14,7 @@ use App\Models\D_Memo_History;
 use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
+use App\Models\Branch;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -31,14 +32,11 @@ class ApprovalController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-        //     return $employee->select('id', 'firstname', 'lastname');
-        // }])->with('position')->get();
-        $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab,  $request->input('search'))->paginate(10);
-        //ddd($memo->get());
+        $dataBranch = Branch::where('branch_name', '<>', 'NULL')->get();
+        $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  $tab,  $request->input('search'), $request->input('checkedBranch'))->paginate(10);
+
         return Inertia::render('User/Approval', [
             'perPage' => 10,
-            // 'dataMemo' => $memo,
             'dataMemoTabList' => $memo,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -59,7 +57,7 @@ class ApprovalController extends Controller
                 'reject' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            //'dataPosition' => $positions,
+            'dataBranch' => $dataBranch,
             '__approving'  => 'user.memo.approval.memo.approving',
             '__previewpdf'  => 'user.memo.approval.memo.preview',
             '__detail'    => 'user.memo.approval.memo.detail',
@@ -73,16 +71,11 @@ class ApprovalController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with(['position' => function ($p) {
-            return $p->where('position_name', '<>', 'TERMINATE');
-        }])->get();
-        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPaymentWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
+        $dataBranch = Branch::where('branch_name', '<>','NULL')->get();
         return Inertia::render('User/Approval_Payment', [
-            'dataMemoTabList' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, $tab,  $request->input('search'))->paginate(10),
+            'dataMemoTabList' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, $tab,  $request->input('search'), $request->input('checkedBranch'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -103,7 +96,7 @@ class ApprovalController extends Controller
                 'reject' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemoPaymentWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            'dataPosition' => $positions,
+            'dataBranch' => $dataBranch,
             '__approving'  => 'user.memo.approval.payment.approving',
             '__previewpdf'  => 'user.memo.approval.payment.preview',
             '__detail'    => 'user.memo.approval.payment.detail',
@@ -117,16 +110,11 @@ class ApprovalController extends Controller
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname');
-        }])->with(['position' => function ($p) {
-            return $p->where('position_name', '<>', 'TERMINATE');
-        }])->get();
-        $positions = $positions->unique('id_employee')->whereNotNull('position')->values()->all();
         //$memo = Memo::getMemoPoWithLastApproverRawQuery(auth()->user()->id_employee);
         // $memo = Memo::getMemoWithLastApprover(auth()->user()->id_employee,  "submit", $request->input('search'))->paginate(10);
+        $dataBranch = Branch::where('branch_name', '<>', 'NULL')->get();
         return Inertia::render('User/Approval_PO', [
-            'dataMemoTabList' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, $tab, $request->input('search'))->paginate(10),
+            'dataMemoTabList' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, $tab, $request->input('search'), $request->input('checkedBranch'))->paginate(10),
             'filters' => $request->all(),
             'breadcrumbItems' => array(
                 [
@@ -147,7 +135,7 @@ class ApprovalController extends Controller
                 'reject' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'reject')->count(),
                 'revisi' => Memo::getMemoPoWithLastApprover(auth()->user()->id_employee, 'revisi')->count(),
             ],
-            'dataPosition' => $positions,
+            'dataBranch' => $dataBranch,
             '__approving'  => 'user.memo.approval.po.approving',
             '__previewpdf'  => 'user.memo.approval.po.preview',
             '__detail'    => 'user.memo.approval.po.detail',

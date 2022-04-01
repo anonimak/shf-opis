@@ -100,10 +100,10 @@ class Memo extends Model
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
     }
 
-    public static function getAllMemo( $search = null)
+    public static function getAllMemo($search = null)
     {
         $memo = Self::select('*')
-            ->where('doc_no','<>', null)
+            ->where('doc_no', '<>', null)
             ->orderBy('id', 'desc');
 
         if ($search) {
@@ -114,8 +114,8 @@ class Memo extends Model
                 $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
                 $query->orWhere('title', 'LIKE', '%' . $search . '%');
                 $query->orWhere('status', 'LIKE', '%' . $search . '%');
-        });
-    }
+            });
+        }
         return $memo;
     }
 
@@ -545,28 +545,60 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoTakeoverBranch($id_employee, $search = null)
+    public static function getMemoTakeoverBranch($id_employee, $search = null, $checkedBranch = null)
     {
-        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-                return $position_now->with(['position' => function ($position) {
-                    return $position->with('department');
-                }])->with('branch');
-            }]);
-        }])
+        // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+        //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        //         return $position_now->with(['position' => function ($position) {
+        //             return $position->with('department');
+        //         }])->with('branch');
+        //     }]);
+        // }])
+        //     ->orderByRaw("FIELD(status_payment,'edit','submit','approve','reject','revisi')")
+        //     ->where('status', '=', 'approve')
+        //     ->where('id_employee2', '=', $id_employee);
+        $proposeEmployee = DB::table(DB::raw('m_employees a'))
+            ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
+            ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+            ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+        $latestHistoryMemo = DB::table('d_memo_history')
+            ->select(DB::raw('MAX(id) as max_id, id_memo'))
+            ->groupBy('id_memo');
+
+        $memo =  DB::table(DB::raw('m_memos a'))
+            ->selectRaw('a.*, b.content, c.*, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished, e.with_payment, e.with_po')
+            ->joinSub($proposeEmployee, 'd', function ($join) {
+                $join->on('a.id_employee', '=', 'd.id')
+                    ->whereRaw('d.year_started < a.propose_at')
+                    ->where(function ($sub) {
+                        $sub->whereRaw('d.year_finished > a.propose_at')
+                            ->orWhere('d.year_finished', null);
+                    });
+            })
+            ->joinSub($latestHistoryMemo, 'c', function ($join) {
+                $join->on('a.id', '=', 'c.id_memo');
+            })
+            ->join(DB::raw('d_memo_history as b'), 'a.id', '=', 'b.id_memo')
+            ->join(DB::raw('ref_type_memo as e'), 'a.id_type', '=', 'e.id')
+            ->whereColumn('c.max_id', '=', 'b.id')
             ->orderByRaw("FIELD(status_payment,'edit','submit','approve','reject','revisi')")
-            ->where('status', '=', 'approve')
+            ->where('a.status', '=', 'approve')
             ->where('id_employee2', '=', $id_employee);
 
         if ($search) {
             $memo->where(function ($query) use ($search) {
-                $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
             });
+        }
+
+        if ($checkedBranch) {
+            $memo->where('d.id_branch', $checkedBranch);
         }
         return $memo;
     }
@@ -582,44 +614,62 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getAllMemoPayment($id_employee, $tab, $search = null)
+    public static function getAllMemoPayment($id_employee, $tab, $search = null, $checkedBranch = null)
     {
+        // $memo = Self::select('*')
+        // ->orderBy('id', 'desc')
+        // ->where('status_payment', '=', 'approve')
+        // ->where('confirmed_payment_by', '=', $id_employee)
+        // ->whereNotNull('payment_at');
+
+        $proposeEmployee = DB::table(DB::raw('m_employees a'))
+            ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
+            ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+            ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+        $latestHistoryMemo = DB::table('d_memo_history')
+            ->select(DB::raw('MAX(id) as max_id, id_memo'))
+            ->groupBy('id_memo');
+
+        $memo =  DB::table(DB::raw('m_memos a'))
+            ->selectRaw('a.*, b.content, c.*, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
+            ->joinSub($proposeEmployee, 'd', function ($join) {
+                $join->on('a.id_employee', '=', 'd.id')
+                    ->whereRaw('d.year_started < a.propose_at')
+                    ->where(function ($sub) {
+                        $sub->whereRaw('d.year_finished > a.propose_at')
+                            ->orWhere('d.year_finished', null);
+                    });
+            })
+            ->joinSub($latestHistoryMemo, 'c', function ($join) {
+                $join->on('a.id', '=', 'c.id_memo');
+            })
+            ->join(DB::raw('d_memo_history as b'), 'a.id', '=', 'b.id_memo')
+            ->where('a.status_payment', '=', 'approve')
+            ->whereColumn('c.max_id', '=', 'b.id')
+            ->where('a.confirmed_payment_by', $id_employee)
+            ->orderBy('a.id', 'desc');
+
         if ($tab == 'paid') {
-            $memo = Self::select('*')
-                ->orderBy('id', 'desc')
-                ->where('status_payment', '=', 'approve')
-                ->where('confirmed_payment_by', '=', $id_employee)
-                ->whereNotNull('payment_at');
-
-            if ($search) {
-                $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
-                });
-            }
-            return $memo;
+            $memo->whereNotNull('a.payment_at');
         } else {
-            $memo = Self::select('*')->orderBy('id', 'desc')
-                ->where('status_payment', '=', 'approve')
-                ->where('confirmed_payment_by', '=', $id_employee)
-                ->whereNull('payment_at');
-
-            if ($search) {
-                $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('status', 'LIKE', '%' . $search . '%');
-                });
-            }
-            return $memo;
+            $memo->whereNull('a.payment_at');
         }
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($checkedBranch) {
+            $memo->where('d.id_branch', $checkedBranch);
+        }
+        return $memo;
     }
 
     public static function getPayment($id_employee, $status, $search = null)
@@ -649,28 +699,61 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getPaymentTakeoverBranch($id_employee2, $status, $search = null)
+    public static function getPaymentTakeoverBranch($id_employee2, $status, $search = null, $checkedBranch = null)
     {
-        $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-                return $position_now->with(['position' => function ($position) {
-                    return $position->with('department');
-                }])->with('branch');
-            }]);
-        }])
-            ->orderBy('id', 'desc')
-            ->where('status_payment', '=', $status)
-            ->where('id_employee2', '=', $id_employee2);
+        // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
+        //     return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
+        //         return $position_now->with(['position' => function ($position) {
+        //             return $position->with('department');
+        //         }])->with('branch');
+        //     }]);
+        // }])
+        //     ->orderBy('id', 'desc')
+        //     ->where('status_payment', '=', $status)
+        //     ->where('id_employee2', '=', $id_employee2);
+
+        $proposeEmployee = DB::table(DB::raw('m_employees a'))
+            ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
+            ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
+            ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
+
+        $latestHistoryMemo = DB::table('d_memo_history')
+            ->select(DB::raw('MAX(id) as max_id, id_memo'))
+            ->groupBy('id_memo');
+
+        $memo = DB::table(DB::raw('m_memos a'))
+            ->selectRaw('a.*, b.content, c.*, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished, e.with_payment, e.with_po')
+            ->joinSub($proposeEmployee, 'd', function ($join) {
+                $join->on('a.id_employee', '=', 'd.id')
+                    ->whereRaw('d.year_started < a.propose_at')
+                    ->where(function ($sub) {
+                        $sub->whereRaw('d.year_finished > a.propose_at')
+                            ->orWhere('d.year_finished', null);
+                    });
+            })
+            ->joinSub($latestHistoryMemo, 'c', function ($join) {
+                $join->on('a.id', '=', 'c.id_memo');
+            })
+            ->join(DB::raw('d_memo_history as b'), 'a.id', '=', 'b.id_memo')
+            ->join(DB::raw('ref_type_memo as e'), 'a.id_type', '=', 'e.id')
+            ->whereColumn('c.max_id', '=', 'b.id')
+            ->orderBy('a.id', 'desc')
+            ->where('a.status_payment', '=', $status)
+            ->where('a.id_employee2', '=', $id_employee2);
 
         if ($search) {
             $memo->where(function ($query) use ($search) {
-                $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                $query->orWhere('title', 'LIKE', '%' . $search . '%');
-                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+                $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
             });
+        }
+
+        if ($checkedBranch) {
+            $memo->where('d.id_branch', $checkedBranch);
         }
         return $memo;
     }
@@ -702,7 +785,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoWithLastApprover($id_employee, $status, $search = null)
+    public static function getMemoWithLastApprover($id_employee, $status, $search = null, $checkedBranch = null)
     {
         if ($status == 'approve') {
             // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
@@ -723,12 +806,12 @@ class Memo extends Model
             //         }
             //     );
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
                 ->joinSub($proposeEmployee, 'd', function ($join) {
                     $join->on('a.id_employee', '=', 'd.id')
                         ->whereRaw('d.year_started < a.propose_at')
@@ -744,14 +827,19 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch', $checkedBranch);
+            }
+
             return $memo;
         } else {
             $lastApprover = DB::table('d_memo_approvers')
@@ -760,12 +848,12 @@ class Memo extends Model
                 ->groupBy('id_memo');
 
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
                 //     return $approver->orderBy('idx', "ASC")->first();
@@ -789,13 +877,17 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
+            }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch', $checkedBranch);
             }
 
             return $memo;
@@ -894,7 +986,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPaymentWithLastApprover($id_employee, $status, $search = null)
+    public static function getMemoPaymentWithLastApprover($id_employee, $status, $search = null, $checkedBranch = null)
     {
         if ($status == 'approve') {
             // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
@@ -915,12 +1007,12 @@ class Memo extends Model
             //         }
             //     );
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-            ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name,d.year_started, d.year_finished')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.id_branch, d.branch_name,d.year_started, d.year_finished')
                 ->joinSub($proposeEmployee, 'd', function ($join) {
                     $join->on('a.id_employee', '=', 'd.id')
                         ->whereRaw('d.year_started < a.propose_payment_at')
@@ -936,14 +1028,19 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch',  $checkedBranch);
+            }
+
             return $memo;
         } else {
             $lastApprover = DB::table('d_payment_approver')
@@ -952,12 +1049,12 @@ class Memo extends Model
                 ->groupBy('id_memo');
 
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name,
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.id_branch, d.branch_name,
                 d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
@@ -982,13 +1079,17 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
+            }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch', $checkedBranch);
             }
 
             return $memo;
@@ -1088,7 +1189,7 @@ class Memo extends Model
         return $memo;
     }
 
-    public static function getMemoPoWithLastApprover($id_employee, $status, $search = null)
+    public static function getMemoPoWithLastApprover($id_employee, $status, $search = null, $checkedBranch = null)
     {
         if ($status == 'approve') {
             // $memo = Self::select('*')->with(['proposeemployee' => function ($employee) {
@@ -1110,12 +1211,12 @@ class Memo extends Model
             //     );
 
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
                 ->joinSub($proposeEmployee, 'd', function ($join) {
                     $join->on('a.id_employee', '=', 'd.id')
                         ->whereRaw('d.year_started < a.propose_at')
@@ -1131,14 +1232,19 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
             }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch', $checkedBranch);
+            }
+
             return $memo;
         } else {
             $lastApprover = DB::table('d_po_approver')
@@ -1147,12 +1253,12 @@ class Memo extends Model
                 ->groupBy('id_memo');
 
             $proposeEmployee = DB::table(DB::raw('m_employees a'))
-                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.branch_name'))
+                ->select(DB::raw('a.id, a.firstname, a.lastname, b.year_started, b.year_finished, c.id as id_branch, c.branch_name'))
                 ->join(DB::raw('emp_history as b'), 'a.id', '=', 'b.id_employee')
                 ->join(DB::raw('m_branches as c'), 'c.id', '=', 'b.id_branch');
 
             $memo =  DB::table(DB::raw('m_memos a'))
-                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.branch_name, d.year_started, d.year_finished')
+                ->selectRaw('a.*,c.id id_approver, c.type_approver, c.status status_approver , d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
                 // ->orderBy('id', 'desc')
                 // ->with(['approver' => function ($approver) {
                 //     return $approver->orderBy('idx', "ASC")->first();
@@ -1176,13 +1282,17 @@ class Memo extends Model
 
             if ($search) {
                 $memo->where(function ($query) use ($search) {
-                    $query->where('doc_no', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('background', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('information', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
-                    $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                    $query->where('a.doc_no', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.background', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.information', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.conclusion', 'LIKE', '%' . $search . '%');
+                    $query->orWhere('a.title', 'LIKE', '%' . $search . '%');
                     $query->orWhere('a.status', 'LIKE', '%' . $search . '%');
                 });
+            }
+
+            if ($checkedBranch) {
+                $memo->where('d.id_branch', $checkedBranch);
             }
 
             return $memo;
