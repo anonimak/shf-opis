@@ -140,7 +140,8 @@ class ConfirmPaymentController extends Controller
 
         $detailspropose = [
             'subject' => "Memo Payment $memo->doc_no has been paid by {$confirmer->firstname}",
-            'message' => "Memo Payment $memo->doc_no has been paid by {$confirmer->firstname} {$confirmer->lastname}"
+            'message' => "Memo Payment $memo->doc_no has been paid by {$confirmer->firstname} {$confirmer->lastname}",
+            'status_approver' => 'approve'
         ];
 
         Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
