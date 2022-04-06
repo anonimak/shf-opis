@@ -60,6 +60,7 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::resource('/ref_approver', 'Super\RefModuleApprover');
     Route::resource('/ref_type_memo', 'Super\RefTypeMemo');
     Route::resource('/maintenance', 'Super\MaintenanceController');
+    Route::resource('/memo_management', 'Super\MemoManagement');
     // Route::resource('/ref_template_memo', 'Super\RefTemplateMemo');
     Route::prefix('/ref_template_memo')->name('ref_template_memo.')->group(function () {
         Route::get('/{id_type_memo}', 'Super\RefTemplateMemo@index')->name('index');
@@ -72,6 +73,15 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
     Route::prefix('/action')->name('action.')->group(function () {
         // send email to after approver
         Route::get('/email-after-approve-memo/{id_memo}', 'Super\ManualAction@sendEmailAfterApproveMemo')->name('email_after_approve_memo');
+    });
+
+    Route::prefix('/api')->name('api.')->group(function () {
+        Route::prefix('/employee')->name('employee.')->group(function () {
+            Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+        Route::prefix('/memo')->name('memo.')->group(function () {
+            Route::get('{id}/ref-type-memo', 'User\ApiMemoController@getTypeMemoByIdMemo')->name('type_memo');
+        });
     });
 });
 
@@ -220,6 +230,13 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         });
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
+        });
+
+
+
+        // notification
+        Route::prefix('/notification')->name('notification.')->group(function () {
+            Route::get('/read/{id_notification}', 'User\ApiNotificationController@markAsRead')->name('read');
         });
     });
 });

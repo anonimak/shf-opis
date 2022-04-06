@@ -100,6 +100,25 @@ class Memo extends Model
         return $this->hasOne(Ref_Type_Memo::class, 'id', 'id_type');
     }
 
+    public static function getAllMemo( $search = null)
+    {
+        $memo = Self::select('*')
+            ->where('doc_no','<>', null)
+            ->orderBy('id', 'desc');
+
+        if ($search) {
+            $memo->where(function ($query) use ($search) {
+                $query->where('doc_no', 'LIKE', '%' . $search . '%');
+                $query->orWhere('background', 'LIKE', '%' . $search . '%');
+                $query->orWhere('information', 'LIKE', '%' . $search . '%');
+                $query->orWhere('conclusion', 'LIKE', '%' . $search . '%');
+                $query->orWhere('title', 'LIKE', '%' . $search . '%');
+                $query->orWhere('status', 'LIKE', '%' . $search . '%');
+        });
+    }
+        return $memo;
+    }
+
     public static function getMemoDetailDraftEdit($id, $formType = 'memo')
     {
         return Self::with(['approvers' => function ($approver) {
