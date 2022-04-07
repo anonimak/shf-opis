@@ -231,6 +231,7 @@
             </tbody>
         </table>
         @endif
+        @endif
         @else
         <h4>Cost/Expenses</h4>
         <hr>
