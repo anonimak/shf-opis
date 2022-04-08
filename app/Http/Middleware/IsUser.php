@@ -26,12 +26,16 @@ class IsUser
 
             // share notif
             Inertia::share('notif', function () {
+                $user = User::find(auth()->user()->id);
                 return [
                     'approval_memo' => count(Memo::getMemoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                     'approval_memo_payment' => count(Memo::getMemoPaymentWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                     'approval_memo_po' => count(Memo::getMemoPoWithLastApproverRawQueryNotif(auth()->user()->id_employee)),
                     'memo_branch' => Memo::getMemoTakeoverBranchNotif(auth()->user()->id_employee)->count(),
-                    'confirmed_paymentmemo' => Memo::getAllMemoPayment(auth()->user()->id_employee, 'unpaid' )->count(),
+                    'confirmed_paymentmemo' => Memo::getAllMemoPayment(auth()->user()->id_employee, 'unpaid')->count(),
+                    'notification' => $user->unreadNotifications->take(5),
+                    'unreadNotification' => $user->unreadNotifications->count(),
+
                 ];
             });
             return $next($request);

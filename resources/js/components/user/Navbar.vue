@@ -60,6 +60,108 @@
           </form>
         </div>
       </li> -->
+      <li class="nav-item dropdown no-arrow">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="notifDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="true"
+        >
+          <i class="fas fa-bell fa-fw"></i>
+          <!-- Counter - Alerts -->
+          <span
+            v-if="notif.unreadNotification > 0"
+            class="badge badge-danger badge-counter"
+            >{{
+              notif.unreadNotification > 10 ? "10+" : notif.unreadNotification
+            }}</span
+          >
+        </a>
+        <!-- Dropdown - User Information -->
+        <div
+          class="
+            dropdown-list dropdown-menu dropdown-menu-right
+            shadow
+            animated--grow-in
+          "
+          aria-labelledby="notifDropdown"
+        >
+          <h6 class="dropdown-header">Notifications</h6>
+          <div v-if="notif.notification.length > 0">
+            <a
+              class="dropdown-item d-flex"
+              v-for="notification in notif.notification"
+              :key="notification.id"
+              href="#"
+              @click="onClickNotification(notification)"
+            >
+              <div class="col px-0">
+                <div class="row">
+                  <div class="col">
+                    <div
+                      class="small"
+                      :class="
+                        !notification.read_at
+                          ? [
+                              `text-${notification.data.content.type}`,
+                              ' font-weight-bold',
+                            ]
+                          : ['text-gray-500']
+                      "
+                    >
+                      {{ notification.data.content.doc_no }}
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div
+                      class="small float-right"
+                      :class="
+                        !notification.read_at
+                          ? 'text-gray-700'
+                          : 'text-gray-400'
+                      "
+                    >
+                      {{ notification.created_at | moment("D/M/YY,h:mm a") }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <div
+                    class="col-12 font-weight-bold text-truncate"
+                    :class="!notification.read_at ? '' : 'text-gray-500'"
+                  >
+                    {{ notification.data.content.caption }}
+                  </div>
+                </div>
+                <span
+                  :class="
+                    !notification.read_at ? 'font-italic' : 'text-gray-500'
+                  "
+                  >{{ notification.data.content.subject }}</span
+                >
+              </div>
+            </a>
+            <!-- <inertia-link
+              class="dropdown-item text-center small text-gray-500"
+              href="#"
+              >Show All Notifications</inertia-link
+            > -->
+          </div>
+          <div v-else>
+            <span class="dropdown-item text-gray-500 font-italic"
+              >No notification found.</span
+            >
+            <!-- <inertia-link
+              class="dropdown-item text-center small text-gray-500"
+              href="#"
+              >Show All Notifications</inertia-link
+            > -->
+          </div>
+        </div>
+      </li>
 
       <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -124,13 +226,38 @@
 </template>
 <script>
 export default {
-  props: ["userdata"],
+  props: ["userdata", "notif"],
   data() {
     return {
       show: false,
       alertstatus: null,
       messagestatus: null,
+      // notifications: [],
+      url_mark_read_notif: "user.api.notification.read",
     };
+  },
+  mounted() {
+    // this.notifications = [...this.notif.notification];
+  },
+  methods: {
+    onClickNotification(notification) {
+      this.getMarkReadNotif(notification.id).then((result) => {
+        if (!result.data.is_read) {
+          this.notif.unreadNotification--;
+          this.notif.notification = this.notif.notification.map((notif) => {
+            if (notif.id === notification.id) {
+              notif.read_at = moment().format();
+            }
+            return notif;
+          });
+        }
+      });
+      this.$inertia.replace(notification.data.url);
+    },
+
+    getMarkReadNotif: async function (id) {
+      return axios.get(route(this.url_mark_read_notif, id)); //TODO: mark read notification
+    },
   },
 };
 </script>

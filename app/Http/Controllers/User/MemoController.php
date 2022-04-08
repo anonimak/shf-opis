@@ -19,6 +19,7 @@ use App\Models\Memo;
 use App\Models\Ref_Doc_No;
 use App\Models\Ref_Template_Cost;
 use App\Models\Ref_Type_Memo;
+use App\Notifications\ApprovalNotification;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -576,7 +577,7 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
-            if($firstApprover->type_approver == 'acknowledge') {
+            if ($firstApprover->type_approver == 'acknowledge') {
                 $type_approver = 'reviewer';
             } else {
                 $type_approver = $firstApprover->type_approver;
@@ -599,6 +600,25 @@ class MemoController extends Controller
 
             Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
             // kirim email ke tiap acknowlegde
+
+            if ($firstApprover->type_approver == 'approver') {
+                $detailapprovers = [
+                    'doc_no'   => $memo->doc_no,
+                    'caption'  => $memo->title,
+                    'type'     => "warning",
+                    'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for approve"
+                ];
+            } else {
+                $detailapprovers = [
+                    'doc_no'   => $memo->doc_no,
+                    'caption'  => $memo->title,
+                    'type'     => "warning",
+                    'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for review"
+                ];
+            }
+            // notif app
+            $firstApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.payment.detail', $memo->id)));
+
             if ($memo->id_employee2 == $employeeInfo->id_employee) {
                 return Redirect::route('user.memo.statustakeoverpaymentbranch.index')->with('success', "Successfull submit memo payment branch.");
             } else {
@@ -642,7 +662,7 @@ class MemoController extends Controller
             ]);
 
             $firstApprover = D_Memo_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
-            if($firstApprover->type_approver == 'acknowledge') {
+            if ($firstApprover->type_approver == 'acknowledge') {
                 $type_approver = 'reviewer';
             } else {
                 $type_approver = $firstApprover->type_approver;
@@ -665,6 +685,26 @@ class MemoController extends Controller
 
             Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
             // kirim email ke tiap acknowlegde
+
+
+            if ($firstApprover->type_approver == 'approver') {
+                $detailapprovers = [
+                    'doc_no'   => $memo->doc_no,
+                    'caption'  => $memo->title,
+                    'type'     => "warning",
+                    'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for approve"
+                ];
+            } else {
+                $detailapprovers = [
+                    'doc_no'   => $memo->doc_no,
+                    'caption'  => $memo->title,
+                    'type'     => "warning",
+                    'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for review"
+                ];
+            }
+            // notif app
+            $firstApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.memo.detail', $memo->id)));
+
             return Redirect::route('user.memo.index')->with('success', "Successfull submit memo.");
         }
     }
@@ -797,7 +837,7 @@ class MemoController extends Controller
         ]);
 
         $firstApprover = D_Payment_Approver::where('id_memo', $id)->where('status', 'submit')->with('employee')->orderBy('idx', 'asc')->first();
-        if($firstApprover->type_approver == 'acknowledge') {
+        if ($firstApprover->type_approver == 'acknowledge') {
             $type_approver = 'reviewer';
         } else {
             $type_approver = $firstApprover->type_approver;
@@ -817,6 +857,25 @@ class MemoController extends Controller
             'type_approver' => $firstApprover->type_approver,
             'url'     => route('user.memo.approval.payment.detail', $id)
         ];
+
+
+        if ($firstApprover->type_approver == 'approver') {
+            $detailapprovers = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "warning",
+                'subject' => "New submission memo payment $memo->title - $memo->doc_no. Click here for approve"
+            ];
+        } else {
+            $detailapprovers = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "warning",
+                'subject' => "New submission memo payment $memo->title - $memo->doc_no. Click here for review"
+            ];
+        }
+        // notif app
+        $firstApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.payment.detail', $memo->id)));
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
         // kirim email ke tiap acknowlegde
@@ -948,6 +1007,25 @@ class MemoController extends Controller
             'doc_no'  => $memo->doc_no,
             'url'     => route('user.memo.approval.po.detail', $id)
         ];
+
+        if ($firstApprover->type_approver == 'approver') {
+            $detailapprovers = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "warning",
+                'subject' => "New submission memo po $memo->title - $memo->doc_no. Click here for approve"
+            ];
+        } else {
+            $detailapprovers = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "warning",
+                'subject' => "New submission memo po $memo->title - $memo->doc_no. Click here for review"
+            ];
+        }
+        // notif app
+        $firstApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.po.detail', $memo->id)));
+
 
         Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
         // kirim email ke tiap acknowlegde

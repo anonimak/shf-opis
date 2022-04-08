@@ -311,10 +311,10 @@
                     class="mt-2"
                   >
                     <b-form-checkbox
-                      id="checkbox-1"
+                      id="checkbox-2"
                       v-model="form.is_cost_invoice"
                       @change="autoSaveItem()"
-                      name="checkbox-1"
+                      name="checkbox-2"
                       :value="true"
                       :unchecked-value="false"
                       class="mb-2"
@@ -335,8 +335,9 @@
               </b-row>
               <b-row
                 v-if="
-                  formType == 'payment' ||
-                  dataMemoType.ref_table.with_po == true
+                  (formType == 'payment' ||
+                    dataMemoType.ref_table.with_po == true) &&
+                  !form.is_cost_invoice
                 "
               >
                 <div class="col-5">
@@ -856,6 +857,15 @@ export default {
         parseFloat(this.pph);
 
       this.debouncedSaveCost();
+    },
+    "form.is_cost_invoice" : function(val) {
+      if(val) {
+        this.sub_total = 0;
+        this.pph = 0;
+        this.ppn = 0;
+        this.grand_total = 0;
+        this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
+      }
     },
     dataTotalCost: function (val) {
       this.fillForm();
