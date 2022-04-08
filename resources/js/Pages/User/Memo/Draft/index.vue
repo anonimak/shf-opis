@@ -4,10 +4,10 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
       <h1 class="h3 mb-0 text-gray-800">Draft Memo</h1>
     </div>
-    <breadcrumb :items="breadcrumbItems" />
+    <breadcrumb v-if="!isMobile()" :items="breadcrumbItems" />
     <div class="row">
       <div class="col-12">
-        <div>
+        <div v-if="!isMobile()">
           <b-card>
             <keep-alive>
               <div class="row">
@@ -26,7 +26,6 @@
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
-                  <!-- <card-memo /> -->
                   <!-- table news -->
                   <div class="table-responsive">
                     <table class="table mt-4">
@@ -137,7 +136,23 @@
             </keep-alive>
           </b-card>
         </div>
+        <div v-else>
+          <card-memo @clicked:Menu="onclickMenu" />
+          <card-memo />
+          <card-memo />
+          <card-memo />
+          <card-memo />
+        </div>
       </div>
+      <b-modal id="bv-modal-example" hide-footer>
+        <template #modal-title> Using <code>$bvModal</code> Methods </template>
+        <div class="d-block text-center">
+          <h3>Hello From This Modal!</h3>
+        </div>
+        <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-example')"
+          >Close Me</b-button
+        >
+      </b-modal>
     </div>
   </layout>
 </template>
@@ -278,6 +293,9 @@ export default {
     },
     reset() {
       this.form = mapValues(this.form, () => null);
+    },
+    onclickMenu: function () {
+      this.$bvModal.show("bv-modal-example");
     },
   },
   watch: {
