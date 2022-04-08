@@ -231,6 +231,13 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
         Route::prefix('/employee')->name('employee.')->group(function () {
             Route::get('/position', 'User\ApiMemoController@getPositionNow')->name('positions');
         });
+
+
+
+        // notification
+        Route::prefix('/notification')->name('notification.')->group(function () {
+            Route::get('/read/{id_notification}', 'User\ApiNotificationController@markAsRead')->name('read');
+        });
     });
 });
 

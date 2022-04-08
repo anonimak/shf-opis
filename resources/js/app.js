@@ -24,6 +24,7 @@ import Storage from "vue-ls";
 
 // untuk moment js
 const moment = require("moment");
+window.moment = moment;
 // require("moment/locale/id");
 
 Vue.use(VueMeta);
