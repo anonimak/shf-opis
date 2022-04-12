@@ -586,7 +586,7 @@ export default {
 
   methods: {
     onClickOutside() {
-      this.editMode(null, null);
+    //   this.editMode(null, null);
     },
     onMouseOverTableInvoice(event) {
       if (this.isMobile()) return;

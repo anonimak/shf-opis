@@ -205,7 +205,17 @@
               <b-row v-else>
                 <b-col>
                   <h5>Cost/Expense</h5>
-                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
+                  <b-form-checkbox
+                      id="checkbox-2"
+                      v-model="dataMemo.is_cost_invoice"
+                      name="checkbox-2"
+                      :value="true"
+                      :unchecked-value="false"
+                      class="mb-2"
+                    >
+                      use Cost Invoice
+                    </b-form-checkbox>
+                  <form-invoice v-if="dataMemo.is_cost_invoice" :id_memo="dataMemo.id" />
                 </b-col>
               </b-row>
               <b-row
@@ -1009,6 +1019,7 @@ export default {
         this.pageFlashes.danger = "Please fill data completely!";
         return;
       }
+      this.form_payment.is_cost_invoice = this.dataMemo.is_cost_invoice;
       this.form_payment.sub_total = this.sub_total;
       this.form_payment.pph = this.pph;
       this.form_payment.ppn = this.ppn;

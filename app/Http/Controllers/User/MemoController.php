@@ -803,7 +803,6 @@ class MemoController extends Controller
             $memo_approver->makeHidden(['id', 'created_at', 'updated_at', 'msg', 'status']);
             D_Payment_Approver::insert($memo_approver->toArray());
         }
-
         $check_history = D_Memo_History::where('id_memo', $id)->get();
         if ($check_history->count() > 0) {
             $doc_no = $memo->doc_no;
@@ -814,7 +813,8 @@ class MemoController extends Controller
         // update status menjadi submit
         Memo::where('id', $id)->update([
             'status_payment'   => 'submit',
-            'propose_payment_at' => Carbon::now()
+            'propose_payment_at' => Carbon::now(),
+            'is_cost_invoice' => $request->input('is_cost_invoice')
         ]);
 
         D_Payment_Approver::where('id_memo', $id)->update([
