@@ -129,7 +129,7 @@
                           v-model="item.type"
                           @change="submitItemInvoice(index, idx, 'type')"
                           value="barang"
-                          >barang</b-form-radio
+                          >barang/reimburse</b-form-radio
                         >
                         <b-form-radio
                           v-model="item.type"
