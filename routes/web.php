@@ -69,6 +69,8 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
         Route::delete('/{template_memo}', 'Super\RefTemplateMemo@destroyTemplateCost')->name('destroy_template_cost');
     });
 
+    Route::put('/{id_type_memo}/update-status', 'Super\RefTypeMemo@updateStatus')->name('update_status');
+
     // manual action
     Route::prefix('/action')->name('action.')->group(function () {
         // send email to after approver
