@@ -160,6 +160,7 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspayment.index',
             '__editpayment'   => 'user.memo.statuspayment.formpayment',
+            '__senddraftpayment' => 'user.memo.statuspayment.senddraft',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
             '__previewpdf'   => 'user.memo.statuspayment.preview',
         ]);
@@ -1381,6 +1382,20 @@ class MemoController extends Controller
         ]);
 
         D_Memo_Approver::where('id_memo', $id)->update([
+            'status'   => 'edit'
+        ]);
+
+        $memo = Memo::where('id', $id)->first();
+        return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "memo has sent to draft.");
+    }
+
+    public function sendDraftPayment(Request $request, $id)
+    {
+        Memo::where('id', $id)->update([
+            'status_payment'   => 'edit'
+        ]);
+
+        D_Payment_Approver::where('id_memo', $id)->update([
             'status'   => 'edit'
         ]);
 

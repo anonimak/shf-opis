@@ -151,6 +151,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPayment')->name('preview');
+            Route::get('/{memo}/send-draft-payment', 'User\MemoController@sendDraftPayment')->name('senddraft');
         });
 
         Route::prefix('/status-payment-takeover-branch')->name('statustakeoverpaymentbranch.')->group(function () {

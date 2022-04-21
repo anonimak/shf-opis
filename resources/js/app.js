@@ -77,6 +77,12 @@ Vue.use(VueCurrencyFilter, {
     avoidEmptyDecimals: 0
 });
 
+// native notification
+import VueNativeNotification from "vue-native-notification";
+Vue.use(VueNativeNotification, {
+    requestOnNotify: true
+});
+
 Vue.mixin(require("./base"));
 
 // lodash
