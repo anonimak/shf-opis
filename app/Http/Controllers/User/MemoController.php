@@ -160,6 +160,7 @@ class MemoController extends Controller
             ],
             '__index'   => 'user.memo.statuspayment.index',
             '__editpayment'   => 'user.memo.statuspayment.formpayment',
+            '__senddraftpayment' => 'user.memo.statuspayment.senddraft',
             '__webpreview'   => 'user.memo.statuspayment.webpreview',
             '__previewpdf'   => 'user.memo.statuspayment.preview',
         ]);
@@ -278,15 +279,17 @@ class MemoController extends Controller
         $employeeInfo = User::getUsersEmployeeInfo();
         $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
         if (!$isHeadOffice) {
-            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
+            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
                 $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
                 $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+                $query->where('status', true);
             })
                 ->orderBy('id_department', 'asc')->get();
         } else {
-            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')
+            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')
                 ->orWhere(function ($query) use ($employeeInfo) {
                     $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+                    $query->where('status', true);
                 })
                 ->orderBy('id_department', 'asc')->get();
         }
@@ -1381,6 +1384,20 @@ class MemoController extends Controller
         ]);
 
         D_Memo_Approver::where('id_memo', $id)->update([
+            'status'   => 'edit'
+        ]);
+
+        $memo = Memo::where('id', $id)->first();
+        return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "memo has sent to draft.");
+    }
+
+    public function sendDraftPayment(Request $request, $id)
+    {
+        Memo::where('id', $id)->update([
+            'status_payment'   => 'edit'
+        ]);
+
+        D_Payment_Approver::where('id_memo', $id)->update([
             'status'   => 'edit'
         ]);
 

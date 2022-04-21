@@ -30,7 +30,22 @@
           ></v-select>
         </b-form-group>
         <b-form-group
-          id="input-group-title"
+          id="input-group-title2"
+          label="Confirmer Payment:"
+          label-for="input-title"
+        >
+          <v-select
+            label="employee_name2"
+            placeholder="-- Edit Confirmer Payment --"
+            :get-option-label="getOptionLabel"
+            :options="dataPositions"
+            v-model="form.id_confirmed_payment"
+            :reduce="(position) => position.id_employee"
+          >
+          </v-select>
+        </b-form-group>
+        <b-form-group
+          id="input-group-title3"
           label="Type Memo:"
           label-for="input-title"
         >
@@ -65,6 +80,7 @@ export default {
     "idTakeover",
     "idEmployee",
     "idTypeMemo",
+    "idConfirmerPayment",
     "__update",
   ],
   data() {
@@ -72,6 +88,7 @@ export default {
       form: {
         id_employee2: null,
         id_type_memo: null,
+        id_confirmed_payment: null,
       },
       url_positions: "super.api.employee.positions",
       url_typememo: "super.api.memo.type_memo",
@@ -88,15 +105,17 @@ export default {
           this.dataTypeMemo = results[1].data;
           this.form.id_type_memo = this.idTypeMemo;
 
-
           let itemTypeMemo = _.find(this.dataTypeMemo, typeMemo => typeMemo.id == this.idTypeMemo);
           this.form.id_employee2 = (this.idTakeover)? this.idTakeover : itemTypeMemo.id_overtake_memo;
+          this.form.id_confirmed_payment = (this.idConfirmerPayment) ? this.idConfirmerPayment : itemTypeMemo.id_confirmed_payment_by;
         }
       );
     },
-    onChangeTypememo(){
-        let itemTypeMemo = _.find(this.dataTypeMemo, typeMemo => typeMemo.id == this.form.id_type_memo);
-        this.form.id_employee2 = (itemTypeMemo && itemTypeMemo.id_overtake_memo)? itemTypeMemo.id_overtake_memo : null;
+    onChangeTypememo() {
+      let itemTypeMemo = _.find(this.dataTypeMemo, typeMemo => typeMemo.id == this.form.id_type_memo);
+      this.form.id_employee2 = (itemTypeMemo && itemTypeMemo.id_overtake_memo) ? itemTypeMemo.id_overtake_memo : null;
+
+      this.form.id_confirmed_payment = (itemTypeMemo && itemTypeMemo.id_confirmed_payment_by) ? itemTypeMemo.id_confirmed_payment_by : null;
     },
     getOptionLabel(option) {
       let firstname = option.employee ? option.employee.firstname : "";
@@ -120,6 +139,7 @@ export default {
       this.form = {
         id_employee2: null,
         id_type_memo: null,
+        id_confirmed_payment: null,
       };
       this.idItemClicked = null;
       this.modalTitle = "";

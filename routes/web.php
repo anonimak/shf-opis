@@ -69,6 +69,8 @@ Route::middleware('auth', 'is_super')->prefix('superadmin')->name('super.')->gro
         Route::delete('/{template_memo}', 'Super\RefTemplateMemo@destroyTemplateCost')->name('destroy_template_cost');
     });
 
+    Route::put('/{id_type_memo}/update-status', 'Super\RefTypeMemo@updateStatus')->name('update_status');
+
     // manual action
     Route::prefix('/action')->name('action.')->group(function () {
         // send email to after approver
@@ -151,6 +153,7 @@ Route::middleware('auth', 'is_user')->name('user.')->group(function () {
             Route::get('/{memo}/form-payment', 'User\MemoController@formPayment')->name('formpayment');
             Route::get('/{memo}/preview', 'User\MemoController@webpreviewPayment')->name('webpreview');
             Route::get('/{memo}/preview-pdf', 'User\MemoController@previewPayment')->name('preview');
+            Route::get('/{memo}/send-draft-payment', 'User\MemoController@sendDraftPayment')->name('senddraft');
         });
 
         Route::prefix('/status-payment-takeover-branch')->name('statustakeoverpaymentbranch.')->group(function () {

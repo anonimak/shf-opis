@@ -129,13 +129,13 @@
                           v-model="item.type"
                           @change="submitItemInvoice(index, idx, 'type')"
                           value="barang"
-                          >barang/reimburse</b-form-radio
+                          >non objek PPh</b-form-radio
                         >
                         <b-form-radio
                           v-model="item.type"
                           @change="submitItemInvoice(index, idx, 'type')"
                           value="jasa"
-                          >jasa</b-form-radio
+                          >objek PPh</b-form-radio
                         >
                       </b-form-group>
                       <p v-else>
@@ -586,7 +586,7 @@ export default {
 
   methods: {
     onClickOutside() {
-    //   this.editMode(null, null);
+      //   this.editMode(null, null);
     },
     onMouseOverTableInvoice(event) {
       if (this.isMobile()) return;

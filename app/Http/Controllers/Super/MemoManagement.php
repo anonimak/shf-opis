@@ -94,7 +94,8 @@ class MemoManagement extends Controller
         //
         Memo::where('id', $id)->update([
             'id_employee2' => $request->input('id_employee2'),
-            'id_type' => $request->input('id_type_memo')
+            'id_type' => $request->input('id_type_memo'),
+            'confirmed_payment_by' => $request->input('id_confirmed_payment'),
         ]);
 
         return Redirect::route('super.memo_management.index')->with('success', "Successfull Edit Memo");

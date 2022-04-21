@@ -53,7 +53,8 @@
                                 item.id,
                                 item.id_employee2,
                                 item.id_employee,
-                                item.id_type
+                                item.id_type,
+                                item.confirmed_payment_by
                               )
                             "
                             variant="primary"
@@ -78,6 +79,7 @@
       :idTakeover="idTakeover"
       :idEmployee="idEmployee"
       :idTypeMemo="idTypeMemo"
+      :idConfirmerPayment="idConfirmerPayment"
       :errors="errors"
       :__update="__update"
     />
@@ -105,7 +107,6 @@ export default {
     "errors",
     "filters",
     "perPage",
-    "dataTypeMemo",
     "__index",
     "__update",
   ],
@@ -116,8 +117,8 @@ export default {
       idTakeover: null,
       idEmployee: null,
       idTypeMemo: null,
+      idConfirmerPayment: null,
       modalTitle: "",
-      //   buttonClicked: "",
       form: {
         search: this.filters.search,
       },
@@ -135,11 +136,12 @@ export default {
     reset() {
       this.form = mapValues(this.form, () => null);
     },
-    actionEditMemo(id, id_takeover, id_propose_employee, id_type) {
+    actionEditMemo(id, id_takeover, id_propose_employee, id_type, id_confirmed_payment_by) {
       this.idItemClicked = id;
       this.idEmployee = id_propose_employee;
       this.idTypeMemo = id_type;
       this.idTakeover = id_takeover;
+      this.idConfirmerPayment = id_confirmed_payment_by;
       this.modalTitle = "Edit Memo";
 
       this.$root.$emit("bv::show::modal", "modal-edit-memo", "#btnShow");

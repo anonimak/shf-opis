@@ -45,12 +45,17 @@ export default {
     },
   },
   created() {
+    this.$notification.requestPermission().then(console.log);
+
     window.Echo.private(`App.User.${this.userinfo.id}`).notification(
       (notification) => {
         switch (notification.type) {
           case "App\\Notifications\\ApprovalNotification":
             this.notif.unreadNotification++;
             this.sound.play();
+            this.$notification.show(notification.content.doc_no, {
+              body: notification.content.caption,
+            });
             let notif = {
               created_at: moment().format(),
               data: {
