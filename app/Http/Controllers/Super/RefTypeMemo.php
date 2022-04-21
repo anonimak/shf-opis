@@ -21,8 +21,13 @@ class RefTypeMemo extends Controller
      */
     public function index(Request $request)
     {
+        $status = true;
+        if ($request->has('status')) {
+            $status = ($request->input('status') == 'true') ? true : false;
+        }
+
         return Inertia::render('Super/Ref_Type_Memo', [
-            'dataRefTypeMemo' => Ref_Type_Memo::getRef_Type_Memo($request->input('search'))->paginate(10),
+            'dataRefTypeMemo' => Ref_Type_Memo::getRef_Type_Memo($request->input('search'), $status)->paginate(10),
             'perPage' => 10,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -36,8 +41,14 @@ class RefTypeMemo extends Controller
                     'active'  => true
                 ]
             ),
+            'status' => [true,false],
+            'countStatus' => [
+                'active' => Ref_Type_Memo::getRef_Type_Memo(null,true)->count(),
+                'inactive' => Ref_Type_Memo::getRef_Type_Memo(null,false)->count(),
+            ],
             '__create'  => 'super.ref_type_memo.create',
             '__edit'    => 'super.ref_type_memo.edit',
+            '__updateStatus' => 'super.update_status',
             '__show'    => 'super.ref_type_memo.show',
             '__destroy' => 'super.ref_type_memo.destroy',
             '__template' => 'super.ref_template_memo.index',
@@ -211,6 +222,14 @@ class RefTypeMemo extends Controller
             'id_overtake_memo'          => $request->input('id_overtake'),
             'id_branch'                 => $request->input('id_branch'),
             'id_confirmed_payment_by'   => $request->input('id_confirmed_payment_by'),
+        ]);
+        return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        Ref_Type_Memo::where('id', $id)->update([
+            'status' => filter_var($request->input('status_type'), FILTER_VALIDATE_BOOLEAN),
         ]);
         return Redirect::route('super.ref_type_memo.index')->with('success', "Successfull updated.");
     }
