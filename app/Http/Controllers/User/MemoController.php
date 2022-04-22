@@ -277,22 +277,38 @@ class MemoController extends Controller
     public function create()
     {
         $employeeInfo = User::getUsersEmployeeInfo();
-        $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
-        if (!$isHeadOffice) {
-            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
-                $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
-                $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
-                $query->where('status', true);
-            })
-                ->orderBy('id_department', 'asc')->get();
-        } else {
-            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')
-                ->orWhere(function ($query) use ($employeeInfo) {
-                    $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
-                    $query->where('status', true);
-                })
-                ->orderBy('id_department', 'asc')->get();
-        }
+        $dataTypeMemo = Ref_Type_Memo::where('status', true)
+        ->where('id_department', $employeeInfo->employee->position_now->position->id_department)
+        ->where('id_branch', $employeeInfo->employee->position_now->branch->id)
+        ->orWhere(function ($query) use ($employeeInfo) {
+            $query->where('status', true);
+            $query->whereNull('id_department');
+            $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+        })->orWhere(function ($query) use ($employeeInfo) {
+            $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+            $query->whereNull('id_branch');
+            $query->where('status', true);
+        })->orWhere(function ($query) {
+            $query->whereNull('id_department');
+            $query->whereNull('id_branch');
+            $query->where('status', true);
+        })->orderBy('id_department', 'asc')->get();
+        // $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
+        // if (!$isHeadOffice) {
+        //     $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
+        //         $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+        //         $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+        //         $query->where('status', true);
+        //     })
+        //         ->orderBy('id_department', 'asc')->get();
+        // } else {
+        //     $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')
+        //         ->orWhere(function ($query) use ($employeeInfo) {
+        //             $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+        //             $query->where('status', true);
+        //         })
+        //         ->orderBy('id_department', 'asc')->get();
+        // }
         return Inertia::render('User/Memo/create', [
             'breadcrumbItems' => array(
                 [
