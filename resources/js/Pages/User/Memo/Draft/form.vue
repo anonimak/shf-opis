@@ -370,7 +370,7 @@
                           class="justify-content-center my-auto ml-2"
                           :value="true"
                           :unchecked-value="false"
-                          @change="actionChangeChenckboxManualInput"
+                          v-on:change="actionChangeCheckboxManualInput"
                         >
                           Manual input Pph
                         </b-form-checkbox>
@@ -1186,10 +1186,11 @@ export default {
           // An error occurred
         });
     },
-    actionChangeChenckboxManualInput() {
+    actionChangeCheckboxManualInput() {
       if (this.manualInputPph) {
         this.pph = 0;
       }
+      this.debouncedSaveCost();
     },
     submitUpdate(id) {
       axios
