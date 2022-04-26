@@ -27,7 +27,7 @@ class RefTypeMemo extends Controller
         }
 
         return Inertia::render('Super/Ref_Type_Memo', [
-            'dataRefTypeMemo' => Ref_Type_Memo::getRef_Type_Memo($request->input('search'), $status)->paginate(10),
+            'dataRefTypeMemo' => Ref_Type_Memo::getRef_Type_Memo($status, $request->input('search'))->paginate(10),
             'perPage' => 10,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -43,8 +43,8 @@ class RefTypeMemo extends Controller
             ),
             'status' => [true,false],
             'countStatus' => [
-                'active' => Ref_Type_Memo::getRef_Type_Memo(null,true)->count(),
-                'inactive' => Ref_Type_Memo::getRef_Type_Memo(null,false)->count(),
+                'active' => Ref_Type_Memo::getRef_Type_Memo(true)->count(),
+                'inactive' => Ref_Type_Memo::getRef_Type_Memo(false)->count(),
             ],
             '__create'  => 'super.ref_type_memo.create',
             '__edit'    => 'super.ref_type_memo.edit',

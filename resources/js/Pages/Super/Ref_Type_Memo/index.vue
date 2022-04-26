@@ -208,9 +208,9 @@ export default {
     Pagination,
     Search,
   },
-  beforeMount() {
-    this.activeTab(this.tabIndexStatus);
-  },
+//   beforeMount() {
+//     this.activeTab(this.tabIndexStatus);
+//   },
   methods: {
     submitDelete(id) {
       this.$inertia.delete(route(this.__destroy, id));
