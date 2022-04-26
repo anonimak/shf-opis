@@ -87,6 +87,19 @@
                       :id_memo="dataMemo.id"
                     />
                     <!-- </div> -->
+                    <b-col
+                      col
+                      lg="12"
+                      class="mb-4"
+                      v-if="form.propose_at || form.propose_payment_at"
+                    >
+                      <span class="text-danger"
+                        ><i
+                          >If there is a change in the approval, the memo will
+                          be resubmitted from the beginning.</i
+                        ></span
+                      >
+                    </b-col>
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -858,8 +871,8 @@ export default {
 
       this.debouncedSaveCost();
     },
-    "form.is_cost_invoice" : function(val) {
-      if(val) {
+    "form.is_cost_invoice": function (val) {
+      if (val) {
         this.sub_total = 0;
         this.pph = 0;
         this.ppn = 0;
