@@ -209,7 +209,7 @@ export default {
     Search,
   },
   beforeMount() {
-    this.activeTab(this.tabIndexStatus);
+    this.setLsTabMemo();
   },
   methods: {
     submitDelete(id) {
@@ -273,9 +273,25 @@ export default {
     reset() {
       this.form = mapValues(this.form, () => null);
     },
+    setLsTabMemo() {
+      this.isLoad = true;
+      if (this.$ls.get("tabIndexType")) {
+        this.tabIndexStatus = this.$ls.get("tabIndexType") - 1;
+      }
+      let query = this.form.search;
+      let param = { search: query,status: this.status[this.tabIndexStatus] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        this.isLoad = false;
+      });
+    },
     activeTab(tabIndexStatus) {
       this.tabIndexStatus = tabIndexStatus;
       this.isLoad = true;
+      this.$ls.set("tabIndexType", this.tabIndexStatus + 1, 60 * 60 * 1000);
 
       let param = { status: this.status[tabIndexStatus] };
       if (this.filters.page) {

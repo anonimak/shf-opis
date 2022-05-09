@@ -56,7 +56,7 @@ class Ref_Type_Memo extends Model
         );
     }
 
-    public static function getRef_Type_Memo($search = null, $status = true)
+    public static function getRef_Type_Memo($status, $search = null)
     {
         $typememo = Self::select('*')->where('status', $status)
             ->with(['department' => function ($query) {

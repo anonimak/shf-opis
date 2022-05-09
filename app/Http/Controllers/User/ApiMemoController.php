@@ -142,21 +142,36 @@ class ApiMemoController extends Controller
         }])
             ->where('id', $id)->first();
 
-        $isHeadOffice =  $proposeEmployee->proposeemployee->position_now->branch->is_head;
-        if (!$isHeadOffice) {
-            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')->orWhere(function ($query) use ($proposeEmployee) {
-                $query->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department);
-                $query->where('id_branch', $proposeEmployee->proposeemployee->position_now->branch->id);
-            })
-                ->orderBy('id_department', 'asc')->get();
-        } else {
-            $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')
-                ->orWhere(function ($query) use ($proposeEmployee) {
-                    $query->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department);
-                })
-                ->orderBy('id_department', 'asc')->get();
-        }
-
+        // $isHeadOffice =  $proposeEmployee->proposeemployee->position_now->branch->is_head;
+        // if (!$isHeadOffice) {
+        //     $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')->orWhere(function ($query) use ($proposeEmployee) {
+        //         $query->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department);
+        //         $query->where('id_branch', $proposeEmployee->proposeemployee->position_now->branch->id);
+        //     })
+        //         ->orderBy('id_department', 'asc')->get();
+        // } else {
+        //     $dataTypeMemo = Ref_Type_Memo::whereNull('id_department')
+        //         ->orWhere(function ($query) use ($proposeEmployee) {
+        //             $query->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department);
+        //         })
+        //         ->orderBy('id_department', 'asc')->get();
+        // }
+        $dataTypeMemo = Ref_Type_Memo::where('status', true)
+        ->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department)
+        ->where('id_branch', $proposeEmployee->proposeemployee->position_now->branch->id)
+        ->orWhere(function ($query) use ($proposeEmployee) {
+            $query->where('status', true);
+            $query->whereNull('id_department');
+            $query->where('id_branch', $proposeEmployee->proposeemployee->position_now->branch->id);
+        })->orWhere(function ($query) use ($proposeEmployee) {
+            $query->where('id_department', $proposeEmployee->proposeemployee->position_now->position->id_department);
+            $query->whereNull('id_branch');
+            $query->where('status', true);
+        })->orWhere(function ($query) {
+            $query->whereNull('id_department');
+            $query->whereNull('id_branch');
+            $query->where('status', true);
+        })->orderBy('id_department', 'asc')->get();
 
         return response()->json($dataTypeMemo);
     }

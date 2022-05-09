@@ -87,6 +87,19 @@
                       :id_memo="dataMemo.id"
                     />
                     <!-- </div> -->
+                    <b-col
+                      col
+                      lg="12"
+                      class="mb-4"
+                      v-if="form.propose_at || form.propose_payment_at"
+                    >
+                      <span class="text-danger"
+                        ><i
+                          >If there is a change in the approval, the memo will
+                          be resubmitted from the beginning.</i
+                        ></span
+                      >
+                    </b-col>
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -370,7 +383,7 @@
                           class="justify-content-center my-auto ml-2"
                           :value="true"
                           :unchecked-value="false"
-                          @change="actionChangeChenckboxManualInput"
+                          v-on:change="actionChangeCheckboxManualInput"
                         >
                           Manual input Pph
                         </b-form-checkbox>
@@ -858,8 +871,8 @@ export default {
 
       this.debouncedSaveCost();
     },
-    "form.is_cost_invoice" : function(val) {
-      if(val) {
+    "form.is_cost_invoice": function (val) {
+      if (val) {
         this.sub_total = 0;
         this.pph = 0;
         this.ppn = 0;
@@ -1186,10 +1199,11 @@ export default {
           // An error occurred
         });
     },
-    actionChangeChenckboxManualInput() {
+    actionChangeCheckboxManualInput() {
       if (this.manualInputPph) {
         this.pph = 0;
       }
+      this.debouncedSaveCost();
     },
     submitUpdate(id) {
       axios

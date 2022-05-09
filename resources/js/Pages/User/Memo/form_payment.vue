@@ -70,6 +70,19 @@
                         />
                       </b-overlay>
                     </div>
+                    <b-col
+                      col
+                      lg="12"
+                      class="mb-4"
+                      v-if="dataMemo.propose_payment_at"
+                    >
+                      <span class="text-danger"
+                        ><i
+                          >If there is a change in the approval, the memo will
+                          be resubmitted from the beginning.</i
+                        ></span
+                      >
+                    </b-col>
                   </b-row>
                 </b-col>
               </b-row>
@@ -206,16 +219,19 @@
                 <b-col>
                   <h5>Cost/Expense</h5>
                   <b-form-checkbox
-                      id="checkbox-2"
-                      v-model="dataMemo.is_cost_invoice"
-                      name="checkbox-2"
-                      :value="true"
-                      :unchecked-value="false"
-                      class="mb-2"
-                    >
-                      use Cost Invoice
-                    </b-form-checkbox>
-                  <form-invoice v-if="dataMemo.is_cost_invoice" :id_memo="dataMemo.id" />
+                    id="checkbox-2"
+                    v-model="dataMemo.is_cost_invoice"
+                    name="checkbox-2"
+                    :value="true"
+                    :unchecked-value="false"
+                    class="mb-2"
+                  >
+                    use Cost Invoice
+                  </b-form-checkbox>
+                  <form-invoice
+                    v-if="dataMemo.is_cost_invoice"
+                    :id_memo="dataMemo.id"
+                  />
                 </b-col>
               </b-row>
               <b-row
@@ -723,7 +739,7 @@ export default {
     this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1000);
   },
   methods: {
-      autoSaveItemCost: function () {
+    autoSaveItemCost: function () {
       this.form.sub_total = this.sub_total;
       this.form.pph = this.pph;
       this.form.ppn = this.ppn;

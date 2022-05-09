@@ -277,22 +277,38 @@ class MemoController extends Controller
     public function create()
     {
         $employeeInfo = User::getUsersEmployeeInfo();
-        $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
-        if (!$isHeadOffice) {
-            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
-                $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
-                $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+        $dataTypeMemo = Ref_Type_Memo::where('status', true)
+            ->where('id_department', $employeeInfo->employee->position_now->position->id_department)
+            ->where('id_branch', $employeeInfo->employee->position_now->branch->id)
+            ->orWhere(function ($query) use ($employeeInfo) {
                 $query->where('status', true);
-            })
-                ->orderBy('id_department', 'asc')->get();
-        } else {
-            $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')
-                ->orWhere(function ($query) use ($employeeInfo) {
-                    $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
-                    $query->where('status', true);
-                })
-                ->orderBy('id_department', 'asc')->get();
-        }
+                $query->whereNull('id_department');
+                $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+            })->orWhere(function ($query) use ($employeeInfo) {
+                $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+                $query->whereNull('id_branch');
+                $query->where('status', true);
+            })->orWhere(function ($query) {
+                $query->whereNull('id_department');
+                $query->whereNull('id_branch');
+                $query->where('status', true);
+            })->orderBy('id_department', 'asc')->get();
+        // $isHeadOffice =  $employeeInfo->employee->position_now->branch->is_head;
+        // if (!$isHeadOffice) {
+        //     $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')->orWhere(function ($query) use ($employeeInfo) {
+        //         $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+        //         $query->where('id_branch', $employeeInfo->employee->position_now->branch->id);
+        //         $query->where('status', true);
+        //     })
+        //         ->orderBy('id_department', 'asc')->get();
+        // } else {
+        //     $dataTypeMemo = Ref_Type_Memo::where('status', true)->whereNull('id_department')
+        //         ->orWhere(function ($query) use ($employeeInfo) {
+        //             $query->where('id_department', $employeeInfo->employee->position_now->position->id_department);
+        //             $query->where('status', true);
+        //         })
+        //         ->orderBy('id_department', 'asc')->get();
+        // }
         return Inertia::render('User/Memo/create', [
             'breadcrumbItems' => array(
                 [
@@ -537,7 +553,7 @@ class MemoController extends Controller
     {
         $memo = Memo::where('id', $id)->with('ref_table')->first();
         $employeeInfo = User::getUsersEmployeeInfo();
-
+        $isRevised = ($memo->propose_payment_at || $memo->propose_at) ? true : false;
         // form payment
         if ($memo->ref_table->type == 'payment' || $memo->payment == true) {
             // cek apakah ada approver
@@ -567,9 +583,15 @@ class MemoController extends Controller
                 'propose_payment_at' => Carbon::now()
             ]);
 
-            D_Payment_Approver::where('id_memo', $id)->update([
-                'status'   => 'submit'
-            ]);
+            if ($isRevised) {
+                D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+                    'status'   => 'submit'
+                ]);
+            } else {
+                D_Payment_Approver::where('id_memo', $id)->update([
+                    'status'   => 'submit'
+                ]);
+            }
 
             // insert to history where first time submit
             D_Memo_History::create([
@@ -652,9 +674,15 @@ class MemoController extends Controller
                 'propose_at' => Carbon::now()
             ]);
 
-            D_Memo_Approver::where('id_memo', $id)->update([
-                'status'   => 'submit'
-            ]);
+            if ($isRevised) {
+                D_Memo_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+                    'status'   => 'submit'
+                ]);
+            } else {
+                D_Memo_Approver::where('id_memo', $id)->update([
+                    'status'   => 'submit'
+                ]);
+            }
 
             // insert to history where first time submit
             D_Memo_History::create([
@@ -800,6 +828,7 @@ class MemoController extends Controller
 
         $memo = Memo::where('id', $id)->with('approvers')->first();
         $employeeInfo = User::getUsersEmployeeInfo();
+        $isRevised = ($memo->propose_payment_at) ? true : false;
         // cek apakah ada approver
         if (D_Payment_Approver::where('id_memo', $id)->count() <= 0) {
             $memo_approver = D_Memo_Approver::where('id_memo', $id)->get();
@@ -820,9 +849,15 @@ class MemoController extends Controller
             'is_cost_invoice' => $request->input('is_cost_invoice')
         ]);
 
-        D_Payment_Approver::where('id_memo', $id)->update([
-            'status'   => 'submit'
-        ]);
+        if ($isRevised) {
+            D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+                'status'   => 'submit'
+            ]);
+        } else {
+            D_Payment_Approver::where('id_memo', $id)->update([
+                'status'   => 'submit'
+            ]);
+        }
 
         // insert to history where first time submit
         D_Memo_History::create([
@@ -1383,9 +1418,9 @@ class MemoController extends Controller
             'status'   => 'edit'
         ]);
 
-        D_Memo_Approver::where('id_memo', $id)->update([
-            'status'   => 'edit'
-        ]);
+        // D_Memo_Approver::where('id_memo', $id)->update([
+        //     'status'   => 'edit'
+        // ]);
 
         $memo = Memo::where('id', $id)->first();
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "memo has sent to draft.");
@@ -1397,9 +1432,9 @@ class MemoController extends Controller
             'status_payment'   => 'edit'
         ]);
 
-        D_Payment_Approver::where('id_memo', $id)->update([
-            'status'   => 'edit'
-        ]);
+        // D_Payment_Approver::where('id_memo', $id)->update([
+        //     'status'   => 'edit'
+        // ]);
 
         $memo = Memo::where('id', $id)->first();
         return Redirect::route('user.memo.draft.edit', [$memo])->with('success', "memo has sent to draft.");
