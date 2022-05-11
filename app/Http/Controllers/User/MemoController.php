@@ -355,6 +355,8 @@ class MemoController extends Controller
 
         $attachments = $attachments->map(function ($itemattach) {
             $itemattach->name = Storage::url('public/uploads/memo/attach/' . $itemattach->name);
+            // contoh disk ftp
+            // $itemattach->name = Storage::disk('ftp')->exists('public/uploads/memo/attach/' . $itemattach->name);
             return $itemattach;
         });
 
@@ -1090,6 +1092,8 @@ class MemoController extends Controller
 
             // $path = Storage::disk('public')->putFileAs('forms/files', $file, $fileName);
             Storage::putFileAs('public/uploads/memo/attach', $file, $fileName);
+            // contoh ftp
+            // Storage::disk('ftp')->put('public/uploads/memo/attach', $file);
 
             D_Memo_Attachment::create([
                 'id_memo' => $id,
