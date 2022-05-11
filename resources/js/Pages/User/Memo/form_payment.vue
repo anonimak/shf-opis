@@ -275,7 +275,7 @@
                           Manual input Pph
                         </b-form-checkbox>
                       </b-input-group>
-                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
+                      <b-input-group prepend="PPN" class="mb-2 mt-2">
                         <b-form-input
                           disabled
                           aria-label="ppn"
@@ -700,7 +700,7 @@ export default {
       if (!val) {
         val = 0;
       }
-      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
+      this.ppn = this.checkPPNInclude ? 0 : 0.11 * parseFloat(val);
       // this.pph = 0.02 * parseFloat(val);
       this.pphValueChange(val);
       this.grand_total =
@@ -718,7 +718,7 @@ export default {
       if (val) {
         this.ppn = 0;
       } else {
-        this.ppn = 0.1 * parseFloat(this.sub_total);
+        this.ppn = 0.11 * parseFloat(this.sub_total);
       }
       this.grand_total =
         parseFloat(this.sub_total) +
