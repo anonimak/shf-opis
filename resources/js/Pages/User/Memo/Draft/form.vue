@@ -10,25 +10,25 @@
         <b-card no-body>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Memo"
             :href="route(__preview, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == false"
           >
-            preview
+            <i class="fa fa-eye" aria-hidden="true"></i> preview
           </a>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Payment"
             :href="route(__previewpayment, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == true"
           >
-            preview payment
+            <i class="fa fa-eye" aria-hidden="true"></i> preview payment
           </a>
           <b-form id="form" @submit.prevent="submit">
             <b-card-body>
