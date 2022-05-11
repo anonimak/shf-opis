@@ -404,17 +404,19 @@ class MemoController extends Controller
     public function itemAutoSave(Request $request, $id)
     {
         Memo::where('id', $id)->update([
+            'title'             => $request->input('title'),
             'background'        => $request->input('background'),
             'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),
             'conclusion'        => $request->input('conclusion'),
-            'is_cost_invoice'        => $request->input('is_cost_invoice'),
+            'is_cost_invoice'   => $request->input('is_cost_invoice'),
             'cost'              => ($request->has('cost')) ? $request->input('cost') : null,
         ]);
 
         return response()->json([
             'status' => 200,
             'message' => 'Successfull auto save.',
+            'title' => $request->input('title'),
             'background' => $request->input('background'),
             'orientation_paper' => $request->input('orientation_paper'),
             'information'       => $request->input('information'),

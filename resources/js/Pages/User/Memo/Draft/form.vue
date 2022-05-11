@@ -49,7 +49,12 @@
                         </tr>
                         <tr>
                           <td>Title</td>
-                          <td>{{ form.title }}</td>
+                          <td>
+                            <b-form-input
+                              v-model="form.title"
+                              @change="autoSaveItem()"
+                            ></b-form-input>
+                          </td>
                         </tr>
                         <tr>
                           <td>Doc. No</td>
@@ -909,6 +914,7 @@ export default {
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
         .then((response) => {
+          this.form.title = response.data.title;
           this.form.background = response.data.background;
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
