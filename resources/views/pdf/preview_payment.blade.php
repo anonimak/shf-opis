@@ -293,7 +293,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th style="width: 38%; text-align: left;">PPN (10%)</th>
+                    <th style="width: 38%; text-align: left;">PPN</th>
                     <td nowrap>
                         <div style="float: left;">Rp</div>
                         <div style="float: right;">{{ number_format($dataTotalCost['ppn'], 2) }}</div>

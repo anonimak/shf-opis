@@ -139,7 +139,9 @@
                         >
                       </b-form-group>
                       <p v-else>
-                        {{ item.type }}
+                        {{
+                          item.type == "barang" ? "non objek PPh" : "objek PPh"
+                        }}
                       </p>
                     </td>
                     <td @click="editMode(index, idx)" class="text-right">
@@ -577,6 +579,9 @@ export default {
       url_delete_item_invoice: "user.api.invoice.deleteiteminvoice",
       url_delete_data_invoice: "user.api.invoice.deletedatainvoice",
       isLoadingData: true,
+      configInvoice: {
+        ppn: 0.11,
+      },
     };
   },
 
@@ -800,10 +805,9 @@ export default {
 
     countPPN(idx) {
       let countPPN =
-        ((this.sumItemInvoiceBy(idx, "barang") +
+        (this.sumItemInvoiceBy(idx, "barang") +
           this.sumItemInvoiceBy(idx, "jasa")) *
-          10) /
-        100;
+        this.configInvoice.ppn;
       this.$set(this.dataInvoices[idx], "ppn_value", countPPN);
       return countPPN;
     },
