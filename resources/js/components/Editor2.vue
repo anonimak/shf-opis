@@ -131,6 +131,7 @@ export default {
   }
 }
 .editor__content .ProseMirror {
+  min-height: 120px;
   outline: none;
 }
 
