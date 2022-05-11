@@ -403,6 +403,10 @@ class MemoController extends Controller
 
     public function itemAutoSave(Request $request, $id)
     {
+        $request->validate([
+            'title'        => 'required',
+        ]);
+
         Memo::where('id', $id)->update([
             'title'             => $request->input('title'),
             'background'        => $request->input('background'),

@@ -50,10 +50,24 @@
                         <tr>
                           <td>Title</td>
                           <td>
-                            <b-form-input
-                              v-model="form.title"
-                              @change="autoSaveItem()"
-                            ></b-form-input>
+                            <b-form-group
+                              id="input-group-title"
+                              label=""
+                              label-for="input-title"
+                              :invalid-feedback="
+                                errors.title ? errors.title[0] : ''
+                              "
+                              :state="errors.title ? false : null"
+                            >
+                              <b-form-input
+                                id="input-title"
+                                v-model="form.title"
+                                name="title"
+                                @change="autoSaveItem()"
+                                :state="errors.title ? false : null"
+                                required
+                              ></b-form-input>
+                            </b-form-group>
                           </td>
                         </tr>
                         <tr>
@@ -715,7 +729,6 @@ export default {
     "dataMemo",
     // "dataTypeMemo",
     "formType",
-    "errors",
     "dataPosition",
     "dataTotalCost",
     "dataAttachments",
@@ -753,6 +766,7 @@ export default {
       fieldSaving: "",
       isSaving: false,
       form: {},
+      errors: {},
       //payment
       checkPPNInclude: false,
       sub_total: 0,
@@ -914,6 +928,7 @@ export default {
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
         .then((response) => {
+          this.errors = {};
           this.form.title = response.data.title;
           this.form.background = response.data.background;
           this.form.information = response.data.information;
@@ -927,7 +942,10 @@ export default {
           }
         })
         .catch((error) => {
-          this.pageFlashes.error = error.response.data.errors;
+          if (error.response) {
+            this.errors = { ...error.response.data.errors };
+          }
+          //   this.pageFlashes.error = error.response.data.errors;
         });
     },
     autoSaveItemCost: function () {
