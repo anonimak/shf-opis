@@ -10,25 +10,25 @@
         <b-card no-body>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Memo"
             :href="route(__preview, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == false"
           >
-            preview
+            <i class="fa fa-eye" aria-hidden="true"></i> preview
           </a>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Payment"
             :href="route(__previewpayment, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == true"
           >
-            preview payment
+            <i class="fa fa-eye" aria-hidden="true"></i> preview payment
           </a>
           <b-form id="form" @submit.prevent="submit">
             <b-card-body>
@@ -49,7 +49,26 @@
                         </tr>
                         <tr>
                           <td>Title</td>
-                          <td>{{ form.title }}</td>
+                          <td>
+                            <b-form-group
+                              id="input-group-title"
+                              label=""
+                              label-for="input-title"
+                              :invalid-feedback="
+                                errors.title ? errors.title[0] : ''
+                              "
+                              :state="errors.title ? false : null"
+                            >
+                              <b-form-input
+                                id="input-title"
+                                v-model="form.title"
+                                name="title"
+                                @change="autoSaveItem()"
+                                :state="errors.title ? false : null"
+                                required
+                              ></b-form-input>
+                            </b-form-group>
+                          </td>
                         </tr>
                         <tr>
                           <td>Doc. No</td>
@@ -724,7 +743,6 @@ export default {
     "dataMemo",
     // "dataTypeMemo",
     "formType",
-    "errors",
     "dataPosition",
     "dataTotalCost",
     "dataAttachments",
@@ -762,6 +780,7 @@ export default {
       fieldSaving: "",
       isSaving: false,
       form: {},
+      errors: {},
       //payment
       checkPPNInclude: false,
       sub_total: 0,
@@ -932,6 +951,8 @@ export default {
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
         .then((response) => {
+          this.errors = {};
+          this.form.title = response.data.title;
           this.form.background = response.data.background;
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
@@ -944,7 +965,10 @@ export default {
           }
         })
         .catch((error) => {
-          this.pageFlashes.error = error.response.data.errors;
+          if (error.response) {
+            this.errors = { ...error.response.data.errors };
+          }
+          //   this.pageFlashes.error = error.response.data.errors;
         });
     },
     autoSaveItemCost: function () {
