@@ -590,7 +590,7 @@ class MemoController extends Controller
             ]);
 
             if ($isRevised) {
-                D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+                D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->orWhere('status', 'edit')->update([
                     'status'   => 'submit'
                 ]);
             } else {
@@ -681,7 +681,7 @@ class MemoController extends Controller
             ]);
 
             if ($isRevised) {
-                D_Memo_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+                D_Memo_Approver::where('id_memo', $id)->where('status', 'revisi')->orWhere('status', 'edit')->update([
                     'status'   => 'submit'
                 ]);
             } else {
@@ -856,7 +856,7 @@ class MemoController extends Controller
         ]);
 
         if ($isRevised) {
-            D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->update([
+            D_Payment_Approver::where('id_memo', $id)->where('status', 'revisi')->orWhere('status', 'edit')->update([
                 'status'   => 'submit'
             ]);
         } else {
