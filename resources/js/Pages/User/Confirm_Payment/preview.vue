@@ -467,7 +467,7 @@ export default {
       //   this.buttonClicked = "approve";
       this.idItemClicked = item.id;
       this.idConfirmedPayment = item.confirmed_payment_by;
-      this.modalTitle = "Modal Confirming Payment";
+      this.modalTitle = "Confirming Payment";
       this.modalCaption = `<b>Title : ${item.title}</b> <br>`;
       this.modalCaption += `<b>Document No : ${item.doc_no}</b><br><br>`;
       this.modalCaption += `Are you sure to confirm this memo payment has been paid?`;

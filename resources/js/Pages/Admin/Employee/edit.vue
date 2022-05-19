@@ -275,7 +275,7 @@
       </div>
     </div>
     <modal-form-terminate
-      title="Modal Terminate"
+      title="Terminate Form"
       caption="Are you sure to terminate?"
       :idItemClicked="form.id"
       @handleOk="actionSubmitTerminate"

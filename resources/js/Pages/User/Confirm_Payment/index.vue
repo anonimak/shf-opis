@@ -258,7 +258,7 @@ export default {
       //   this.buttonClicked = "approve";
       this.idItemClicked = item.id;
       this.idConfirmedPayment = item.confirmed_payment_by;
-      this.modalTitle = "Modal Confirming Payment";
+      this.modalTitle = "Confirming Payment";
       this.modalCaption = `<b>Title : ${item.title}</b> <br>`;
       this.modalCaption += `<b>Document No : ${item.doc_no}</b><br><br>`;
       this.modalCaption += `Are you sure to confirm this memo payment has been paid?`;
@@ -268,7 +268,7 @@ export default {
     // actionNext(id) {
     //   this.buttonClicked = "approve";
     //   this.idItemClicked = id;
-    //   this.modalTitle = "Modal Acknowledge";
+    //   this.modalTitle = "Approval Form";
     //   this.modalCaption = "Are you sure to next?";
 
     //   this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -276,7 +276,7 @@ export default {
     // actionRevisi(id) {
     //   this.buttonClicked = "revisi";
     //   this.idItemClicked = id;
-    //   this.modalTitle = "Modal Revision";
+    //   this.modalTitle = "Revision Form";
     //   this.modalCaption = "Are you sure to revision?";
 
     //   this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -284,7 +284,7 @@ export default {
     // actionReject(id) {
     //   this.buttonClicked = "reject";
     //   this.idItemClicked = id;
-    //   this.modalTitle = "Modal Reject";
+    //   this.modalTitle = "Rejection Form";
     //   this.modalCaption = "Are you sure to reject?";
 
     //   this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
