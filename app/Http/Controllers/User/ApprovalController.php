@@ -15,6 +15,7 @@ use App\Models\D_Po_Approver;
 use App\Models\Employee;
 use App\Models\Employee_History;
 use App\Models\Branch;
+use App\Notifications\ApprovalNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -316,16 +317,39 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "info",
                         'subject' => "Memo $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "Memo $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "Memo $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for approve"
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'   => $memo->title,
+                        'type'     => "info",
                         'subject' => "Memo $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "Memo $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "Memo $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission memo $memo->title - $memo->doc_no. Click here for review"
                     ];
                 }
 
+                // notif app
+                $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statusmemo.webpreview', $memo->id)));
+                $nextApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.memo.detail', $memo->id)));
                 Mail::to($mailApprover)->send(new \App\Mail\ApprovalMemoMail($details));
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
             } else {
@@ -340,13 +364,21 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "Memo $memo->title - $memo->doc_no approved",
-                        'message' => "Memo $memo->title - $memo->doc_no has approved"
+                        'message' => "Memo $memo->title - $memo->doc_no has approved",
+                        'status_approver' => $status_approver,
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "Memo $memo->title - $memo->doc_no reviewed",
-                        'message' => "Memo $memo->title - $memo->doc_no has reviewed"
+                        'message' => "Memo $memo->title - $memo->doc_no has reviewed",
+                        'status_approver' => $status_approver,
                     ];
                 }
 
@@ -382,6 +414,8 @@ class ApprovalController extends Controller
                 //
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+                // notif app
+                $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statusmemo.webpreview', $memo->id)));
             }
         }
 
@@ -389,7 +423,7 @@ class ApprovalController extends Controller
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status' => 'revisi']);
             // insert to history when revisi by approver
-            if($approver->type_approver == 'acknowledge') {
+            if ($approver->type_approver == 'acknowledge') {
                 $type_approver = 'reviewer';
             } else {
                 $type_approver = $approver->type_approver;
@@ -403,11 +437,17 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'      => 'secondary',
                 'subject' => "Memo $memo->title - $memo->doc_no revised",
-                'message' => "Memo $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message",
+                'status_approver' => $status_approver,
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            // notif app
+            $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statusmemo.webpreview', $memo->id)));
         }
 
         if ($status_approver == 'reject') {
@@ -422,11 +462,17 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'      => 'danger',
                 'subject' => "Memo $memo->title - $memo->doc_no rejected",
-                'message' => "Memo $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message",
+                'status_approver' => $status_approver,
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposeMail($detailspropose));
+            // notif app
+            $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statusmemo.webpreview', $memo->id)));
         }
 
         return Redirect::route('user.memo.approval.memo.index')->with('success', "Successfull " . $request->input('variant'));
@@ -496,15 +542,39 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "info",
                         'subject' => "Memo Payment $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission memo payment $memo->title - $memo->doc_no. Click here for approve"
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'   => $memo->title,
+                        'type'     => "info",
                         'subject' => "Memo Payment $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission memo payment $memo->title - $memo->doc_no. Click here for review"
                     ];
                 }
+
+                // notif app
+                $proposeEmployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspayment.webpreview', $memo->id)));
+                $nextApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.payment.detail', $memo->id)));
 
                 Mail::to($mailApprover)->send(new \App\Mail\ApprovalPaymentMail($details));
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
@@ -520,13 +590,21 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "Memo Payment $memo->title - $memo->doc_no approved",
-                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved"
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has approved",
+                        'status_approver' => $status_approver,
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "Memo Payment $memo->title - $memo->doc_no reviewed",
-                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed"
+                        'message' => "Memo Payment $memo->title - $memo->doc_no has reviewed",
+                        'status_approver' => $status_approver,
                     ];
                 }
 
@@ -552,6 +630,9 @@ class ApprovalController extends Controller
                 });
 
                 $details2 = [
+                    'doc_no'   => $memo->doc_no,
+                    'caption'  => $memo->title,
+                    'type'     => "warning",
                     'subject' => "Confirm Payment Memo $memo->title",
                     'doc_no' => $memo->doc_no,
                     'url' => route('user.memo.confirmpayment.webpreview', $memo->id)
@@ -560,6 +641,9 @@ class ApprovalController extends Controller
                 Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
                 //notif ke confirmer payment
                 Mail::to($confirmer_payment->email)->send(new \App\Mail\ConfirmPaymentMail($details2));
+                // notif app
+                $proposeEmployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspayment.webpreview', $memo->id)));
+                $confirmer_payment->user->notify(new ApprovalNotification($detailspropose, route('user.memo.confirmpayment.webpreview', $memo->id)));
             }
         }
 
@@ -567,7 +651,7 @@ class ApprovalController extends Controller
             // notif ke user propose
             Memo::where('id', $approver->id_memo)->update(['status_payment' => 'revisi']);
             // insert to history when revisi by approver
-            if($approver->type_approver == 'acknowledge') {
+            if ($approver->type_approver == 'acknowledge') {
                 $type_approver = 'reviewer';
             } else {
                 $type_approver = $approver->type_approver;
@@ -580,11 +664,17 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "secondary",
                 'subject' => "Memo Payment $memo->title - $memo->doc_no revised",
-                'message' => "Memo Payment $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo Payment $memo->title - $memo->doc_no has revised by {$type_approver} lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message",
+                'status_approver' => $status_approver,
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
+            // notif app
+            $proposeEmployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspayment.webpreview', $memo->id)));
         }
 
         if ($status_approver == 'reject') {
@@ -599,11 +689,17 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'     => "danger",
                 'subject' => "Memo Payment $memo->title - $memo->doc_no rejected",
-                'message' => "Memo Payment $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "Memo Payment $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message",
+                'status_approver' => $status_approver,
             ];
             // notif ke user propose
             Mail::to($proposeEmployee->email)->send(new \App\Mail\NotifUserProposePaymentMail($detailspropose));
+            // notif app
+            $proposeEmployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspayment.webpreview', $memo->id)));
         }
 
         return Redirect::route('user.memo.approval.payment.index')->with('success', "Successfull " . $request->input('variant'));
@@ -668,18 +764,42 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "info",
                         'subject' => "PO $memo->title - $memo->doc_no approved by {$approver->employee->firstname}",
-                        'message' => "PO $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "PO $memo->title - $memo->doc_no has approved by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission PO $memo->title - $memo->doc_no. Click here for approve"
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'   => $memo->title,
+                        'type'     => "info",
                         'subject' => "PO $memo->title - $memo->doc_no reviewed by {$approver->employee->firstname}",
-                        'message' => "PO $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}"
+                        'message' => "PO $memo->title - $memo->doc_no has reviewed by {$approver->employee->firstname} {$approver->employee->lastname}",
+                        'status_approver' => $status_approver,
+                    ];
+                    $detailapprovers = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'     => "warning",
+                        'subject' => "New submission PO $memo->title - $memo->doc_no. Click here for review"
                     ];
                 }
 
                 Mail::to($mailApprover)->send(new \App\Mail\ApprovalPOMail($details));
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+                // notif app
+                $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspo.webpreview', $memo->id)));
+                $nextApprover->employee->user->notify(new ApprovalNotification($detailapprovers, route('user.memo.approval.po.detail', $memo->id)));
             } else {
                 Memo::where('id', $approver->id_memo)->update(['status_po' => 'approve']);
                 // insert to history when all approved by approver
@@ -692,17 +812,27 @@ class ApprovalController extends Controller
 
                 if ($approver->type_approver == 'approver') {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "PO $memo->title - $memo->doc_no approved",
-                        'message' => "PO $memo->title - $memo->doc_no has approved"
+                        'message' => "PO $memo->title - $memo->doc_no has approved",
+                        'status_approver' => $status_approver,
                     ];
                 } else {
                     $detailspropose = [
+                        'doc_no'   => $memo->doc_no,
+                        'caption'  => $memo->title,
+                        'type'      => 'success',
                         'subject' => "PO $memo->title - $memo->doc_no reviewed",
-                        'message' => "PO $memo->title - $memo->doc_no has reviewed"
+                        'message' => "PO $memo->title - $memo->doc_no has reviewed",
+                        'status_approver' => $status_approver,
                     ];
                 }
                 // notif ke user propose
                 Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+                // notif app
+                $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspo.webpreview', $memo->id)));
             }
         }
 
@@ -718,11 +848,17 @@ class ApprovalController extends Controller
             ]);
 
             $detailspropose = [
+                'doc_no'   => $memo->doc_no,
+                'caption'  => $memo->title,
+                'type'      => 'danger',
                 'subject' => "PO $memo->title - $memo->doc_no rejected",
-                'message' => "PO $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message"
+                'message' => "PO $memo->title - $memo->doc_no has rejected by approver lvl {$approver->idx} ({$approver->employee->firstname} {$approver->employee->lastname}). $message",
+                'status_approver' => $status_approver,
             ];
             // notif ke user propose
             Mail::to($memo->proposeemployee->email)->send(new \App\Mail\NotifUserProposePOMail($detailspropose));
+            // notif app
+            $memo->proposeemployee->user->notify(new ApprovalNotification($detailspropose, route('user.memo.statuspo.webpreview', $memo->id)));
         }
 
         return Redirect::route('user.memo.approval.po.index')->with('success', "Successfull " . $request->input('variant'));

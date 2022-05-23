@@ -151,11 +151,18 @@
                                   aria-labelledby="dropdownMenuButton"
                                 >
                                   <inertia-link
-                                    v-if="tabIndex == 3"
+                                    v-if="tabIndex == 3 && item.ref_table.type == 'approval'"
                                     :href="route(__editpayment, item.id)"
                                     class="dropdown-item"
                                   >
                                     Edit Payment
+                                  </inertia-link>
+                                  <inertia-link
+                                    v-if="tabIndex == 3 && item.ref_table.type == 'payment'"
+                                    :href="route(__senddraftpayment, item.id)"
+                                    class="dropdown-item"
+                                  >
+                                    Send to draft
                                   </inertia-link>
                                   <inertia-link
                                     :href="route(__webpreview, item.id)"
@@ -234,6 +241,7 @@ export default {
     "__webpreview",
     "__previewpdf",
     "__editpayment",
+    "__senddraftpayment"
   ],
   metaInfo: { title: "Status Payment" },
   data() {
@@ -342,8 +350,8 @@ export default {
       if (this.$ls.get("tabIndexPayment")) {
         this.tabIndex = this.$ls.get("tabIndexPayment") - 1;
       }
-
-      let param = { tab: this.tab[this.tabIndex] };
+      let query = this.form.search;
+      let param = { search: query, tab: this.tab[this.tabIndex] };
       if (this.filters.page) {
         param.page = this.filters.page;
       }

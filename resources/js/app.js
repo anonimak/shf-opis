@@ -24,6 +24,7 @@ import Storage from "vue-ls";
 
 // untuk moment js
 const moment = require("moment");
+window.moment = moment;
 // require("moment/locale/id");
 
 Vue.use(VueMeta);
@@ -74,6 +75,12 @@ Vue.use(VueCurrencyFilter, {
     symbolPosition: "front",
     symbolSpacing: true,
     avoidEmptyDecimals: 0
+});
+
+// native notification
+import VueNativeNotification from "vue-native-notification";
+Vue.use(VueNativeNotification, {
+    requestOnNotify: true
 });
 
 Vue.mixin(require("./base"));

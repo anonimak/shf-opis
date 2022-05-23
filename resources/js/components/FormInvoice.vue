@@ -52,12 +52,11 @@
                     <th v-if="isEditMode && !editOnlyTax" scope="col">#</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody v-click-outside="onClickOutside">
                   <tr
                     v-for="(item, index) in invoice.item_invoices"
                     :key="index"
                     @click="editMode(index, idx)"
-                    v-click-outside="onClickOutside"
                     style="cursor: pointer"
                   >
                     <td @click="editMode(index, idx)">
@@ -130,17 +129,19 @@
                           v-model="item.type"
                           @change="submitItemInvoice(index, idx, 'type')"
                           value="barang"
-                          >barang</b-form-radio
+                          >non objek PPh</b-form-radio
                         >
                         <b-form-radio
                           v-model="item.type"
                           @change="submitItemInvoice(index, idx, 'type')"
                           value="jasa"
-                          >jasa</b-form-radio
+                          >objek PPh</b-form-radio
                         >
                       </b-form-group>
                       <p v-else>
-                        {{ item.type }}
+                        {{
+                          item.type == "barang" ? "non objek PPh" : "objek PPh"
+                        }}
                       </p>
                     </td>
                     <td @click="editMode(index, idx)" class="text-right">
@@ -578,6 +579,9 @@ export default {
       url_delete_item_invoice: "user.api.invoice.deleteiteminvoice",
       url_delete_data_invoice: "user.api.invoice.deletedatainvoice",
       isLoadingData: true,
+      configInvoice: {
+        ppn: 0.11,
+      },
     };
   },
 
@@ -587,7 +591,7 @@ export default {
 
   methods: {
     onClickOutside() {
-      this.editMode(null, null);
+      //   this.editMode(null, null);
     },
     onMouseOverTableInvoice(event) {
       if (this.isMobile()) return;
@@ -617,7 +621,7 @@ export default {
             (invoice) => invoice.id_invoice != id_invoice
           );
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
           }
         });
     },
@@ -633,11 +637,11 @@ export default {
           this.dataInvoices = [...this.dataInvoices, invoice];
           this.editMode(0, this.dataInvoices.length - 1);
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
           }
         })
         .catch((error) => {
-          this.pageFlashes.error = error.response.data.errors;
+          // this.pageFlashes.error = error.response.data.errors;
         });
     },
 
@@ -658,7 +662,7 @@ export default {
           .delete(route(this.url_delete_item_invoice, id_item))
           .then((response) => {
             if (response.data.status == 200) {
-              this.pageFlashes.success = response.data.message;
+              // this.pageFlashes.success = response.data.message;
             }
           });
       }
@@ -712,8 +716,8 @@ export default {
     submitItemInvoice(indexItem, indexInvoice, keyfield) {
       this.countTotal(indexInvoice);
       let row = this.dataInvoices[indexInvoice].item_invoices[indexItem];
-      //   _.debounce(this.autoSaveItemInvoice(row), 2000);
-      this.autoSaveItemInvoice(row, keyfield);
+      _.debounce(this.autoSaveItemInvoice(row, keyfield), 2000);
+      // this.autoSaveItemInvoice(row, keyfield);
     },
 
     autoSaveItemInvoice: function (row, keyfield) {
@@ -723,11 +727,11 @@ export default {
           .then((response) => {
             this.getData();
             if (response.data.status == 200) {
-              this.pageFlashes.success = response.data.message;
+              // this.pageFlashes.success = response.data.message;
             }
           })
           .catch((error) => {
-            this.pageFlashes.error = error.response.data.errors;
+            // this.pageFlashes.error = error.response.data.errors;
           });
       } else {
         axios
@@ -738,11 +742,11 @@ export default {
           .then((response) => {
             // this.getData();
             if (response.data.status == 200) {
-              this.pageFlashes.success = response.data.message;
+              // this.pageFlashes.success = response.data.message;
             }
           })
           .catch((error) => {
-            this.pageFlashes.error = error.response.data.errors;
+            // this.pageFlashes.error = error.response.data.errors;
           });
       }
     },
@@ -767,11 +771,11 @@ export default {
         .then((response) => {
           // this.getData();
           if (response.data.status == 200) {
-            this.pageFlashes.success = response.data.message;
+            // this.pageFlashes.success = response.data.message;
           }
         })
         .catch((error) => {
-          this.pageFlashes.error = error.response.data.errors;
+          // this.pageFlashes.error = error.response.data.errors;
         });
     },
 
@@ -801,10 +805,9 @@ export default {
 
     countPPN(idx) {
       let countPPN =
-        ((this.sumItemInvoiceBy(idx, "barang") +
+        (this.sumItemInvoiceBy(idx, "barang") +
           this.sumItemInvoiceBy(idx, "jasa")) *
-          10) /
-        100;
+        this.configInvoice.ppn;
       this.$set(this.dataInvoices[idx], "ppn_value", countPPN);
       return countPPN;
     },

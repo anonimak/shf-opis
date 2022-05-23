@@ -10,25 +10,25 @@
         <b-card no-body>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Memo"
             :href="route(__preview, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == false"
           >
-            preview
+            <i class="fa fa-eye" aria-hidden="true"></i> preview
           </a>
           <a
             role="button"
-            class="btn btn-secondary"
+            class="btn btn-info"
             v-b-tooltip.hover
             title="Preview Payment"
             :href="route(__previewpayment, dataMemo.id)"
             target="_blank"
             v-if="dataMemo.payment == true"
           >
-            preview payment
+            <i class="fa fa-eye" aria-hidden="true"></i> preview payment
           </a>
           <b-form id="form" @submit.prevent="submit">
             <b-card-body>
@@ -49,7 +49,26 @@
                         </tr>
                         <tr>
                           <td>Title</td>
-                          <td>{{ form.title }}</td>
+                          <td>
+                            <b-form-group
+                              id="input-group-title"
+                              label=""
+                              label-for="input-title"
+                              :invalid-feedback="
+                                errors.title ? errors.title[0] : ''
+                              "
+                              :state="errors.title ? false : null"
+                            >
+                              <b-form-input
+                                id="input-title"
+                                v-model="form.title"
+                                name="title"
+                                @change="autoSaveItem()"
+                                :state="errors.title ? false : null"
+                                required
+                              ></b-form-input>
+                            </b-form-group>
+                          </td>
                         </tr>
                         <tr>
                           <td>Doc. No</td>
@@ -87,6 +106,19 @@
                       :id_memo="dataMemo.id"
                     />
                     <!-- </div> -->
+                    <b-col
+                      col
+                      lg="12"
+                      class="mb-4"
+                      v-if="form.propose_at || form.propose_payment_at"
+                    >
+                      <span class="text-danger"
+                        ><i
+                          >If there is a change in the approval, the memo will
+                          be resubmitted from the beginning.</i
+                        ></span
+                      >
+                    </b-col>
                   </b-row>
                   <!-- <hr /> -->
                   <b-row class="mb-4">
@@ -311,10 +343,10 @@
                     class="mt-2"
                   >
                     <b-form-checkbox
-                      id="checkbox-1"
+                      id="checkbox-2"
                       v-model="form.is_cost_invoice"
                       @change="autoSaveItem()"
-                      name="checkbox-1"
+                      name="checkbox-2"
                       :value="true"
                       :unchecked-value="false"
                       class="mb-2"
@@ -335,8 +367,9 @@
               </b-row>
               <b-row
                 v-if="
-                  formType == 'payment' ||
-                  dataMemoType.ref_table.with_po == true
+                  (formType == 'payment' ||
+                    dataMemoType.ref_table.with_po == true) &&
+                  !form.is_cost_invoice
                 "
               >
                 <div class="col-5">
@@ -355,7 +388,7 @@
                         <b-form-input
                           aria-label="sub_total"
                           v-model="sub_total"
-                          @change="autoSaveItemCost()"
+                          @change="debouncedSaveCost()"
                         ></b-form-input>
                       </b-input-group>
                       <b-input-group prepend="Pph 23" class="mb-2 mt-2">
@@ -369,12 +402,12 @@
                           class="justify-content-center my-auto ml-2"
                           :value="true"
                           :unchecked-value="false"
-                          @change="actionChangeChenckboxManualInput"
+                          v-on:change="actionChangeCheckboxManualInput"
                         >
                           Manual input Pph
                         </b-form-checkbox>
                       </b-input-group>
-                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
+                      <b-input-group prepend="PPN" class="mb-2 mt-2">
                         <b-form-input
                           disabled
                           aria-label="ppn"
@@ -710,7 +743,6 @@ export default {
     "dataMemo",
     // "dataTypeMemo",
     "formType",
-    "errors",
     "dataPosition",
     "dataTotalCost",
     "dataAttachments",
@@ -748,6 +780,7 @@ export default {
       fieldSaving: "",
       isSaving: false,
       form: {},
+      errors: {},
       //payment
       checkPPNInclude: false,
       sub_total: 0,
@@ -830,7 +863,7 @@ export default {
       if (!val) {
         val = 0;
       }
-      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
+      this.ppn = this.checkPPNInclude ? 0 : 0.11 * parseFloat(val);
       // this.pph = 0.02 * parseFloat(val);
       this.pphValueChange(val);
       this.grand_total =
@@ -848,14 +881,23 @@ export default {
       if (val) {
         this.ppn = 0;
       } else {
-        this.ppn = 0.1 * parseFloat(this.sub_total);
+        this.ppn = 0.11 * parseFloat(this.sub_total);
       }
       this.grand_total =
         parseFloat(this.sub_total) +
         parseFloat(this.ppn) -
         parseFloat(this.pph);
 
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
+    },
+    "form.is_cost_invoice": function (val) {
+      if (val) {
+        this.sub_total = 0;
+        this.pph = 0;
+        this.ppn = 0;
+        this.grand_total = 0;
+        this.checkPPNInclude = this.dataTotalCost.ppn == 0 && true;
+      }
     },
     dataTotalCost: function (val) {
       this.fillForm();
@@ -865,8 +907,8 @@ export default {
     },
   },
   created() {
-    this.debouncedSave = _.debounce(this.autoSaveItem, 500);
-    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 500);
+    this.debouncedSave = _.debounce(this.autoSaveItem, 1500);
+    this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1500);
   },
   methods: {
     typing: function (field) {
@@ -909,6 +951,8 @@ export default {
       axios
         .post(route(this.__autoSaveItem, this.dataMemo.id), this.form)
         .then((response) => {
+          this.errors = {};
+          this.form.title = response.data.title;
           this.form.background = response.data.background;
           this.form.information = response.data.information;
           this.form.conclusion = response.data.conclusion;
@@ -921,7 +965,10 @@ export default {
           }
         })
         .catch((error) => {
-          this.pageFlashes.error = error.response.data.errors;
+          if (error.response) {
+            this.errors = { ...error.response.data.errors };
+          }
+          //   this.pageFlashes.error = error.response.data.errors;
         });
     },
     autoSaveItemCost: function () {
@@ -965,7 +1012,7 @@ export default {
       if (!this.manualInputPph) {
         this.pph = 0.02 * parseFloat(val);
       }
-      this.autoSaveItemCost();
+      this.debouncedSaveCost();
     },
 
     uploadFiles: function () {
@@ -1176,10 +1223,11 @@ export default {
           // An error occurred
         });
     },
-    actionChangeChenckboxManualInput() {
+    actionChangeCheckboxManualInput() {
       if (this.manualInputPph) {
         this.pph = 0;
       }
+      this.debouncedSaveCost();
     },
     submitUpdate(id) {
       axios

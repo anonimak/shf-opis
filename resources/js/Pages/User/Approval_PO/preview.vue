@@ -336,7 +336,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <th style="width: 50%">PPN (10%)</th>
+                        <th style="width: 50%">PPN</th>
                         <td nowrap>
                           <div style="float: left">Rp</div>
                           <div style="float: right">
@@ -465,7 +465,7 @@ export default {
     actionApprove(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Approve";
+      this.modalTitle = "Approval Form";
       this.modalCaption = "Are you sure to approve?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -473,7 +473,7 @@ export default {
     actionNext(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Acknowledge";
+      this.modalTitle = "Approval Form";
       this.modalCaption = "Are you sure to next?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -489,7 +489,7 @@ export default {
     actionReject(id) {
       this.buttonClicked = "reject";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Reject";
+      this.modalTitle = "Rejection Form";
       this.modalCaption = "Are you sure to reject?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");

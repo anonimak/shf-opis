@@ -215,7 +215,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th style="width: 38%; text-align: left;">PPN (10%)</th>
+                    <th style="width: 38%; text-align: left;">PPN</th>
                     <td nowrap>
                         <div style="float: left;">Rp</div>
                         <div style="float: right;">{{ number_format($dataTotalCost['ppn'], 2) }}</div>
@@ -230,6 +230,7 @@
                 </tr>
             </tbody>
         </table>
+        @endif
         @endif
         @else
         <h4>Cost/Expenses</h4>
@@ -390,9 +391,14 @@
                             {{-- <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td> --}}
                             <td  style="height: 40px">-</td>
                             @elseif ($approver->status == 'reject' || $approver->status == 'revisi')
-                            <td><div style="font-family: ZapfDingbats, sans-serif;">8</div></td>
+                            <td>
+                                <div style="font-family: DejaVu Sans;font-size:14px;">&#9746;</div>
+                            </td>
                             @else
-                            <td><div style="font-family: ZapfDingbats, sans-serif;">4</div></td>
+                            <td>
+                                <div style="font-family: DejaVu Sans;font-size:14px;">&#9745;</div>
+                                {{-- <div style="font-family: ZapfDingbats, sans-serif;">4</div> --}}
+                            </td>
                             @endif
                         @endif
                         @endforeach

@@ -400,7 +400,7 @@ export default {
     actionApprove(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Approve";
+      this.modalTitle = "Approval Form";
       this.modalCaption = "Are you sure to approve?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -408,7 +408,7 @@ export default {
     actionNext(id) {
       this.buttonClicked = "approve";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Acknowledge";
+      this.modalTitle = "Approval Form";
       this.modalCaption = "Are you sure to next?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -416,7 +416,7 @@ export default {
     actionReject(id) {
       this.buttonClicked = "reject";
       this.idItemClicked = id;
-      this.modalTitle = "Modal Reject";
+      this.modalTitle = "Rejection Form";
       this.modalCaption = "Are you sure to reject?";
 
       this.$root.$emit("bv::show::modal", "modal-prevent-closing", "#btnShow");
@@ -470,8 +470,8 @@ export default {
       if (this.$ls.get("tabIndexApprovalPO")) {
         this.tabIndex = this.$ls.get("tabIndexApprovalPO") - 1;
       }
-
-      let param = { tab: this.tab[this.tabIndex] };
+      let query = this.form.search;
+      let param = { search: query, tab: this.tab[this.tabIndex] };
       if (this.filters.page) {
         param.page = this.filters.page;
       }

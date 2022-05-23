@@ -350,14 +350,14 @@ export default {
     },
     showModal(id) {
       this.idItemClicked = id;
-      this.modalTitle = "Modal Payment";
+      this.modalTitle = "Payment Form";
       this.$root.$emit("bv::show::modal", "modal-propose-payment", "#btnShow");
       //this.$refs.modalPayment.show(item);
     },
     showModalProposePo(id) {
       // this.$inertia.put(route(this.__proposepo, id));
       this.idItemPOClicked = id;
-      this.modalTitle = "Modal PO";
+      this.modalTitle = "PO Form";
 
       this.$root.$emit(
         "bv::show::modal",
@@ -450,8 +450,8 @@ export default {
       if (this.$ls.get("tabIndexMemo")) {
         this.tabIndex = this.$ls.get("tabIndexMemo") - 1;
       }
-
-      let param = { tab: this.tab[this.tabIndex] };
+      let query = this.form.search;
+      let param = { search: query, tab: this.tab[this.tabIndex] };
       if (this.filters.page) {
         param.page = this.filters.page;
       }

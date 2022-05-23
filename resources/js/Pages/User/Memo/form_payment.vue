@@ -70,6 +70,19 @@
                         />
                       </b-overlay>
                     </div>
+                    <b-col
+                      col
+                      lg="12"
+                      class="mb-4"
+                      v-if="dataMemo.propose_payment_at"
+                    >
+                      <span class="text-danger"
+                        ><i
+                          >If there is a change in the approval, the memo will
+                          be resubmitted from the beginning.</i
+                        ></span
+                      >
+                    </b-col>
                   </b-row>
                 </b-col>
               </b-row>
@@ -205,7 +218,20 @@
               <b-row v-else>
                 <b-col>
                   <h5>Cost/Expense</h5>
-                  <form-invoice :id_memo="dataMemo.id" :editOnlyTax="true" />
+                  <b-form-checkbox
+                    id="checkbox-2"
+                    v-model="dataMemo.is_cost_invoice"
+                    name="checkbox-2"
+                    :value="true"
+                    :unchecked-value="false"
+                    class="mb-2"
+                  >
+                    use Cost Invoice
+                  </b-form-checkbox>
+                  <form-invoice
+                    v-if="dataMemo.is_cost_invoice"
+                    :id_memo="dataMemo.id"
+                  />
                 </b-col>
               </b-row>
               <b-row
@@ -249,7 +275,7 @@
                           Manual input Pph
                         </b-form-checkbox>
                       </b-input-group>
-                      <b-input-group prepend="PPN (10%)" class="mb-2 mt-2">
+                      <b-input-group prepend="PPN" class="mb-2 mt-2">
                         <b-form-input
                           disabled
                           aria-label="ppn"
@@ -674,7 +700,7 @@ export default {
       if (!val) {
         val = 0;
       }
-      this.ppn = this.checkPPNInclude ? 0 : 0.1 * parseFloat(val);
+      this.ppn = this.checkPPNInclude ? 0 : 0.11 * parseFloat(val);
       // this.pph = 0.02 * parseFloat(val);
       this.pphValueChange(val);
       this.grand_total =
@@ -692,7 +718,7 @@ export default {
       if (val) {
         this.ppn = 0;
       } else {
-        this.ppn = 0.1 * parseFloat(this.sub_total);
+        this.ppn = 0.11 * parseFloat(this.sub_total);
       }
       this.grand_total =
         parseFloat(this.sub_total) +
@@ -713,7 +739,7 @@ export default {
     this.debouncedSaveCost = _.debounce(this.autoSaveItemCost, 1000);
   },
   methods: {
-      autoSaveItemCost: function () {
+    autoSaveItemCost: function () {
       this.form.sub_total = this.sub_total;
       this.form.pph = this.pph;
       this.form.ppn = this.ppn;
@@ -1009,6 +1035,7 @@ export default {
         this.pageFlashes.danger = "Please fill data completely!";
         return;
       }
+      this.form_payment.is_cost_invoice = this.dataMemo.is_cost_invoice;
       this.form_payment.sub_total = this.sub_total;
       this.form_payment.pph = this.pph;
       this.form_payment.ppn = this.ppn;

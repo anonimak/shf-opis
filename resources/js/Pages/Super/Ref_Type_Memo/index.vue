@@ -23,79 +23,133 @@
                       >
                     </div>
                   </div>
+                  <b-tabs
+                    content-class="mt-3"
+                    align="center"
+                    v-model="tabIndexStatus"
+                    @activate-tab="activeTab"
+                    small
+                  >
+                    <b-tab>
+                      <template #title>
+                        Active
+                        <b-badge
+                          v-if="countStatus.active > 0"
+                          variant="primary"
+                          >{{ countStatus.active }}</b-badge
+                        >
+                      </template>
+                    </b-tab>
+                    <b-tab>
+                      <template #title>
+                        Inactive
+                        <b-badge
+                          v-if="countStatus.inactive > 0"
+                          variant="primary"
+                          >{{ countStatus.inactive }}</b-badge
+                        >
+                      </template>
+                    </b-tab>
+                  </b-tabs>
                   <div class="col-lg-3 col-xs-12 mt-3">
                     <search v-model="form.search" @reset="reset" />
                   </div>
                   <!-- table news -->
-                  <table class="table mt-4">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Type Memo Name</th>
-                        <th scope="col">Module Approver</th>
-                        <th scope="col">Department</th>
-                        <th scope="col">Branch</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in dataRefTypeMemo.data"
-                        :key="item.id"
-                      >
-                        <th scope="row">
-                          {{
-                            (filters.page !== undefined
-                              ? filters.page - 1
-                              : 1 - 1) *
-                              perPage +
-                            index +
-                            1
-                          }}
-                        </th>
-                        <td>
-                          {{ item.name }}
-                        </td>
-                        <td>
-                          {{
-                            item.ref_module_approver
-                              ? item.ref_module_approver.name
-                              : "-"
-                          }}
-                        </td>
-                        <td>
-                          {{
-                            item.department
-                              ? item.department.department_name
-                              : "-"
-                          }}
-                        </td>
-                        <td>
-                          {{ item.branch ? item.branch.branch_name : "-" }}
-                        </td>
-                        <td>
-                          <b-button-group size="sm">
-                            <inertia-link
-                              :href="route(__template, item.id)"
-                              class="btn btn-info"
-                              >template</inertia-link
-                            >
-                            <inertia-link
-                              :href="route(__edit, item.id)"
-                              class="btn btn-secondary"
-                              ><i class="fa fa-edit" aria-hidden="true"></i
-                            ></inertia-link>
-                            <b-button
-                              href="#"
-                              variant="danger"
-                              @click="showMsgBoxDelete(item.id)"
-                              ><i class="fa fa-trash-alt" aria-hidden="true"></i
-                            ></b-button>
-                          </b-button-group>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div class="table-responsive">
+                    <b-overlay
+                      :show="isLoad"
+                      opacity="0.6"
+                      spinner-small
+                      spinner-variant="primary"
+                    >
+                      <table class="table mt-4">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Type Memo Name</th>
+                            <th scope="col">Module Approver</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(item, index) in dataRefTypeMemo.data"
+                            :key="item.id"
+                          >
+                            <th scope="row">
+                              {{
+                                (filters.page !== undefined
+                                  ? filters.page - 1
+                                  : 1 - 1) *
+                                  perPage +
+                                index +
+                                1
+                              }}
+                            </th>
+                            <td>
+                              {{ item.name }}
+                            </td>
+                            <td>
+                              {{
+                                item.ref_module_approver
+                                  ? item.ref_module_approver.name
+                                  : "-"
+                              }}
+                            </td>
+                            <td>
+                              {{
+                                item.department
+                                  ? item.department.department_name
+                                  : "-"
+                              }}
+                            </td>
+                            <td>
+                              {{ item.branch ? item.branch.branch_name : "-" }}
+                            </td>
+                            <td>
+                              <b-button-group size="sm">
+                                <inertia-link
+                                  :href="route(__template, item.id)"
+                                  class="btn btn-info"
+                                  >template</inertia-link
+                                >
+                                <b-button
+                                  href="#"
+                                  variant="primary"
+                                  @click="actionStatus(item.id, true)"
+                                  v-if="!item.status"
+                                  >active
+                                </b-button>
+                                <b-button
+                                  href="#"
+                                  variant="warning"
+                                  @click="actionStatus(item.id, false)"
+                                  v-else
+                                  >inactive
+                                </b-button>
+                                <inertia-link
+                                  :href="route(__edit, item.id)"
+                                  class="btn btn-secondary"
+                                  ><i class="fa fa-edit" aria-hidden="true"></i
+                                ></inertia-link>
+                                <b-button
+                                  href="#"
+                                  variant="danger"
+                                  @click="showMsgBoxDelete(item.id)"
+                                  ><i
+                                    class="fa fa-trash-alt"
+                                    aria-hidden="true"
+                                  ></i
+                                ></b-button>
+                              </b-button-group>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </b-overlay>
+                  </div>
                   <Pagination :links="dataRefTypeMemo.links" />
                 </div>
               </div>
@@ -126,8 +180,11 @@ export default {
     "notif",
     "filters",
     "perPage",
+    "status",
+    "countStatus",
     "__create",
     "__edit",
+    "__updateStatus",
     "__show",
     "__destroy",
     "__template",
@@ -136,11 +193,12 @@ export default {
   metaInfo: { title: "Admin Reference Type Memo" },
   data() {
     return {
-      tabIndexCfgHome: 0,
+      tabIndexStatus: 0,
       form: {
         search: this.filters.search,
       },
       isCheched: false,
+      isLoad: false,
     };
   },
   components: {
@@ -149,6 +207,9 @@ export default {
     Breadcrumb,
     Pagination,
     Search,
+  },
+  beforeMount() {
+    this.setLsTabMemo();
   },
   methods: {
     submitDelete(id) {
@@ -176,6 +237,12 @@ export default {
         .catch((err) => {
           // An error occurred
         });
+    },
+    actionStatus: function (id, status_type) {
+      this.form.status_type = status_type;
+      this.$inertia.put(route(this.__updateStatus, id), this.form).then(() => {
+        this.activeTab(this.tabIndexStatus);
+      });
     },
     showMsgBoxDeleteAll: function () {
       this.$bvModal
@@ -206,15 +273,45 @@ export default {
     reset() {
       this.form = mapValues(this.form, () => null);
     },
+    setLsTabMemo() {
+      this.isLoad = true;
+      if (this.$ls.get("tabIndexType")) {
+        this.tabIndexStatus = this.$ls.get("tabIndexType") - 1;
+      }
+      let query = this.form.search;
+      let param = { search: query,status: this.status[this.tabIndexStatus] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        this.isLoad = false;
+      });
+    },
+    activeTab(tabIndexStatus) {
+      this.tabIndexStatus = tabIndexStatus;
+      this.isLoad = true;
+      this.$ls.set("tabIndexType", this.tabIndexStatus + 1, 60 * 60 * 1000);
+
+      let param = { status: this.status[tabIndexStatus] };
+      if (this.filters.page) {
+        param.page = this.filters.page;
+      }
+      this.$inertia.replace(route(this.__index, param)).then(() => {
+        this.isLoad = false;
+      });
+    },
   },
   watch: {
     form: {
       handler: throttle(function () {
-        let query = pickBy(this.form);
+        let query = this.form.search;
         this.$inertia.replace(
           this.route(
             this.__index,
-            Object.keys(query).length ? query : { remember: "forget" }
+            Object.keys(query).length
+              ? { search: query, status: this.status[this.tabIndexStatus] }
+              : { remember: "forget", status: this.status[this.tabIndexStatus] }
           )
         );
       }, 150),

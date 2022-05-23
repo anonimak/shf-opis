@@ -56,9 +56,9 @@ class Ref_Type_Memo extends Model
         );
     }
 
-    public static function getRef_Type_Memo($search = null)
+    public static function getRef_Type_Memo($status, $search = null)
     {
-        $typememo = Self::select('*')
+        $typememo = Self::select('*')->where('status', $status)
             ->with(['department' => function ($query) {
                 return $query->select('id', 'department_name')->orderBy('id', 'ASC');
             }])
