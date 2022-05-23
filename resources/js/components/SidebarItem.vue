@@ -29,6 +29,7 @@
           class="collapse"
           aria-labelledby="headingPage"
           data-parent="#accordionSidebar"
+          style="z-index: 2;"
         >
           <div class="bg-white py-2 collapse-inner rounded">
             <!-- <h6 class="collapse-header">Custom Utilities:</h6> -->

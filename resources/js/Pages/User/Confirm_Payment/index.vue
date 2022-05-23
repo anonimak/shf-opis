@@ -223,7 +223,7 @@ export default {
       modalCaption: "",
       form: {
         search: this.filters.search,
-        selectedBranch: null,
+        selectedBranch: this.filters.checkedBranch,
       },
     };
   },
@@ -303,7 +303,11 @@ export default {
         this.tabIndex = this.$ls.get("tabIndexConfirm") - 1;
       }
       let query = this.form.search;
-      let param = { search: query, tab: this.tab[this.tabIndex] };
+      let branch = this.form.selectedBranch;
+      if (!this.form.selectedBranch) {
+        branch = "";
+      }
+      let param = { search: query, checkedBranch: branch, tab: this.tab[this.tabIndex] };
       if (this.filters.page) {
         param.page = this.filters.page;
       }
