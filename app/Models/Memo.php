@@ -635,9 +635,9 @@ class Memo extends Model
             ->selectRaw('a.*, b.content, c.*, d.firstname, d.lastname, d.id_branch, d.branch_name, d.year_started, d.year_finished')
             ->joinSub($proposeEmployee, 'd', function ($join) {
                 $join->on('a.id_employee', '=', 'd.id')
-                    ->whereRaw('d.year_started < a.propose_at')
+                    ->whereRaw('d.year_started < a.propose_payment_at')
                     ->where(function ($sub) {
-                        $sub->whereRaw('d.year_finished > a.propose_at')
+                        $sub->whereRaw('d.year_finished > a.propose_payment_at')
                             ->orWhere('d.year_finished', null);
                     });
             })
