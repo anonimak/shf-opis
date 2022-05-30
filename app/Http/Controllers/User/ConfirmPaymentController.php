@@ -13,6 +13,7 @@ use App\Models\M_Data_Cost_Total;
 use App\Models\D_Memo_History;
 use App\Models\Employee_History;
 use App\Models\Ref_Type_Memo;
+use App\Models\Branch;
 use Inertia\Inertia;
 use Barryvdh\DomPDF\Facade as PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -29,25 +30,16 @@ class ConfirmPaymentController extends Controller
      */
     public function index(Request $request)
     {
-        //
         $tab = 'unpaid';
         if ($request->has('tab')) {
             $tab = $request->input('tab');
         }
-        // $positions = Employee_History::position_now()->with(['employee' => function ($employee) {
-        //     return $employee->select('id', 'firstname', 'lastname');
-        // }])->with('position')->get();
-        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab, $request->input('search'))->with(['proposeemployee' => function ($employee) {
-            return $employee->select('id', 'firstname', 'lastname')->with(['position_now' => function ($position_now) {
-                return $position_now->with(['position' => function ($position) {
-                    return $position->with('department');
-                }])->with('branch');
-            }]);
-        }])->with('latestHistory')->paginate(10);
-        //ddd($memo->get());
+
+        $dataBranch = Branch::where('branch_name','<>','NULL')->get();
+        $memo = Memo::getAllMemoPayment(auth()->user()->id_employee, $tab, $request->input('search'), $request->input('checkedBranch'))->paginate(10);
+
         return Inertia::render('User/Confirm_Payment', [
             'perPage' => 10,
-            // 'dataMemo' => $memo,
             'dataMemo' => $memo,
             'filters' => $request->all(),
             'breadcrumbItems' => array(
@@ -66,7 +58,7 @@ class ConfirmPaymentController extends Controller
                 'unpaid' => Memo::getAllMemoPayment(auth()->user()->id_employee, 'unpaid')->count(),
                 'paid' => Memo::getAllMemoPayment(auth()->user()->id_employee, 'paid')->count(),
             ],
-            // 'dataPosition' => $positions,
+            'dataBranch' => $dataBranch,
             '__confirming'  => 'user.memo.confirmpayment.confirming',
             '__previewpdf'  => 'user.memo.confirmpayment.preview',
             '__detail'    => 'user.memo.confirmpayment.webpreview',
