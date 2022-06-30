@@ -648,7 +648,7 @@ class Memo extends Model
             ->where('a.status_payment', '=', 'approve')
             ->whereColumn('c.max_id', '=', 'b.id')
             ->where('a.confirmed_payment_by', $id_employee)
-            ->orderBy('a.id', 'desc');
+            ->orderBy('a.updated_at', 'desc');
 
         if ($tab == 'paid') {
             $memo->whereNotNull('a.payment_at');
