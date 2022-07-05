@@ -48,8 +48,8 @@ class User extends Authenticatable
         return Self::with(['employee' => function ($query) {
             return $query->with(['position_now' => function ($position_now) {
                 return $position_now->with(['position' => function ($position) {
-                    return $position->with('department')->first();
-                }])->with('branch')->first();
+                    return $position->with('department');
+                }])->with('branch');
             }])->with('overtake')->with('confirmedPayment')->first();
         }])->where('id', auth()->id())->first();
     }
